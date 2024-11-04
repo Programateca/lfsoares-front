@@ -1,14 +1,50 @@
+import logo from "@/assets/logo.svg";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import logo from "@/assets/logo.svg";
+import { useAuth } from "@/context/AuthContextProvider";
+import { api } from "@/lib/axios";
+import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+type Role = "User";
+
+type LoginResponseData = {
+  refreshToken: string;
+  user: {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: { id: number; name: Role };
+  };
+};
+
 export default function Login() {
+  const { login } = useAuth()
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const emailInput = useRef<HTMLInputElement>(null);
+  const senhaInput = useRef<HTMLInputElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/");
+
+    const body = {
+      email: emailInput.current?.value,
+      password: senhaInput.current?.value,
+    };
+
+    const { data } = await api.post<LoginResponseData>(
+      "/api/v1/auth/email/login",
+      body
+    );
+
+    if (data) {
+      login({...data.user, token: data.refreshToken})
+      navigate("/");
+    }
   };
 
   return (
@@ -34,6 +70,7 @@ export default function Login() {
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
+                ref={emailInput}
                 id="email"
                 type="email"
                 placeholder="seu@email.com"
@@ -44,6 +81,7 @@ export default function Login() {
             <div className="space-y-2 pb-4">
               <Label htmlFor="senha">Senha</Label>
               <Input
+                ref={senhaInput}
                 id="senha"
                 type="password"
                 placeholder="********"

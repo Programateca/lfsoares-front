@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -20,6 +20,7 @@ import Treinamentos from "@/components/Treinamentos";
 import Instrutores from "@/components/Instrutores";
 import Pessoas from "@/components/Pessoas";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContextProvider";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -30,14 +31,28 @@ const componentsMap = {
 
 type ComponentKeys = keyof typeof componentsMap;
 
+console.log(import.meta.env.VITE_BACKEND_DOMAIN)
+
 export default function HomePage() {
   const navigate = useNavigate();
-  const [userName] = useState("João Silva");
+  const { isAuthenticated, logout, user } = useAuth()
+
   const [selectedOption, setSelectedOption] = useState<ComponentKeys | "">("");
 
   const handleSelectedOption = (option: ComponentKeys) => {
     setSelectedOption(option);
   };
+
+  const handleLogOut = () => {
+    logout()
+    navigate("/login")
+  }
+
+
+  useEffect(() => {
+    if(!isAuthenticated()) navigate('/login')
+      console.log('User', user)
+  }, [isAuthenticated, navigate, user])
 
   return (
     <div className="min-h-screen h-full flex flex-col">
@@ -136,7 +151,7 @@ export default function HomePage() {
                 size="icon"
                 className="w-full text-gray-600 
                 hover:text-gray-700 px-4"
-                onClick={() => navigate("/login")}
+                onClick={handleLogOut}
               >
                 <LogOut className="h-5 w-5 " />
                 Sair
@@ -148,7 +163,7 @@ export default function HomePage() {
               <CardContent className="p-5 py-4">
                 <div className="text-start text-white">
                   <h1 className="text-4xl font-bold">
-                    Olá, {userName.split(" ")[0]} 👋
+                    Olá, {user?.firstName} 👋
                   </h1>
                   <p className="mt-2 text-xl">
                     Bem-vindo ao Sistema de Geração de Documentos de Treinamento
