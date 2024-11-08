@@ -142,10 +142,8 @@ export default function HomePage() {
                     size="sm"
                     className="w-full justify-start"
                   >
-                    <a href="/layout/lista-presenca">
-                      <ClipboardList className="mr-2 h-4 w-4" />
-                      Lista de Presença
-                    </a>
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    Lista de Presença
                   </Button>
                 </div>
               </div>
