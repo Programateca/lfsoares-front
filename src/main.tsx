@@ -7,7 +7,8 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Home from "./pages/Home.tsx";
 import { AuthProvider } from "./context/AuthContextProvider.tsx";
 
-if(!import.meta.env.VITE_BACKEND_DOMAIN) throw new Error('Env VITE_BACKEND_DOMAIN missing')
+if (!import.meta.env.VITE_BACKEND_DOMAIN)
+  throw new Error("Env VITE_BACKEND_DOMAIN missing");
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </AuthProvider>
   </StrictMode>
 );

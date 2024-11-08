@@ -24,49 +24,160 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "./ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/axios";
 
-const pessoas = [
-  {
-    id: 1,
-    nome: "Alice Johnson",
-    cpf: "123.456.789-00",
-    empresa: "Empresa A",
-    status: 1,
-  },
-  {
-    id: 2,
-    nome: "Bob Smith",
-    cpf: "123.456.789-00",
-    empresa: "",
-    status: 1,
-  },
-];
+interface Pessoa {
+  id: string;
+  name: string;
+  cpf: string;
+  empresa: {
+    id: string;
+    name: string;
+  };
+}
+
+interface Empresa {
+  id: string;
+  name: string;
+}
 
 const Pessoas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState({
-    nome: "",
+  const [pessoaInEditMode, setPessoaInEditMode] = useState<string | number>("");
+  const [newPessoa, setNewPessoa] = useState({
+    id: "",
+    name: "",
     cpf: "",
-    empresa: "",
+    empresa: {
+      id: "",
+      name: "",
+    },
   });
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+
+  console.log(newPessoa);
+  const fetchPessoas = async () => {
+    try {
+      const response = await api.get("pessoas");
+      setPessoas(response.data.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchPessoas();
+    api.get("empresas").then((response) => setEmpresas(response.data.data));
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
+    setNewPessoa((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("New user data:", newUser);
-    setIsModalOpen(false);
-    setNewUser({
-      nome: "",
-      cpf: "",
-      empresa: "",
-    });
+
+    const pessoa = pessoas.find((pessoa) => pessoa.id === newPessoa.id);
+
+    if (pessoaInEditMode) {
+      try {
+        await api.patch(`pessoas/${pessoaInEditMode}`, {
+          name:
+            newPessoa.name === pessoa?.name || newPessoa.name === ""
+              ? null
+              : newPessoa.name,
+          cpf:
+            newPessoa.cpf === pessoa?.cpf || newPessoa.cpf === ""
+              ? null
+              : newPessoa.cpf,
+          empresa: {
+            id:
+              newPessoa.empresa.id === pessoa?.empresa.id ||
+              newPessoa.empresa.id === ""
+                ? null
+                : newPessoa.empresa.id,
+          },
+        });
+
+        fetchPessoas();
+        setIsModalOpen(false);
+        setNewPessoa({
+          id: "",
+          name: "",
+          cpf: "",
+          empresa: {
+            id: "",
+            name: "",
+          },
+        });
+        setPessoaInEditMode("");
+      } catch (error) {}
+      return;
+    }
+
+    try {
+      await api.post("pessoas", {
+        name: newPessoa.name,
+        cpf: newPessoa.cpf,
+        empresa: {
+          id: newPessoa.empresa.id,
+        },
+      });
+
+      fetchPessoas();
+      setIsModalOpen(false);
+      setNewPessoa({
+        id: "",
+        name: "",
+        cpf: "",
+        empresa: {
+          id: "",
+          name: "",
+        },
+      });
+    } catch (error) {}
   };
+
+  const handleEdit = (id: string) => {
+    setPessoaInEditMode(id);
+    setIsModalOpen(true);
+    const pessoa = pessoas.find((pessoa) => pessoa.id === id);
+
+    if (pessoa) {
+      setNewPessoa({
+        id: pessoa.id,
+        name: pessoa.name,
+        cpf: pessoa.cpf,
+        empresa: {
+          id: pessoa.empresa.id,
+          name: pessoa.empresa.name,
+        },
+      });
+    }
+  };
+
+  // const handleUpdateStatus = async (id: number, status: number) => {
+  //   try {
+  //     await api.patch(`users/${id}`, {
+  //       status: {
+  //         id: status,
+  //       },
+  //     });
+
+  //     fetchPessoas();
+  //   } catch (error) {}
+  // };
 
   return (
     <Card className="shadow-md">
@@ -88,7 +199,22 @@ const Pessoas = () => {
               <Search className="h-4 w-4" />
             </Button>
           </div>
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <Dialog
+            open={isModalOpen}
+            onOpenChange={(open) => {
+              setIsModalOpen(open);
+              if (!open)
+                setNewPessoa({
+                  id: "",
+                  name: "",
+                  cpf: "",
+                  empresa: {
+                    id: "",
+                    name: "",
+                  },
+                });
+            }}
+          >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Pessoa
@@ -104,39 +230,69 @@ const Pessoas = () => {
                   <Input
                     id="name"
                     name="name"
-                    value={newUser.nome}
+                    value={newPessoa.name}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">CPF</Label>
+                  <Label htmlFor="cpf">CPF</Label>
                   <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={newUser.cpf}
+                    id="cpf"
+                    name="cpf"
+                    type="cpf"
+                    value={newPessoa.cpf}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Empresa</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={newUser.empresa}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Label htmlFor="empresa">Empresa</Label>
+                  <Select onValueChange={
+                    (value) => {
+                      setNewPessoa((prev) => ({
+                        ...prev,
+                        empresa: {
+                          id: value,
+                          name: empresas.find((empresa) => empresa.id === value)?.name || "",
+                        },
+                      }));
+                    }
+                  }>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione uma empresa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Empresas:</SelectLabel>
+                        {empresas.map((empresa) => {
+                          return (
+                            <SelectItem key={empresa.id} value={empresa.id}>
+                              {empresa.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="flex justify-end space-x-2">
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={() => {
+                      setIsModalOpen(false),
+                        setNewPessoa({
+                          id: "",
+                          name: "",
+                          cpf: "",
+                          empresa: {
+                            id: "",
+                            name: "",
+                          },
+                        });
+                    }}
                   >
                     Cancelar
                   </Button>
@@ -152,39 +308,36 @@ const Pessoas = () => {
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
               <TableHead>Empresa</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pessoas.map((user) => (
-              <TableRow
-                key={user.id}
-                className={user.status === 0 ? "line-through" : ""}
-              >
+            {pessoas.map((pessoa) => (
+              <TableRow key={pessoa.id}>
                 <TableCell
                   className="font-medium max-w-[20rem]
                 overflow-hidden whitespace-nowrap overflow-ellipsis
                 py-2
                 "
                 >
-                  {user.nome}
+                  {pessoa.name}
                 </TableCell>
-                <TableCell className="py-2">{user.cpf}</TableCell>
+                <TableCell className="py-2">{pessoa.cpf}</TableCell>
                 <TableCell className="py-2">
-                  {user.empresa ? user.empresa : "Não informada"}
+                  {pessoa.empresa?.name ? pessoa.empresa.name : "Não informada"}
                 </TableCell>
-                <TableCell className="py-2">
+                {/* <TableCell className="py-2">
                   {user.status === 1 ? "Ativo" : "Inativo"}
-                </TableCell>
+                </TableCell> */}
                 <TableCell className="text-end py-2">
                   <Button
+                    onClick={() => handleEdit(pessoa.id)}
                     variant={"outline"}
                     className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  {user.status === 1 ? (
+                  {/* {user.status === 1 ? (
                     <Button
                       variant={"outline"}
                       className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
@@ -198,7 +351,7 @@ const Pessoas = () => {
                     >
                       <RotateCcw className="h-4 w-4" />
                     </Button>
-                  )}
+                  )} */}
                 </TableCell>
               </TableRow>
             ))}
