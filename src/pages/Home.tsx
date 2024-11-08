@@ -133,7 +133,6 @@ export default function HomePage() {
                     variant="ghost"
                     size="sm"
                     className="w-full justify-start"
-                    asChild
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Certificado
@@ -142,10 +141,11 @@ export default function HomePage() {
                     variant="ghost"
                     size="sm"
                     className="w-full justify-start"
-                    asChild
                   >
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    Lista de Presença
+                    <a href="/layout/lista-presenca">
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Lista de Presença
+                    </a>
                   </Button>
                 </div>
               </div>
