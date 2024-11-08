@@ -93,7 +93,6 @@ const Empresas = () => {
       });
     } catch (error) {}
   };
-  console.log(empresas);
   const handleEdit = (id: number) => {
     setEmpresaInEditMode(id);
     setIsModalOpen(true);

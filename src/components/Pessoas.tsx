@@ -65,7 +65,6 @@ const Pessoas = () => {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
-  console.log(newPessoa);
   const fetchPessoas = async () => {
     try {
       const response = await api.get("pessoas");

@@ -51,7 +51,6 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isAuthenticated()) navigate("/login");
-    console.log("User", user);
   }, [isAuthenticated, navigate, user]);
 
   return (
@@ -136,10 +135,8 @@ export default function HomePage() {
                     className="w-full justify-start"
                     asChild
                   >
-                    <a href="/layout/certificado">
-                      <FileText className="mr-2 h-4 w-4" />
-                      Certificado
-                    </a>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Certificado
                   </Button>
                   <Button
                     variant="ghost"
@@ -147,10 +144,8 @@ export default function HomePage() {
                     className="w-full justify-start"
                     asChild
                   >
-                    <a href="/layout/lista-presenca">
-                      <ClipboardList className="mr-2 h-4 w-4" />
-                      Lista de Presença
-                    </a>
+                    <ClipboardList className="mr-2 h-4 w-4" />
+                    Lista de Presença
                   </Button>
                 </div>
               </div>

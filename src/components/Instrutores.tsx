@@ -37,7 +37,6 @@ const Instrutores = () => {
     name: "",
   });
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
-  console.log(instrutores);
   const fetchInstrutores = async () => {
     try {
       const response = await api.get("instrutores");
