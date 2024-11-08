@@ -13,6 +13,7 @@ import {
   Settings,
   IdCard,
   Contact,
+  Building2,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -21,21 +22,21 @@ import Instrutores from "@/components/Instrutores";
 import Pessoas from "@/components/Pessoas";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
+import Empresas from "@/components/Empresas";
 
 const componentsMap = {
   Usuários: Usuarios,
   Treinamentos: Treinamentos,
   Instrutores: Instrutores,
   Pessoas: Pessoas,
+  Empresas: Empresas,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
 
-console.log(import.meta.env.VITE_BACKEND_DOMAIN)
-
 export default function HomePage() {
   const navigate = useNavigate();
-  const { isAuthenticated, logout, user } = useAuth()
+  const { isAuthenticated, logout, user } = useAuth();
 
   const [selectedOption, setSelectedOption] = useState<ComponentKeys | "">("");
 
@@ -44,20 +45,19 @@ export default function HomePage() {
   };
 
   const handleLogOut = () => {
-    logout()
-    navigate("/login")
-  }
-
+    logout();
+    navigate("/login");
+  };
 
   useEffect(() => {
-    if(!isAuthenticated()) navigate('/login')
-      console.log('User', user)
-  }, [isAuthenticated, navigate, user])
+    if (!isAuthenticated()) navigate("/login");
+    console.log("User", user);
+  }, [isAuthenticated, navigate, user]);
 
   return (
     <div className="min-h-screen h-full flex flex-col">
       <div className="flex flex-1 h-full">
-        <div className="w-[17rem] fixed h-full overflow-y-auto border-r bg-background py-8 px-4">
+        <div className="w-[17rem] fixed h-full overflow-y-auto border-r bg-background py-8 px-4 z-20">
           <div className="flex flex-col h-full">
             <div className="flex justify-center pb-5 border-b-2">
               <img src={logo} alt="Logo da empresa" className="h-[3.5rem]" />
@@ -102,6 +102,16 @@ export default function HomePage() {
               >
                 <Users className="mr-2 h-4 w-4" />
                 Pessoas
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${
+                  selectedOption === "Empresas" ? "bg-gray-100" : ""
+                }`}
+                onClick={() => handleSelectedOption("Empresas")}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                Empresas
               </Button>
               <div>
                 <Button variant="ghost" className="w-full justify-start">

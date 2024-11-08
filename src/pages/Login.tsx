@@ -12,6 +12,7 @@ type Role = "User";
 
 type LoginResponseData = {
   refreshToken: string;
+  token: string;
   user: {
     id: number;
     email: string;
@@ -22,7 +23,7 @@ type LoginResponseData = {
 };
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const emailInput = useRef<HTMLInputElement>(null);
@@ -37,12 +38,12 @@ export default function Login() {
     };
 
     const { data } = await api.post<LoginResponseData>(
-      "/api/v1/auth/email/login",
+      "auth/email/login",
       body
     );
 
     if (data) {
-      login({...data.user, token: data.refreshToken})
+      login({ ...data.user, token: data.token });
       navigate("/");
     }
   };
