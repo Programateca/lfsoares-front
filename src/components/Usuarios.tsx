@@ -201,6 +201,7 @@ const Usuarios = () => {
                   password: "",
                   confirmPassword: "",
                 });
+              setUserInEditMode("");
             }}
           >
             <DialogTrigger asChild>
@@ -269,6 +270,7 @@ const Usuarios = () => {
                           password: "",
                           confirmPassword: "",
                         });
+                      setUserInEditMode("");
                     }}
                   >
                     Cancelar

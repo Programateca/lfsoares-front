@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   ChevronDown,
   Users,
-  BookOpen,
   Layout,
   FileText,
   ClipboardList,
@@ -14,6 +13,7 @@ import {
   IdCard,
   Contact,
   Building2,
+  MonitorCog,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -63,56 +63,66 @@ export default function HomePage() {
               <img src={logo} alt="Logo da empresa" className="h-[3.5rem]" />
             </div>
             <div className="space-y-4 pt-5">
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  selectedOption === "Usuários" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handleSelectedOption("Usuários")}
-              >
-                <Contact className="mr-2 h-4 w-4" />
-                Usuários
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  selectedOption === "Treinamentos" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handleSelectedOption("Treinamentos")}
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Treinamentos
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  selectedOption === "Instrutores" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handleSelectedOption("Instrutores")}
-              >
-                <IdCard className="mr-2 h-4 w-4" />
-                Instrutores
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  selectedOption === "Pessoas" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handleSelectedOption("Pessoas")}
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Pessoas
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  selectedOption === "Empresas" ? "bg-gray-100" : ""
-                }`}
-                onClick={() => handleSelectedOption("Empresas")}
-              >
-                <Building2 className="mr-2 h-4 w-4" />
-                Empresas
-              </Button>
+              <div>
+                <Button variant="ghost" className="w-full justify-start">
+                  <MonitorCog className="mr-2 h-4 w-4" />
+                  Cadastros
+                  <ChevronDown className="ml-auto h-4 w-4" />
+                </Button>
+                <div className="ml-4 mt-2 space-y-2">
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Usuários" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Usuários")}
+                  >
+                    <Contact className="mr-2 h-4 w-4" />
+                    Usuários
+                  </Button>
+                  {/* <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Treinamentos" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Treinamentos")}
+                  >
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Treinamentos
+                  </Button> */}
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Instrutores" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Instrutores")}
+                  >
+                    <IdCard className="mr-2 h-4 w-4" />
+                    Instrutores
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Pessoas" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Pessoas")}
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Pessoas
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Empresas" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Empresas")}
+                  >
+                    <Building2 className="mr-2 h-4 w-4" />
+                    Empresas
+                  </Button>
+                </div>
+              </div>
+
               <div>
                 <Button variant="ghost" className="w-full justify-start">
                   <Layout className="mr-2 h-4 w-4" />

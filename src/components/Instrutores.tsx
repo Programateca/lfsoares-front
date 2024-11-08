@@ -8,26 +8,111 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Button } from "./ui/button";
 import {
-  Search,
-  Plus,
-  Edit,
-  Trash2Icon,
-  CircleX,
-  RotateCcw,
-} from "lucide-react";
-import { Dialog, DialogTrigger } from "./ui/dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const treinadores = [
-  {
-    id: 1,
-    instrutor: "Alice Johnson",
-    status: 1,
-  },
-];
+import { Button } from "./ui/button";
+import { Search, Plus, Edit, CircleX } from "lucide-react";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/axios";
+import { Label } from "./ui/label";
 
-const Treinadores = () => {
+interface Instrutor {
+  id: string;
+  name: string;
+}
+
+const Instrutores = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [instrutorInEditMode, setInstrutorInEditMode] = useState<
+    string | number
+  >("");
+  const [newInstrutor, setNewInstrutor] = useState<Instrutor>({
+    id: "",
+    name: "",
+  });
+  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  console.log(instrutores);
+  const fetchInstrutores = async () => {
+    try {
+      const response = await api.get("instrutores");
+      setInstrutores(response.data.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchInstrutores();
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewInstrutor((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (instrutorInEditMode) {
+      try {
+        await api.patch(`instrutores/${instrutorInEditMode}`, {
+          name: newInstrutor.name,
+        });
+
+        fetchInstrutores();
+        setIsModalOpen(false);
+        setNewInstrutor({
+          id: "",
+          name: "",
+        });
+        setInstrutorInEditMode("");
+      } catch (error) {}
+      return;
+    }
+
+    try {
+      await api.post("instrutores", {
+        name: newInstrutor.name,
+      });
+      fetchInstrutores();
+      setIsModalOpen(false);
+      setNewInstrutor({
+        id: "",
+        name: "",
+      });
+    } catch (error) {}
+  };
+
+  const handleEdit = (id: string) => {
+    setInstrutorInEditMode(id);
+    setIsModalOpen(true);
+
+    const instrutor = instrutores.find((instrutor) => instrutor.id === id);
+
+    if (instrutor) {
+      setNewInstrutor({
+        id: instrutor.id,
+        name: instrutor.name,
+      });
+    }
+  };
+
+  // const handleUpdateStatus = async (id: number, status: number) => {
+  //   try {
+  //     await api.patch(`users/${id}`, {
+  //       status: {
+  //         id: status,
+  //       },
+  //     });
+
+  //     fetchUsers();
+  //   } catch (error) {}
+  // };
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -48,13 +133,25 @@ const Treinadores = () => {
               <Search className="h-4 w-4" />
             </Button>
           </div>
-          <Dialog>
+          <Dialog
+            open={isModalOpen}
+            onOpenChange={(isOpen) => {
+              setIsModalOpen(isOpen);
+              if (!isOpen) {
+                setNewInstrutor({
+                  id: "",
+                  name: "",
+                });
+                setInstrutorInEditMode("");
+              }
+            }}
+          >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Instrutor
               </Button>
             </DialogTrigger>
-            {/* <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Adicionar Novo Usuário</DialogTitle>
               </DialogHeader>
@@ -64,40 +161,7 @@ const Treinadores = () => {
                   <Input
                     id="name"
                     name="name"
-                    value={newUser.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={newUser.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    value={newUser.confirmPassword}
+                    value={newInstrutor.name}
                     onChange={handleInputChange}
                     required
                   />
@@ -106,49 +170,51 @@ const Treinadores = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      setNewInstrutor({
+                        id: "",
+                        name: "",
+                      });
+                      setInstrutorInEditMode("");
+                    }}
                   >
                     Cancelar
                   </Button>
                   <Button type="submit">Adicionar</Button>
                 </div>
               </form>
-            </DialogContent> */}
+            </DialogContent>
           </Dialog>
         </div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Instrutor</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {treinadores.map((user) => (
-              <TableRow
-                key={user.id}
-                className={user.status === 0 ? "line-through" : ""}
-              >
+            {instrutores.map((instrutor) => (
+              <TableRow key={instrutor.id}>
                 <TableCell
                   className="font-medium max-w-[20rem]
                 overflow-hidden whitespace-nowrap overflow-ellipsis
                 py-2
                 "
                 >
-                  {user.instrutor}
+                  {instrutor.name}
                 </TableCell>
-                <TableCell className="py-2">
-                  {user.status === 1 ? "Ativo" : "Inativo"}
-                </TableCell>
+
                 <TableCell className="text-end py-2">
                   <Button
+                    onClick={() => handleEdit(instrutor.id)}
                     variant={"outline"}
                     className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  {user.status === 1 ? (
+                  {/* {instrutor.status === 1 ? (
                     <Button
                       variant={"outline"}
                       className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
@@ -162,11 +228,11 @@ const Treinadores = () => {
                     >
                       <RotateCcw className="h-4 w-4" />
                     </Button>
-                  )}
+                  )} */}
                 </TableCell>
               </TableRow>
             ))}
-            {!treinadores && (
+            {!instrutores && (
               <TableRow>
                 <TableCell colSpan={3} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -185,4 +251,4 @@ const Treinadores = () => {
   );
 };
 
-export default Treinadores;
+export default Instrutores;

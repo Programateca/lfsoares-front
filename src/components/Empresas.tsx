@@ -13,9 +13,7 @@ import {
   Search,
   Plus,
   Edit,
-  Trash2Icon,
   CircleX,
-  RotateCcw,
 } from "lucide-react";
 import {
   Dialog,
