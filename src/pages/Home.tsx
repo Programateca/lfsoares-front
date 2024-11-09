@@ -176,7 +176,7 @@ export default function HomePage() {
               <CardContent className="p-5 py-4">
                 <div className="text-start text-white">
                   <h1 className="text-4xl font-bold">
-                    Olá, {user?.firstName} 👋
+                    Olá, {user?.name} 👋
                   </h1>
                   <p className="mt-2 text-xl">
                     Bem-vindo ao Sistema de Geração de Documentos de Treinamento
