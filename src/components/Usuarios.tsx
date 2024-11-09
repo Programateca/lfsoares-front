@@ -54,8 +54,7 @@ interface User {
   email: string;
   provider: string;
   socialId: string | null;
-  firstName: string;
-  lastName: string;
+  name: string;
   role: Role;
   status: Status;
 }
@@ -96,7 +95,7 @@ const Usuarios = () => {
     if (userInEditMode) {
       try {
         await api.patch(`users/${userInEditMode}`, {
-          firstName: newUser.name,
+          name: newUser.name,
           email:
             newUser.email === user?.email || newUser.email === ""
               ? null
@@ -126,8 +125,7 @@ const Usuarios = () => {
       await api.post("users", {
         email: newUser.email,
         password: newUser.password,
-        firstName: newUser.name,
-        lastName: ".",
+        name: newUser.name,
         role: { id: 1, name: "User" },
         status: { id: 1, name: "Ativo" },
       });
@@ -153,7 +151,7 @@ const Usuarios = () => {
     if (user) {
       setNewUser({
         id: user.id,
-        name: user.firstName,
+        name: user.name,
         email: user.email,
         password: "",
         confirmPassword: "",
@@ -298,7 +296,7 @@ const Usuarios = () => {
                   className={user.status.id !== 1 ? "line-through" : ""}
                 >
                   <TableCell className="font-medium py-2">
-                    {user.firstName}
+                    {user.name}
                   </TableCell>
                   <TableCell className="py-2">{user.email}</TableCell>
                   <TableCell className="py-2">
