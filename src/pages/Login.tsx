@@ -16,8 +16,7 @@ type LoginResponseData = {
   user: {
     id: number;
     email: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     role: { id: number; name: Role };
   };
 };
