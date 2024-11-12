@@ -17,14 +17,28 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "./ui/button";
-import { Search, Plus, Edit, CircleX } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Edit,
+  CircleX,
+  Trash2Icon,
+  RotateCcw,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+
+interface Status {
+  id: number;
+  name: string;
+}
 
 interface Instrutor {
   id: string;
   name: string;
+  status: Status;
 }
 
 const Instrutores = () => {
@@ -32,11 +46,12 @@ const Instrutores = () => {
   const [instrutorInEditMode, setInstrutorInEditMode] = useState<
     string | number
   >("");
-  const [newInstrutor, setNewInstrutor] = useState<Instrutor>({
+  const [newInstrutor, setNewInstrutor] = useState({
     id: "",
     name: "",
   });
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+
   const fetchInstrutores = async () => {
     try {
       const response = await api.get("instrutores");
@@ -100,17 +115,17 @@ const Instrutores = () => {
     }
   };
 
-  // const handleUpdateStatus = async (id: number, status: number) => {
-  //   try {
-  //     await api.patch(`users/${id}`, {
-  //       status: {
-  //         id: status,
-  //       },
-  //     });
+  const handleUpdateStatus = async (id: string, status: number) => {
+    try {
+      await api.patch(`instrutores/${id}`, {
+        status: {
+          id: status,
+        },
+      });
 
-  //     fetchUsers();
-  //   } catch (error) {}
-  // };
+      fetchInstrutores();
+    } catch (error) {}
+  };
 
   return (
     <Card className="shadow-md">
@@ -190,47 +205,82 @@ const Instrutores = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Instrutor</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {instrutores.map((instrutor) => (
-              <TableRow key={instrutor.id}>
-                <TableCell
-                  className="font-medium max-w-[20rem]
+            {instrutores &&
+              instrutores.map((instrutor) => (
+                <TableRow
+                  key={instrutor.id}
+                  className={instrutor.status.id !== 1 ? "line-through" : ""}
+                >
+                  <TableCell
+                    className="font-medium max-w-[20rem]
                 overflow-hidden whitespace-nowrap overflow-ellipsis
                 py-2
                 "
-                >
-                  {instrutor.name}
-                </TableCell>
-
-                <TableCell className="text-end py-2">
-                  <Button
-                    onClick={() => handleEdit(instrutor.id)}
-                    variant={"outline"}
-                    className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
                   >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  {/* {instrutor.status === 1 ? (
+                    {instrutor.name}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {instrutor.status.id !== 2 ? "Ativo" : "Inativo"}
+                  </TableCell>
+                  <TableCell className="text-end py-2">
                     <Button
+                      onClick={() => handleEdit(instrutor.id)}
                       variant={"outline"}
-                      className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
+                      disabled={instrutor.status.id !== 1}
                     >
-                      <Trash2Icon className="h-4 w-4" />
+                      <Edit className="h-4 w-4" />
                     </Button>
-                  ) : (
-                    <Button
-                      variant={"outline"}
-                      className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                  )} */}
-                </TableCell>
-              </TableRow>
-            ))}
+                    {instrutor.status.id === 1 ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          <Button
+                            variant={"outline"}
+                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                          >
+                            <Trash2Icon className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Tem certeza que deseja inativar este instrutor?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Está ação podera ser revertida posteriormente. Mas
+                              o instrutor não poderá ser vinculado a novos eventos.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="w-20">
+                              Não
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              className="w-20"
+                              onClick={() => handleUpdateStatus(instrutor.id, 2)}
+                            >
+                              Sim
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <Button
+                        onClick={() => handleUpdateStatus(instrutor.id, 1)}
+                        variant={"outline"}
+                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
             {!instrutores && (
               <TableRow>
                 <TableCell colSpan={3} className="text-center">

@@ -190,7 +190,7 @@ const Usuarios = () => {
           <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {
-              setIsModalOpen;
+              setIsModalOpen(open);
               if (!open)
                 setNewUser({
                   id: 0,
