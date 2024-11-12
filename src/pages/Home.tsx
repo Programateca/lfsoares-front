@@ -14,6 +14,7 @@ import {
   Contact,
   Building2,
   MonitorCog,
+  BookOpen,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -79,7 +80,7 @@ export default function HomePage() {
                     <Contact className="mr-2 h-4 w-4" />
                     Usuários
                   </Button>
-                  {/* <Button
+                  <Button
                     variant="ghost"
                     className={`w-full justify-start ${
                       selectedOption === "Treinamentos" ? "bg-gray-100" : ""
@@ -88,7 +89,7 @@ export default function HomePage() {
                   >
                     <BookOpen className="mr-2 h-4 w-4" />
                     Treinamentos
-                  </Button> */}
+                  </Button>
                   <Button
                     variant="ghost"
                     className={`w-full justify-start ${
@@ -102,16 +103,6 @@ export default function HomePage() {
                   <Button
                     variant="ghost"
                     className={`w-full justify-start ${
-                      selectedOption === "Pessoas" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Pessoas")}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Pessoas
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
                       selectedOption === "Empresas" ? "bg-gray-100" : ""
                     }`}
                     onClick={() => handleSelectedOption("Empresas")}
@@ -119,6 +110,17 @@ export default function HomePage() {
                     <Building2 className="mr-2 h-4 w-4" />
                     Empresas
                   </Button>
+                  <Button
+                    variant="ghost"
+                    className={`w-full justify-start ${
+                      selectedOption === "Pessoas" ? "bg-gray-100" : ""
+                    }`}
+                    onClick={() => handleSelectedOption("Pessoas")}
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Pessoas
+                  </Button>
+          
                 </div>
               </div>
 
