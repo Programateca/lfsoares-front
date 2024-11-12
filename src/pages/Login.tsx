@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContextProvider";
 import { api } from "@/lib/axios";
-import { useRef } from "react";
+import { Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 type Role = "User";
@@ -24,13 +25,14 @@ type LoginResponseData = {
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const emailInput = useRef<HTMLInputElement>(null);
   const senhaInput = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const body = {
       email: emailInput.current?.value,
       password: senhaInput.current?.value,
@@ -42,6 +44,7 @@ export default function Login() {
     );
 
     if (data) {
+      setIsLoading(false);
       login({ ...data.user, token: data.token });
       navigate("/");
     }
@@ -91,9 +94,14 @@ export default function Login() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-green-500 hover:bg-green-600 focus-visible:ring-green-800"
+              className="w-full bg-green-500 hover:bg-green-600 focus-visible:ring-green-800 disabled:opacity-[60%]"
+              disabled={isLoading}
             >
-              Entrar
+              {isLoading ? (
+                <Loader2 className="text-lg mr-2 h-full w-full animate-spin" />
+              ) : (
+                "Entrar"
+              )}
             </Button>
           </form>
           <div className="text-center">
