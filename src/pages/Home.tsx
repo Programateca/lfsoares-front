@@ -14,7 +14,7 @@ import {
   Contact,
   Building2,
   MonitorCog,
-  BookOpen,
+  // BookOpen,
   ChevronUp,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
@@ -93,7 +93,7 @@ export default function HomePage() {
                         <Contact className="mr-2 h-4 w-4" />
                         Usuários
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         className={`w-full justify-start ${
                           selectedOption === "Treinamentos" ? "bg-gray-100" : ""
@@ -102,7 +102,7 @@ export default function HomePage() {
                       >
                         <BookOpen className="mr-2 h-4 w-4" />
                         Treinamentos
-                      </Button>
+                      </Button> */}
                       <Button
                         variant="ghost"
                         className={`w-full justify-start ${
