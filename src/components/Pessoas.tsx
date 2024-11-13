@@ -14,6 +14,8 @@ import {
   Plus,
   Edit,
   CircleX,
+  Trash2Icon,
+  RotateCcw,
 } from "lucide-react";
 import {
   Dialog,
@@ -22,6 +24,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -35,20 +48,25 @@ import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 
-interface Pessoa {
-  id: string;
+interface Status {
+  id: number;
   name: string;
-  cpf: string;
-  empresa: {
-    id: string;
-    name: string;
-  };
 }
 
 interface Empresa {
   id: string;
   name: string;
 }
+
+interface Pessoa {
+  id: string;
+  name: string;
+  cpf: string;
+  status: Status
+  empresa: Empresa;
+}
+
+
 
 const Pessoas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,14 +108,9 @@ const Pessoas = () => {
     if (pessoaInEditMode) {
       try {
         await api.patch(`pessoas/${pessoaInEditMode}`, {
-          name:
-            newPessoa.name === pessoa?.name || newPessoa.name === ""
-              ? null
-              : newPessoa.name,
+          name: newPessoa.name,
           cpf:
-            newPessoa.cpf === pessoa?.cpf || newPessoa.cpf === ""
-              ? null
-              : newPessoa.cpf,
+            newPessoa.cpf,
           empresa: {
             id:
               newPessoa.empresa.id === pessoa?.empresa.id ||
@@ -164,17 +177,17 @@ const Pessoas = () => {
     }
   };
 
-  // const handleUpdateStatus = async (id: number, status: number) => {
-  //   try {
-  //     await api.patch(`users/${id}`, {
-  //       status: {
-  //         id: status,
-  //       },
-  //     });
+  const handleUpdateStatus = async (id: string, status: number) => {
+    try {
+      await api.patch(`pessoas/${id}`, {
+        status: {
+          id: status,
+        },
+      });
 
-  //     fetchPessoas();
-  //   } catch (error) {}
-  // };
+      fetchPessoas();
+    } catch (error) {}
+  };
 
   return (
     <Card className="shadow-md">
@@ -255,7 +268,8 @@ const Pessoas = () => {
                         },
                       }));
                     }
-                  }>
+                    
+                  } value={newPessoa.empresa.id}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione uma empresa" />
                     </SelectTrigger>
@@ -305,17 +319,20 @@ const Pessoas = () => {
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
               <TableHead>Empresa</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pessoas.map((pessoa) => (
-              <TableRow key={pessoa.id}>
+            {pessoas && pessoas.map((pessoa) => (
+              <TableRow key={pessoa.id} className={pessoa.status.id !== 1 ? "line-through" : ""}
+              >
                 <TableCell
                   className="font-medium max-w-[20rem]
                 overflow-hidden whitespace-nowrap overflow-ellipsis
                 py-2
                 "
+                
                 >
                   {pessoa.name}
                 </TableCell>
@@ -323,32 +340,60 @@ const Pessoas = () => {
                 <TableCell className="py-2">
                   {pessoa.empresa?.name ? pessoa.empresa.name : "Não informada"}
                 </TableCell>
-                {/* <TableCell className="py-2">
-                  {user.status === 1 ? "Ativo" : "Inativo"}
-                </TableCell> */}
+                <TableCell className="py-2">
+                  {pessoa.status.id === 1 ? "Ativo" : "Inativo"}
+                </TableCell>
                 <TableCell className="text-end py-2">
                   <Button
                     onClick={() => handleEdit(pessoa.id)}
                     variant={"outline"}
                     className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                  >
+                    disabled={pessoa.status.id !== 1}
+                    >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  {/* {user.status === 1 ? (
-                    <Button
-                      variant={"outline"}
-                      className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                    >
-                      <Trash2Icon className="h-4 w-4" />
-                    </Button>
+                  {pessoa.status.id === 1 ? (
+                    <AlertDialog>
+                    <AlertDialogTrigger>
+                      <Button
+                        variant={"outline"}
+                        className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                      >
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Tem certeza que deseja inativar essa pessoa?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Está ação podera ser revertida posteriormente. Mas
+                          a pessoa não podera ser vinculada a nenhum layout gerado.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="w-20">
+                          Não
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="w-20"
+                          onClick={() => handleUpdateStatus(pessoa.id, 2)}
+                        >
+                          Sim
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   ) : (
                     <Button
+                      onClick={() => handleUpdateStatus(pessoa.id, 1)}
                       variant={"outline"}
-                      className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
+                      className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                     >
                       <RotateCcw className="h-4 w-4" />
                     </Button>
-                  )} */}
+                  )}
                 </TableCell>
               </TableRow>
             ))}

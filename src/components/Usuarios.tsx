@@ -307,7 +307,6 @@ const Usuarios = () => {
                       onClick={() => handleEditUser(user.id)}
                       variant={"outline"}
                       className={`mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200
-                      disabled:opacity-75 disabled:cursor-not-allowed
                       `}
                       disabled={user.status.id !== 1}
                     >
@@ -351,7 +350,7 @@ const Usuarios = () => {
                       <Button
                         onClick={() => handleUpdateStatusUser(user.id, 1)}
                         variant={"outline"}
-                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
+                        className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       >
                         <RotateCcw className="h-4 w-4" />
                       </Button>

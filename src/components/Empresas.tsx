@@ -61,7 +61,7 @@ const Empresas = () => {
     cnpj: "",
   });
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  console.log(empresas);
+
   const fetchEmpresas = async () => {
     try {
       const response = await api.get("empresas");

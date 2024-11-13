@@ -15,6 +15,7 @@ import {
   Building2,
   MonitorCog,
   BookOpen,
+  ChevronUp,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -40,9 +41,19 @@ export default function HomePage() {
   const { isAuthenticated, logout, user } = useAuth();
 
   const [selectedOption, setSelectedOption] = useState<ComponentKeys | "">("");
+  const [isCadastroOpen, setIsCadastroOpen] = useState(false);
+  const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 
   const handleSelectedOption = (option: ComponentKeys) => {
     setSelectedOption(option);
+  };
+
+  const toggleCadastro = () => {
+    setIsCadastroOpen(!isCadastroOpen);
+  };
+
+  const toggleLayout = () => {
+    setIsLayoutOpen(!isLayoutOpen);
   };
 
   const handleLogOut = () => {
@@ -64,90 +75,100 @@ export default function HomePage() {
             </div>
             <div className="space-y-4 pt-5">
               <div>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start" onClick={toggleCadastro}>
                   <MonitorCog className="mr-2 h-4 w-4" />
                   Cadastros
-                  <ChevronDown className="ml-auto h-4 w-4" />
+                  {isCadastroOpen ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
                 </Button>
-                <div className="ml-4 mt-2 space-y-2">
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
-                      selectedOption === "Usuários" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Usuários")}
-                  >
-                    <Contact className="mr-2 h-4 w-4" />
-                    Usuários
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
-                      selectedOption === "Treinamentos" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Treinamentos")}
-                  >
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Treinamentos
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
-                      selectedOption === "Instrutores" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Instrutores")}
-                  >
-                    <IdCard className="mr-2 h-4 w-4" />
-                    Instrutores
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
-                      selectedOption === "Empresas" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Empresas")}
-                  >
-                    <Building2 className="mr-2 h-4 w-4" />
-                    Empresas
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${
-                      selectedOption === "Pessoas" ? "bg-gray-100" : ""
-                    }`}
-                    onClick={() => handleSelectedOption("Pessoas")}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Pessoas
-                  </Button>
-          
-                </div>
+                {
+                  isCadastroOpen && (
+                    <div className="ml-4 mt-2 space-y-2">
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Usuários" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Usuários")}
+                      >
+                        <Contact className="mr-2 h-4 w-4" />
+                        Usuários
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Treinamentos" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Treinamentos")}
+                      >
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Treinamentos
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Instrutores" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Instrutores")}
+                      >
+                        <IdCard className="mr-2 h-4 w-4" />
+                        Instrutores
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Empresas" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Empresas")}
+                      >
+                        <Building2 className="mr-2 h-4 w-4" />
+                        Empresas
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Pessoas" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Pessoas")}
+                      >
+                        <Users className="mr-2 h-4 w-4" />
+                        Pessoas
+                      </Button>
+            
+                    </div>
+                  )
+                }
+              
               </div>
 
               <div>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start" onClick={toggleLayout}>
                   <Layout className="mr-2 h-4 w-4" />
                   Layout
-                  <ChevronDown className="ml-auto h-4 w-4" />
+                  {isLayoutOpen ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
                 </Button>
-                <div className="ml-4 mt-2 space-y-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Certificado
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    Lista de Presença
-                  </Button>
-                </div>
+                {
+                  isLayoutOpen && (
+                    <div className="ml-4 mt-2 space-y-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start"
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        Certificado
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start"
+                      >
+                        <ClipboardList className="mr-2 h-4 w-4" />
+                        Lista de Presença
+                      </Button>
+                    </div>
+                  )
+                }
+                
               </div>
             </div>
           </div>
