@@ -1,5 +1,5 @@
 import logo from "@/assets/logo.svg";
-
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,16 +38,21 @@ export default function Login() {
       password: senhaInput.current?.value,
     };
 
-    const { data } = await api.post<LoginResponseData>(
-      "auth/email/login",
-      body
-    );
-
-    if (data) {
-      setIsLoading(false);
-      login({ ...data.user, token: data.token });
-      navigate("/");
-    }
+    api
+      .post<LoginResponseData>("auth/email/login", body)
+      .then(({ data }) => {
+        if (data) {
+          login({ ...data.user, token: data.token });
+          toast.success("Login efetuado com sucesso!");
+          navigate("/");
+        }
+      })
+      .catch(() => {
+        toast.error("Erro ao efetuar login");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
