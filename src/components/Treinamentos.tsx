@@ -16,6 +16,7 @@ import {
   Trash2Icon,
   CircleX,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
 import {
   Dialog,
@@ -58,6 +59,7 @@ interface Treinamento {
 
 const Treinamentos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [treinamentoInEditMode, setTreinamentoInEditMode] = useState<
     string | number
   >("");
@@ -70,13 +72,16 @@ const Treinamentos = () => {
     name: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
-
+  console.log(newTreinamento)
   const fetchTreinamentos = async () => {
+    setLoading(true);
     try {
       const response = await api.get("treinamentos");
-      console.log(response);
-      setTreinamentos(response.data);
-    } catch (error) {}
+      setTreinamentos(response.data.data);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -317,92 +322,99 @@ const Treinamentos = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {treinamentos.map((treinamento) => (
-              <TableRow
-                key={treinamento.id}
-                className={treinamento.status.id !== 1 ? "line-through" : ""}
-              >
-                <TableCell
-                  className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                >
-                  {treinamento.name}
-                </TableCell>
-                <TableCell className="py-2">{treinamento.courseType}</TableCell>
-                <TableCell className="py-2">
-                  {treinamento.courseModality}
-                </TableCell>
-                <TableCell className="py-2">
-                  {treinamento.status.id !== 2 ? "Ativo" : "Inativo"}
-                </TableCell>
-                <TableCell className="text-end py-2">
-                  <Button
-                    variant={"outline"}
-                    className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  {treinamento.status.id === 1 ? (
-                    <AlertDialog>
-                      <AlertDialogTrigger>
-                        <Button
-                          variant={"outline"}
-                          className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                        >
-                          <Trash2Icon className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Tem certeza que deseja inativar este treinamento?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Está ação podera ser revertida posteriormente. Mas o
-                            treinamento não podera ser utilizada enquanto
-                            estiver inativa.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="w-20">
-                            Não
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            className="w-20"
-                            onClick={() =>
-                              handleUpdateStatus(treinamento.id, 2)
-                            }
-                          >
-                            Sim
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  ) : (
-                    <Button
-                      onClick={() => handleUpdateStatus(treinamento.id, 1)}
-                      variant={"outline"}
-                      className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-            {treinamentos.length === 0 && (
+            {loading ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2 ">
-                  <CircleX className="h-6 w-6 text-red-400" />
-                  <p className="text-sm text-red-400">
-                    Nenhum treinamento encontrado
-                  </p>
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="loader"></div>
+                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
                   </div>
                 </TableCell>
               </TableRow>
+            ) : treinamentos.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <CircleX className="h-6 w-6 text-red-400" />
+                    <p className="text-sm text-red-400">
+                      Nenhum treinamento encontrado
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              treinamentos.map((treinamento) => (
+                <TableRow
+                  key={treinamento.id}
+                  className={treinamento.status.id !== 1 ? "line-through" : ""}
+                >
+                  <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
+                    {treinamento.name}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {treinamento.courseType}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {treinamento.courseModality}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {treinamento.status.id !== 2 ? "Ativo" : "Inativo"}
+                  </TableCell>
+                  <TableCell className="text-end py-2">
+                    <Button
+                      onClick={() => handleEdit(treinamento.id)}
+                      variant={"outline"}
+                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
+                      disabled={treinamento.status.id !== 1}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    {treinamento.status.id === 1 ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          <Button
+                            variant={"outline"}
+                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                          >
+                            <Trash2Icon className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Tem certeza que deseja inativar este treinamento?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Está ação podera ser revertida posteriormente. Mas
+                              o treinamento não podera ser utilizada enquanto estiver
+                              inativa.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="w-20">
+                              Não
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              className="w-20"
+                              onClick={() => handleUpdateStatus(treinamento.id, 2)}
+                            >
+                              Sim
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <Button
+                        onClick={() => handleUpdateStatus(treinamento.id, 1)}
+                        variant={"outline"}
+                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

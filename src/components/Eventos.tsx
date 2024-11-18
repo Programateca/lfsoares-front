@@ -134,7 +134,7 @@ const Eventos = () => {
     updatedAt: "",
   });
   const [eventos, setEventos] = useState<Evento[]>([]);
-
+  console.log(eventos)
   const fetchEventos = async () => {
     try {
       const response = await api.get("eventos");
