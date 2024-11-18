@@ -16,6 +16,8 @@ import {
   MonitorCog,
   // BookOpen,
   ChevronUp,
+  BookOpen,
+  Ticket,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -25,9 +27,11 @@ import Pessoas from "@/components/Pessoas";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
+import Eventos from "@/components/Eventos";
 
 const componentsMap = {
   Usuários: Usuarios,
+  Eventos: Eventos,
   Treinamentos: Treinamentos,
   Instrutores: Instrutores,
   Pessoas: Pessoas,
@@ -93,7 +97,17 @@ export default function HomePage() {
                         <Contact className="mr-2 h-4 w-4" />
                         Usuários
                       </Button>
-                      {/* <Button
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start ${
+                          selectedOption === "Eventos" ? "bg-gray-100" : ""
+                        }`}
+                        onClick={() => handleSelectedOption("Eventos")}
+                      >
+                        <Ticket className="mr-2 h-4 w-4" />
+                        Eventos
+                      </Button>
+                      <Button
                         variant="ghost"
                         className={`w-full justify-start ${
                           selectedOption === "Treinamentos" ? "bg-gray-100" : ""
@@ -102,7 +116,7 @@ export default function HomePage() {
                       >
                         <BookOpen className="mr-2 h-4 w-4" />
                         Treinamentos
-                      </Button> */}
+                      </Button>
                       <Button
                         variant="ghost"
                         className={`w-full justify-start ${
