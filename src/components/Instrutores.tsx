@@ -24,11 +24,23 @@ import {
   CircleX,
   Trash2Icon,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import toast from "react-hot-toast";
 
 interface Status {
   id: number;
@@ -43,6 +55,7 @@ interface Instrutor {
 
 const Instrutores = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [instrutorInEditMode, setInstrutorInEditMode] = useState<
     string | number
   >("");
@@ -60,7 +73,13 @@ const Instrutores = () => {
   };
 
   useEffect(() => {
-    fetchInstrutores();
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchInstrutores();
+      setLoading(false);
+    };
+
+    inicializarFetch();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +98,7 @@ const Instrutores = () => {
 
         fetchInstrutores();
         setIsModalOpen(false);
+        toast.success("Instrutor atualizado com sucesso!");
         setNewInstrutor({
           id: "",
           name: "",
@@ -94,6 +114,7 @@ const Instrutores = () => {
       });
       fetchInstrutores();
       setIsModalOpen(false);
+      toast.success("Instrutor adicionado com sucesso!");
       setNewInstrutor({
         id: "",
         name: "",
@@ -122,7 +143,16 @@ const Instrutores = () => {
           id: status,
         },
       });
-
+      if (status === 1)
+        toast("Instrutor ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Instrutor inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
       fetchInstrutores();
     } catch (error) {}
   };
@@ -210,7 +240,27 @@ const Instrutores = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {instrutores &&
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="loader"></div>
+                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : instrutores.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <CircleX className="h-6 w-6 text-red-400" />
+                    <p className="text-sm text-red-400">
+                      Nenhum instrutor encontrado
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
               instrutores.map((instrutor) => (
                 <TableRow
                   key={instrutor.id}
@@ -253,7 +303,8 @@ const Instrutores = () => {
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               Está ação podera ser revertida posteriormente. Mas
-                              o instrutor não poderá ser vinculado a novos eventos.
+                              o instrutor não poderá ser vinculado a novos
+                              eventos.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -262,7 +313,9 @@ const Instrutores = () => {
                             </AlertDialogCancel>
                             <AlertDialogAction
                               className="w-20"
-                              onClick={() => handleUpdateStatus(instrutor.id, 2)}
+                              onClick={() =>
+                                handleUpdateStatus(instrutor.id, 2)
+                              }
                             >
                               Sim
                             </AlertDialogAction>
@@ -280,18 +333,7 @@ const Instrutores = () => {
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
-            {!instrutores && (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-8 w-8 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum usuário encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

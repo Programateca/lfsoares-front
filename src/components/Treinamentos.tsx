@@ -73,7 +73,7 @@ const Treinamentos = () => {
     name: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
-  console.log(treinamentos);
+
   const fetchTreinamentos = async () => {
     try {
       const response = await api.get("treinamentos");
