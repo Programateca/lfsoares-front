@@ -34,10 +34,12 @@ import {
   Trash2Icon,
   CircleX,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { api } from "@/lib/axios";
+import toast from "react-hot-toast";
 
 interface Role {
   id: number;
@@ -61,6 +63,7 @@ interface User {
 
 const Usuarios = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [userInEditMode, setUserInEditMode] = useState<string | number>("");
   const [newUser, setNewUser] = useState({
     id: 0,
@@ -79,7 +82,13 @@ const Usuarios = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchUsers();
+      setLoading(false);
+    };
+
+    inicializarFetch();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +114,7 @@ const Usuarios = () => {
 
         fetchUsers();
         setIsModalOpen(false);
+        toast.success("Usuário atualizado com sucesso");
         setNewUser({
           id: 0,
           name: "",
@@ -132,6 +142,7 @@ const Usuarios = () => {
 
       fetchUsers();
       setIsModalOpen(false);
+      toast.success("Usuário cadastrado com sucesso");
       setNewUser({
         id: 0,
         name: "",
@@ -167,6 +178,16 @@ const Usuarios = () => {
         },
       });
 
+      if (status === 1)
+        toast("Usuário ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Usuário inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
       fetchUsers();
     } catch (error) {}
   };
@@ -289,7 +310,27 @@ const Usuarios = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users &&
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="loader"></div>
+                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : users.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <CircleX className="h-6 w-6 text-red-400" />
+                    <p className="text-sm text-red-400">
+                      Nenhum usuário encontrado
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
               users.map((user) => (
                 <TableRow
                   key={user.id}
@@ -357,18 +398,7 @@ const Usuarios = () => {
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
-            {!users && (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-8 w-8 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum usuário encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

@@ -16,6 +16,7 @@ import {
   CircleX,
   Trash2Icon,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
 import {
   Dialog,
@@ -47,6 +48,7 @@ import {
 import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
+import toast from "react-hot-toast";
 
 interface Status {
   id: number;
@@ -62,14 +64,13 @@ interface Pessoa {
   id: string;
   name: string;
   cpf: string;
-  status: Status
+  status: Status;
   empresa: Empresa;
 }
 
-
-
 const Pessoas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [pessoaInEditMode, setPessoaInEditMode] = useState<string | number>("");
   const [newPessoa, setNewPessoa] = useState({
     id: "",
@@ -91,8 +92,15 @@ const Pessoas = () => {
   };
 
   useEffect(() => {
-    fetchPessoas();
-    api.get("empresas").then((response) => setEmpresas(response.data.data));
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchPessoas();
+      const response = await api.get("empresas");
+      setEmpresas(response.data.data);
+      setLoading(false);
+    };
+
+    inicializarFetch();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,8 +117,7 @@ const Pessoas = () => {
       try {
         await api.patch(`pessoas/${pessoaInEditMode}`, {
           name: newPessoa.name,
-          cpf:
-            newPessoa.cpf,
+          cpf: newPessoa.cpf,
           empresa: {
             id:
               newPessoa.empresa.id === pessoa?.empresa.id ||
@@ -122,6 +129,7 @@ const Pessoas = () => {
 
         fetchPessoas();
         setIsModalOpen(false);
+        toast.success("Pessoa atualizada com sucesso!");
         setNewPessoa({
           id: "",
           name: "",
@@ -147,6 +155,7 @@ const Pessoas = () => {
 
       fetchPessoas();
       setIsModalOpen(false);
+      toast.success("Pessoa adicionada com sucesso!");
       setNewPessoa({
         id: "",
         name: "",
@@ -184,7 +193,16 @@ const Pessoas = () => {
           id: status,
         },
       });
-
+      if (status === 1)
+        toast("Pessoa ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Pessoa inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
       fetchPessoas();
     } catch (error) {}
   };
@@ -258,18 +276,20 @@ const Pessoas = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="empresa">Empresa</Label>
-                  <Select onValueChange={
-                    (value) => {
+                  <Select
+                    onValueChange={(value) => {
                       setNewPessoa((prev) => ({
                         ...prev,
                         empresa: {
                           id: value,
-                          name: empresas.find((empresa) => empresa.id === value)?.name || "",
+                          name:
+                            empresas.find((empresa) => empresa.id === value)
+                              ?.name || "",
                         },
                       }));
-                    }
-                    
-                  } value={newPessoa.empresa.id}>
+                    }}
+                    value={newPessoa.empresa.id}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione uma empresa" />
                     </SelectTrigger>
@@ -324,90 +344,104 @@ const Pessoas = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pessoas && pessoas.map((pessoa) => (
-              <TableRow key={pessoa.id} className={pessoa.status.id !== 1 ? "line-through" : ""}
-              >
-                <TableCell
-                  className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                
-                >
-                  {pessoa.name}
-                </TableCell>
-                <TableCell className="py-2">{pessoa.cpf}</TableCell>
-                <TableCell className="py-2">
-                  {pessoa.empresa?.name ? pessoa.empresa.name : "Não informada"}
-                </TableCell>
-                <TableCell className="py-2">
-                  {pessoa.status.id === 1 ? "Ativo" : "Inativo"}
-                </TableCell>
-                <TableCell className="text-end py-2">
-                  <Button
-                    onClick={() => handleEdit(pessoa.id)}
-                    variant={"outline"}
-                    className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                    disabled={pessoa.status.id !== 1}
-                    >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  {pessoa.status.id === 1 ? (
-                    <AlertDialog>
-                    <AlertDialogTrigger>
-                      <Button
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                      >
-                        <Trash2Icon className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Tem certeza que deseja inativar essa pessoa?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Está ação podera ser revertida posteriormente. Mas
-                          a pessoa não podera ser vinculada a nenhum layout gerado.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel className="w-20">
-                          Não
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          className="w-20"
-                          onClick={() => handleUpdateStatus(pessoa.id, 2)}
-                        >
-                          Sim
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  ) : (
-                    <Button
-                      onClick={() => handleUpdateStatus(pessoa.id, 1)}
-                      variant={"outline"}
-                      className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                    >
-                      <RotateCcw className="h-4 w-4" />
-                    </Button>
-                  )}
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="loader"></div>
+                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
+                  </div>
                 </TableCell>
               </TableRow>
-            ))}
-            {!pessoas && (
+            ) : pessoas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center">
+                <TableCell colSpan={5} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-8 w-8 text-red-400" />
+                    <CircleX className="h-6 w-6 text-red-400" />
                     <p className="text-sm text-red-400">
-                      Nenhum usuário encontrado
+                      Nenhuma pessoa encontrada
                     </p>
                   </div>
                 </TableCell>
               </TableRow>
+            ) : (
+              pessoas.map((pessoa) => (
+                <TableRow
+                  key={pessoa.id}
+                  className={pessoa.status.id !== 1 ? "line-through" : ""}
+                >
+                  <TableCell
+                    className="font-medium max-w-[20rem]
+                overflow-hidden whitespace-nowrap overflow-ellipsis
+                py-2
+                "
+                  >
+                    {pessoa.name}
+                  </TableCell>
+                  <TableCell className="py-2">{pessoa.cpf}</TableCell>
+                  <TableCell className="py-2">
+                    {pessoa.empresa?.name
+                      ? pessoa.empresa.name
+                      : "Não informada"}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {pessoa.status.id === 1 ? "Ativo" : "Inativo"}
+                  </TableCell>
+                  <TableCell className="text-end py-2">
+                    <Button
+                      onClick={() => handleEdit(pessoa.id)}
+                      variant={"outline"}
+                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
+                      disabled={pessoa.status.id !== 1}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    {pessoa.status.id === 1 ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          <Button
+                            variant={"outline"}
+                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                          >
+                            <Trash2Icon className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Tem certeza que deseja inativar essa pessoa?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Está ação podera ser revertida posteriormente. Mas
+                              a pessoa não podera ser vinculada a nenhum layout
+                              gerado.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="w-20">
+                              Não
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                              className="w-20"
+                              onClick={() => handleUpdateStatus(pessoa.id, 2)}
+                            >
+                              Sim
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <Button
+                        onClick={() => handleUpdateStatus(pessoa.id, 1)}
+                        variant={"outline"}
+                        className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

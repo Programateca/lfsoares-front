@@ -16,6 +16,7 @@ import {
   CircleX,
   Trash2Icon,
   RotateCcw,
+  Loader2,
 } from "lucide-react";
 import {
   Dialog,
@@ -38,6 +39,7 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
+import toast from "react-hot-toast";
 
 interface Status {
   id: number;
@@ -53,6 +55,7 @@ interface Empresa {
 
 const Empresas = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [empresaInEditMode, setEmpresaInEditMode] = useState<string | number>(
     ""
   );
@@ -70,7 +73,13 @@ const Empresas = () => {
   };
 
   useEffect(() => {
-    fetchEmpresas();
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchEmpresas();
+      setLoading(false);
+    };
+
+    inicializarFetch();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +99,7 @@ const Empresas = () => {
 
         fetchEmpresas();
         setIsModalOpen(false);
+        toast.success("Empresa atualizada com sucesso!");
         setNewEmpresa({
           name: "",
           cnpj: "",
@@ -106,6 +116,7 @@ const Empresas = () => {
 
       fetchEmpresas();
       setIsModalOpen(false);
+      toast.success("Empresa cadastrada com sucesso!");
       setNewEmpresa({
         name: "",
         cnpj: "",
@@ -133,7 +144,16 @@ const Empresas = () => {
           id: status,
         },
       });
-
+      if (status === 1)
+        toast("Empresa ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Empresa inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
       fetchEmpresas();
     } catch (error) {}
   };
@@ -232,7 +252,27 @@ const Empresas = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {empresas &&
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="loader"></div>
+                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : empresas.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <CircleX className="h-6 w-6 text-red-400" />
+                    <p className="text-sm text-red-400">
+                      Nenhuma empresa encontrada
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
               empresas
                 .sort((a, b) => (a.name > b.name ? 1 : -1))
                 .map((empresa) => (
@@ -308,18 +348,7 @@ const Empresas = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))}
-            {!empresas && (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-8 w-8 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum usuário encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
+                ))
             )}
           </TableBody>
         </Table>
