@@ -9,15 +9,14 @@ import {
   FileText,
   ClipboardList,
   LogOut,
-  Settings,
   IdCard,
   Contact,
   Building2,
   MonitorCog,
-  // BookOpen,
   ChevronUp,
   BookOpen,
   Ticket,
+  Radar,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -194,7 +193,7 @@ export default function HomePage() {
             </h1>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" className="px-4">
-                <Settings className="h-5 w-5 text-gray-600" />
+                <Radar className="h-5 w-5 text-gray-600" />
               </Button>
               <Button
                 variant="ghost"
