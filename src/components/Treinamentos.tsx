@@ -40,6 +40,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+import toast from "react-hot-toast";
 
 interface Status {
   id: number;
@@ -50,7 +51,7 @@ interface Treinamento {
   courseModality: string;
   courseType: string;
   description: string;
-  courseValidity: string;
+  courseValidaty: string;
   courseHours: string;
   name: string;
   id: string;
@@ -72,20 +73,22 @@ const Treinamentos = () => {
     name: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
-  console.log(newTreinamento)
+  console.log(treinamentos);
   const fetchTreinamentos = async () => {
-    setLoading(true);
     try {
       const response = await api.get("treinamentos");
       setTreinamentos(response.data.data);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    fetchTreinamentos();
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchTreinamentos();
+      setLoading(false);
+    };
+
+    inicializarFetch();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +117,7 @@ const Treinamentos = () => {
 
         fetchTreinamentos();
         setIsModalOpen(false);
+        toast.success("Treinamento atualizado com sucesso!");
         setNewTreinamento({
           courseModality: "",
           courseType: "",
@@ -122,7 +126,9 @@ const Treinamentos = () => {
           courseHours: "",
           name: "",
         });
-      } catch (error) {}
+      } catch (error) {
+        toast.error("Erro ao atualizar treinamento");
+      }
       return;
     }
 
@@ -138,6 +144,7 @@ const Treinamentos = () => {
 
       fetchTreinamentos();
       setIsModalOpen(false);
+      toast.success("Treinamento adicionado com sucesso!");
       setNewTreinamento({
         courseModality: "",
         courseType: "",
@@ -162,7 +169,7 @@ const Treinamentos = () => {
         courseModality: treinamento.courseModality,
         courseType: treinamento.courseType,
         description: treinamento.description,
-        courseValidaty: treinamento.courseValidity,
+        courseValidaty: treinamento.courseValidaty,
         courseHours: treinamento.courseHours,
         name: treinamento.name,
       });
@@ -176,7 +183,16 @@ const Treinamentos = () => {
           id: status,
         },
       });
-
+      if (status === 1)
+        toast("Treinamento ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Treinamento inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        },);
       fetchTreinamentos();
     } catch (error) {}
   };
@@ -190,7 +206,7 @@ const Treinamentos = () => {
         <div className="flex justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Input
-              placeholder="Buscar usuários..."
+              placeholder="Buscar treinamento..."
               className="w-64 focus-visible:ring-gray-400"
             />
             <Button
@@ -238,41 +254,41 @@ const Treinamentos = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modalidade">Modalidade</Label>
+                  <Label htmlFor="courseModality">Modalidade</Label>
                   <Input
-                    id="modalidade"
-                    name="modalidade"
+                    id="courseModality"
+                    name="courseModality"
                     value={newTreinamento.courseModality}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modalidade">Tipo</Label>
+                  <Label htmlFor="courseType">Tipo</Label>
                   <Input
-                    id="modalidade"
-                    name="modalidade"
-                    value={newTreinamento.courseModality}
+                    id="courseType"
+                    name="courseType"
+                    value={newTreinamento.courseType}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modalidade">Validade do curso</Label>
+                  <Label htmlFor="courseValidaty">Validade do curso</Label>
                   <Input
-                    id="modalidade"
-                    name="modalidade"
-                    value={newTreinamento.courseModality}
+                    id="courseValidaty"
+                    name="courseValidaty"
+                    value={newTreinamento.courseValidaty}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="modalidade">Horas do curso</Label>
+                  <Label htmlFor="courseHours">Horas do curso</Label>
                   <Input
-                    id="modalidade"
-                    name="modalidade"
-                    value={newTreinamento.courseModality}
+                    id="courseHours"
+                    name="courseHours"
+                    value={newTreinamento.courseHours}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
@@ -386,8 +402,8 @@ const Treinamentos = () => {
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               Está ação podera ser revertida posteriormente. Mas
-                              o treinamento não podera ser utilizada enquanto estiver
-                              inativa.
+                              o treinamento não podera ser utilizada enquanto
+                              estiver inativa.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -396,7 +412,9 @@ const Treinamentos = () => {
                             </AlertDialogCancel>
                             <AlertDialogAction
                               className="w-20"
-                              onClick={() => handleUpdateStatus(treinamento.id, 2)}
+                              onClick={() =>
+                                handleUpdateStatus(treinamento.id, 2)
+                              }
                             >
                               Sim
                             </AlertDialogAction>
