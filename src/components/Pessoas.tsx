@@ -66,6 +66,7 @@ interface Pessoa {
   cpf: string;
   status: Status;
   empresa: Empresa;
+  matricula: string;
 }
 
 const Pessoas = () => {
@@ -76,6 +77,7 @@ const Pessoas = () => {
     id: "",
     name: "",
     cpf: "",
+    matricula: "",
     empresa: {
       id: "",
       name: "",
@@ -118,6 +120,7 @@ const Pessoas = () => {
         await api.patch(`pessoas/${pessoaInEditMode}`, {
           name: newPessoa.name,
           cpf: newPessoa.cpf,
+          matricula: newPessoa.matricula,
           empresa: {
             id:
               newPessoa.empresa.id === pessoa?.empresa.id ||
@@ -134,6 +137,7 @@ const Pessoas = () => {
           id: "",
           name: "",
           cpf: "",
+          matricula: "",
           empresa: {
             id: "",
             name: "",
@@ -148,6 +152,7 @@ const Pessoas = () => {
       await api.post("pessoas", {
         name: newPessoa.name,
         cpf: newPessoa.cpf,
+        matricula: newPessoa.matricula,
         empresa: {
           id: newPessoa.empresa.id,
         },
@@ -160,6 +165,7 @@ const Pessoas = () => {
         id: "",
         name: "",
         cpf: "",
+        matricula: "",
         empresa: {
           id: "",
           name: "",
@@ -178,6 +184,7 @@ const Pessoas = () => {
         id: pessoa.id,
         name: pessoa.name,
         cpf: pessoa.cpf,
+        matricula: pessoa.matricula,
         empresa: {
           id: pessoa.empresa.id,
           name: pessoa.empresa.name,
@@ -216,7 +223,7 @@ const Pessoas = () => {
         <div className="flex justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Input
-              placeholder="Buscar usuários..."
+              placeholder="Buscar pessoa..."
               className="w-64 focus-visible:ring-gray-400"
             />
             <Button
@@ -236,6 +243,7 @@ const Pessoas = () => {
                   id: "",
                   name: "",
                   cpf: "",
+                  matricula: "",
                   empresa: {
                     id: "",
                     name: "",
@@ -264,18 +272,27 @@ const Pessoas = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF</Label>
+                  <Label htmlFor="cpf">CPF (opcional)</Label>
                   <Input
                     id="cpf"
                     name="cpf"
                     type="cpf"
                     value={newPessoa.cpf}
                     onChange={handleInputChange}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="empresa">Empresa</Label>
+                  <Label htmlFor="matricula">Matricula (opcional)</Label>
+                  <Input
+                    id="matricula"
+                    name="matricula"
+                    type="matricula"
+                    value={newPessoa.matricula}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="empresa">Empresa (opcional)</Label>
                   <Select
                     onValueChange={(value) => {
                       setNewPessoa((prev) => ({
@@ -318,6 +335,7 @@ const Pessoas = () => {
                           id: "",
                           name: "",
                           cpf: "",
+                          matricula: "",
                           empresa: {
                             id: "",
                             name: "",
@@ -339,6 +357,7 @@ const Pessoas = () => {
               <TableHead>Nome</TableHead>
               <TableHead>CPF</TableHead>
               <TableHead>Empresa</TableHead>
+              <TableHead>Matricula</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
@@ -384,6 +403,7 @@ const Pessoas = () => {
                       ? pessoa.empresa.name
                       : "Não informada"}
                   </TableCell>
+                  <TableCell className="py-2">{pessoa.matricula}</TableCell>
                   <TableCell className="py-2">
                     {pessoa.status.id === 1 ? "Ativo" : "Inativo"}
                   </TableCell>

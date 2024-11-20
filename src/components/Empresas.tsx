@@ -50,6 +50,7 @@ interface Empresa {
   id: string;
   name: string;
   cnpj: string;
+  endereco: string;
   status: Status;
 }
 
@@ -62,6 +63,7 @@ const Empresas = () => {
   const [newEmpresa, setNewEmpresa] = useState({
     name: "",
     cnpj: "",
+    endereco: "",
   });
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
@@ -95,6 +97,7 @@ const Empresas = () => {
         await api.patch(`empresas/${empresaInEditMode}`, {
           name: newEmpresa.name,
           cnpj: newEmpresa.cnpj,
+          endereco: newEmpresa.endereco,
         });
 
         fetchEmpresas();
@@ -103,6 +106,7 @@ const Empresas = () => {
         setNewEmpresa({
           name: "",
           cnpj: "",
+          endereco: "",
         });
       } catch (error) {}
       return;
@@ -112,6 +116,7 @@ const Empresas = () => {
       await api.post("empresas", {
         name: newEmpresa.name,
         cnpj: newEmpresa.cnpj,
+        endereco: newEmpresa.endereco,
       });
 
       fetchEmpresas();
@@ -120,6 +125,7 @@ const Empresas = () => {
       setNewEmpresa({
         name: "",
         cnpj: "",
+        endereco: "",
       });
     } catch (error) {}
   };
@@ -133,6 +139,7 @@ const Empresas = () => {
       setNewEmpresa({
         name: empresa.name,
         cnpj: empresa.cnpj,
+        endereco: empresa.endereco,
       });
     }
   };
@@ -186,6 +193,7 @@ const Empresas = () => {
                 setNewEmpresa({
                   name: "",
                   cnpj: "",
+                  endereco: "",
                 });
               setEmpresaInEditMode("");
             }}
@@ -221,7 +229,17 @@ const Empresas = () => {
                     required={empresaInEditMode ? false : true}
                   />
                 </div>
-
+                <div className="space-y-2">
+                  <Label htmlFor="endereco">Endereço</Label>
+                  <Input
+                    id="endereco"
+                    name="endereco"
+                    type="endereco"
+                    value={newEmpresa.endereco}
+                    onChange={handleInputChange}
+                    required={empresaInEditMode ? false : true}
+                  />
+                </div>
                 <div className="flex justify-end space-x-2">
                   <Button
                     type="button"
@@ -231,6 +249,7 @@ const Empresas = () => {
                         setNewEmpresa({
                           name: "",
                           cnpj: "",
+                          endereco: "",
                         });
                     }}
                   >

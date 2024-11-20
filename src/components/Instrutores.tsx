@@ -50,6 +50,8 @@ interface Status {
 interface Instrutor {
   id: string;
   name: string;
+  qualificacaoProfissional: string;
+  registroProfissional: string;
   status: Status;
 }
 
@@ -62,6 +64,8 @@ const Instrutores = () => {
   const [newInstrutor, setNewInstrutor] = useState({
     id: "",
     name: "",
+    qualificacaoProfissional: "",
+    registroProfissional: "",
   });
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
 
@@ -94,6 +98,8 @@ const Instrutores = () => {
       try {
         await api.patch(`instrutores/${instrutorInEditMode}`, {
           name: newInstrutor.name,
+          qualificacaoProfissional: newInstrutor.qualificacaoProfissional,
+          registroProfissional: newInstrutor.registroProfissional,
         });
 
         fetchInstrutores();
@@ -102,6 +108,8 @@ const Instrutores = () => {
         setNewInstrutor({
           id: "",
           name: "",
+          qualificacaoProfissional: "",
+          registroProfissional: "",
         });
         setInstrutorInEditMode("");
       } catch (error) {}
@@ -111,6 +119,8 @@ const Instrutores = () => {
     try {
       await api.post("instrutores", {
         name: newInstrutor.name,
+        qualificacaoProfissional: newInstrutor.qualificacaoProfissional,
+        registroProfissional: newInstrutor.registroProfissional,
       });
       fetchInstrutores();
       setIsModalOpen(false);
@@ -118,6 +128,8 @@ const Instrutores = () => {
       setNewInstrutor({
         id: "",
         name: "",
+        qualificacaoProfissional: "",
+        registroProfissional: "",
       });
     } catch (error) {}
   };
@@ -132,6 +144,8 @@ const Instrutores = () => {
       setNewInstrutor({
         id: instrutor.id,
         name: instrutor.name,
+        qualificacaoProfissional: instrutor.qualificacaoProfissional,
+        registroProfissional: instrutor.registroProfissional,
       });
     }
   };
@@ -166,7 +180,7 @@ const Instrutores = () => {
         <div className="flex justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Input
-              placeholder="Buscar usuários..."
+              placeholder="Buscar instrutor..."
               className="w-64 focus-visible:ring-gray-400"
             />
             <Button
@@ -185,6 +199,8 @@ const Instrutores = () => {
                 setNewInstrutor({
                   id: "",
                   name: "",
+                  registroProfissional: "",
+                  qualificacaoProfissional: "",
                 });
                 setInstrutorInEditMode("");
               }
@@ -197,15 +213,35 @@ const Instrutores = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar Novo Usuário</DialogTitle>
+                <DialogTitle>Adicionar Novo Instrutor</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
+                  <Label htmlFor="name">Nome Completo</Label>
                   <Input
                     id="name"
                     name="name"
                     value={newInstrutor.name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="qualificacaoProfissional">Qualificação profissional</Label>
+                  <Input
+                    id="qualificacaoProfissional"
+                    name="qualificacaoProfissional"
+                    value={newInstrutor.qualificacaoProfissional}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="registroProfissional">Registro profissional</Label>
+                  <Input
+                    id="registroProfissional"
+                    name="registroProfissional"
+                    value={newInstrutor.registroProfissional}
                     onChange={handleInputChange}
                     required
                   />
@@ -219,6 +255,8 @@ const Instrutores = () => {
                       setNewInstrutor({
                         id: "",
                         name: "",
+                        registroProfissional: "",
+                        qualificacaoProfissional: "",
                       });
                       setInstrutorInEditMode("");
                     }}
@@ -234,7 +272,9 @@ const Instrutores = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Instrutor</TableHead>
+              <TableHead>Nome Completo</TableHead>
+              <TableHead>Qualificação profissional</TableHead>
+              <TableHead>Registro profissional</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
@@ -273,6 +313,12 @@ const Instrutores = () => {
                 "
                   >
                     {instrutor.name}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {instrutor.qualificacaoProfissional}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {instrutor.registroProfissional}
                   </TableCell>
                   <TableCell className="py-2">
                     {instrutor.status.id !== 2 ? "Ativo" : "Inativo"}
