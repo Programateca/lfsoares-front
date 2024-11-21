@@ -10,130 +10,83 @@ import { api } from "@/lib/axios";
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import {
-  CircleX,
-  Edit,
-  Loader2,
-  Plus,
-  RotateCcw,
-  Search,
-  Trash2Icon,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
 
-// export function Certificado() {
-//   async function handleTeste() {
-//     generateDocument();
-//   }
+import { Plus } from "lucide-react";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 
-//   function loadFile(url: string, callback: any) {
-//     PizZipUtils.getBinaryContent(url, callback);
-//   }
+import { CertificadoModal } from "./CertificadoModal";
 
-//   const generateDocument = () => {
-//     loadFile(
-//       "/templates/certificado-frente.pptx",
-//       (error: Error, content: any) => {
-//         if (error) {
-//           throw error;
-//         }
-//         const zip = new PizZip(content);
-//         const doc = new Docxtemplater(zip, {
-//           delimiters: { start: "[", end: "]" },
-//           paragraphLoop: true,
-//           linebreaks: true,
-//           parser: expressionParser,
-//         });
-//         doc.render({
-//           nome_treinamento: "Treinamento de Segurança",
-//           carga_hora: "8",
-//           cnpj: "123456789",
-//           e_dia: "01",
-//           e_mes: "01",
-//           empresa: "Empresa",
-//           nome_participante: "Fulano de Tal",
-//           portaria_treinamento: "123",
-//           r_dia: "01",
-//           r_hora: "08",
-//           r_mes: "01",
-//         });
-//         const out = doc.getZip().generate({
-//           type: "blob",
-//           mimeType:
-//             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-//         }); //Output the document using Data-URI
-//         saveAs(out, "output.docx");
-//       }
-//     );
-//   };
+export enum TipoDeDocumento {
+  CERTIFICADO = "certificado",
+  CERTIFICADO_PONTE = "certificado-ponte",
+  // TODO Listas vão ser geradas no componente de listas
+  // LISTA_DIA_TODO = 'lista-dia-todo',
+  // LISTA_MEIO_PERIODO = 'lista-meio-periodo',
+}
 
-//   return (
-//     <div>
-//       <Button onClick={handleTeste}>TESTE</Button>
-//     </div>
-//   );
-// }
+interface CertificadoDb {
+  expiryDate: string;
+  modelType: TipoDeDocumento;
+  documentData: string;
+}
 
 const Certificado = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userInEditMode, setUserInEditMode] = useState<string | number>("");
-  const [newUser, setNewUser] = useState({
-    id: 0,
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
+  // const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
 
-  // const saveCertificadoInDb = async () => {
-  //   try {
-  //     const response = await api.post("documentos");
-  //     setUsers(response.data.data);
-  //   } catch (error) {}
-  // };
+  // Função usada dentro do gerarDocumento
+  function loadFile(url: string, callback: any) {
+    PizZipUtils.getBinaryContent(url, callback);
+  }
 
-  // useEffect(() => {
-  //   const inicializarFetch = async () => {
-  //     setLoading(true);
-  //     await fetchUsers();
-  //     setLoading(false);
-  //   };
+  // TODO Essa função gera o documento igual o exemplo que mandei no whatsapp
+  // TODO Refatorar para receber criar o certificado atraves de parametros dinamicos
+  const gerarDocumento = () => {
+    loadFile(
+      "/templates/certificado-frente.pptx",
+      (error: Error, content: any) => {
+        if (error) {
+          throw error;
+        }
+        const zip = new PizZip(content);
+        const doc = new Docxtemplater(zip, {
+          delimiters: { start: "[", end: "]" },
+          paragraphLoop: true,
+          linebreaks: true,
+          parser: expressionParser,
+        });
+        doc.render({
+          nome_treinamento: "Treinamento de Segurança",
+          carga_hora: "8",
+          cnpj: "123456789",
+          e_dia: "01",
+          e_mes: "01",
+          empresa: "Empresa",
+          nome_participante: "Fulano de Tal",
+          portaria_treinamento: "123",
+          r_dia: "01",
+          r_hora: "08",
+          r_mes: "01",
+        });
+        const out = doc.getZip().generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        }); //Output the document using Data-URI
+        saveAs(out, "output.pptx");
+      }
+    );
+  };
 
-  //   inicializarFetch();
-  // }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
+  // TODO Exemplo de como salvar um certificado no banco de dados
+  const saveCertificadoInDb = async (data: CertificadoDb) => {
+    // const dataString = JSON.stringify(data);
+    // const response = await api.post("documentos", {
+    //   expiryDate: "string",
+    //   modelType: "certificado",
+    //   documentData: dataString,
+    // });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -151,15 +104,6 @@ const Certificado = () => {
             open={isModalOpen}
             onOpenChange={(open) => {
               setIsModalOpen(open);
-              if (!open)
-                setNewUser({
-                  id: 0,
-                  name: "",
-                  email: "",
-                  password: "",
-                  confirmPassword: "",
-                });
-              setUserInEditMode("");
             }}
           >
             <DialogTrigger asChild>
@@ -167,79 +111,10 @@ const Certificado = () => {
                 <Plus className="mr-2 h-4 w-4" /> Gerar Novo Certificado
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Adicionar novo usuário</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={newUser.name}
-                    onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={newUser.password}
-                    onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    value={newUser.confirmPassword}
-                    onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsModalOpen(false),
-                        setNewUser({
-                          id: 0,
-                          name: "",
-                          email: "",
-                          password: "",
-                          confirmPassword: "",
-                        });
-                      setUserInEditMode("");
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button type="submit">Adicionar</Button>
-                </div>
-              </form>
-            </DialogContent>
+            <CertificadoModal handleSubmit={handleSubmit} />
           </Dialog>
         </div>
-        <Table>
+        {/* <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
@@ -335,8 +210,11 @@ const Certificado = () => {
               ))
             )}
           </TableBody>
-        </Table>
+        </Table> */}
       </CardContent>
+      <div>
+        <Button onClick={gerarDocumento}>GERAR CERTIFICADO TESTE</Button>
+      </div>
     </Card>
   );
 };
