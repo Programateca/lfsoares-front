@@ -307,10 +307,10 @@ const Empresas = () => {
                     >
                       {empresa.name}
                     </TableCell>
+                    <TableCell className="py-2">{empresa.cnpj}</TableCell>
                     <TableCell className="py-2">
                       {empresa.status.id !== 2 ? "Ativo" : "Inativo"}
                     </TableCell>
-                    <TableCell className="py-2">{empresa.cnpj}</TableCell>
                     <TableCell className="text-end py-2">
                       <Button
                         onClick={() => handleEdit(empresa.id)}
