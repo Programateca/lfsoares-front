@@ -27,14 +27,16 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
+import Certificado from "@/components/Certificado";
 
 const componentsMap = {
   Usuários: Usuarios,
-  Eventos: Eventos,
-  Treinamentos: Treinamentos,
-  Instrutores: Instrutores,
-  Pessoas: Pessoas,
-  Empresas: Empresas,
+  Eventos,
+  Treinamentos,
+  Instrutores,
+  Pessoas,
+  Empresas,
+  Certificado,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
@@ -78,110 +80,120 @@ export default function HomePage() {
             </div>
             <div className="space-y-4 pt-5">
               <div>
-                <Button variant="ghost" className="w-full justify-start" onClick={toggleCadastro}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={toggleCadastro}
+                >
                   <MonitorCog className="mr-2 h-4 w-4" />
                   Cadastros
-                  {isCadastroOpen ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
+                  {isCadastroOpen ? (
+                    <ChevronUp className="ml-auto h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-auto h-4 w-4" />
+                  )}
                 </Button>
-                {
-                  isCadastroOpen && (
-                    <div className="ml-4 mt-2 space-y-2">
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Usuários" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Usuários")}
-                      >
-                        <Contact className="mr-2 h-4 w-4" />
-                        Usuários
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Eventos" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Eventos")}
-                      >
-                        <Ticket className="mr-2 h-4 w-4" />
-                        Eventos
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Treinamentos" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Treinamentos")}
-                      >
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        Treinamentos
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Instrutores" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Instrutores")}
-                      >
-                        <IdCard className="mr-2 h-4 w-4" />
-                        Instrutores
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Empresas" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Empresas")}
-                      >
-                        <Building2 className="mr-2 h-4 w-4" />
-                        Empresas
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className={`w-full justify-start ${
-                          selectedOption === "Pessoas" ? "bg-gray-100" : ""
-                        }`}
-                        onClick={() => handleSelectedOption("Pessoas")}
-                      >
-                        <Users className="mr-2 h-4 w-4" />
-                        Pessoas
-                      </Button>
-            
-                    </div>
-                  )
-                }
-              
+                {isCadastroOpen && (
+                  <div className="ml-4 mt-2 space-y-2">
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Usuários" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Usuários")}
+                    >
+                      <Contact className="mr-2 h-4 w-4" />
+                      Usuários
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Eventos" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Eventos")}
+                    >
+                      <Ticket className="mr-2 h-4 w-4" />
+                      Eventos
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Treinamentos" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Treinamentos")}
+                    >
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Treinamentos
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Instrutores" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Instrutores")}
+                    >
+                      <IdCard className="mr-2 h-4 w-4" />
+                      Instrutores
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Empresas" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Empresas")}
+                    >
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Empresas
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start ${
+                        selectedOption === "Pessoas" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Pessoas")}
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      Pessoas
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div>
-                <Button variant="ghost" className="w-full justify-start" onClick={toggleLayout}>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={toggleLayout}
+                >
                   <Layout className="mr-2 h-4 w-4" />
                   Layout
-                  {isLayoutOpen ? <ChevronUp className="ml-auto h-4 w-4" /> : <ChevronDown className="ml-auto h-4 w-4" />}
+                  {isLayoutOpen ? (
+                    <ChevronUp className="ml-auto h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="ml-auto h-4 w-4" />
+                  )}
                 </Button>
-                {
-                  isLayoutOpen && (
-                    <div className="ml-4 mt-2 space-y-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        <FileText className="mr-2 h-4 w-4" />
-                        Certificado
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start"
-                      >
-                        <ClipboardList className="mr-2 h-4 w-4" />
-                        Lista de Presença
-                      </Button>
-                    </div>
-                  )
-                }
-                
+                {isLayoutOpen && (
+                  <div className="ml-4 mt-2 space-y-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                      onClick={() => handleSelectedOption("Certificado")}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Certificado
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Lista de Presença
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -211,9 +223,7 @@ export default function HomePage() {
             <Card className="bg-green-500 rounded-xl shadow-lg">
               <CardContent className="p-5 py-4">
                 <div className="text-start text-white">
-                  <h1 className="text-4xl font-bold">
-                    Olá, {user?.name} 👋
-                  </h1>
+                  <h1 className="text-4xl font-bold">Olá, {user?.name} 👋</h1>
                   <p className="mt-2 text-xl">
                     Bem-vindo ao Sistema de Geração de Documentos de Treinamento
                   </p>

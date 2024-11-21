@@ -48,42 +48,10 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-
-interface Status {
-  id: number;
-  name: string;
-}
-
-interface Instrutor {
-  status: Status;
-  name: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Treinamento {
-  status: Status;
-  courseModality: string;
-  courseType: string;
-  description: string;
-  courseValidaty: string;
-  courseHours: string;
-  name: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Empresa {
-  status: Status;
-  cnpj: string;
-  name: string;
-  endereco: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Status } from "@/@types/Status";
+import { Empresa } from "@/@types/Empresa";
+import { Instrutor } from "@/@types/Instrutor";
+import { Treinamento } from "@/@types/Treinamento";
 
 interface Evento {
   status: Status;
