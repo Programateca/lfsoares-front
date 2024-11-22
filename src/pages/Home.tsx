@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
-import Certificado from "@/components/Certificado";
+import Certificados from "@/components/Certificados";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -36,7 +36,7 @@ const componentsMap = {
   Instrutores,
   Pessoas,
   Empresas,
-  Certificado,
+  Certificados,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
@@ -179,10 +179,10 @@ export default function HomePage() {
                       variant="ghost"
                       size="sm"
                       className="w-full justify-start"
-                      onClick={() => handleSelectedOption("Certificado")}
+                      onClick={() => handleSelectedOption("Certificados")}
                     >
                       <FileText className="mr-2 h-4 w-4" />
-                      Certificado
+                      Certificados
                     </Button>
                     <Button
                       variant="ghost"
