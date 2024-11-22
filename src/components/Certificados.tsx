@@ -1,10 +1,10 @@
 import { Button } from "./ui/button";
 
-// import Docxtemplater from "docxtemplater";
-// import PizZip from "pizzip";
-// import PizZipUtils from "pizzip/utils/index.js";
-// import { saveAs } from "file-saver";
-// import expressionParser from "docxtemplater/expressions";
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
+import PizZipUtils from "pizzip/utils/index.js";
+import { saveAs } from "file-saver";
+import expressionParser from "docxtemplater/expressions";
 
 import { api } from "@/lib/axios";
 
@@ -36,17 +36,6 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-//   AlertDialogTrigger,
-// } from "./ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -55,62 +44,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-
-// export function Certificados() {
-//   async function handleTeste() {
-//     generateDocument();
-//   }
-
-//   function loadFile(url: string, callback: any) {
-//     PizZipUtils.getBinaryContent(url, callback);
-//   }
-
-//   const generateDocument = () => {
-//     loadFile(
-//       "/templates/certificado-frente.pptx",
-//       (error: Error, content: any) => {
-//         if (error) {
-//           throw error;
-//         }
-//         const zip = new PizZip(content);
-//         const doc = new Docxtemplater(zip, {
-//           delimiters: { start: "[", end: "]" },
-//           paragraphLoop: true,
-//           linebreaks: true,
-//           parser: expressionParser,
-//         });
-//         doc.render({
-//           nome_treinamento: "Treinamento de Segurança",
-//           carga_hora: "8",
-//           cpf: "123456789",
-//           cnpj: "123456789",
-//           e_dia: "01",
-//           e_mes: "01",
-//           empresa: "Empresa",
-//           nome_participante: "Fulano de Tal",
-//           portaria_treinamento: "123",
-//           r_dia: "01",
-//           r_hora: "08",
-//           r_hora_fim: "17",
-//           r_mes: "01",
-//         });
-//         const out = doc.getZip().generate({
-//           type: "blob",
-//           mimeType:
-//             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-//         }); //Output the document using Data-URI
-//         saveAs(out, "output.pptx");
-//       }
-//     );
-//   };
-
-//   return (
-//     <div>
-//       <Button onClick={handleTeste}>TESTE</Button>
-//     </div>
-//   );
-// }
+} from "./ui/select";
 
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,22 +60,68 @@ const Certificados = () => {
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
   const [eventos, setEventos] = useState<any[]>([]);
   const [participantes, setParticipantes] = useState<any[]>([]);
-  console.log(newCertificado);
-  const fetchCertificados = async () => {
+
+  function loadFile(url: string, callback: any) {
+    PizZipUtils.getBinaryContent(url, callback);
+  }
+
+  const generateDocument = (data: Record<string, string>) => {
+    loadFile(
+      "/templates/certificado-frente-verso.pptx",
+      (error: Error, content: any) => {
+        if (error) {
+          throw error;
+        }
+        const zip = new PizZip(content);
+        const doc = new Docxtemplater(zip, {
+          delimiters: { start: "[", end: "e]" },
+          paragraphLoop: true,
+          linebreaks: true,
+          parser: expressionParser,
+        });
+        doc.render({
+          nome_treinamento: "Treinamento de Segurança",
+          carga_hora: "8",
+          cpf: "123456789",
+          cnpj: "123456789",
+          e_dia: "01",
+          e_mes: "01",
+          empresa: "Empresa",
+          nome_participante: "Fulano de Tal",
+          portaria_treinamento: "123",
+          r_dia: "01",
+          r_hora: "08",
+          r_hora_fim: "17",
+          r_mes: "01",
+        });
+        const out = doc.getZip().generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        }); //Output the document using Data-URI
+        saveAs(out, "output.pptx");
+      }
+    );
+  };
+
+  const fetchData = async () => {
     try {
       const response = await api.get("documentos");
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
+
       setParticipantes(pessoasResp.data.data);
       setCertificadosGerados(response.data.data);
       setEventos(eventosResp.data.data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     const inicializarFetch = async () => {
       setLoading(true);
-      await fetchCertificados();
+      await fetchData();
       setLoading(false);
     };
 
@@ -155,6 +135,35 @@ const Certificados = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // r = realizado
+    // e = emissão
+    const schema = {
+      // Frente
+      nome_participante:
+      portaria_treinamento:
+      nome_treinamento:
+      cnpj:
+      r_dia:
+      r_mes:
+      r_hora:
+      r_minutos:
+      carga_hora:
+      e_dia:
+      e_mes:
+      codigo:
+      // Verso
+      nome_treinamento:
+      nome_instrutor:
+      matricula_instrutor:
+      formacao_instrutor:
+      descricao:
+      tipo_formacao:
+      carga_h:
+      nome_responsavel_tecnico:
+      formacao_responsavel_tecnico:
+      crea_responsavel_tecnico:
+    }
   };
 
   const resetForm = () => {
