@@ -28,6 +28,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
 import Certificados from "@/components/Certificados";
+import Presenca from "@/components/Presenca";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -37,6 +38,7 @@ const componentsMap = {
   Pessoas,
   Empresas,
   Certificados,
+  'Lista de Presença': Presenca,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
@@ -178,7 +180,9 @@ export default function HomePage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-start"
+                      className={`w-full justify-start ${
+                        selectedOption === "Certificados" ? "bg-gray-100" : ""
+                      }`}
                       onClick={() => handleSelectedOption("Certificados")}
                     >
                       <FileText className="mr-2 h-4 w-4" />
@@ -187,7 +191,10 @@ export default function HomePage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-start"
+                      className={`w-full justify-start ${
+                        selectedOption === "Lista de Presença" ? "bg-gray-100" : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Lista de Presença")}
                     >
                       <ClipboardList className="mr-2 h-4 w-4" />
                       Lista de Presença
