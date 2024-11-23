@@ -45,16 +45,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Evento } from "@/@types/Evento";
+import { Participante } from "@/@types/Participante";
 
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
-  const [eventos, setEventos] = useState<any[]>([]);
-  const [participantes, setParticipantes] = useState<any[]>([]);
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [participantes, setParticipantes] = useState<Participante[]>([]);
 
-  console.log(eventos);
+  console.log(participantes);
   const [newCertificado, setNewCertificado] = useState({
     evento: {
       id: "",
