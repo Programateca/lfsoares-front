@@ -49,17 +49,20 @@ import {
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
+  const [eventos, setEventos] = useState<any[]>([]);
+  const [participantes, setParticipantes] = useState<any[]>([]);
+
+  console.log(eventos);
   const [newCertificado, setNewCertificado] = useState({
     evento: {
       id: "",
     },
     pessoas: [],
-    documentData: "",
+    emissaoData: "",
     local: "",
   });
-  const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
-  const [eventos, setEventos] = useState<any[]>([]);
-  const [participantes, setParticipantes] = useState<any[]>([]);
 
   function loadFile(url: string, callback: any) {
     PizZipUtils.getBinaryContent(url, callback);
@@ -140,30 +143,30 @@ const Certificados = () => {
     // e = emissão
     const schema = {
       // Frente
-      nome_participante:
-      portaria_treinamento:
-      nome_treinamento:
-      cnpj:
-      r_dia:
-      r_mes:
-      r_hora:
-      r_minutos:
-      carga_hora:
-      e_dia:
-      e_mes:
-      codigo:
-      // Verso
-      nome_treinamento:
-      nome_instrutor:
-      matricula_instrutor:
-      formacao_instrutor:
-      descricao:
-      tipo_formacao:
-      carga_h:
-      nome_responsavel_tecnico:
-      formacao_responsavel_tecnico:
-      crea_responsavel_tecnico:
-    }
+      nome_participante: participantes[0].name,
+      portaria_treinamento: "123",
+      // nome_treinamento:
+      // cnpj:
+      // r_dia:
+      // r_mes:
+      // r_hora:
+      // r_minutos:
+      // carga_hora:
+      // e_dia:
+      // e_mes:
+      // codigo:
+      // // Verso
+      // nome_treinamento:
+      // nome_instrutor:
+      // matricula_instrutor:
+      // formacao_instrutor:
+      // descricao:
+      // tipo_formacao:
+      // carga_h:
+      // nome_responsavel_tecnico:
+      // formacao_responsavel_tecnico:
+      // crea_responsavel_tecnico:
+    };
   };
 
   const resetForm = () => {
@@ -172,7 +175,7 @@ const Certificados = () => {
         id: "",
       },
       pessoas: [],
-      documentData: "",
+      emissaoData: "",
       local: "",
     });
   };
@@ -268,7 +271,7 @@ const Certificados = () => {
                       id="documentData"
                       name="documentData"
                       type="date"
-                      value={newCertificado.documentData}
+                      value={newCertificado.emissaoData}
                       onChange={handleInputChange}
                       required
                     />
