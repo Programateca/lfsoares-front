@@ -52,21 +52,7 @@ import { Status } from "@/@types/Status";
 import { Empresa } from "@/@types/Empresa";
 import { Instrutor } from "@/@types/Instrutor";
 import { Treinamento } from "@/@types/Treinamento";
-
-interface Evento {
-  status: Status;
-  empresa: Empresa;
-  instrutor: Instrutor;
-  treinamento: Treinamento;
-  courseLocation: string;
-  responsavelTecnico: string;
-  completionDate: string;
-  courseTime: string;
-  courseDate: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Evento } from "@/@types/Evento";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
