@@ -1,9 +1,12 @@
-import { Status } from "./Status";
+import { Empresa } from "./Empresa";
 
 export interface Instrutor {
-  status: Status;
-  name: string;
-  id: string;
+  cpf: string;
   createdAt: string;
+  empresa: Empresa;
+  id: string;
+  matricula: string;
+  name: string;
+  status: { id: number };
   updatedAt: string;
 }
