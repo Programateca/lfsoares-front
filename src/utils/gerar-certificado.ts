@@ -8,7 +8,7 @@ function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
-export function generateDocument(data: Record<string, string>) {
+export function gerarCertificado(data: Record<string, string>) {
   loadFile("/templates/certificado-frente-verso.pptx", (error: Error, content: any) => {
     if (error) {
       throw error;

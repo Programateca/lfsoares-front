@@ -66,12 +66,12 @@ const Certificados = () => {
           <Dialog open={isModalOpen} onOpenChange={(open) => setIsModalOpen(open)}>
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
-                <Plus className="mr-2 h-4 w-4" /> Gerar Novo Certificado
+                <Plus className="mr-2 h-4 w-4" /> Gerar Nova Lista de Presença
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-3xl">
               <DialogHeader>
-                <DialogTitle>Geração de Certificado</DialogTitle>
+                <DialogTitle>Lista de Presença</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"></form>
             </DialogContent>

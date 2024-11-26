@@ -17,7 +17,7 @@ import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { Checkbox } from "./ui/checkbox";
-import { generateDocument } from "@/utils/generetaPdf";
+import { gerarCertificado } from "@/utils/gerar-certificado";
 
 const defaultValues = {
   evento: { id: "" },
@@ -154,7 +154,7 @@ const Certificados = () => {
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
       console.log({ ...schema, nome_participante });
-      generateDocument({ ...schema, nome_participante });
+      gerarCertificado({ ...schema, nome_participante });
     }
   };
 
