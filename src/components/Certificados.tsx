@@ -19,6 +19,7 @@ import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { Checkbox } from "./ui/checkbox";
+import { generateDocument } from "@/utils/generetaPdf";
 
 const defaultValues = {
   evento: { id: "" },
@@ -30,13 +31,9 @@ const defaultValues = {
   portaria_treinamento: "",
   nome_treinamento: "",
   cnpj: "",
-  r_dia: "",
-  r_mes: "",
-  r_hora: "",
-  r_minutos: "",
+  realizacao_data_e_hora: "",
   carga_hora: "",
-  emissao_data: "",
-  codigo: "",
+  codigo_certificado: "",
   // Verso
   nome_instrutor: "",
   matricula_instrutor: "",
@@ -120,38 +117,47 @@ const Certificados = () => {
     //   username: z.string(),
     // });
 
-    // r = realizado
-    // e = emissão
-    const dataRealizada = newCertificado.emissao_data.split("-");
+    const dataAndTimeRealizada = newCertificado.realizacao_data_e_hora.split("T");
+    const dataRealizada = dataAndTimeRealizada[0].split("-"); // [YYYY,MM,DD]
+    const timeRealizada = dataAndTimeRealizada[1].split(":"); // [HH,MM]
 
-    console.log(selectedInstrutor);
+    const dataEmissao = new Date().toISOString().split("T")[0]; // [YYYY,MM,DD]
+
     const schema = {
       // Dois lados
       carga_hora: selectedEvento.treinamento.courseHours,
       // Frente
-      nome_participante: "Vitor Teste",
-      portaria_treinamento: "Portaria Teste",
+      // nome_participante: "Vitor Teste", // Passar dinaimcamente na criação do certificado
+      portaria_treinamento: newCertificado.portaria_treinamento,
       nome_treinamento: selectedEvento.treinamento.name,
       cnpj: selectedEmpresa.cnpj,
       r_dia: dataRealizada[2], // Dia de Realização
       r_mes: dataRealizada[1], // Mes de Realização
-      r_hora: "", // Hora de Realização
-      r_minutos: "", // Minutos de Realização
-      e_dia: "", // Dia de Emissão
-      e_mes: "", // Mes de Emissão
-      codigo: "",
+      r_hora: timeRealizada[0], // Hora de Realização
+      r_minutos: timeRealizada[1], // Minutos de Realização
+      e_dia: dataEmissao[2], // Dia de Emissão
+      e_mes: dataEmissao[1], // Mes de Emissão
+      codigo_certificado: "",
       // Verso
       nome_instrutor: selectedInstrutor.name,
-      matricula_instrutor: selectedInstrutor.matricula,
-      formacao_instrutor: selectedInstrutor.qualificacaoProfissional,
+      matricula_instrutor: selectedInstrutor.matricula ?? "",
+      formacao_instrutor: selectedInstrutor.qualificacaoProfissional ?? "",
       descricao: selectedEvento.treinamento.description,
       tipo_formacao: selectedEvento.treinamento.courseType,
-      nome_responsavel_tecnico: "",
-      formacao_responsavel_tecnico: "",
-      crea_responsavel_tecnico: "",
+      nome_responsavel_tecnico: newCertificado.nome_responsavel_tecnico,
+      formacao_responsavel_tecnico: newCertificado.formacao_responsavel_tecnico,
+      crea_responsavel_tecnico: newCertificado.crea_responsavel_tecnico,
       local_treinamento: selectedEvento.courseLocation,
       contratante: selectedEmpresa.name,
     };
+
+    for (let pessoa of newCertificado.participantes) {
+      const nome_participante = participantes.find((p) => p.id === pessoa.id)?.name;
+
+      if (!nome_participante) throw new AppError("Participante invalido", 404);
+      console.log({ ...schema, nome_participante });
+      generateDocument({ ...schema, nome_participante });
+    }
   };
 
   const handleParticipante = (isChecked: boolean | string, participante: Pessoa) => {
@@ -222,12 +228,22 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emissao_data">Data de Emissão</Label>
+                    <Label htmlFor="realizacao_data_e_hora">Data e Hora de Realização</Label>
                     <Input
-                      id="emissao_data"
-                      name="emissao_data"
-                      type="date"
-                      value={newCertificado?.emissao_data}
+                      id="realizacao_data_e_hora"
+                      name="realizacao_data_e_hora"
+                      type="datetime-local"
+                      value={newCertificado?.realizacao_data_e_hora}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="portaria_treinamento">Portaria do Treinamento</Label>
+                    <Input
+                      id="portaria_treinamento"
+                      name="portaria_treinamento"
+                      value={newCertificado?.portaria_treinamento}
                       onChange={handleInputChange}
                       required
                     />
@@ -265,6 +281,16 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="codigo_certificado">Codigo do Certificado</Label>
+                    <Input
+                      id="codigo_certificado"
+                      name="codigo_certificado"
+                      value={newCertificado?.codigo_certificado}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <SelectMap
                       onChange={(value) =>
                         setNewCertificado((prev) => ({ ...prev, instrutor: { id: value } }))
@@ -287,15 +313,20 @@ const Certificados = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col">
+                  <div className="flex flex-col gap-1">
                     {participantes.map((participante) => (
-                      <div key={participante.id} className="flex items-center space-x-2">
+                      <div
+                        key={participante.id}
+                        className="flex items-center space-x-2 aspect-video h-8 w-full rounded-sm bg-muted/50"
+                      >
                         <Checkbox
+                          id={participante.id}
                           onCheckedChange={(checked) => handleParticipante(checked, participante)}
+                          className="ml-2"
                         />
                         <label
                           htmlFor={participante.id}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="text-sm p-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           {participante.name}
                         </label>
