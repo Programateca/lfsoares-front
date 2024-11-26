@@ -1,60 +1,37 @@
-import { Button } from "./ui/button";
+import { z } from "zod";
 
-import Docxtemplater from "docxtemplater";
-import PizZip from "pizzip";
-import PizZipUtils from "pizzip/utils/index.js";
-import { saveAs } from "file-saver";
-import expressionParser from "docxtemplater/expressions";
+import { Button } from "./ui/button";
 
 import { api } from "@/lib/axios";
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
-import {
-  CircleX,
-  Edit,
-  Loader2,
-  Plus,
-  RotateCcw,
-  // Search,
-  Trash2Icon,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { CircleX, Loader2, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
-import { SelectMap } from "./Select";
+import { SelectMap } from "./SelectMap";
 import { Instrutor } from "@/@types/Instrutor";
+import { AppError } from "@/utils/AppError";
+import { Empresa } from "@/@types/Empresa";
+import { Checkbox } from "./ui/checkbox";
 
 const defaultValues = {
   evento: { id: "" },
   instrutor: { id: "" },
   empresa: { id: "" },
-  participantes: Array<{ id: "" }>,
+  participantes: [{ id: "" }],
   // Frente
   nome_participante: "",
   portaria_treinamento: "",
@@ -90,51 +67,9 @@ const Certificados = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
-  const [newCertificado, setNewCertificado] = useState<NewCertificado>();
-
-  function loadFile(url: string, callback: any) {
-    PizZipUtils.getBinaryContent(url, callback);
-  }
-
-  const generateDocument = (data: Record<string, string>) => {
-    loadFile(
-      "/templates/certificado-frente-verso.pptx",
-      (error: Error, content: any) => {
-        if (error) {
-          throw error;
-        }
-        const zip = new PizZip(content);
-        const doc = new Docxtemplater(zip, {
-          delimiters: { start: "[", end: "e]" },
-          paragraphLoop: true,
-          linebreaks: true,
-          parser: expressionParser,
-        });
-        doc.render({
-          nome_treinamento: "Treinamento de Segurança",
-          carga_hora: "8",
-          cpf: "123456789",
-          cnpj: "123456789",
-          e_dia: "01",
-          e_mes: "01",
-          empresa: "Empresa",
-          nome_participante: "Fulano de Tal",
-          portaria_treinamento: "123",
-          r_dia: "01",
-          r_hora: "08",
-          r_hora_fim: "17",
-          r_mes: "01",
-        });
-        const out = doc.getZip().generate({
-          type: "blob",
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        }); //Output the document using Data-URI
-        saveAs(out, "output.pptx");
-      }
-    );
-  };
+  const [newCertificado, setNewCertificado] = useState<NewCertificado>(defaultValues);
 
   const fetchData = async () => {
     try {
@@ -142,7 +77,11 @@ const Certificados = () => {
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
       const instrutoresResp = await api.get("instrutores");
+      const empresasResp = await api.get("empresas");
 
+      // console.log(empresasResp.data);
+
+      setEmpresas(empresasResp.data.data);
       setParticipantes(pessoasResp.data.data);
       setCertificadosGerados(response.data.data);
       setInstrutores(instrutoresResp.data.data);
@@ -164,46 +103,76 @@ const Certificados = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewCertificado((prev) =>
-      prev ? { ...prev, [name]: value } : { ...defaultValues, [name]: value }
-    );
+    setNewCertificado((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(newCertificado);
+    const selectedParticipantes = participantes.filter((participante) =>
+      newCertificado?.participantes?.some((p) => p.id === participante.id)
+    );
+    const selectedEmpresa = empresas.find((empresa) => empresa.id === newCertificado?.empresa?.id);
+    const selectedEvento = eventos.find((evento) => evento.id === newCertificado?.evento?.id);
+    const selectedInstrutor = instrutores.find(
+      (instrutor) => instrutor.id === newCertificado?.instrutor?.id
+    );
 
-    return;
+    // console.log(selectedInstrutor);
+    if (selectedParticipantes.length) throw new AppError("Selecione um participante", 404); // TODO
+    if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
+    if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
+    if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
+
+    // const User = z.object({
+    //   username: z.string(),
+    // });
+
     // r = realizado
     // e = emissão
+
     const schema = {
       // Dois lados
-      carga_hora: "",
+      carga_hora: selectedEvento.treinamento.courseHours,
       // Frente
-      nome_participante: "",
-      portaria_treinamento: "",
-      nome_treinamento: "",
-      cnpj: "",
-      r_dia: "",
-      r_mes: "",
-      r_hora: "",
-      r_minutos: "",
-      e_dia: "",
-      e_mes: "",
+      nome_participante: "Vitor Teste",
+      portaria_treinamento: "Portaria Teste",
+      nome_treinamento: selectedEvento.treinamento.name,
+      cnpj: selectedEmpresa.cnpj,
+      r_dia: "", // Dia de Realização
+      r_mes: "", // Mes de Realização
+      r_hora: "", // Hora de Realização
+      r_minutos: "", // Minutos de Realização
+      e_dia: "", // Dia de Emissão
+      e_mes: "", // Mes de Emissão
       codigo: "",
       // Verso
-      nome_instrutor: "",
-      matricula_instrutor: "",
+      nome_instrutor: selectedInstrutor.name,
+      matricula_instrutor: selectedInstrutor.matricula,
       formacao_instrutor: "",
-      descricao: "",
-      tipo_formacao: "",
+      descricao: selectedEvento.treinamento.description,
+      tipo_formacao: selectedEvento.treinamento.courseType,
       nome_responsavel_tecnico: "",
       formacao_responsavel_tecnico: "",
       crea_responsavel_tecnico: "",
-      local_treinamento: "",
-      contratante: "",
+      local_treinamento: selectedEvento.courseLocation,
+      contratante: selectedEmpresa.name,
     };
+  };
+
+  console.log(newCertificado.participantes);
+  const handleParticipante = (isChecked: boolean | string, participante: Pessoa) => {
+    if (isChecked) {
+      setNewCertificado((prev) => ({
+        ...prev,
+        participantes: [...prev.participantes, { id: participante.id }],
+      }));
+    } else {
+      setNewCertificado((prev) => ({
+        ...prev,
+        participantes: prev.participantes.filter((p) => p.id !== participante.id),
+      }));
+    }
   };
 
   const resetForm = () => {
@@ -228,76 +197,39 @@ const Certificados = () => {
           >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
-                <Plus className="mr-2 h-4 w-4" /> Gerar novo Certificado
+                <Plus className="mr-2 h-4 w-4" /> Gerar Novo Certificado
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-3xl">
               <DialogHeader>
-                <DialogTitle>Geração de certificado</DialogTitle>
+                <DialogTitle>Geração de Certificado</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Evento</Label>
-                    <Select
-                      onValueChange={(value) => {
-                        setNewCertificado((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                evento: { id: value },
-                              }
-                            : { ...defaultValues, evento: { id: value } }
-                        );
-                      }}
-                      value={newCertificado?.evento?.id}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione um evento" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup className="text-start">
-                          <SelectLabel>Evento:</SelectLabel>
-                          {eventos.map((evento) => {
-                            return (
-                              <SelectItem key={evento.id} value={evento.id}>
-                                {evento.treinamento.name}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                <div className="space-y-4 grid grid-cols-3 gap-4 max-h-[80vh]">
+                  <div className="space-y-2 col-span-2">
+                    <SelectMap
+                      input_name="evento"
+                      itens={eventos ?? []}
+                      label="Evento"
+                      placeholder="Selecione o Evento"
+                      onChange={(value) =>
+                        setNewCertificado((prev) => ({ ...prev, evento: { id: value } }))
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="name">Participantes</Label>
-                    <Select
-                      onValueChange={(value) => {
-                        // setNewCertificado((prev) => ({ ...prev, pessoas: value }));
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione os participantes" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup className="text-start">
-                          <SelectLabel>Participantes:</SelectLabel>
-                          {participantes.map((participante) => {
-                            return (
-                              <SelectItem
-                                key={participante.id}
-                                value={participante.id}
-                              >
-                                {participante.name}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <SelectMap
+                      input_name="empresa"
+                      itens={empresas ?? []}
+                      label="Empresa"
+                      placeholder="Selecione a Empresa"
+                      onChange={(value) =>
+                        setNewCertificado((prev) => ({ ...prev, empresa: { id: value } }))
+                      }
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="emissao_data">Data de emissão</Label>
+                    <Label htmlFor="emissao_data">Data de Emissão</Label>
                     <Input
                       id="emissao_data"
                       name="emissao_data"
@@ -308,7 +240,43 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="nome_responsavel_tecnico">Nome do Responsável Técnico</Label>
+                    <Input
+                      id="nome_responsavel_tecnico"
+                      name="nome_responsavel_tecnico"
+                      type="date"
+                      value={newCertificado?.nome_responsavel_tecnico}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="formacao_responsavel_tecnico">
+                      Formação do Responsável Técnico
+                    </Label>
+                    <Input
+                      id="formacao_responsavel_tecnico"
+                      name="formacao_responsavel_tecnico"
+                      value={newCertificado?.formacao_responsavel_tecnico}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="crea_responsavel_tecnico">Crea do Responsável Técnico</Label>
+                    <Input
+                      id="crea_responsavel_tecnico"
+                      name="crea_responsavel_tecnico"
+                      value={newCertificado?.crea_responsavel_tecnico}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <SelectMap
+                      onChange={(value) =>
+                        setNewCertificado((prev) => ({ ...prev, instrutor: { id: value } }))
+                      }
                       label="Instrutores"
                       input_name="instrutor"
                       itens={instrutores}
@@ -316,7 +284,7 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="local_treinamento">Local de emissão</Label>
+                    <Label htmlFor="local_treinamento">Local de Emissão</Label>
                     <Input
                       id="local_treinamento"
                       name="local_treinamento"
@@ -326,6 +294,22 @@ const Certificados = () => {
                       onChange={handleInputChange}
                       required
                     />
+                  </div>
+
+                  <div className="flex flex-col">
+                    {participantes.map((participante) => (
+                      <div key={participante.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          onCheckedChange={(checked) => handleParticipante(checked, participante)}
+                        />
+                        <label
+                          htmlFor={participante.id}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {participante.name}
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 <div className="flex justify-end space-x-2">
@@ -376,9 +360,7 @@ const Certificados = () => {
             ) : (
               certificadosGerados.map((certificado) => (
                 <TableRow key={certificado.id}>
-                  <TableCell className="font-medium py-2">
-                    {certificado.modelType}
-                  </TableCell>
+                  <TableCell className="font-medium py-2">{certificado.modelType}</TableCell>
                 </TableRow>
               ))
             )}

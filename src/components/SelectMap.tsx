@@ -1,3 +1,6 @@
+import { Evento } from "@/@types/Evento";
+import { Empresa } from "@/@types/Empresa";
+
 import { Label } from "./ui/label";
 import {
   SelectGroup,
@@ -7,24 +10,21 @@ import {
   Select,
   SelectContent,
 } from "./ui/select";
+import { Instrutor } from "@/@types/Instrutor";
 
 interface SelectMapProps {
   placeholder: string;
-  itens: { id: string; name: string }[];
+  itens: Evento[] | Empresa[] | Instrutor[];
   input_name: string;
   label: string;
+  onChange: (value: string) => void;
 }
 
-export function SelectMap({
-  itens,
-  placeholder,
-  input_name,
-  label,
-}: SelectMapProps) {
+export function SelectMap({ itens, placeholder, input_name, label, onChange }: SelectMapProps) {
   return (
     <>
       <Label htmlFor={input_name}>{label}</Label>
-      <Select>
+      <Select onValueChange={onChange}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -33,7 +33,7 @@ export function SelectMap({
             {itens.map((item) => {
               return (
                 <SelectItem key={item.id} value={item.id}>
-                  {item.name}
+                  {"treinamento" in item ? item.treinamento.name : item.name}
                 </SelectItem>
               );
             })}
