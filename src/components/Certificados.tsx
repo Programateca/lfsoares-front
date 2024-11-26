@@ -11,14 +11,7 @@ import { CircleX, Loader2, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
@@ -31,7 +24,7 @@ const defaultValues = {
   evento: { id: "" },
   instrutor: { id: "" },
   empresa: { id: "" },
-  participantes: [{ id: "" }],
+  participantes: [] as { id: string }[],
   // Frente
   nome_participante: "",
   portaria_treinamento: "",
@@ -118,8 +111,7 @@ const Certificados = () => {
       (instrutor) => instrutor.id === newCertificado?.instrutor?.id
     );
 
-    // console.log(selectedInstrutor);
-    if (selectedParticipantes.length) throw new AppError("Selecione um participante", 404); // TODO
+    if (!selectedParticipantes.length) throw new AppError("Selecione um participante", 404); // TODO
     if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
     if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
     if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
@@ -130,7 +122,9 @@ const Certificados = () => {
 
     // r = realizado
     // e = emissão
+    const dataRealizada = newCertificado.emissao_data.split("-");
 
+    console.log(selectedInstrutor);
     const schema = {
       // Dois lados
       carga_hora: selectedEvento.treinamento.courseHours,
@@ -139,8 +133,8 @@ const Certificados = () => {
       portaria_treinamento: "Portaria Teste",
       nome_treinamento: selectedEvento.treinamento.name,
       cnpj: selectedEmpresa.cnpj,
-      r_dia: "", // Dia de Realização
-      r_mes: "", // Mes de Realização
+      r_dia: dataRealizada[2], // Dia de Realização
+      r_mes: dataRealizada[1], // Mes de Realização
       r_hora: "", // Hora de Realização
       r_minutos: "", // Minutos de Realização
       e_dia: "", // Dia de Emissão
@@ -149,7 +143,7 @@ const Certificados = () => {
       // Verso
       nome_instrutor: selectedInstrutor.name,
       matricula_instrutor: selectedInstrutor.matricula,
-      formacao_instrutor: "",
+      formacao_instrutor: selectedInstrutor.qualificacaoProfissional,
       descricao: selectedEvento.treinamento.description,
       tipo_formacao: selectedEvento.treinamento.courseType,
       nome_responsavel_tecnico: "",
@@ -160,7 +154,6 @@ const Certificados = () => {
     };
   };
 
-  console.log(newCertificado.participantes);
   const handleParticipante = (isChecked: boolean | string, participante: Pessoa) => {
     if (isChecked) {
       setNewCertificado((prev) => ({
@@ -244,7 +237,6 @@ const Certificados = () => {
                     <Input
                       id="nome_responsavel_tecnico"
                       name="nome_responsavel_tecnico"
-                      type="date"
                       value={newCertificado?.nome_responsavel_tecnico}
                       onChange={handleInputChange}
                       required
@@ -288,7 +280,6 @@ const Certificados = () => {
                     <Input
                       id="local_treinamento"
                       name="local_treinamento"
-                      type="text"
                       placeholder="Ex: TRÊS LAGOAS/ MS"
                       value={newCertificado?.local_treinamento}
                       onChange={handleInputChange}

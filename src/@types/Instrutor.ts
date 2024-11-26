@@ -1,12 +1,14 @@
 import { Empresa } from "./Empresa";
 
 export interface Instrutor {
-  cpf: string;
+  cpf?: string;
   createdAt: string;
-  empresa: Empresa;
+  empresa?: Empresa;
   id: string;
-  matricula: string;
+  matricula?: string;
   name: string;
   status: { id: number };
+  qualificacaoProfissional?: string;
+  registroProfissional?: string;
   updatedAt: string;
 }
