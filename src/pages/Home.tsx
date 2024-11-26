@@ -28,6 +28,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
 import Certificados from "@/components/Certificados";
+import ListaPresenca from "@/components/ListaPresenca";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -37,6 +38,7 @@ const componentsMap = {
   Pessoas,
   Empresas,
   Certificados,
+  Lista: ListaPresenca,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
@@ -80,11 +82,7 @@ export default function HomePage() {
             </div>
             <div className="space-y-4 pt-5">
               <div>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={toggleCadastro}
-                >
+                <Button variant="ghost" className="w-full justify-start" onClick={toggleCadastro}>
                   <MonitorCog className="mr-2 h-4 w-4" />
                   Cadastros
                   {isCadastroOpen ? (
@@ -160,11 +158,7 @@ export default function HomePage() {
               </div>
 
               <div>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={toggleLayout}
-                >
+                <Button variant="ghost" className="w-full justify-start" onClick={toggleLayout}>
                   <Layout className="mr-2 h-4 w-4" />
                   Layout
                   {isLayoutOpen ? (
@@ -188,6 +182,7 @@ export default function HomePage() {
                       variant="ghost"
                       size="sm"
                       className="w-full justify-start"
+                      onClick={() => handleSelectedOption("Lista")}
                     >
                       <ClipboardList className="mr-2 h-4 w-4" />
                       Lista de Presença
@@ -200,9 +195,7 @@ export default function HomePage() {
         </div>
         <div className="flex-1 ml-64 p-8">
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">
-              {selectedOption}
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-800">{selectedOption}</h1>
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="icon" className="px-4">
                 <Radar className="h-5 w-5 text-gray-600" />
