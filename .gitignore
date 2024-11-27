@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env
 .tool-versions
+test/output
+test/templates

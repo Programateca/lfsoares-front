@@ -26,6 +26,10 @@ const Certificados = () => {
     console.log(data);
   };
 
+  const schema = {
+    nome_treinamento: "",
+  };
+
   //   const fetchData = async () => {
   //     try {
   //       const response = await api.get("documentos");
