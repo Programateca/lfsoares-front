@@ -6,68 +6,91 @@ import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
-import { CircleX, Loader2, Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
-const Certificados = () => {
+import { Empresa } from "@/@types/Empresa";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+
+interface ListaDiaTodo {
+  nome_treinamento: string;
+  tipo: string; // FORMAÇÃO OU ATUALIZAÇÃO PERIODICA
+  intervalo: string; // XX:XX ÀS XX:XX
+  cidade: string; // TRÊS LAGOAS / MS
+  nome_instrutor: string;
+  horario: string; // XX:XX ÀS XX:XX
+  modulo: string; // TEÓRICO OU PRÁTICO / OU TEORICO E PRÁTICO
+  carga_horaria: string; // 08 HORAS AULA
+  datas: string; // XX/XX/XXXX
+  endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
+  nome_empresa: string;
+  cpf: string; // XX.XXX.XXX/XX-XX
+  participante_1: string;
+  participante_2: string;
+  participante_3: string;
+  participante_4: string;
+  participante_5: string;
+}
+
+const ListaPresenca = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const form = useForm<ListaDiaTodo>();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: ListaDiaTodo) => {
     console.log(data);
   };
 
-  const schema = {
-    nome_treinamento: "",
+  const fetchData = async () => {
+    try {
+      const empresasResp = await api.get("empresas");
+
+      setEmpresas(empresasResp.data.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await api.get("documentos");
-  //       const eventosResp = await api.get("eventos");
-  //       const pessoasResp = await api.get("pessoas");
-  //       const instrutoresResp = await api.get("instrutores");
-  //       const empresasResp = await api.get("empresas");
-
-  //       // console.log(empresasResp.data);
-
-  //       setEmpresas(empresasResp.data.data);
-  //       setParticipantes(pessoasResp.data.data);
-  //       setCertificadosGerados(response.data.data);
-  //       setInstrutores(instrutoresResp.data.data);
-  //       setEventos(eventosResp.data.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   useEffect(() => {
-  //     const inicializarFetch = async () => {
-  //       setLoading(true);
-  //       await fetchData();
-  //       setLoading(false);
-  //     };
-
-  //     inicializarFetch();
-  //   }, []);
+  useEffect(() => {
+    setLoading(true);
+    fetchData().then(() => setLoading(false));
+  }, []);
 
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="text-gray-800">Lista de Certificados</CardTitle>
+        <CardTitle className="text-gray-800">Lista de Participantes</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <Dialog open={isModalOpen} onOpenChange={(open) => setIsModalOpen(open)}>
+          <Dialog
+            open={isModalOpen}
+            onOpenChange={(open) => setIsModalOpen(open)}
+          >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
                 <Plus className="mr-2 h-4 w-4" /> Gerar Nova Lista de Presença
@@ -77,7 +100,57 @@ const Certificados = () => {
               <DialogHeader>
                 <DialogTitle>Lista de Presença</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4"></form>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="w-2/3 space-y-6"
+                >
+                  {/* --- */}
+                  <FormField
+                    control={form.control}
+                    name="cidade"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>cidade</FormLabel>
+                        <FormControl>
+                          <Input placeholder="cidade" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* --- */}
+                  <FormField
+                    control={form.control}
+                    name="nome_empresa"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>nome_empresa</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione uma empresa" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {empresas.map((empresa) => (
+                              <SelectItem key={empresa.id} value={empresa.name}>
+                                {empresa.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* --- */}
+                  <Button type="submit">Submit</Button>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
         </div>
@@ -122,4 +195,4 @@ const Certificados = () => {
   );
 };
 
-export default Certificados;
+export default ListaPresenca;
