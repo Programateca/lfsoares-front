@@ -5,11 +5,33 @@ import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
-import { CircleX, Loader2, Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { BookUp2, CircleX, List, Loader2, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { Label } from "./ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
@@ -18,6 +40,7 @@ import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { Checkbox } from "./ui/checkbox";
 import { generateDocument } from "@/utils/generetaPdf";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 const defaultValues = {
   evento: { id: "" },
@@ -46,10 +69,14 @@ const defaultValues = {
 };
 
 type NewCertificado = typeof defaultValues;
+type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showStatusBar, setShowStatusBar] = useState<Checked>(true);
+  const [showActivityBar, setShowActivityBar] = useState<Checked>(false);
+  const [showPanel, setShowPanel] = useState<Checked>(false);
 
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -57,7 +84,8 @@ const Certificados = () => {
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
-  const [newCertificado, setNewCertificado] = useState<NewCertificado>(defaultValues);
+  const [newCertificado, setNewCertificado] =
+    useState<NewCertificado>(defaultValues);
 
   const fetchData = async () => {
     try {
@@ -100,13 +128,17 @@ const Certificados = () => {
     const selectedParticipantes = participantes.filter((participante) =>
       newCertificado?.participantes?.some((p) => p.id === participante.id)
     );
-    const selectedEmpresa = empresas.find((empresa) => empresa.id === newCertificado?.empresa?.id);
-    const selectedEvento = eventos.find((evento) => evento.id === newCertificado?.evento?.id);
+    const selectedEmpresa = empresas.find(
+      (empresa) => empresa.id === newCertificado?.empresa?.id
+    );
+    const selectedEvento = eventos.find(
+      (evento) => evento.id === newCertificado?.evento?.id
+    );
     const selectedInstrutor = instrutores.find(
       (instrutor) => instrutor.id === newCertificado?.instrutor?.id
     );
-
-    if (!selectedParticipantes.length) throw new AppError("Selecione um participante", 404); // TODO
+    if (!selectedParticipantes.length)
+      throw new AppError("Selecione um participante", 404); // TODO
     if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
     if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
     if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
@@ -115,7 +147,8 @@ const Certificados = () => {
     //   username: z.string(),
     // });
 
-    const dataAndTimeRealizada = newCertificado.realizacao_data_e_hora.split("T");
+    const dataAndTimeRealizada =
+      newCertificado.realizacao_data_e_hora.split("T");
     const dataRealizada = dataAndTimeRealizada[0].split("-"); // [YYYY,MM,DD]
     const timeRealizada = dataAndTimeRealizada[1].split(":"); // [HH,MM]
 
@@ -128,6 +161,7 @@ const Certificados = () => {
       // nome_participante: "Vitor Teste", // Passar dinaimcamente na criação do certificado
       portaria_treinamento: newCertificado.portaria_treinamento,
       nome_treinamento: selectedEvento.treinamento.name,
+      empresa: selectedEmpresa.name,
       cnpj: selectedEmpresa.cnpj,
       r_dia: dataRealizada[2], // Dia de Realização
       r_mes: dataRealizada[1], // Mes de Realização
@@ -135,7 +169,7 @@ const Certificados = () => {
       r_minutos: timeRealizada[1], // Minutos de Realização
       e_dia: dataEmissao[2], // Dia de Emissão
       e_mes: dataEmissao[1], // Mes de Emissão
-      codigo_certificado: "",
+      codigo: newCertificado.codigo_certificado,
       // Verso
       nome_instrutor: selectedInstrutor.name,
       matricula_instrutor: selectedInstrutor.matricula ?? "",
@@ -150,15 +184,24 @@ const Certificados = () => {
     };
 
     for (let pessoa of newCertificado.participantes) {
-      const nome_participante = participantes.find((p) => p.id === pessoa.id)?.name;
+      const nome_participante = participantes.find(
+        (p) => p.id === pessoa.id
+      )?.name;
+      const cpf = participantes.find((p) => p.id === pessoa.id)?.cpf;
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
-      console.log({ ...schema, nome_participante });
-      generateDocument({ ...schema, nome_participante });
+      if (!cpf) throw new AppError("CPF invalido", 404);
+      console.log(cpf);
+      generateDocument({ ...schema, nome_participante, cpf });
     }
   };
 
-  const handleParticipante = (isChecked: boolean | string, participante: Pessoa) => {
+  const handleParticipante = (
+    isChecked: boolean | string,
+    participante: Pessoa
+  ) => {
+    console.log(isChecked);
+    console.log(participante);
     if (isChecked) {
       setNewCertificado((prev) => ({
         ...prev,
@@ -167,7 +210,9 @@ const Certificados = () => {
     } else {
       setNewCertificado((prev) => ({
         ...prev,
-        participantes: prev.participantes.filter((p) => p.id !== participante.id),
+        participantes: prev.participantes.filter(
+          (p) => p.id !== participante.id
+        ),
       }));
     }
   };
@@ -177,7 +222,7 @@ const Certificados = () => {
       ...defaultValues,
     });
   };
-
+  console.log(newCertificado);
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -201,8 +246,8 @@ const Certificados = () => {
               <DialogHeader>
                 <DialogTitle>Geração de Certificado</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-4 grid grid-cols-3 gap-4 max-h-[80vh]">
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
                   <div className="space-y-2 col-span-2">
                     <SelectMap
                       input_name="evento"
@@ -210,7 +255,10 @@ const Certificados = () => {
                       label="Evento"
                       placeholder="Selecione o Evento"
                       onChange={(value) =>
-                        setNewCertificado((prev) => ({ ...prev, evento: { id: value } }))
+                        setNewCertificado((prev) => ({
+                          ...prev,
+                          evento: { id: value },
+                        }))
                       }
                     />
                   </div>
@@ -221,12 +269,17 @@ const Certificados = () => {
                       label="Empresa"
                       placeholder="Selecione a Empresa"
                       onChange={(value) =>
-                        setNewCertificado((prev) => ({ ...prev, empresa: { id: value } }))
+                        setNewCertificado((prev) => ({
+                          ...prev,
+                          empresa: { id: value },
+                        }))
                       }
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="realizacao_data_e_hora">Data e Hora de Realização</Label>
+                    <Label htmlFor="realizacao_data_e_hora">
+                      Data e Hora de Realização
+                    </Label>
                     <Input
                       id="realizacao_data_e_hora"
                       name="realizacao_data_e_hora"
@@ -237,7 +290,9 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="portaria_treinamento">Portaria do Treinamento</Label>
+                    <Label htmlFor="portaria_treinamento">
+                      Portaria do Treinamento
+                    </Label>
                     <Input
                       id="portaria_treinamento"
                       name="portaria_treinamento"
@@ -247,7 +302,9 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="nome_responsavel_tecnico">Nome do Responsável Técnico</Label>
+                    <Label htmlFor="nome_responsavel_tecnico">
+                      Nome do Responsável Técnico
+                    </Label>
                     <Input
                       id="nome_responsavel_tecnico"
                       name="nome_responsavel_tecnico"
@@ -269,7 +326,9 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="crea_responsavel_tecnico">Crea do Responsável Técnico</Label>
+                    <Label htmlFor="crea_responsavel_tecnico">
+                      Crea do Responsável Técnico
+                    </Label>
                     <Input
                       id="crea_responsavel_tecnico"
                       name="crea_responsavel_tecnico"
@@ -279,7 +338,9 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="codigo_certificado">Codigo do Certificado</Label>
+                    <Label htmlFor="codigo_certificado">
+                      Codigo do Certificado
+                    </Label>
                     <Input
                       id="codigo_certificado"
                       name="codigo_certificado"
@@ -291,7 +352,10 @@ const Certificados = () => {
                   <div className="space-y-2">
                     <SelectMap
                       onChange={(value) =>
-                        setNewCertificado((prev) => ({ ...prev, instrutor: { id: value } }))
+                        setNewCertificado((prev) => ({
+                          ...prev,
+                          instrutor: { id: value },
+                        }))
                       }
                       label="Instrutores"
                       input_name="instrutor"
@@ -311,28 +375,36 @@ const Certificados = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1">
-                    {participantes.map((participante) => (
-                      <div
-                        key={participante.id}
-                        className="flex items-center space-x-2 aspect-video h-8 w-full rounded-sm bg-muted/50"
-                      >
-                        <Checkbox
-                          id={participante.id}
-                          onCheckedChange={(checked) => handleParticipante(checked, participante)}
-                          className="ml-2"
-                        />
-                        <label
-                          htmlFor={participante.id}
-                          className="text-sm p-2 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  <div className="flex flex-col space-y-3 justify-end">
+                    <Label htmlFor="local_treinamento">Participantes</Label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="justify-start font-normal"
                         >
-                          {participante.name}
-                        </label>
-                      </div>
-                    ))}
+                          Selecione os Participantes
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56">
+                        {participantes.map((participante) => (
+                          <DropdownMenuCheckboxItem
+                            key={participante.id}
+                            checked={newCertificado.participantes.some(
+                              (p) => p.id === participante.id
+                            )}
+                            onCheckedChange={(isChecked) =>
+                              handleParticipante(isChecked, participante)
+                            }
+                          >
+                            {participante.name}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
-                <div className="flex justify-end space-x-2">
+                <div className="flex justify-end space-x-2 mt-5">
                   <Button
                     type="button"
                     variant="outline"
@@ -354,6 +426,9 @@ const Certificados = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
+              <TableHead>Data de emissão</TableHead>
+              <TableHead>Data de validade</TableHead>
+              <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -380,7 +455,36 @@ const Certificados = () => {
             ) : (
               certificadosGerados.map((certificado) => (
                 <TableRow key={certificado.id}>
-                  <TableCell className="font-medium py-2">{certificado.modelType}</TableCell>
+                  <TableCell
+                    className="font-medium max-w-[20rem]
+                overflow-hidden whitespace-nowrap overflow-ellipsis
+                py-2
+                "
+                  >
+                    {certificado.modelType}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {certificado.createdAt.split("T")[0].split("-").reverse().join("/")}
+                  </TableCell>
+                  <TableCell className="py-2">
+                    {certificado.expiryDate.split("T")[0].split("-").reverse().join("/")}
+                  </TableCell>
+                  <TableCell className="text-end py-2">
+                    <Button
+                      variant={"outline"}
+                      className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                    >
+                      <BookUp2 className="" />
+                      Baixar zip
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                    >
+                      <List className="" />
+                      Listagem
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             )}
