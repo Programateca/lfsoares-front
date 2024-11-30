@@ -26,10 +26,10 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
+  // DropdownMenuLabel,
+  // DropdownMenuRadioGroup,
+  // DropdownMenuRadioItem,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Evento } from "@/@types/Evento";
@@ -38,8 +38,8 @@ import { SelectMap } from "./SelectMap";
 import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
-import { Checkbox } from "./ui/checkbox";
-import { generateDocument } from "@/utils/generetaPdf";
+// import { Checkbox } from "./ui/checkbox";
+import { gerarCertificado } from "@/utils/gerar-certificado";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 const defaultValues = {
@@ -74,9 +74,9 @@ type Checked = DropdownMenuCheckboxItemProps["checked"];
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showStatusBar, setShowStatusBar] = useState<Checked>(true);
-  const [showActivityBar, setShowActivityBar] = useState<Checked>(false);
-  const [showPanel, setShowPanel] = useState<Checked>(false);
+  // const [showStatusBar, setShowStatusBar] = useState<Checked>(true);
+  // const [showActivityBar, setShowActivityBar] = useState<Checked>(false);
+  // const [showPanel, setShowPanel] = useState<Checked>(false);
 
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -192,7 +192,7 @@ const Certificados = () => {
       if (!nome_participante) throw new AppError("Participante invalido", 404);
       if (!cpf) throw new AppError("CPF invalido", 404);
       console.log(cpf);
-      generateDocument({ ...schema, nome_participante, cpf });
+      gerarCertificado({ ...schema, nome_participante, cpf });
     }
   };
 
