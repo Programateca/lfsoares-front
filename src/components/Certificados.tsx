@@ -40,7 +40,6 @@ import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 // import { Checkbox } from "./ui/checkbox";
 import { gerarCertificado } from "@/utils/gerar-certificado";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 const defaultValues = {
   evento: { id: "" },
@@ -69,15 +68,10 @@ const defaultValues = {
 };
 
 type NewCertificado = typeof defaultValues;
-type Checked = DropdownMenuCheckboxItemProps["checked"];
 
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [showStatusBar, setShowStatusBar] = useState<Checked>(true);
-  // const [showActivityBar, setShowActivityBar] = useState<Checked>(false);
-  // const [showPanel, setShowPanel] = useState<Checked>(false);
-
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
@@ -200,8 +194,6 @@ const Certificados = () => {
     isChecked: boolean | string,
     participante: Pessoa
   ) => {
-    console.log(isChecked);
-    console.log(participante);
     if (isChecked) {
       setNewCertificado((prev) => ({
         ...prev,
