@@ -67,7 +67,7 @@ interface ListaDiaTodo {
   datas: string; // XX/XX/XXXX
   endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
   nome_empresa: string;
-  cpf: string; // XX.XXX.XXX/XX-XX
+  cnpj: string; // XX.XXX.XXX/XX-XX
   participante_1: string;
   participante_2: string;
   participante_3: string;
@@ -78,9 +78,6 @@ interface ListaDiaTodo {
   participante_8: string;
   participante_9: string;
   participante_10: string;
-  participante_11: string;
-  participante_12: string;
-  participante_13: string;
 }
 
 const ListaPresenca = () => {
@@ -93,7 +90,7 @@ const ListaPresenca = () => {
 
   const form = useForm<ListaDiaTodo>();
 
-  const onSubmit = (data: ListaDiaTodo) => {
+  const onSubmit = async (data: ListaDiaTodo) => {
     const eventoFiltrado = eventos.find((evento) => evento.id === data.evento);
 
     const schema: { [key: string]: string | undefined } = {
@@ -107,21 +104,31 @@ const ListaPresenca = () => {
       carga_horaria: eventoFiltrado?.treinamento.courseHours,
       datas: eventoFiltrado?.courseDate,
       endereco: eventoFiltrado?.courseLocation,
-      intervalo: data.intervalo,
-      cpf: eventoFiltrado?.empresa.cnpj,
+      intervalo: data.intervalo || "N/A",
+      cnpj: eventoFiltrado?.empresa.cnpj,
     };
 
     participantes.forEach((participanteId, index) => {
-      schema[`participante_${index + 1}`] = pessoas.find(
-        (pessoa) => pessoa.id === participanteId
-      )?.name;
+      schema[`participante_${index + 1}`] =
+        pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
     });
+
+    for (let i = participantes.length; i < 10; i++) {
+      schema[`participante_${i + 1}`] = "";
+    }
 
     const filteredSchema: Record<string, string> = Object.fromEntries(
       Object.entries(schema).filter(([_, value]) => value !== undefined)
     ) as Record<string, string>;
     console.log(filteredSchema);
-    gerarLista(filteredSchema);
+
+    const response = await api.post("documentos", {
+      expiryDate: "",
+      modelType: "lista-dia-todo",
+      documentData: JSON.stringify(filteredSchema),
+    });
+
+    console.log(response);
   };
 
   const fetchData = async () => {
@@ -149,6 +156,12 @@ const ListaPresenca = () => {
         prev.filter((participanteId) => participanteId !== participante.id)
       );
     }
+  };
+
+  const handleDownload = async (documentoId: string) => {
+    const response = await api.get(`documentos/${documentoId}`);
+    const data = JSON.parse(response.data.documentData);
+    gerarLista(data);
   };
 
   useEffect(() => {
@@ -393,7 +406,7 @@ const ListaPresenca = () => {
                 py-2
                 "
                   >
-                    Lista de Presença 
+                    Lista de Presença
                   </TableCell>
                   <TableCell className="py-2">
                     {documento.createdAt
@@ -413,6 +426,7 @@ const ListaPresenca = () => {
                     <Button
                       variant={"outline"}
                       className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                      onClick={() => handleDownload(documento.id)}
                     >
                       <BookUp2 className="" />
                       Baixar
