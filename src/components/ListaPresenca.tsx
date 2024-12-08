@@ -15,8 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-
-import { Empresa } from "@/@types/Empresa";
 import { Evento } from "@/@types/Evento";
 
 import {
@@ -52,6 +50,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
+import toast from "react-hot-toast";
 
 interface ListaDiaTodo {
   tipo_lista: string;
@@ -93,6 +92,29 @@ const ListaPresenca = () => {
   const onSubmit = async (data: ListaDiaTodo) => {
     const eventoFiltrado = eventos.find((evento) => evento.id === data.evento);
 
+    if (!data.tipo_lista) {
+      toast.error("Selecione o tipo de lista");
+      return;
+    }
+
+    if (!eventoFiltrado) {
+      toast.error("Evento não encontrado");
+      return;
+    }
+    if (!data.modulo) {
+      toast.error("Informe o módulo");
+      return;
+    }
+    if (!data.cidade) {
+      toast.error("Informe a cidade");
+      return;
+    }
+
+    if (participantes.length === 0) {
+      toast.error("Selecione ao menos um participante");
+      return;
+    }
+
     const schema: { [key: string]: string | undefined } = {
       cidade: data.cidade,
       nome_empresa: eventoFiltrado?.empresa.name,
@@ -120,20 +142,24 @@ const ListaPresenca = () => {
     const filteredSchema: Record<string, string> = Object.fromEntries(
       Object.entries(schema).filter(([_, value]) => value !== undefined)
     ) as Record<string, string>;
-    console.log(filteredSchema);
 
-    const response = await api.post("documentos", {
-      expiryDate: "",
-      modelType: "lista-dia-todo",
+    await api.post("documentos", {
+      modelType: data.tipo_lista,
       documentData: JSON.stringify(filteredSchema),
     });
 
-    console.log(response);
+    setIsModalOpen(false);
+    form.reset();
+    setParticipantes([]);
+    fetchData();
+    toast.success("Lista de presença gerada com sucesso");
   };
 
   const fetchData = async () => {
     try {
-      const documentosResp = await api.get("documentos");
+      const documentosResp = await api.get(
+        "documentos/lista-dia-todo,lista-meio-periodo"
+      );
       const treinamentosResp = await api.get("eventos");
       const participantesResp = await api.get("pessoas");
 
@@ -218,10 +244,10 @@ const ListaPresenca = () => {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="lista-dia-todo">
-                                  Dia Todo
+                                  Lista do Dia Todo
                                 </SelectItem>
                                 <SelectItem value="lista-meio-periodo">
-                                  Meio Período
+                                  Lista do Meio Período
                                 </SelectItem>
                               </SelectContent>
                             </Select>
@@ -263,14 +289,14 @@ const ListaPresenca = () => {
                         name="modulo"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Modulo</FormLabel>
+                            <FormLabel>Módulo</FormLabel>
                             <FormControl>
                               <Select
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Selecione o modulo" />
+                                  <SelectValue placeholder="Selecione o módulo" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="TEÓRICO">
@@ -294,9 +320,9 @@ const ListaPresenca = () => {
                         name="cidade"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>cidade</FormLabel>
+                            <FormLabel>Cidade</FormLabel>
                             <FormControl>
-                              <Input placeholder="cidade" {...field} />
+                              <Input placeholder="Cidade" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -307,7 +333,7 @@ const ListaPresenca = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col space-y-3 justify-end w-full">
                         <Label htmlFor="local_treinamento">Participantes</Label>
-                        <DropdownMenu>
+                        <DropdownMenu >
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="outline"
@@ -338,7 +364,35 @@ const ListaPresenca = () => {
                           <FormItem>
                             <FormLabel>Intervalo</FormLabel>
                             <FormControl>
-                              <Input placeholder="Intervalo" {...field} />
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  type="time"
+                                  placeholder="Início"
+                                  onChange={(e) => {
+                                    const startTime = e.target.value;
+                                    const endTime =
+                                      field.value?.split(" ÀS ")[1] || "";
+                                    field.onChange(
+                                      `${startTime} ÀS ${endTime}`
+                                    );
+                                  }}
+                                  value={field.value?.split(" ÀS ")[0] || ""}
+                                />
+                                <span>ÀS</span>
+                                <Input
+                                  type="time"
+                                  placeholder="Fim"
+                                  onChange={(e) => {
+                                    const startTime =
+                                      field.value?.split(" ÀS ")[0] || "";
+                                    const endTime = e.target.value;
+                                    field.onChange(
+                                      `${startTime} ÀS ${endTime}`
+                                    );
+                                  }}
+                                  value={field.value?.split(" ÀS ")[1] || ""}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -371,8 +425,8 @@ const ListaPresenca = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
+              <TableHead>Tipo de lista</TableHead>
               <TableHead>Data de emissão</TableHead>
-              <TableHead>Data de validade</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -409,14 +463,12 @@ const ListaPresenca = () => {
                     Lista de Presença
                   </TableCell>
                   <TableCell className="py-2">
-                    {documento.createdAt
-                      .split("T")[0]
-                      .split("-")
-                      .reverse()
-                      .join("/")}
+                    {documento.modelType === "lista-dia-todo"
+                      ? "Lista do Dia Todo"
+                      : "Lista do Meio Período"}
                   </TableCell>
                   <TableCell className="py-2">
-                    {documento.expiryDate
+                    {documento.createdAt
                       .split("T")[0]
                       .split("-")
                       .reverse()

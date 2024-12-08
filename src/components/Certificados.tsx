@@ -419,7 +419,6 @@ const Certificados = () => {
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Data de emissão</TableHead>
-              <TableHead>Data de validade</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -457,9 +456,6 @@ const Certificados = () => {
                   </TableCell>
                   <TableCell className="py-2">
                     {certificado.createdAt.split("T")[0].split("-").reverse().join("/")}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {certificado.expiryDate.split("T")[0].split("-").reverse().join("/")}
                   </TableCell>
                   <TableCell className="text-end py-2">
                     <Button

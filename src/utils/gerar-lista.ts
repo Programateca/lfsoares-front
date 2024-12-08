@@ -9,7 +9,15 @@ function loadFile(url: string, callback: any) {
 }
 
 export function gerarLista(data: Record<string, string>) {
-  loadFile("/templates/lista-dia-todo-teste.docx", (error: Error, content: any) => {
+
+  const PAGE_SIZE = 5;
+
+  const pages: string[] = [];
+  for (let i = 0; i < data.participantes.length; i += PAGE_SIZE) {
+    pages.push(data.participantes.slice(i, i + PAGE_SIZE));
+  }
+
+  loadFile("/templates/lista-dia-todo.docx", (error: Error, content: any) => {
     if (error) {
       throw error;
     }
@@ -20,7 +28,9 @@ export function gerarLista(data: Record<string, string>) {
       linebreaks: true,
       parser: expressionParser,
     });
-    doc.render(data);
+    doc.render({
+      pages,
+    });
     const out = doc.getZip().generate({
       type: "blob",
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
