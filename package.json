@@ -40,6 +40,7 @@
     "router-dom": "^3.0.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "xmldom": "^0.6.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
