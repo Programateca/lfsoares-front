@@ -63,7 +63,7 @@ interface ListaDiaTodo {
   horario: string; // XX:XX ÀS XX:XX
   modulo: string; // TEÓRICO OU PRÁTICO / OU TEORICO E PRÁTICO
   carga_horaria: string; // 08 HORAS AULA
-  datas: string; // XX/XX/XXXX
+  datas: string; // XX/XX/XXXX À XX/XX/XXXX
   endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
   nome_empresa: string;
   cnpj: string; // XX.XXX.XXX/XX-XX
@@ -185,8 +185,11 @@ const ListaPresenca = () => {
   };
 
   const handleDownload = async (documentoId: string) => {
-    const response = await api.get(`documentos/${documentoId}`);
-    const data = JSON.parse(response.data.documentData);
+    const response = await api.get(`documentos`);
+    const documentoFiltrado = response.data.data.find(
+      (documento: any) => documento.id === documentoId
+    );
+    const data = JSON.parse(documentoFiltrado.documentData);
     gerarLista(data);
   };
 
@@ -333,7 +336,7 @@ const ListaPresenca = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col space-y-3 justify-end w-full">
                         <Label htmlFor="local_treinamento">Participantes</Label>
-                        <DropdownMenu >
+                        <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="outline"
