@@ -14,7 +14,7 @@ import { Instrutor } from "@/@types/Instrutor";
 
 interface SelectMapProps {
   placeholder: string;
-  itens: Evento[] | Empresa[] | Instrutor[];
+  itens: Evento[] | Empresa[] | Instrutor[] | any[];
   input_name: string;
   label: string;
   onChange: (value: string) => void;

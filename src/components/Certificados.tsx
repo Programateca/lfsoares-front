@@ -42,6 +42,7 @@ import { Empresa } from "@/@types/Empresa";
 import { gerarCertificado } from "@/utils/gerar-certificado";
 
 const defaultValues = {
+  tipo_certificado: "",
   evento: { id: "" },
   instrutor: { id: "" },
   empresa: { id: "" },
@@ -65,6 +66,8 @@ const defaultValues = {
   crea_responsavel_tecnico: "",
   local_treinamento: "",
   contratante: "",
+  image1: "",
+  image2: "",
 };
 
 type NewCertificado = typeof defaultValues;
@@ -74,6 +77,21 @@ const Certificados = () => {
   const [loading, setLoading] = useState(false);
   const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
+  const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
+  const tiposCertificados = [
+    {
+      id: "certificado-frente-verso",
+      name: "Certificado Frente e Verso",
+    },
+    {
+      id: "certificado-ponte-rolante",
+      name: "Certificado Ponte",
+    },
+    {
+      id: "certificado-verso",
+      name: "Certificado Verso",
+    },
+  ];
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
@@ -83,13 +101,11 @@ const Certificados = () => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get("documentos");
+      const response = await api.get("documentos/certificado");
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
       const instrutoresResp = await api.get("instrutores");
       const empresasResp = await api.get("empresas");
-
-      // console.log(empresasResp.data);
 
       setEmpresas(empresasResp.data.data);
       setParticipantes(pessoasResp.data.data);
@@ -132,14 +148,10 @@ const Certificados = () => {
       (instrutor) => instrutor.id === newCertificado?.instrutor?.id
     );
     if (!selectedParticipantes.length)
-      throw new AppError("Selecione um participante", 404); // TODO
+      throw new AppError("Selecione um participante", 404);
     if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
     if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
     if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
-
-    // const User = z.object({
-    //   username: z.string(),
-    // });
 
     const dataAndTimeRealizada =
       newCertificado.realizacao_data_e_hora.split("T");
@@ -152,7 +164,6 @@ const Certificados = () => {
       // Dois lados
       carga_hora: selectedEvento.treinamento.courseHours,
       // Frente
-      // nome_participante: "Vitor Teste", // Passar dinaimcamente na criação do certificado
       portaria_treinamento: newCertificado.portaria_treinamento,
       nome_treinamento: selectedEvento.treinamento.name,
       empresa: selectedEmpresa.name,
@@ -185,8 +196,8 @@ const Certificados = () => {
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
       if (!cpf) throw new AppError("CPF invalido", 404);
-      console.log(cpf);
-      gerarCertificado({ ...schema, nome_participante, cpf });
+
+      gerarCertificado({ ...schema, nome_participante, cpf }, imageMap);
     }
   };
 
@@ -214,7 +225,7 @@ const Certificados = () => {
       ...defaultValues,
     });
   };
-  console.log(newCertificado);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -240,6 +251,78 @@ const Certificados = () => {
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
+                  <div className="space-y-2 col-span-3">
+                    <SelectMap
+                      input_name="tipo_certificado"
+                      itens={tiposCertificados}
+                      label="Tipo de Certificado"
+                      placeholder="Selecione o tipo de certificado"
+                      onChange={(value) =>
+                        setNewCertificado((prev) => ({
+                          ...prev,
+                          tipo_certificado: value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div className="col-span-3 flex justify-between gap-4">
+                    <div className="space-y-2 col-span-3">
+                      <label
+                        htmlFor="image-upload"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Selecione a capa de frente
+                      </label>
+                      <input
+                        type="file"
+                        id="image-upload"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              setImageMap((prev) => ({
+                                ...prev,
+                                ['image1.jpeg']: reader.result as ArrayBuffer,
+                              }));
+
+                            };
+                            reader.readAsArrayBuffer(file);
+                          }
+                        }}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                    </div>
+                    <div className="space-y-2 col-span-3">
+                      <label
+                        htmlFor="image-upload"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Selecione a capa do verso
+                      </label>
+                      <input
+                        type="file"
+                        id="image-upload"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                              setImageMap((prev) => ({
+                                ...prev,
+                                ['image2.jpeg']: reader.result as ArrayBuffer,
+                              }));
+
+                            };
+                            reader.readAsArrayBuffer(file);
+                          }
+                        }}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2 col-span-2">
                     <SelectMap
                       input_name="evento"
@@ -366,7 +449,6 @@ const Certificados = () => {
                       required
                     />
                   </div>
-
                   <div className="flex flex-col space-y-3 justify-end">
                     <Label htmlFor="local_treinamento">Participantes</Label>
                     <DropdownMenu>
@@ -455,7 +537,11 @@ const Certificados = () => {
                     {certificado.modelType}
                   </TableCell>
                   <TableCell className="py-2">
-                    {certificado.createdAt.split("T")[0].split("-").reverse().join("/")}
+                    {certificado.createdAt
+                      .split("T")[0]
+                      .split("-")
+                      .reverse()
+                      .join("/")}
                   </TableCell>
                   <TableCell className="text-end py-2">
                     <Button
