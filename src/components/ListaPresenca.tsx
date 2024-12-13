@@ -51,7 +51,6 @@ import {
   TableRow,
 } from "./ui/table";
 import toast from "react-hot-toast";
-import { gerarCertificado } from "@/utils/gerar-certificado";
 import { DocxElementRemover } from "@/utils/docx-element-remover";
 
 interface ListaDiaTodo {
