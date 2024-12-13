@@ -8,23 +8,46 @@ function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
-export function gerarCertificado(data: Record<string, string>) {
-  loadFile("/templates/certificado-frente-verso.pptx", (error: Error, content: any) => {
+function replaceImage(zip: any, imageMap: Record<string, string>) {
+  const mediaFolder = "ppt/media/";
+
+  Object.keys(imageMap).forEach((imageName) => {
+    const newImage = imageMap[imageName];
+    const imagePath = `${mediaFolder}${imageName}`;
+
+    if (zip.file(imagePath)) {
+      zip.file(imagePath, newImage, { binary: true });
+    } else {
+      console.warn(`Image ${imageName} not found in the archive.`);
+    }
+  });
+}
+
+export function gerarCertificado(data: any, imageMap: any) {
+  loadFile("/templates/certificado-frente-verso.pptx", (error: any, content: any) => {
     if (error) {
       throw error;
     }
+
     const zip = new PizZip(content);
+
+    // Replace images in the zip
+    replaceImage(zip, imageMap);
+
     const doc = new Docxtemplater(zip, {
       delimiters: { start: "[", end: "]" },
       paragraphLoop: true,
       linebreaks: true,
       parser: expressionParser,
     });
+
     doc.render(data);
+
     const out = doc.getZip().generate({
       type: "blob",
-      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    }); //Output the document using Data-URI
+      mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    });
+
     saveAs(out, "output.pptx");
   });
 }
