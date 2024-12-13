@@ -51,6 +51,8 @@ import {
   TableRow,
 } from "./ui/table";
 import toast from "react-hot-toast";
+import { gerarCertificado } from "@/utils/gerar-certificado";
+import { DocxElementRemover } from "@/utils/docx-element-remover";
 
 interface ListaDiaTodo {
   tipo_lista: string;
@@ -115,7 +117,7 @@ const ListaPresenca = () => {
       return;
     }
 
-    const schema: { [key: string]: string | undefined } = {
+    const schema = {
       cidade: data.cidade,
       nome_empresa: eventoFiltrado?.empresa.name,
       nome_treinamento: eventoFiltrado?.treinamento.name,
@@ -130,27 +132,20 @@ const ListaPresenca = () => {
       cnpj: eventoFiltrado?.empresa.cnpj,
     };
 
-    participantes.forEach((participanteId, index) => {
-      schema[`participante_${index + 1}`] =
-        pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
-    });
-
-    for (let i = participantes.length; i < 10; i++) {
-      schema[`participante_${i + 1}`] = "";
-    }
-
-    const filteredSchema: Record<string, string> = Object.fromEntries(
-      Object.entries(schema).filter(([_, value]) => value !== undefined)
-    ) as Record<string, string>;
-
     await api.post("documentos", {
       modelType: data.tipo_lista,
-      documentData: JSON.stringify(filteredSchema),
+      documentData: JSON.stringify(schema),
     });
+
+    // Gera o certificado
+    await DocxElementRemover.removeElements(
+      "templates/lista-dia-todo.docx",
+      schema,
+      { removeTableCount: 1, removeParagraphCount: 2 }
+    );
 
     setIsModalOpen(false);
     form.reset();
-    setParticipantes([]);
     fetchData();
     toast.success("Lista de presença gerada com sucesso");
   };
