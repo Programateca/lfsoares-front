@@ -141,6 +141,7 @@ const ListaPresenca = () => {
     await DocxElementRemover.removeElements(
       Models.DIA_TODO,
       schema,
+      "output.docx",
       data.tipo_lista === "lista-dia-todo"
         ? {
             removeTableCount: countRemovedPages,

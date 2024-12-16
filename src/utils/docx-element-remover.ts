@@ -16,6 +16,7 @@ class DocxElementRemover {
   static async removeElements(
     model: Models,
     data: Record<string, string>,
+    outputName: string,
     options: {
       removeTableCount?: number;
       removeParagraphCount?: number;
@@ -124,7 +125,7 @@ class DocxElementRemover {
           mimeType:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         }); //Output the document using Data-URI
-        saveAs(out, "output.docx");
+        saveAs(out, outputName);
         return zip.generate({ type: "base64" });
         // Write the modified DOCX file
         // const modifiedBuffer = zip.generate({ type: "nodebuffer" });
