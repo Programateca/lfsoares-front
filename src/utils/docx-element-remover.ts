@@ -6,6 +6,7 @@ import Docxtemplater from "docxtemplater";
 
 import { saveAs } from "file-saver";
 import expressionParser from "docxtemplater/expressions";
+import { Models } from "@/@types/Models";
 
 function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
@@ -13,7 +14,7 @@ function loadFile(url: string, callback: any) {
 
 class DocxElementRemover {
   static async removeElements(
-    inputPath: string,
+    model: Models,
     data: Record<string, string>,
     options: {
       removeTableCount?: number;
@@ -22,14 +23,11 @@ class DocxElementRemover {
       removeSpecificTables?: number[];
       removeSpecificParagraphs?: number[];
       removeSpecificTableRows?: number[];
-      filterTablesByContent?: (tableContent: string) => boolean;
-      filterParagraphsByContent?: (paragraphContent: string) => boolean;
-      filterTableRowsByContent?: (rowContent: string) => boolean;
     } = {}
   ) {
     try {
       // Read the DOCX file
-      loadFile(inputPath, (error: Error, content: any) => {
+      loadFile(model, (error: Error, content: any) => {
         if (error) {
           throw error;
         }
@@ -106,23 +104,6 @@ class DocxElementRemover {
             });
         }
 
-        // Filter table rows by content
-        if (options.filterTableRowsByContent) {
-          const tableRows = xmlDoc.getElementsByTagName("w:tr");
-          const tableRowsArray = Array.from(tableRows);
-
-          tableRowsArray.forEach((row) => {
-            // @ts-ignore TBM N SEI
-            const rowText = this.extractElementText(row);
-            // @ts-ignore SEILA
-            if (!options.filterTableRowsByContent(rowText)) {
-              if (row.parentNode) {
-                row.parentNode.removeChild(row);
-              }
-            }
-          });
-        }
-
         // Serialize the modified XML
         const serializer = new XMLSerializer();
         const modifiedXml = serializer.serializeToString(xmlDoc);
@@ -154,17 +135,6 @@ class DocxElementRemover {
       console.error("Error modifying document:", error);
       throw error;
     }
-  }
-
-  private static extractElementText(element: Element): string {
-    const textElements = element.getElementsByTagName("w:t");
-    let elementText = "";
-
-    for (let i = 0; i < textElements.length; i++) {
-      elementText += textElements[i].textContent || "";
-    }
-
-    return elementText.trim();
   }
 }
 

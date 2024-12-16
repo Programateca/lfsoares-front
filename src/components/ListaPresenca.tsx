@@ -52,6 +52,7 @@ import {
 } from "./ui/table";
 import toast from "react-hot-toast";
 import { DocxElementRemover } from "@/utils/docx-element-remover";
+import { Models } from "@/@types/Models";
 
 interface ListaDiaTodo {
   tipo_lista: string;
@@ -68,16 +69,6 @@ interface ListaDiaTodo {
   endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
   nome_empresa: string;
   cnpj: string; // XX.XXX.XXX/XX-XX
-  participante_1: string;
-  participante_2: string;
-  participante_3: string;
-  participante_4: string;
-  participante_5: string;
-  participante_6: string;
-  participante_7: string;
-  participante_8: string;
-  participante_9: string;
-  participante_10: string;
 }
 
 const ListaPresenca = () => {
@@ -116,7 +107,7 @@ const ListaPresenca = () => {
       return;
     }
 
-    const schema = {
+    const schema: { [key: string]: string } = {
       cidade: data.cidade,
       nome_empresa: eventoFiltrado?.empresa.name,
       nome_treinamento: eventoFiltrado?.treinamento.name,
@@ -131,16 +122,31 @@ const ListaPresenca = () => {
       cnpj: eventoFiltrado?.empresa.cnpj,
     };
 
+    participantes.forEach((participante, index) => {
+      schema[`participante_${index + 1}`] =
+        pessoas.find((pessoa) => pessoa.id === participante)?.name || "";
+    });
+
     await api.post("documentos", {
       modelType: data.tipo_lista,
       documentData: JSON.stringify(schema),
     });
 
+    const maxPages = 12; // Total inicial de páginas
+    const participantsPerPage = 5; // Participantes por página
+    const requiredPages = Math.ceil(participantes.length / participantsPerPage);
+    const countRemovedPages = maxPages - requiredPages;
+
     // Gera o certificado
     await DocxElementRemover.removeElements(
-      "templates/lista-dia-todo.docx",
+      Models.DIA_TODO,
       schema,
-      { removeTableCount: 1, removeParagraphCount: 2 }
+      data.tipo_lista === "lista-dia-todo"
+        ? {
+            removeTableCount: countRemovedPages,
+            removeParagraphCount: countRemovedPages * 2,
+          }
+        : { removeTableRowCount: countRemovedPages * 7 }
     );
 
     setIsModalOpen(false);
