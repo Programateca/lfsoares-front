@@ -28,6 +28,7 @@ class DocxElementRemover {
   ) {
     try {
       // Read the DOCX file
+      console.log("model", model);
       loadFile(model, (error: Error, content: any) => {
         if (error) {
           throw error;

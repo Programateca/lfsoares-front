@@ -69,6 +69,16 @@ interface ListaDiaTodo {
   endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
   nome_empresa: string;
   cnpj: string; // XX.XXX.XXX/XX-XX
+  participante_1: string;
+  participante_2: string;
+  participante_3: string;
+  participante_4: string;
+  participante_5: string;
+  participante_6: string;
+  participante_7: string;
+  participante_8: string;
+  participante_9: string;
+  participante_10: string;
 }
 
 const ListaPresenca = () => {
@@ -120,12 +130,17 @@ const ListaPresenca = () => {
       endereco: eventoFiltrado?.courseLocation,
       intervalo: data.intervalo || "N/A",
       cnpj: eventoFiltrado?.empresa.cnpj,
+      participante_1: "Rodrigo Teste",
+      participante_60: "Rodrigo Teste",
+      participante_59: "Rodrigo Teste",
+      p1: "Rodrigo Teste",
     };
 
-    participantes.forEach((participante, index) => {
-      schema[`participante_${index + 1}`] =
-        pessoas.find((pessoa) => pessoa.id === participante)?.name || "";
-    });
+    // participantes.forEach((participante, index) => {
+    //   schema[`participante_${index + 1}`] = pessoas.find(
+    //     (pessoa) => pessoa.id === participante
+    //   )?.name!;
+    // });
 
     await api.post("documentos", {
       modelType: data.tipo_lista,
