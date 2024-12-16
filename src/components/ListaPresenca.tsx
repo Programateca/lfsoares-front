@@ -130,18 +130,19 @@ const ListaPresenca = () => {
       endereco: eventoFiltrado?.courseLocation,
       intervalo: data.intervalo || "N/A",
       cnpj: eventoFiltrado?.empresa.cnpj,
-      participante_1: "Rodrigo Teste",
-      participante_60: "Rodrigo Teste",
-      participante_59: "Rodrigo Teste",
-      p1: "Rodrigo Teste",
     };
 
-    // participantes.forEach((participante, index) => {
-    //   schema[`participante_${index + 1}`] = pessoas.find(
-    //     (pessoa) => pessoa.id === participante
-    //   )?.name!;
-    // });
+    for (let i = 1; i < 60; i++) {
+      schema[`participante_${i + 1}`] = " ";
+    }
 
+    participantes.forEach((participante, index) => {
+      schema[`participante_${index + 1}`] = pessoas.find(
+        (pessoa) => pessoa.id === participante
+      )?.name!;
+    });
+
+    console.log(schema);
     await api.post("documentos", {
       modelType: data.tipo_lista,
       documentData: JSON.stringify(schema),
@@ -160,7 +161,7 @@ const ListaPresenca = () => {
       data.tipo_lista === "lista-dia-todo"
         ? {
             removeTableCount: countRemovedPages,
-            removeParagraphCount: countRemovedPages * 2,
+            removeParagraphCount: countRemovedPages,
           }
         : { removeTableRowCount: countRemovedPages * 7 }
     );
