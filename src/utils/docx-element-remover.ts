@@ -8,6 +8,7 @@ import { saveAs } from "file-saver";
 import expressionParser from "docxtemplater/expressions";
 import { Models } from "@/@types/Models";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
@@ -28,7 +29,7 @@ class DocxElementRemover {
   ) {
     try {
       // Read the DOCX file
-      loadFile(model, (error: Error, content: any) => {
+      loadFile(model, (error: Error, content: ArrayBuffer) => {
         if (error) {
           throw error;
         }
@@ -59,7 +60,6 @@ class DocxElementRemover {
         if (options.removeParagraphCount) {
           const paragraphs = xmlDoc.getElementsByTagName("w:p");
           const paragraphsArray = Array.from(paragraphs);
-          console.log(paragraphsArray.length);
           const paragraphsToRemove = paragraphsArray.slice(
             -options.removeParagraphCount * 2 - 1
           );
@@ -73,6 +73,7 @@ class DocxElementRemover {
 
         // Remove last N table rows
         if (options.removeTableRowCount) {
+          
           const tableRows = xmlDoc.getElementsByTagName("w:tr");
           const tableRowsArray = Array.from(tableRows);
           const rowsToRemove = tableRowsArray.slice(
@@ -84,6 +85,18 @@ class DocxElementRemover {
               row.parentNode.removeChild(row);
             }
           });
+
+          // const tc = xmlDoc.getElementsByTagName("w:tc");
+          // const tcArray = Array.from(tc);
+          // const tcToRemove = tcArray.slice(
+          //   -2
+          // );
+
+          // tcToRemove.forEach((row) => {
+          //   if (row.parentNode) {
+          //     row.parentNode.removeChild(row);
+          //   }
+          // });
         }
 
         // Serialize the modified XML
@@ -92,6 +105,9 @@ class DocxElementRemover {
 
         // Update the ZIP file
         zip.file("word/document.xml", modifiedXml);
+
+        // const blob = new Blob([modifiedXml], { type: "application/xml" });
+        // saveAs(blob, 'outputName.xml');
 
         const doc = new Docxtemplater(zip, {
           delimiters: { start: "[", end: "]" },
@@ -106,7 +122,7 @@ class DocxElementRemover {
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         }); //Output the document using Data-URI
         saveAs(out, outputName);
-        return zip.generate({ type: "base64" });
+        // return zip.generate({ type: "base64" });
         // Write the modified DOCX file
         // const modifiedBuffer = zip.generate({ type: "nodebuffer" });
         // fs.writeFileSync(outputPath, modifiedBuffer);
