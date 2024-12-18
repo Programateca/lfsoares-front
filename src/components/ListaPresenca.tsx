@@ -69,16 +69,6 @@ interface ListaDiaTodo {
   endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
   nome_empresa: string;
   cnpj: string; // XX.XXX.XXX/XX-XX
-  participante_1: string;
-  participante_2: string;
-  participante_3: string;
-  participante_4: string;
-  participante_5: string;
-  participante_6: string;
-  participante_7: string;
-  participante_8: string;
-  participante_9: string;
-  participante_10: string;
 }
 
 const ListaPresenca = () => {
@@ -87,7 +77,7 @@ const ListaPresenca = () => {
   const [participantes, setParticipantes] = useState<string[]>([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
-  const [documentos, setDocumentos] = useState<any[]>([]);
+  const [documentos, setDocumentos] = useState<Record<string, string>[]>([]);
 
   const form = useForm<ListaDiaTodo>();
 
@@ -137,9 +127,9 @@ const ListaPresenca = () => {
     }
 
     participantes.forEach((participante, index) => {
-      schema[`participante_${index + 1}`] = pessoas.find(
-        (pessoa) => pessoa.id === participante
-      )?.name!;
+      const foundPessoa = pessoas.find((pessoa) => pessoa.id === participante);
+      if (!foundPessoa) throw new Error("Pessoa não encontrada");
+      schema[`participante_${index + 1}`] = foundPessoa.name;
     });
 
     console.log(schema);
@@ -155,7 +145,9 @@ const ListaPresenca = () => {
 
     // Gera o certificado
     await DocxElementRemover.removeElements(
-      Models.DIA_TODO,
+      data.tipo_lista === "lista-dia-todo"
+        ? Models.DIA_TODO
+        : Models.MEIO_PERIODO,
       schema,
       "output.docx",
       data.tipo_lista === "lista-dia-todo"
@@ -163,7 +155,10 @@ const ListaPresenca = () => {
             removeTableCount: countRemovedPages,
             removeParagraphCount: countRemovedPages,
           }
-        : { removeTableRowCount: countRemovedPages * 7 }
+        : {
+            removeTableRowCount: countRemovedPages * 7,
+            removeParagraphCount: 2,
+          }
     );
 
     setIsModalOpen(false);
@@ -204,7 +199,7 @@ const ListaPresenca = () => {
   const handleDownload = async (documentoId: string) => {
     const response = await api.get(`documentos`);
     const documentoFiltrado = response.data.data.find(
-      (documento: any) => documento.id === documentoId
+      (documento: Record<string, string>) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
     gerarLista(data);
