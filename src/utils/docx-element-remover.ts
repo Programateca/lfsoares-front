@@ -24,8 +24,7 @@ class DocxElementRemover {
       const zip = new PizZip(content);
 
       // Extract the document.xml
-      // @ts-ignore SEILA
-      const documentXml = zip.file("word/document.xml").asText();
+      const documentXml = zip.file("word/document.xml")!.asText();
 
       // Parse the XML
       const parser = new DOMParser();
@@ -99,10 +98,8 @@ class DocxElementRemover {
         const tableRowsArray = Array.from(tableRows);
 
         tableRowsArray.forEach((row) => {
-          // @ts-ignore TBM N SEI
           const rowText = this.extractElementText(row);
-          // @ts-ignore SEILA
-          if (!options.filterTableRowsByContent(rowText)) {
+          if (!options.filterTableRowsByContent!(rowText)) {
             if (row.parentNode) {
               row.parentNode.removeChild(row);
             }
@@ -133,7 +130,7 @@ class DocxElementRemover {
    * @param element XML element to extract text from
    * @returns Extracted text content
    */
-  private static extractElementText(element: Element): string {
+  private static extractElementText(element: import("@xmldom/xmldom").Element): string {
     const textElements = element.getElementsByTagName("w:t");
     let elementText = "";
 
