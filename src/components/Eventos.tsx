@@ -48,7 +48,6 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-import { Status } from "@/@types/Status";
 import { Empresa } from "@/@types/Empresa";
 import { Instrutor } from "@/@types/Instrutor";
 import { Treinamento } from "@/@types/Treinamento";
@@ -270,7 +269,9 @@ const Eventos = () => {
           updatedAt: evento.treinamento.updatedAt,
         },
         instrutor: {
-          status: evento.instrutor.status,
+          status: {
+            name: evento.instrutor.name,
+          },
           id: evento.instrutor.id,
           name: evento.instrutor.name,
           createdAt: evento.instrutor.createdAt,
@@ -520,13 +521,37 @@ const Eventos = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseTime">Horário</Label>
-                      <Input
-                        id="courseTime"
-                        name="courseTime"
-                        value={newEvento.courseTime}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="time"
+                          placeholder="Início"
+                          onChange={(e) => {
+                            const startTime = e.target.value;
+                            const endTime =
+                              newEvento.courseTime.split(" ÀS ")[1] || "";
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                        />
+                        <span>ÀS</span>
+                        <Input
+                          type="time"
+                          placeholder="Fim"
+                          onChange={(e) => {
+                            const startTime =
+                              newEvento.courseTime.split(" ÀS ")[0] || "";
+                            const endTime = e.target.value;
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="completionDate">Data de conclusão</Label>

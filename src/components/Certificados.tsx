@@ -55,6 +55,7 @@ const defaultValues = {
   realizacao_data_e_hora: "",
   carga_hora: "",
   codigo_certificado: "",
+  local_emissao: "",
   // Verso
   nome_instrutor: "",
   matricula_instrutor: "",
@@ -153,12 +154,21 @@ const Certificados = () => {
     if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
     if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
 
-    const dataAndTimeRealizada =
-      newCertificado.realizacao_data_e_hora.split("T");
-    const dataRealizada = dataAndTimeRealizada[0].split("-"); // [YYYY,MM,DD]
-    const timeRealizada = dataAndTimeRealizada[1].split(":"); // [HH,MM]
+    const dataRealizada1 = selectedEvento.courseDate.split("T")[0].split("-"); // [YYYY,MM,DD]
+    const dataRealizada2 = selectedEvento.completionDate.split("T")[0].split("-"); // [HH,MM]
+    console.log(dataRealizada1.length)
+    let dataRealizada = "";
+    if(dataRealizada2.length < 2) {
+      dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
+    } else {
+      dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
 
-    const dataEmissao = new Date().toISOString().split("T")[0]; // [YYYY,MM,DD]
+    }
+
+    const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
+    const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
+
+    const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
 
     const schema = {
       // Dois lados
@@ -168,13 +178,13 @@ const Certificados = () => {
       nome_treinamento: selectedEvento.treinamento.name,
       empresa: selectedEmpresa.name,
       cnpj: selectedEmpresa.cnpj,
-      r_dia: dataRealizada[2], // Dia de Realização
-      r_mes: dataRealizada[1], // Mes de Realização
-      r_hora: timeRealizada[0], // Hora de Realização
-      r_minutos: timeRealizada[1], // Minutos de Realização
+      data_realizada: dataRealizada,
+      r_hora_1: timeRealizada1, // Hora de Realização
+      r_horas_2: timeRealizada2, // Minutos de Realização
       e_dia: dataEmissao[2], // Dia de Emissão
       e_mes: dataEmissao[1], // Mes de Emissão
       codigo: newCertificado.codigo_certificado,
+      local_emissao: newCertificado.local_emissao,
       // Verso
       nome_instrutor: selectedInstrutor.name,
       matricula_instrutor: selectedInstrutor.matricula ?? "",
@@ -187,15 +197,19 @@ const Certificados = () => {
       local_treinamento: selectedEvento.courseLocation,
       contratante: selectedEmpresa.name,
     };
-
     for (let pessoa of newCertificado.participantes) {
       const nome_participante = participantes.find(
         (p) => p.id === pessoa.id
       )?.name;
+      console.log(nome_participante)
       const cpf = participantes.find((p) => p.id === pessoa.id)?.cpf;
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
-      if (!cpf) throw new AppError("CPF invalido", 404);
+      // se nao tiver cpf, passar vazio
+      // if (!cpf) {
+      //   gerarCertificado({ ...schema, nome_participante }, imageMap);
+      //   continue;
+      // }
 
       gerarCertificado({ ...schema, nome_participante, cpf }, imageMap);
     }
@@ -351,7 +365,7 @@ const Certificados = () => {
                       }
                     />
                   </div>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <Label htmlFor="realizacao_data_e_hora">
                       Data e Hora de Realização
                     </Label>
@@ -363,7 +377,7 @@ const Certificados = () => {
                       onChange={handleInputChange}
                       required
                     />
-                  </div>
+                  </div> */}
                   <div className="space-y-2">
                     <Label htmlFor="portaria_treinamento">
                       Portaria do Treinamento
@@ -439,17 +453,17 @@ const Certificados = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="local_treinamento">Local de Emissão</Label>
+                    <Label htmlFor="local_emissao">Local de Emissão</Label>
                     <Input
-                      id="local_treinamento"
-                      name="local_treinamento"
+                      id="local_emissao"
+                      name="local_emissao"
                       placeholder="Ex: TRÊS LAGOAS/ MS"
-                      value={newCertificado?.local_treinamento}
+                      value={newCertificado?.local_emissao}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  <div className="flex flex-col space-y-3 justify-end">
+                  <div className="flex flex-col space-y-3 justify-end col-span-2">
                     <Label htmlFor="local_treinamento">Participantes</Label>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -549,15 +563,15 @@ const Certificados = () => {
                       className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                     >
                       <BookUp2 className="" />
-                      Baixar zip
+                      Baixar certificados
                     </Button>
-                    <Button
+                    {/* <Button
                       variant={"outline"}
                       className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                     >
                       <List className="" />
                       Listagem
-                    </Button>
+                    </Button> */}
                   </TableCell>
                 </TableRow>
               ))

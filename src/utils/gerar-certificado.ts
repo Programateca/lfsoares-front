@@ -24,14 +24,13 @@ function replaceImage(zip: any, imageMap: Record<string, string>) {
 }
 
 export function gerarCertificado(data: any, imageMap: any) {
-  loadFile("/templates/certificado-frente-verso.pptx", (error: any, content: any) => {
+  loadFile("/templates/frente-verso-2a.pptx", (error: any, content: any) => {
     if (error) {
       throw error;
     }
 
     const zip = new PizZip(content);
 
-    // Replace images in the zip
     replaceImage(zip, imageMap);
 
     const doc = new Docxtemplater(zip, {
