@@ -209,9 +209,6 @@ export default function HomePage() {
               {selectedOption}
             </h1>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" className="px-4">
-                <Radar className="h-5 w-5 text-gray-600" />
-              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -230,7 +227,7 @@ export default function HomePage() {
                 <div className="text-start text-white">
                   <h1 className="text-4xl font-bold">Olá, {user?.name} 👋</h1>
                   <p className="mt-2 text-xl">
-                    Bem-vindo ao Sistema de Geração de Documentos de Treinamento
+                    Bem-vindo ao Sistema de Layout de Treinamentos e Serviços
                   </p>
                 </div>
               </CardContent>
