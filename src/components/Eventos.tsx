@@ -352,52 +352,6 @@ const Eventos = () => {
                 <div className="grid grid-cols-2 gap-4 ">
                   <div className="space-y-3">
                     <div className="space-y-2">
-                      <Label htmlFor="instrutor">Instrutor</Label>
-                      <Select
-                        onValueChange={(value) => {
-                          setNewEvento((prev) => ({
-                            ...prev,
-                            instrutor: {
-                              ...prev.instrutor,
-                              id: value,
-                            },
-                          }));
-                        }}
-                        value={newEvento.instrutor.id}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione um instrutor" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Instrutor:</SelectLabel>
-                            {instrutores.map((instrutor) => {
-                              return (
-                                <SelectItem
-                                  key={instrutor.id}
-                                  value={instrutor.id}
-                                >
-                                  {instrutor.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="responsavelTecnico">
-                        Responsável técnico
-                      </Label>
-                      <Input
-                        id="responsavelTecnico"
-                        name="responsavelTecnico"
-                        value={newEvento.responsavelTecnico}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
-                    </div>
-                    <div className="space-y-2">
                       <Label htmlFor="empresa">Contratante</Label>
                       <Select
                         onValueChange={(value) => {
@@ -462,23 +416,9 @@ const Eventos = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="tipoDeTreinamento">
-                        Tipo de treinamento
-                      </Label>
-                      <Input
-                        id="tipoDeTreinamento"
-                        name="tipoDeTreinamento"
-                        value={newEvento.treinamento.courseType}
-                        required={eventoInEditMode ? false : true}
-                        disabled
-                      />
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseLocation">
-                        Local de treinamento
+                        Local de treinamento 1
                       </Label>
                       <Input
                         id="courseLocation"
@@ -489,25 +429,21 @@ const Eventos = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseHours">Carga Horária</Label>
+                      <Label htmlFor="courseLocation">
+                        Local de treinamento 2
+                      </Label>
                       <Input
-                        id="courseHours"
-                        name="courseHours"
-                        value={newEvento.treinamento.courseHours}
+                        className="border-dashed text-center"
+                        id="courseLocation"
+                        name="courseLocation"
+                        placeholder="Clique para adicionar"
+                        value={newEvento.courseLocation}
+                        onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
-                        disabled
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseModality">Modalidade</Label>
-                      <Input
-                        id="courseModality"
-                        name="courseModality"
-                        value={newEvento.treinamento.courseModality}
-                        required={eventoInEditMode ? false : true}
-                        disabled
-                      />
-                    </div>
+                  </div>
+                  <div className="space-y-3">
                     <div className="space-y-2">
                       <Label htmlFor="courseDate">Data</Label>
                       <Input
@@ -515,6 +451,17 @@ const Eventos = () => {
                         name="courseDate"
                         type="date"
                         value={newEvento.courseDate}
+                        onChange={handleInputChange}
+                        required={eventoInEditMode ? false : true}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="completionDate">Data de conclusão</Label>
+                      <Input
+                        id="completionDate"
+                        name="completionDate"
+                        type="date"
+                        value={newEvento.completionDate}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
@@ -554,15 +501,38 @@ const Eventos = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="completionDate">Data de conclusão</Label>
-                      <Input
-                        id="completionDate"
-                        name="completionDate"
-                        type="date"
-                        value={newEvento.completionDate}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
+                      <Label htmlFor="courseTime">Intervalo</Label>
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="time"
+                          placeholder="Início"
+                          onChange={(e) => {
+                            const startTime = e.target.value;
+                            const endTime =
+                              newEvento.courseTime.split(" ÀS ")[1] || "";
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                        />
+                        <span>ÀS</span>
+                        <Input
+                          type="time"
+                          placeholder="Fim"
+                          onChange={(e) => {
+                            const startTime =
+                              newEvento.courseTime.split(" ÀS ")[0] || "";
+                            const endTime = e.target.value;
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

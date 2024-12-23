@@ -264,6 +264,16 @@ const Treinamentos = () => {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="courseModality">Modulo</Label>
+                  <Input
+                    id="courseModality"
+                    name="courseModality"
+                    value={newTreinamento.courseModality}
+                    onChange={handleInputChange}
+                    required={treinamentoInEditMode ? false : true}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="courseType">Tipo</Label>
                   <Input
                     id="courseType"
@@ -294,12 +304,12 @@ const Treinamentos = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Conteúdo</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={newTreinamento.description}
-                    onChange={handleTextareaChange}
+                  <Label htmlFor="portariaTreinamento">Portaria do treinamento</Label>
+                  <Input
+                    id="portariaTreinamento"
+                    name="portariaTreinamento"
+                    value=""
+                    onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>

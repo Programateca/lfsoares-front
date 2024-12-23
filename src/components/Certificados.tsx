@@ -155,14 +155,15 @@ const Certificados = () => {
     if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
 
     const dataRealizada1 = selectedEvento.courseDate.split("T")[0].split("-"); // [YYYY,MM,DD]
-    const dataRealizada2 = selectedEvento.completionDate.split("T")[0].split("-"); // [HH,MM]
-    console.log(dataRealizada1.length)
+    const dataRealizada2 = selectedEvento.completionDate
+      .split("T")[0]
+      .split("-"); // [HH,MM]
+    console.log(dataRealizada1.length);
     let dataRealizada = "";
-    if(dataRealizada2.length < 2) {
+    if (dataRealizada2.length < 2) {
       dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
     } else {
       dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
-
     }
 
     const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
@@ -201,7 +202,7 @@ const Certificados = () => {
       const nome_participante = participantes.find(
         (p) => p.id === pessoa.id
       )?.name;
-      console.log(nome_participante)
+      console.log(nome_participante);
       const cpf = participantes.find((p) => p.id === pessoa.id)?.cpf;
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
@@ -269,8 +270,8 @@ const Certificados = () => {
                     <SelectMap
                       input_name="tipo_certificado"
                       itens={tiposCertificados}
-                      label="Tipo de Certificado"
-                      placeholder="Selecione o tipo de certificado"
+                      label="Para gerar o's certificado's, selecione um dos identificadores de participantes abaixo:"
+                      placeholder="Selecione um documento"
                       onChange={(value) =>
                         setNewCertificado((prev) => ({
                           ...prev,
@@ -278,6 +279,9 @@ const Certificados = () => {
                         }))
                       }
                     />
+                    <p className="text-sm text-gray-500">
+                      O certificado gerado sera o modelo de{" "}
+                    </p>
                   </div>
                   <div className="col-span-3 flex justify-between gap-4">
                     <div className="space-y-2 col-span-3">
@@ -298,9 +302,8 @@ const Certificados = () => {
                             reader.onload = () => {
                               setImageMap((prev) => ({
                                 ...prev,
-                                ['image1.jpeg']: reader.result as ArrayBuffer,
+                                ["image1.jpeg"]: reader.result as ArrayBuffer,
                               }));
-
                             };
                             reader.readAsArrayBuffer(file);
                           }
@@ -326,9 +329,8 @@ const Certificados = () => {
                             reader.onload = () => {
                               setImageMap((prev) => ({
                                 ...prev,
-                                ['image2.jpeg']: reader.result as ArrayBuffer,
+                                ["image2.jpeg"]: reader.result as ArrayBuffer,
                               }));
-
                             };
                             reader.readAsArrayBuffer(file);
                           }
@@ -336,160 +338,6 @@ const Certificados = () => {
                         className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2 col-span-2">
-                    <SelectMap
-                      input_name="evento"
-                      itens={eventos ?? []}
-                      label="Evento"
-                      placeholder="Selecione o Evento"
-                      onChange={(value) =>
-                        setNewCertificado((prev) => ({
-                          ...prev,
-                          evento: { id: value },
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <SelectMap
-                      input_name="empresa"
-                      itens={empresas ?? []}
-                      label="Empresa"
-                      placeholder="Selecione a Empresa"
-                      onChange={(value) =>
-                        setNewCertificado((prev) => ({
-                          ...prev,
-                          empresa: { id: value },
-                        }))
-                      }
-                    />
-                  </div>
-                  {/* <div className="space-y-2">
-                    <Label htmlFor="realizacao_data_e_hora">
-                      Data e Hora de Realização
-                    </Label>
-                    <Input
-                      id="realizacao_data_e_hora"
-                      name="realizacao_data_e_hora"
-                      type="datetime-local"
-                      value={newCertificado?.realizacao_data_e_hora}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div> */}
-                  <div className="space-y-2">
-                    <Label htmlFor="portaria_treinamento">
-                      Portaria do Treinamento
-                    </Label>
-                    <Input
-                      id="portaria_treinamento"
-                      name="portaria_treinamento"
-                      value={newCertificado?.portaria_treinamento}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="nome_responsavel_tecnico">
-                      Nome do Responsável Técnico
-                    </Label>
-                    <Input
-                      id="nome_responsavel_tecnico"
-                      name="nome_responsavel_tecnico"
-                      value={newCertificado?.nome_responsavel_tecnico}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="formacao_responsavel_tecnico">
-                      Formação do Responsável Técnico
-                    </Label>
-                    <Input
-                      id="formacao_responsavel_tecnico"
-                      name="formacao_responsavel_tecnico"
-                      value={newCertificado?.formacao_responsavel_tecnico}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="crea_responsavel_tecnico">
-                      Crea do Responsável Técnico
-                    </Label>
-                    <Input
-                      id="crea_responsavel_tecnico"
-                      name="crea_responsavel_tecnico"
-                      value={newCertificado?.crea_responsavel_tecnico}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="codigo_certificado">
-                      Codigo do Certificado
-                    </Label>
-                    <Input
-                      id="codigo_certificado"
-                      name="codigo_certificado"
-                      value={newCertificado?.codigo_certificado}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <SelectMap
-                      onChange={(value) =>
-                        setNewCertificado((prev) => ({
-                          ...prev,
-                          instrutor: { id: value },
-                        }))
-                      }
-                      label="Instrutores"
-                      input_name="instrutor"
-                      itens={instrutores}
-                      placeholder="Selecione os Instrutores"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="local_emissao">Local de Emissão</Label>
-                    <Input
-                      id="local_emissao"
-                      name="local_emissao"
-                      placeholder="Ex: TRÊS LAGOAS/ MS"
-                      value={newCertificado?.local_emissao}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-3 justify-end col-span-2">
-                    <Label htmlFor="local_treinamento">Participantes</Label>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="justify-start font-normal"
-                        >
-                          Selecione os Participantes
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56">
-                        {participantes.map((participante) => (
-                          <DropdownMenuCheckboxItem
-                            key={participante.id}
-                            checked={newCertificado.participantes.some(
-                              (p) => p.id === participante.id
-                            )}
-                            onCheckedChange={(isChecked) =>
-                              handleParticipante(isChecked, participante)
-                            }
-                          >
-                            {participante.name}
-                          </DropdownMenuCheckboxItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </div>
                 <div className="flex justify-end space-x-2 mt-5">
