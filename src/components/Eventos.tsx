@@ -49,7 +49,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import { Empresa } from "@/@types/Empresa";
-import { Instrutor } from "@/@types/Instrutor";
+// import { Instrutor } from "@/@types/Instrutor";
 import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 
@@ -106,7 +106,7 @@ const Eventos = () => {
   });
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  // const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
   const fetchEventos = async () => {
@@ -121,10 +121,10 @@ const Eventos = () => {
       setLoading(true);
       await fetchEventos();
       const empresaResp = await api.get("empresas");
-      const instrutorResp = await api.get("instrutores");
+      // const instrutorResp = await api.get("instrutores");
       const treinamentoResp = await api.get("treinamentos");
       setEmpresas(empresaResp.data.data);
-      setInstrutores(instrutorResp.data.data);
+      // setInstrutores(instrutorResp.data.data);
       setTreinamentos(treinamentoResp.data.data);
       setLoading(false);
     };
@@ -344,7 +344,7 @@ const Eventos = () => {
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Eventos
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[555px]">
+            <DialogContent className="sm:max-w-[600px] lg:max-w-[650px]">
               <DialogHeader>
                 <DialogTitle>Adicionar nova evento</DialogTitle>
               </DialogHeader>
@@ -468,7 +468,7 @@ const Eventos = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseTime">Horário</Label>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
                           type="time"
                           placeholder="Início"
@@ -502,7 +502,7 @@ const Eventos = () => {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseTime">Intervalo</Label>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
                           type="time"
                           placeholder="Início"

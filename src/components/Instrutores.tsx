@@ -18,7 +18,6 @@ import {
 
 import { Button } from "./ui/button";
 import {
-  Search,
   Plus,
   Edit,
   CircleX,
@@ -174,11 +173,11 @@ const Instrutores = () => {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle className="text-gray-800">Lista de Instrutores</CardTitle>
+        <CardTitle className="text-gray-800">Lista de Integrantes</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <Input
               placeholder="Buscar instrutor..."
               className="w-64 focus-visible:ring-gray-400"
@@ -190,7 +189,7 @@ const Instrutores = () => {
             >
               <Search className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
           <Dialog
             open={isModalOpen}
             onOpenChange={(isOpen) => {
@@ -208,12 +207,12 @@ const Instrutores = () => {
           >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
-                <Plus className="mr-2 h-4 w-4" /> Adicionar Instrutor
+                <Plus className="mr-2 h-4 w-4" /> Adicionar Integrantes
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar Novo Instrutor</DialogTitle>
+                <DialogTitle>Adicionar Novo Integrantes</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -227,7 +226,9 @@ const Instrutores = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="qualificacaoProfissional">Qualificação profissional</Label>
+                  <Label htmlFor="qualificacaoProfissional">
+                    Qualificação profissional
+                  </Label>
                   <Input
                     id="qualificacaoProfissional"
                     name="qualificacaoProfissional"
@@ -237,7 +238,9 @@ const Instrutores = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="registroProfissional">Registro profissional</Label>
+                  <Label htmlFor="registroProfissional">
+                    Registro profissional
+                  </Label>
                   <Input
                     id="registroProfissional"
                     name="registroProfissional"

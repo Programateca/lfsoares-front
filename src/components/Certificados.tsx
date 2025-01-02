@@ -4,8 +4,7 @@ import { api } from "@/lib/axios";
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Input } from "./ui/input";
-import { BookUp2, CircleX, List, Loader2, Plus } from "lucide-react";
+import { BookUp2, CircleX, Loader2, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Label } from "./ui/label";
 import {
   Table,
   TableBody,
@@ -22,23 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  // DropdownMenuLabel,
-  // DropdownMenuRadioGroup,
-  // DropdownMenuRadioItem,
-  // DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
 import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
-// import { Checkbox } from "./ui/checkbox";
 import { gerarCertificado } from "@/utils/gerar-certificado";
 
 const defaultValues = {
@@ -128,10 +116,10 @@ const Certificados = () => {
     inicializarFetch();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewCertificado((prev) => ({ ...prev, [name]: value }));
-  };
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setNewCertificado((prev) => ({ ...prev, [name]: value }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,24 +204,24 @@ const Certificados = () => {
     }
   };
 
-  const handleParticipante = (
-    isChecked: boolean | string,
-    participante: Pessoa
-  ) => {
-    if (isChecked) {
-      setNewCertificado((prev) => ({
-        ...prev,
-        participantes: [...prev.participantes, { id: participante.id }],
-      }));
-    } else {
-      setNewCertificado((prev) => ({
-        ...prev,
-        participantes: prev.participantes.filter(
-          (p) => p.id !== participante.id
-        ),
-      }));
-    }
-  };
+  // const handleParticipante = (
+  //   isChecked: boolean | string,
+  //   participante: Pessoa
+  // ) => {
+  //   if (isChecked) {
+  //     setNewCertificado((prev) => ({
+  //       ...prev,
+  //       participantes: [...prev.participantes, { id: participante.id }],
+  //     }));
+  //   } else {
+  //     setNewCertificado((prev) => ({
+  //       ...prev,
+  //       participantes: prev.participantes.filter(
+  //         (p) => p.id !== participante.id
+  //       ),
+  //     }));
+  //   }
+  // };
 
   const resetForm = () => {
     setNewCertificado({

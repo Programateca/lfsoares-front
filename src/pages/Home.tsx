@@ -16,7 +16,6 @@ import {
   ChevronUp,
   BookOpen,
   Ticket,
-  Radar,
 } from "lucide-react";
 import logo from "@/assets/logo.svg";
 import Usuarios from "@/components/Usuarios";
@@ -29,6 +28,7 @@ import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
 import Certificados from "@/components/Certificados";
 import ListaPresenca from "@/components/ListaPresenca";
+import { Identificadores } from "@/components/Identificadores";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -39,6 +39,7 @@ const componentsMap = {
   Empresas,
   Certificados,
   Lista: ListaPresenca,
+  Identificadores: Identificadores,
 } as const;
 
 type ComponentKeys = keyof typeof componentsMap;
@@ -135,7 +136,7 @@ export default function HomePage() {
                       onClick={() => handleSelectedOption("Instrutores")}
                     >
                       <IdCard className="mr-2 h-4 w-4" />
-                      Instrutores
+                      Integrantes
                     </Button>
                     <Button
                       variant="ghost"
@@ -177,6 +178,19 @@ export default function HomePage() {
                 </Button>
                 {isLayoutOpen && (
                   <div className="ml-4 mt-2 space-y-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`w-full justify-start ${
+                        selectedOption === "Identificadores"
+                          ? "bg-gray-100"
+                          : ""
+                      }`}
+                      onClick={() => handleSelectedOption("Identificadores")}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Identificadores
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

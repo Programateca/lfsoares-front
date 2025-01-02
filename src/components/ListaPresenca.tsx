@@ -33,14 +33,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 import { Pessoa } from "@/@types/Pessoa";
-import { Label } from "./ui/label";
 import { gerarLista } from "@/utils/gerar-lista";
 import {
   Table,
@@ -171,18 +164,18 @@ const ListaPresenca = () => {
     }
   };
 
-  const handleParticipante = (
-    isChecked: boolean | string,
-    participante: Pessoa
-  ) => {
-    if (isChecked) {
-      setParticipantes((prev) => [...prev, participante.id]);
-    } else {
-      setParticipantes((prev) =>
-        prev.filter((participanteId) => participanteId !== participante.id)
-      );
-    }
-  };
+  // const handleParticipante = (
+  //   isChecked: boolean | string,
+  //   participante: Pessoa
+  // ) => {
+  //   if (isChecked) {
+  //     setParticipantes((prev) => [...prev, participante.id]);
+  //   } else {
+  //     setParticipantes((prev) =>
+  //       prev.filter((participanteId) => participanteId !== participante.id)
+  //     );
+  //   }
+  // };
 
   const handleDownload = async (documentoId: string) => {
     const response = await api.get(`documentos`);
@@ -259,149 +252,20 @@ const ListaPresenca = () => {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
-                      name="evento"
+                      name="cidade"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Evento</FormLabel>
+                          <FormLabel>Cidade</FormLabel>
                           <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione o evento" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {eventos.map((evento) => (
-                                  <SelectItem key={evento.id} value={evento.id}>
-                                    {evento.treinamento.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <Input placeholder="Cidade" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="modulo"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Módulo</FormLabel>
-                            <FormControl>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione o módulo" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="TEÓRICO">
-                                    Teórico
-                                  </SelectItem>
-                                  <SelectItem value="PRÁTICO">
-                                    Prático
-                                  </SelectItem>
-                                  <SelectItem value="TEÓRICO E PRÁTICO">
-                                    Teórico e Prático
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="cidade"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Cidade</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Cidade" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="flex flex-col space-y-3 justify-end w-full">
-                        <Label htmlFor="local_treinamento">Participantes</Label>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="justify-start font-normal"
-                            >
-                              Selecione os Participantes
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="w-[22rem]">
-                            {pessoas.map((pessoa) => (
-                              <DropdownMenuCheckboxItem
-                                key={pessoa.id}
-                                checked={participantes.includes(pessoa.id)}
-                                onCheckedChange={(isChecked) =>
-                                  handleParticipante(isChecked, pessoa)
-                                }
-                              >
-                                {pessoa.name}
-                              </DropdownMenuCheckboxItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="intervalo"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Intervalo</FormLabel>
-                            <FormControl>
-                              <div className="flex items-center space-x-2">
-                                <Input
-                                  type="time"
-                                  placeholder="Início"
-                                  onChange={(e) => {
-                                    const startTime = e.target.value;
-                                    const endTime =
-                                      field.value?.split(" ÀS ")[1] || "";
-                                    field.onChange(
-                                      `${startTime} ÀS ${endTime}`
-                                    );
-                                  }}
-                                  value={field.value?.split(" ÀS ")[0] || ""}
-                                />
-                                <span>ÀS</span>
-                                <Input
-                                  type="time"
-                                  placeholder="Fim"
-                                  onChange={(e) => {
-                                    const startTime =
-                                      field.value?.split(" ÀS ")[0] || "";
-                                    const endTime = e.target.value;
-                                    field.onChange(
-                                      `${startTime} ÀS ${endTime}`
-                                    );
-                                  }}
-                                  value={field.value?.split(" ÀS ")[1] || ""}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
                   </div>
                   <div className="flex justify-end space-x-4">
                     <Button
