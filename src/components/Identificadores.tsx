@@ -55,7 +55,7 @@ export const Identificadores = () => {
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
       const instrutoresResp = await api.get("instrutores");
-
+      console.log(response);
       setParticipantes(pessoasResp.data.data);
       setIdentificadoresGerados(response.data.data);
       setInstrutores(instrutoresResp.data.data);
@@ -431,7 +431,7 @@ export const Identificadores = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {!loading ? (
+              {loading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center">
                     <div className="flex items-center justify-center space-x-2">

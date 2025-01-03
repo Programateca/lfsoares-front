@@ -10,7 +10,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import {
-  Search,
   Plus,
   Edit,
   CircleX,
@@ -316,19 +315,6 @@ const Eventos = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Buscar Eventos..."
-              className="w-64 focus-visible:ring-gray-400"
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="focus-visible:ring-transparent border-none"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
           <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {

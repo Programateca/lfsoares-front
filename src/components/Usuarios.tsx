@@ -28,7 +28,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import {
-  Search,
   Plus,
   Edit,
   Trash2Icon,
@@ -199,15 +198,6 @@ const Usuarios = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Buscar usuários..."
-              className="w-64 focus-visible:ring-gray-400"
-            />
-            <Button size="icon" variant="ghost">
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
           <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {
