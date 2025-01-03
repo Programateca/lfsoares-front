@@ -2,22 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-import {
-  ChevronDown,
-  Users,
-  Layout,
-  FileText,
-  ClipboardList,
-  LogOut,
-  IdCard,
-  Contact,
-  Building2,
-  MonitorCog,
-  ChevronUp,
-  BookOpen,
-  Ticket,
-} from "lucide-react";
-import logo from "@/assets/logo.svg";
+import { LogOut } from "lucide-react";
 import Usuarios from "@/components/Usuarios";
 import Treinamentos from "@/components/Treinamentos";
 import Instrutores from "@/components/Instrutores";
@@ -29,6 +14,7 @@ import Eventos from "@/components/Eventos";
 import Certificados from "@/components/Certificados";
 import ListaPresenca from "@/components/ListaPresenca";
 import { Identificadores } from "@/components/Identificadores";
+import { Navbar } from "@/components/Navbar";
 
 const componentsMap = {
   Usuários: Usuarios,
@@ -52,7 +38,7 @@ export default function HomePage() {
   const [isCadastroOpen, setIsCadastroOpen] = useState(false);
   const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 
-  const handleSelectedOption = (option: ComponentKeys) => {
+  const handleSelectedOption = (option: ComponentKeys | "") => {
     setSelectedOption(option);
   };
 
@@ -77,145 +63,14 @@ export default function HomePage() {
     <div className="min-h-screen h-full flex flex-col">
       <div className="flex flex-1 h-full">
         <div className="w-[17rem] fixed h-full overflow-y-auto border-r bg-background py-8 px-4 z-20">
-          <div className="flex flex-col h-full">
-            <div className="flex justify-center pb-5 border-b-2">
-              <img src={logo} alt="Logo da empresa" className="h-[3.5rem]" />
-            </div>
-            <div className="space-y-4 pt-5">
-              <div>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={toggleCadastro}
-                >
-                  <MonitorCog className="mr-2 h-4 w-4" />
-                  Cadastros
-                  {isCadastroOpen ? (
-                    <ChevronUp className="ml-auto h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="ml-auto h-4 w-4" />
-                  )}
-                </Button>
-                {isCadastroOpen && (
-                  <div className="ml-4 mt-2 space-y-2">
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Usuários" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Usuários")}
-                    >
-                      <Contact className="mr-2 h-4 w-4" />
-                      Usuários
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Eventos" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Eventos")}
-                    >
-                      <Ticket className="mr-2 h-4 w-4" />
-                      Eventos
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Treinamentos" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Treinamentos")}
-                    >
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Treinamentos
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Instrutores" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Instrutores")}
-                    >
-                      <IdCard className="mr-2 h-4 w-4" />
-                      Integrantes
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Empresas" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Empresas")}
-                    >
-                      <Building2 className="mr-2 h-4 w-4" />
-                      Empresas
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className={`w-full justify-start ${
-                        selectedOption === "Pessoas" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Pessoas")}
-                    >
-                      <Users className="mr-2 h-4 w-4" />
-                      Pessoas
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start"
-                  onClick={toggleLayout}
-                >
-                  <Layout className="mr-2 h-4 w-4" />
-                  Layout
-                  {isLayoutOpen ? (
-                    <ChevronUp className="ml-auto h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="ml-auto h-4 w-4" />
-                  )}
-                </Button>
-                {isLayoutOpen && (
-                  <div className="ml-4 mt-2 space-y-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`w-full justify-start ${
-                        selectedOption === "Identificadores"
-                          ? "bg-gray-100"
-                          : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Identificadores")}
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      Identificadores
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`w-full justify-start ${
-                        selectedOption === "Certificados" ? "bg-gray-100" : ""
-                      }`}
-                      onClick={() => handleSelectedOption("Certificados")}
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      Certificados
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      onClick={() => handleSelectedOption("Lista")}
-                    >
-                      <ClipboardList className="mr-2 h-4 w-4" />
-                      Lista de Presença
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <Navbar
+            toggleCadastro={toggleCadastro}
+            toggleLayout={toggleLayout}
+            handleSelectedOption={handleSelectedOption}
+            isCadastroOpen={isCadastroOpen}
+            isLayoutOpen={isLayoutOpen}
+            selectedOption={selectedOption}
+          />
         </div>
         <div className="flex-1 ml-64 p-8">
           <header className="flex justify-between items-center mb-8">
