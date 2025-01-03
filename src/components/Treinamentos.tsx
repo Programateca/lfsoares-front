@@ -10,7 +10,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import {
-  Search,
   Plus,
   Edit,
   Trash2Icon,
@@ -39,7 +38,6 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
 import toast from "react-hot-toast";
 
 interface Status {
@@ -92,11 +90,6 @@ const Treinamentos = () => {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewTreinamento((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setNewTreinamento((prev) => ({ ...prev, [name]: value }));
   };
@@ -192,7 +185,7 @@ const Treinamentos = () => {
         toast("Treinamento inativado!", {
           icon: "🗑️",
           duration: 2000,
-        },);
+        });
       fetchTreinamentos();
     } catch (error) {}
   };
@@ -204,19 +197,6 @@ const Treinamentos = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Buscar treinamento..."
-              className="w-64 focus-visible:ring-gray-400"
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="focus-visible:ring-transparent border-none"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
           <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {
@@ -264,6 +244,16 @@ const Treinamentos = () => {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="courseModality">Modulo</Label>
+                  <Input
+                    id="courseModality"
+                    name="courseModality"
+                    value={newTreinamento.courseModality}
+                    onChange={handleInputChange}
+                    required={treinamentoInEditMode ? false : true}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="courseType">Tipo</Label>
                   <Input
                     id="courseType"
@@ -294,12 +284,14 @@ const Treinamentos = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Conteúdo</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    value={newTreinamento.description}
-                    onChange={handleTextareaChange}
+                  <Label htmlFor="portariaTreinamento">
+                    Portaria do treinamento
+                  </Label>
+                  <Input
+                    id="portariaTreinamento"
+                    name="portariaTreinamento"
+                    value=""
+                    onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>

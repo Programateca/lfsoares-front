@@ -8,8 +8,8 @@ function loadFile(url: string, callback: any) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
-export function generateDocument(data: Record<string, string>) {
-  loadFile("/templates/certificado-frente-verso.pptx", (error: Error, content: any) => {
+export function gerarLista(data: Record<string, string>) {
+  loadFile("/templates/lista-dia-todo-teste.docx", (error: Error, content: any) => {
     if (error) {
       throw error;
     }
@@ -25,6 +25,6 @@ export function generateDocument(data: Record<string, string>) {
       type: "blob",
       mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     }); //Output the document using Data-URI
-    saveAs(out, "output.pptx");
+    saveAs(out, "output.docx");
   });
 }

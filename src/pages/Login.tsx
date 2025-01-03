@@ -71,7 +71,7 @@ export default function Login() {
               <img src={logo} alt="Logo da empresa" className="h-40" />
             </div>
             <p className="text-gray-700 text-lg">
-              Por favor, faça login na sua conta para acessar o sistema
+              Faça login na sua conta para acessar o sistema
             </p>
           </div>
           <form className="space-y-3" onSubmit={handleSubmit}>

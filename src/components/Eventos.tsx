@@ -10,7 +10,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import {
-  Search,
   Plus,
   Edit,
   CircleX,
@@ -48,9 +47,8 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-import { Status } from "@/@types/Status";
 import { Empresa } from "@/@types/Empresa";
-import { Instrutor } from "@/@types/Instrutor";
+// import { Instrutor } from "@/@types/Instrutor";
 import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 
@@ -107,7 +105,7 @@ const Eventos = () => {
   });
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  // const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
   const fetchEventos = async () => {
@@ -122,10 +120,10 @@ const Eventos = () => {
       setLoading(true);
       await fetchEventos();
       const empresaResp = await api.get("empresas");
-      const instrutorResp = await api.get("instrutores");
+      // const instrutorResp = await api.get("instrutores");
       const treinamentoResp = await api.get("treinamentos");
       setEmpresas(empresaResp.data.data);
-      setInstrutores(instrutorResp.data.data);
+      // setInstrutores(instrutorResp.data.data);
       setTreinamentos(treinamentoResp.data.data);
       setLoading(false);
     };
@@ -270,7 +268,9 @@ const Eventos = () => {
           updatedAt: evento.treinamento.updatedAt,
         },
         instrutor: {
-          status: evento.instrutor.status,
+          status: {
+            name: evento.instrutor.name,
+          },
           id: evento.instrutor.id,
           name: evento.instrutor.name,
           createdAt: evento.instrutor.createdAt,
@@ -315,19 +315,6 @@ const Eventos = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Input
-              placeholder="Buscar Eventos..."
-              className="w-64 focus-visible:ring-gray-400"
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              className="focus-visible:ring-transparent border-none"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
           <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {
@@ -343,59 +330,13 @@ const Eventos = () => {
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Eventos
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[555px]">
+            <DialogContent className="sm:max-w-[600px] lg:max-w-[650px]">
               <DialogHeader>
                 <DialogTitle>Adicionar nova evento</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 ">
                   <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="instrutor">Instrutor</Label>
-                      <Select
-                        onValueChange={(value) => {
-                          setNewEvento((prev) => ({
-                            ...prev,
-                            instrutor: {
-                              ...prev.instrutor,
-                              id: value,
-                            },
-                          }));
-                        }}
-                        value={newEvento.instrutor.id}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione um instrutor" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Instrutor:</SelectLabel>
-                            {instrutores.map((instrutor) => {
-                              return (
-                                <SelectItem
-                                  key={instrutor.id}
-                                  value={instrutor.id}
-                                >
-                                  {instrutor.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="responsavelTecnico">
-                        Responsável técnico
-                      </Label>
-                      <Input
-                        id="responsavelTecnico"
-                        name="responsavelTecnico"
-                        value={newEvento.responsavelTecnico}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="empresa">Contratante</Label>
                       <Select
@@ -461,23 +402,9 @@ const Eventos = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="tipoDeTreinamento">
-                        Tipo de treinamento
-                      </Label>
-                      <Input
-                        id="tipoDeTreinamento"
-                        name="tipoDeTreinamento"
-                        value={newEvento.treinamento.courseType}
-                        required={eventoInEditMode ? false : true}
-                        disabled
-                      />
-                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseLocation">
-                        Local de treinamento
+                        Local de treinamento 1
                       </Label>
                       <Input
                         id="courseLocation"
@@ -488,25 +415,21 @@ const Eventos = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseHours">Carga Horária</Label>
+                      <Label htmlFor="courseLocation">
+                        Local de treinamento 2
+                      </Label>
                       <Input
-                        id="courseHours"
-                        name="courseHours"
-                        value={newEvento.treinamento.courseHours}
+                        className="border-dashed text-center"
+                        id="courseLocation"
+                        name="courseLocation"
+                        placeholder="Clique para adicionar"
+                        value={newEvento.courseLocation}
+                        onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
-                        disabled
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseModality">Modalidade</Label>
-                      <Input
-                        id="courseModality"
-                        name="courseModality"
-                        value={newEvento.treinamento.courseModality}
-                        required={eventoInEditMode ? false : true}
-                        disabled
-                      />
-                    </div>
+                  </div>
+                  <div className="space-y-3">
                     <div className="space-y-2">
                       <Label htmlFor="courseDate">Data</Label>
                       <Input
@@ -514,16 +437,6 @@ const Eventos = () => {
                         name="courseDate"
                         type="date"
                         value={newEvento.courseDate}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseTime">Horário</Label>
-                      <Input
-                        id="courseTime"
-                        name="courseTime"
-                        value={newEvento.courseTime}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
@@ -538,6 +451,74 @@ const Eventos = () => {
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="courseTime">Horário</Label>
+                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
+                        <Input
+                          type="time"
+                          placeholder="Início"
+                          onChange={(e) => {
+                            const startTime = e.target.value;
+                            const endTime =
+                              newEvento.courseTime.split(" ÀS ")[1] || "";
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                        />
+                        <span>ÀS</span>
+                        <Input
+                          type="time"
+                          placeholder="Fim"
+                          onChange={(e) => {
+                            const startTime =
+                              newEvento.courseTime.split(" ÀS ")[0] || "";
+                            const endTime = e.target.value;
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="courseTime">Intervalo</Label>
+                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
+                        <Input
+                          type="time"
+                          placeholder="Início"
+                          onChange={(e) => {
+                            const startTime = e.target.value;
+                            const endTime =
+                              newEvento.courseTime.split(" ÀS ")[1] || "";
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                        />
+                        <span>ÀS</span>
+                        <Input
+                          type="time"
+                          placeholder="Fim"
+                          onChange={(e) => {
+                            const startTime =
+                              newEvento.courseTime.split(" ÀS ")[0] || "";
+                            const endTime = e.target.value;
+                            setNewEvento((prev) => ({
+                              ...prev,
+                              courseTime: `${startTime} ÀS ${endTime}`,
+                            }));
+                          }}
+                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
