@@ -472,9 +472,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
-                                    <SelectItem value="Manha">Manhã</SelectItem>
-                                    <SelectItem value="Tarde">Tarde</SelectItem>
-                                    <SelectItem value="ManhaTarde">
+                                    <SelectItem value="manha">Manhã</SelectItem>
+                                    <SelectItem value="tarde">Tarde</SelectItem>
+                                    <SelectItem value="manhaTarde">
                                       Manhã e Tarde
                                     </SelectItem>
                                   </SelectGroup>
@@ -507,9 +507,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
-                                    <SelectItem value="Manha">Manhã</SelectItem>
-                                    <SelectItem value="Tarde">Tarde</SelectItem>
-                                    <SelectItem value="ManhaTarde">
+                                    <SelectItem value="manha">Manhã</SelectItem>
+                                    <SelectItem value="tarde">Tarde</SelectItem>
+                                    <SelectItem value="manhaTarde">
                                       Manhã e Tarde
                                     </SelectItem>
                                   </SelectGroup>
