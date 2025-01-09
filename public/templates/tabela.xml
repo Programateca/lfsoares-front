@@ -420,7 +420,7 @@
                         <w:color w:val="000000" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>11/05/2024</w:t>
+                    <w:t>[data]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
@@ -859,8 +859,8 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="16DF462A" w14:textId="28C1DD3A" w:rsidR="00295FB9"
-                w:rsidRPr="00841D0D" w:rsidRDefault="00200FB9" w:rsidP="00295FB9">
+            <w:p w14:paraId="16DF462A" w14:textId="6A136EF1" w:rsidR="00295FB9"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="00295FB9">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -885,7 +885,7 @@
                         <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>01</w:t>
+                    <w:t>[pi]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
@@ -901,8 +901,8 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0E936D7C" w14:textId="3CDA2584" w:rsidR="00295FB9"
-                w:rsidRPr="00D84010" w:rsidRDefault="00295FB9" w:rsidP="00295FB9">
+            <w:p w14:paraId="0E936D7C" w14:textId="22B23814" w:rsidR="00295FB9"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="00295FB9">
                 <w:pPr>
                     <w:ind w:right="-70" />
                     <w:rPr>
@@ -911,15 +911,6 @@
                         <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="000D2C1C">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t xml:space="preserve">AGUINALDO FERREIRA </w:t>
-                </w:r>
                 <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -927,16 +918,7 @@
                         <w:sz w:val="20" />
                         <w:szCs w:val="20" />
                     </w:rPr>
-                    <w:t>D</w:t>
-                </w:r>
-                <w:r w:rsidRPr="000D2C1C">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>E SA</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
@@ -1164,8 +1146,8 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="6D4E8174" w14:textId="25887E38" w:rsidR="00447A95"
-                w:rsidRPr="00841D0D" w:rsidRDefault="00200FB9" w:rsidP="00447A95">
+            <w:p w14:paraId="6D4E8174" w14:textId="6AA07475" w:rsidR="00447A95"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="00447A95">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1190,7 +1172,7 @@
                         <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>02</w:t>
+                    <w:t>[pi]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
@@ -1206,8 +1188,8 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="77C92FE8" w14:textId="7E750EAB" w:rsidR="00447A95"
-                w:rsidRPr="00D84010" w:rsidRDefault="00447A95" w:rsidP="00447A95">
+            <w:p w14:paraId="77C92FE8" w14:textId="797C6F1A" w:rsidR="00447A95"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="00447A95">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -1215,15 +1197,6 @@
                         <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="000D2C1C">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t xml:space="preserve">LEANDRO MARTINS </w:t>
-                </w:r>
                 <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -1231,16 +1204,7 @@
                         <w:sz w:val="20" />
                         <w:szCs w:val="20" />
                     </w:rPr>
-                    <w:t>D</w:t>
-                </w:r>
-                <w:r w:rsidRPr="000D2C1C">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>E OLIVEIRA</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
@@ -1463,7 +1427,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="601DC84B"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -1475,14 +1439,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="308BA51B" w14:textId="6543BD08" w:rsidR="009C3528"
-                w:rsidRPr="00841D0D" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="308BA51B" w14:textId="1CA02F6B" w:rsidR="009C3528"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1496,6 +1459,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1506,14 +1482,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="7849D30C" w14:textId="28FF4D43" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="7849D30C" w14:textId="1E2B916F" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -1521,6 +1496,15 @@
                         <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1531,10 +1515,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="4332762F" w14:textId="282B87A3" w:rsidR="009C3528"
@@ -1561,10 +1544,9 @@
                     <w:left w:val="nil" />
                     <w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -1593,10 +1575,9 @@
                     <w:left w:val="nil" />
                     <w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="25E38743" w14:textId="77777777" w:rsidR="009C3528"
@@ -1624,10 +1605,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="73D8D2D9" w14:textId="73C223DD" w:rsidR="009C3528"
@@ -1645,7 +1625,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="168FDEFC"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -1657,14 +1637,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="7199C095" w14:textId="238361BB" w:rsidR="009C3528"
-                w:rsidRPr="00841D0D" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="7199C095" w14:textId="352BB297" w:rsidR="009C3528"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1678,6 +1657,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1688,14 +1680,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="327DFE14" w14:textId="0BF079F5" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="327DFE14" w14:textId="682F3C1A" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -1703,6 +1694,15 @@
                         <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1713,10 +1713,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="2689191D" w14:textId="43541683" w:rsidR="009C3528"
@@ -1743,10 +1742,9 @@
                     <w:left w:val="nil" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -1775,10 +1773,9 @@
                     <w:left w:val="nil" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="344BAE72" w14:textId="77777777" w:rsidR="009C3528"
@@ -1806,10 +1803,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="1998D0D3" w14:textId="72B7D6DC" w:rsidR="009C3528"
@@ -1830,7 +1826,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="5D5866FB"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -1842,14 +1838,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="286A2318" w14:textId="5821FD5D" w:rsidR="009C3528"
-                w:rsidRPr="00841D0D" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="286A2318" w14:textId="4CD510D3" w:rsidR="009C3528"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1863,6 +1858,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1873,14 +1881,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0AD11661" w14:textId="75B91330" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="0AD11661" w14:textId="73F47AEB" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -1892,6 +1899,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -1902,10 +1918,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="125445BB" w14:textId="03A89718" w:rsidR="009C3528"
@@ -1932,10 +1947,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -1964,10 +1978,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="3B6C1EEC" w14:textId="77777777" w:rsidR="009C3528"
@@ -1995,10 +2008,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="1D478F7D" w14:textId="0248FF7B" w:rsidR="009C3528"
@@ -2015,7 +2027,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="096F11EC"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -2027,14 +2039,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="23738A58" w14:textId="77B9CA33" w:rsidR="009C3528"
-                w:rsidRPr="00841D0D" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="23738A58" w14:textId="6989B28A" w:rsidR="009C3528"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2048,6 +2059,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2058,14 +2082,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="228F1FAC" w14:textId="292E7E8E" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="228F1FAC" w14:textId="1E4A631E" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -2077,6 +2100,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2087,10 +2119,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="67BECAD2" w14:textId="6F0836E2" w:rsidR="009C3528"
@@ -2117,10 +2148,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -2149,10 +2179,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="42046CAB" w14:textId="77777777" w:rsidR="009C3528"
@@ -2180,10 +2209,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="16850DCC" w14:textId="2B01CC67" w:rsidR="009C3528"
@@ -2200,7 +2228,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="1D5E4C9E"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -2212,14 +2240,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="050F30CD" w14:textId="67B75367" w:rsidR="009C3528"
-                w:rsidRPr="00841D0D" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="050F30CD" w14:textId="6E068AC8" w:rsidR="009C3528"
+                w:rsidRPr="00841D0D" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2233,6 +2260,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2243,14 +2283,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="32CFE671" w14:textId="6E4EFFC6" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="32CFE671" w14:textId="770F88B4" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -2262,6 +2301,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2272,10 +2320,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="6CC838D7" w14:textId="3E30B9A7" w:rsidR="009C3528"
@@ -2302,10 +2349,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -2334,10 +2380,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="5923E8D4" w14:textId="77777777" w:rsidR="009C3528"
@@ -2365,10 +2410,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="33173BCF" w14:textId="2D8F04B5" w:rsidR="009C3528"
@@ -2385,7 +2429,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="009C3528" w:rsidRPr="0080658E" w14:paraId="0A18844B"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -2397,14 +2441,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="45AE09C3" w14:textId="669AE8ED" w:rsidR="009C3528"
-                w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="45AE09C3" w14:textId="358BB7C9" w:rsidR="009C3528"
+                w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2418,6 +2461,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2428,14 +2484,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="40B958CE" w14:textId="2CE84B3B" w:rsidR="009C3528"
-                w:rsidRPr="00D84010" w:rsidRDefault="009C3528" w:rsidP="008D0F29">
+            <w:p w14:paraId="40B958CE" w14:textId="5761BA57" w:rsidR="009C3528"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -2447,6 +2502,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2457,10 +2521,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="21909DF2" w14:textId="1F9832F9" w:rsidR="009C3528"
@@ -2487,10 +2550,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -2516,10 +2578,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="3FFBF2AD" w14:textId="77777777" w:rsidR="009C3528"
@@ -2544,10 +2605,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="042E950B" w14:textId="7F0775A6" w:rsidR="009C3528"
@@ -2564,7 +2624,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="00200FB9" w:rsidRPr="0080658E" w14:paraId="3130CA8F"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -2576,14 +2636,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="45D4329B" w14:textId="77777777" w:rsidR="00200FB9"
-                w:rsidRDefault="00200FB9" w:rsidP="008D0F29">
+            <w:p w14:paraId="45D4329B" w14:textId="3FCDFDEF" w:rsidR="00200FB9"
+                w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2597,6 +2656,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2607,14 +2679,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="78A6439D" w14:textId="77777777" w:rsidR="00200FB9"
-                w:rsidRPr="00D84010" w:rsidRDefault="00200FB9" w:rsidP="008D0F29">
+            <w:p w14:paraId="78A6439D" w14:textId="64047E53" w:rsidR="00200FB9"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -2626,6 +2697,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2636,10 +2716,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="1D7CE00A" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2666,10 +2745,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -2695,10 +2773,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="0411E105" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2723,10 +2800,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="3CF2298D" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2743,7 +2819,7 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="00200FB9" w:rsidRPr="0080658E" w14:paraId="1446F12C"
-        w14:textId="77777777" w:rsidTr="009C3528">
+        w14:textId="77777777" w:rsidTr="000E5B5C">
         <w:trPr>
             <w:trHeight w:val="340" />
         </w:trPr>
@@ -2755,14 +2831,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="70FBE6B9" w14:textId="77777777" w:rsidR="00200FB9"
-                w:rsidRDefault="00200FB9" w:rsidP="008D0F29">
+            <w:p w14:paraId="70FBE6B9" w14:textId="327F5E9E" w:rsidR="00200FB9"
+                w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2776,6 +2851,19 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2786,14 +2874,13 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0ACF29D1" w14:textId="77777777" w:rsidR="00200FB9"
-                w:rsidRPr="00D84010" w:rsidRDefault="00200FB9" w:rsidP="008D0F29">
+            <w:p w14:paraId="0ACF29D1" w14:textId="35C0C6C5" w:rsidR="00200FB9"
+                w:rsidRPr="00D84010" w:rsidRDefault="00754FB3" w:rsidP="008D0F29">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
@@ -2805,6 +2892,15 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
             </w:p>
         </w:tc>
         <w:tc>
@@ -2815,10 +2911,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="4883EBE6" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2845,10 +2940,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:noWrap />
                 <w:vAlign w:val="center" />
             </w:tcPr>
@@ -2874,10 +2968,9 @@
                     <w:left w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="2CCEE88F" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2902,10 +2995,9 @@
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:tl2br w:val="single" w:sz="4" w:space="0" w:color="auto" />
                 </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"
-                    w:themeFill="background1" w:themeFillShade="D9" />
+                <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
+                    w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
             <w:p w14:paraId="18BC8BAB" w14:textId="77777777" w:rsidR="00200FB9"
@@ -2922,7 +3014,7 @@
         </w:tc>
     </w:tr>
 </w:tbl>
-<w:p w14:paraId="6BEB6B4A" w14:textId="3F1A6BA7" w:rsidR="002564AC" w:rsidRPr="002564AC"
+<w:p w14:paraId="6BEB6B4A" w14:textId="3F1A6BA7" w:rsidR="002564AC" w:rsidRPr="007D0690"
     w:rsidRDefault="002564AC">
     <w:pPr>
         <w:rPr>
@@ -3012,7 +3104,7 @@
                     </w:rPr>
                 </w:pPr>
             </w:p>
-            <w:p w14:paraId="17D278AD" w14:textId="54CAB491" w:rsidR="002564AC"
+            <w:p w14:paraId="17D278AD" w14:textId="2EC08085" w:rsidR="002564AC"
                 w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
@@ -3042,6 +3134,16 @@
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>A:</w:t>
+                </w:r>
+                <w:r w:rsidR="00754FB3" w:rsidRPr="00754FB3">
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:bCs />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t xml:space="preserve"> [responsavel_tecnico]</w:t>
                 </w:r>
             </w:p>
             <w:p w14:paraId="006C322F" w14:textId="2C345FB3" w:rsidR="002564AC"
@@ -3089,7 +3191,7 @@
                 <w:tcW w:w="9952" w:type="dxa" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="4DA6E8CA" w14:textId="4862AEA9" w:rsidR="00585049"
+            <w:p w14:paraId="4DA6E8CA" w14:textId="3FDEEFBC" w:rsidR="00585049"
                 w:rsidRPr="009A7B3F" w:rsidRDefault="00585049" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
@@ -3110,13 +3212,13 @@
                     </w:rPr>
                     <w:t xml:space="preserve">INSTRUTOR: </w:t>
                 </w:r>
-                <w:r w:rsidRPr="000D2C1C">
+                <w:r w:rsidR="00A967DF">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:sz w:val="22" />
                         <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>WELLINGTON ADILSON DA SILVA SANTANA</w:t>
+                    <w:t>[instrutor]</w:t>
                 </w:r>
             </w:p>
         </w:tc>

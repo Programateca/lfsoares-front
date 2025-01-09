@@ -3,6 +3,7 @@ import { gerarIdentificador } from "@/utils/aux";
 
 const CONTEUDO =
   " 1.	Garantir a segurança dos trabalhadores que adentrarem nos espaços confinados;\n2.	Identificação dos espaços confinados;\n3.	Critérios de indicação e uso de equipamentos para controle de riscos;\n4.	Conhecimentos sobre práticas seguras em espaços confinados;\n5.	Legislação de segurança e saúde no trabalho;\n6.	Programa de proteção respiratória;\n7.	Area classificada;\n8.	Operações de salvamento.\n9.	Reconhecimento, avaliação e controle de riscos;\n10.	Funcionamento de equipamentos utilizados;\n11.	Procedimentos e utilização da Permissão de Entrada e Trabalho; e\n12.	Noções de resgate e primeiros socorros. \n";
+
 export function TesteComponent() {
   const dataObj = {
     instrutor1_titulo: "INSTRUTOR:",
@@ -38,7 +39,7 @@ export function TesteComponent() {
 
   return (
     <div className="p-10">
-      <Button onClick={() => gerarIdentificador(1)}>Teste</Button>
+      <Button onClick={() => gerarIdentificador(5)}>Teste</Button>
     </div>
   );
 }
