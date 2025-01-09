@@ -82,21 +82,35 @@ export const Identificadores = () => {
   };
 
   const handlePeriodChange = (
-    day: string | number,
+    day: string,
     instructor: string,
     value: string
   ) => {
     setDisabledFields((prev) => {
       const newState = { ...prev };
-      if (!newState[day])
-        newState[day] = { instrutorA: false, instrutorB: false };
 
-      if (value === "manhaTarde") {
-        if (instructor === "instrutorA") newState[day].instrutorB = true;
-        if (instructor === "instrutorB") newState[day].instrutorA = true;
-      } else {
-        if (instructor === "instrutorA") newState[day].instrutorB = false;
-        if (instructor === "instrutorB") newState[day].instrutorA = false;
+      // Ajusta o estado do período baseado na seleção
+      if (!newState[day]) {
+        newState[day] = { instrutorA: false, instrutorB: false };
+      }
+
+      // Regras para ajustar o período do outro instrutor
+      if (instructor === "instrutorA") {
+        if (value === "manha") {
+          setValue(`instrutorB.${day}.periodo`, "tarde");
+        } else if (value === "tarde") {
+          setValue(`instrutorB.${day}.periodo`, "manha");
+        } else if (value === "manhaTarde") {
+          setValue(`instrutorB.${day}.periodo`, undefined);
+        }
+      } else if (instructor === "instrutorB") {
+        if (value === "manha") {
+          setValue(`instrutorA.${day}.periodo`, "tarde");
+        } else if (value === "tarde") {
+          setValue(`instrutorA.${day}.periodo`, "manha");
+        } else if (value === "manhaTarde") {
+          setValue(`instrutorA.${day}.periodo`, undefined);
+        }
       }
 
       return newState;
@@ -256,6 +270,31 @@ export const Identificadores = () => {
                         <Input
                           {...register(`assinatura[${index}].titulo`)}
                           className="w-full"
+                          value={
+                            // Define "Instrutor" para os dois primeiros inputs em certificados com 3 ou mais assinaturas
+                            (index < 2 && signatureCount >= 3) ||
+                            (index === 0 && signatureCount === 2)
+                              ? "Instrutor"
+                              : undefined
+                          }
+                          onChange={(e) => {
+                            // Permite edição somente para campos que não estão fixos como "Instrutor"
+                            if (
+                              !(
+                                (index < 2 && signatureCount >= 3) ||
+                                (index === 0 && signatureCount === 2)
+                              )
+                            ) {
+                              setValue(
+                                `assinatura[${index}].titulo`,
+                                e.target.value
+                              );
+                            }
+                          }}
+                          readOnly={
+                            (index < 2 && signatureCount >= 3) ||
+                            (index === 0 && signatureCount === 2)
+                          } // Torna os campos fixos somente leitura
                         />
                         <Controller
                           name={`assinatura[${index}].assinante`}
@@ -329,7 +368,7 @@ export const Identificadores = () => {
             {showIdentificationConfig && (
               <div className="mt-4 flex gap-4 flex-col">
                 <p className="my-1 w-full">Configurar Lista:</p>
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
                   {days.map((day, index) => (
                     <div key={index} className="border p-4 mb-4 w-full">
                       <Label>Dia: {day}</Label>
