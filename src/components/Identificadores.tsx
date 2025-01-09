@@ -28,6 +28,7 @@ import { Evento } from "@/@types/Evento";
 import { MultiSelect } from "@/components/multi-select";
 import { Pessoa } from "@/@types/Pessoa";
 import { Instrutor } from "@/@types/Instrutor";
+import { EventSchedule, gerarIdentificador, Period } from "@/utils/aux";
 
 export const Identificadores = () => {
   const { control, register, handleSubmit, watch, setValue } = useForm();
@@ -91,7 +92,7 @@ export const Identificadores = () => {
       if (!newState[day])
         newState[day] = { instrutorA: false, instrutorB: false };
 
-      if (value === "manhaTarde") {
+      if (value === "ManhaTarde") {
         if (instructor === "instrutorA") newState[day].instrutorB = true;
         if (instructor === "instrutorB") newState[day].instrutorA = true;
       } else {
@@ -123,7 +124,7 @@ export const Identificadores = () => {
       const dataInicio = new Date(inicio.split("/").reverse().join("-")); // "20/12/2024" -> "2024-12-20"
       const dataFim = new Date(fim.split("/").reverse().join("-")); // "22/12/2024" -> "2024-12-22"
 
-      let dataAtual = new Date(dataInicio);
+      const dataAtual = new Date(dataInicio);
       while (dataAtual <= dataFim) {
         dias.push(
           dataAtual.toLocaleDateString("pt-BR", {
@@ -141,6 +142,86 @@ export const Identificadores = () => {
     setDays(diasGerados);
     console.log(diasGerados); // Para verificar os dias gerados
   };
+
+  type Dias = {
+    instrutorA: Record<string, { periodo?: Period }>;
+    instrutorB: Record<string, { periodo?: Period }>;
+  };
+
+  const formatDays = (dias: Dias): EventSchedule => ({
+    instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
+      dia,
+      periodo,
+    })),
+    instrutorB: Object.entries(dias.instrutorB).map(([dia, { periodo }]) => ({
+      dia,
+      periodo,
+    })),
+  });
+
+  // type Data = {
+  //   conteudoAplicado: string;
+  //   motivoTreinamento: string;
+  //   objetivoTreinamento: string;
+  //   evento: string;
+  //   certificadoTipo: string;
+  //   participantes: string[];
+  //   assinatura: { titulo: string; assinante: string }[];
+  //   instrutorA: Record<string, { periodo?: Period }>;
+  //   instrutorB: Record<string, { periodo?: Period }>;
+  // };
+
+  function onSubmit(data: any) {
+    const dataTeste = {
+      conteudoAplicado: "1. Incendio\n2. Seguranca\n3. Equipamentos",
+      motivoTreinamento: "Atualização",
+      objetivoTreinamento: "Objetivo da LF Soares Treinamentos e Serviços",
+      evento: "bd5b2ff4-3fdb-47ac-9134-e60744458e42",
+      certificadoTipo: "3",
+      participantes: ["11b30ab0-d725-4d78-90ef-70477b98baa0"],
+      assinatura: [
+        {
+          titulo: "Instrutor 1",
+          assinante: "c054e21e-257e-4c1c-a0cb-0d99f7018b3d",
+        },
+        {
+          titulo: "Instrutor 2",
+          assinante: "7e9191df-6f1d-40c2-99f6-051ab1868492",
+        },
+        {
+          titulo: "Instrutor 3",
+          assinante: "d91aeeaf-ff64-4f94-9826-0016fd488374",
+        },
+      ],
+      instrutorA: {
+        "30/12/2024": {
+          periodo: "Manha",
+        },
+        "31/12/2024": {
+          periodo: "Manha",
+        },
+        "01/01/2025": {},
+        "02/01/2025": {},
+      },
+      instrutorB: {
+        "30/12/2024": {},
+        "31/12/2024": {},
+        "01/01/2025": {
+          periodo: "Tarde",
+        },
+        "02/01/2025": {
+          periodo: "Tarde",
+        },
+      },
+    };
+
+    const instrutorDates = formatDays({
+      instrutorA: data.instrutorA,
+      instrutorB: data.instrutorB,
+    });
+
+    gerarIdentificador({}, instrutorDates, dataTeste.participantes.length);
+  }
 
   return (
     <Card className="shadow-md">
@@ -169,11 +250,7 @@ export const Identificadores = () => {
           </Button>
         </div>
         {formsOpen ? (
-          <form
-            onSubmit={handleSubmit((data) => {
-              console.log(data);
-            })}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex gap-4 w-full">
               <div className="w-full">
                 <Label>Evento</Label>
@@ -356,9 +433,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
-                                    <SelectItem value="manha">Manhã</SelectItem>
-                                    <SelectItem value="tarde">Tarde</SelectItem>
-                                    <SelectItem value="manhaTarde">
+                                    <SelectItem value="Manha">Manhã</SelectItem>
+                                    <SelectItem value="Tarde">Tarde</SelectItem>
+                                    <SelectItem value="ManhaTarde">
                                       Manhã e Tarde
                                     </SelectItem>
                                   </SelectGroup>
@@ -391,9 +468,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
-                                    <SelectItem value="manha">Manhã</SelectItem>
-                                    <SelectItem value="tarde">Tarde</SelectItem>
-                                    <SelectItem value="manhaTarde">
+                                    <SelectItem value="Manha">Manhã</SelectItem>
+                                    <SelectItem value="Tarde">Tarde</SelectItem>
+                                    <SelectItem value="ManhaTarde">
                                       Manhã e Tarde
                                     </SelectItem>
                                   </SelectGroup>

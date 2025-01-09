@@ -3,91 +3,93 @@ import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import PizZipUtils from "pizzip/utils";
 
-function loadFile(url: string, callback: any) {
-  PizZipUtils.getBinaryContent(url, callback);
-}
+export type Period = "Manha" | "Tarde" | "ManhaTarde";
 
-const eventSchedule: EventSchedule = {
-  instrutorA: [
-    { dia: "30/12/2024", periodo: "Manha" },
-    { dia: "31/12/2024", periodo: "Tarde" },
-    { dia: "01/01/2025", periodo: "ManhaTarde" },
-    { dia: "02/01/2025", periodo: "Manha" },
-  ],
-  instrutorB: [
-    { dia: "30/12/2024", periodo: "Tarde" },
-    { dia: "31/12/2024", periodo: "Manha" },
-    { dia: "01/01/2025" },
-    { dia: "02/01/2025", periodo: "Tarde" },
-  ],
+export type Schedule = { dia: string; periodo?: Period };
+
+type DaySchedule = {
+  instrutorA: Schedule[];
+  instrutorB: Schedule[];
 };
 
-const PAGES = calcularPaginas(eventSchedule, 11);
+export type EventSchedule = DaySchedule;
+
+type Pages = {
+  instrutorA: { paginas: number; dias: Schedule[] }[];
+  instrutorB: { paginas: number; dias: Schedule[] }[];
+};
+
+function loadFile(
+  url: string,
+  callback: (error: Error | null, data?: string | ArrayBuffer) => void
+) {
+  PizZipUtils.getBinaryContent(url, callback);
+}
 
 function formatarPaginas(pages: Pages, xmlPage: string) {
   let newXmlPages = "";
 
-  const diasTardeA = pages.instrutorA
-    .filter((item) => item.dias[0].periodo === "Manha")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
+  const getDias = (
+    instrutor: { paginas: number; dias: Schedule[] }[],
+    periodo: Period
+  ) =>
+    instrutor
+      .filter((item) => item.dias[0].periodo === periodo)
+      .map((item) => item.dias[0].dia)
+      .join(", ");
 
-  const diasManhaA = pages.instrutorA
-    .filter((item) => item.dias[0].periodo === "Tarde")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
+  const diasManhaA = getDias(pages.instrutorA, "Manha");
+  const diasTardeA = getDias(pages.instrutorA, "Tarde");
+  const diasManhaTardeA = getDias(pages.instrutorA, "ManhaTarde");
 
-  const diasManhaTardeA = pages.instrutorA
-    .filter((item) => item.dias[0].periodo === "ManhaTarde")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
+  const diasManhaB = getDias(pages.instrutorB, "Manha");
+  const diasTardeB = getDias(pages.instrutorB, "Tarde");
+  const diasManhaTardeB = getDias(pages.instrutorB, "ManhaTarde");
 
-  const diasTardeB = pages.instrutorB
-    .filter((item) => item.dias[0].periodo === "Manha")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
+  const processInstrutor = (
+    instrutor: { paginas: number; dias: Schedule[] }[],
+    instrutorName: string,
+    diasManha: string,
+    diasTarde: string,
+    diasManhaTarde: string
+  ) => {
+    instrutor.forEach((item) => {
+      newXmlPages += substituirOcorrencias(
+        xmlPage.repeat(item.paginas),
+        instrutorName,
+        item.dias[0].periodo === "Manha"
+          ? diasManha
+          : item.dias[0].periodo === "Tarde"
+          ? diasTarde
+          : diasManhaTarde
+      );
+    });
+  };
 
-  const diasManhaB = pages.instrutorB
-    .filter((item) => item.dias[0].periodo === "Tarde")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
-
-  const diasManhaTardeB = pages.instrutorB
-    .filter((item) => item.dias[0].periodo === "ManhaTarde")
-    .map((item) => item.dias[0].dia)
-    .join(", ");
-
-  pages.instrutorA.forEach((item) => {
-    console.log(diasManhaA);
-    newXmlPages += substituirOcorrencias(
-      xmlPage.repeat(item.paginas),
-      "instrutor_a",
-      item.dias[0].periodo === "Manha"
-        ? diasManhaA
-        : item.dias[0].periodo === "Tarde"
-        ? diasTardeA
-        : diasManhaTardeA
-    );
-  });
-
-  pages.instrutorB.forEach((item) => {
-    newXmlPages += substituirOcorrencias(
-      xmlPage.repeat(item.paginas),
-      "instrutor_b",
-      item.dias[0].periodo === "Manha"
-        ? diasManhaB
-        : item.dias[0].periodo === "Tarde"
-        ? diasTardeB
-        : diasManhaTardeB
-    );
-  });
+  processInstrutor(
+    pages.instrutorA,
+    "instrutor_a",
+    diasManhaA,
+    diasTardeA,
+    diasManhaTardeA
+  );
+  processInstrutor(
+    pages.instrutorB,
+    "instrutor_b",
+    diasManhaB,
+    diasTardeB,
+    diasManhaTardeB
+  );
 
   return newXmlPages;
 }
 
-export async function gerarIdentificador() {
-  // participantes: Record<string, string>[],
-  // data?: Record<string, string>
+export async function gerarIdentificador(
+  data: Record<string, unknown>,
+  pages: EventSchedule,
+  numeroParticipantes: number
+) {
+  const formattedPages = calcularPaginas(pages, numeroParticipantes);
   const TAG_NAME = "<!--aux-page-->";
   try {
     // Carrega o arquivo XML principal
@@ -108,38 +110,29 @@ export async function gerarIdentificador() {
     // Atualiza o conteúdo do XML, duplicando e inserindo após a tag
     const updatedXml = xmlContent
       .split(TAG_NAME)
-      .join(formatarPaginas(PAGES, xmlNewContent));
+      .join(formatarPaginas(formattedPages, xmlNewContent));
 
     // Formatar as paginas
     // const pages = calcularPaginas(eventSchedule, participantes.length);
 
     loadFile(
       "/templates/identificacao-do-participante.docx",
-      (error: Error, content: any) => {
+      (error: Error | null, data?: string | ArrayBuffer) => {
         if (error) {
           throw error;
         }
-        const zip = new PizZip(content);
+        if (!data) {
+          throw new Error("No data received");
+        }
+        const zip = new PizZip(data);
         zip.file("word/document.xml", updatedXml);
+
         // const doc = new Docxtemplater(zip, {
         //   delimiters: { start: "[", end: "]" },
         //   paragraphLoop: true,
         //   linebreaks: true,
         //   parser: expressionParser,
         // });
-        const out = zip.generate({
-          type: "blob",
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        });
-        saveAs(out, "output.docx");
-
-        // const url = URL.createObjectURL(out);
-        // const link = document.createElement("a");
-        // link.href = url;
-        // link.download = "document-template-updated.docx";
-        // link.click();
-        // URL.revokeObjectURL(url);
 
         // doc.render(data);
         // const out = doc.getZip().generate({
@@ -148,9 +141,16 @@ export async function gerarIdentificador() {
         //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         // });
         // saveAs(out, "output.docx");
+
+        const out = zip.generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+        saveAs(out, "output.docx");
       }
     );
-    // Se quiser disponibilizar para download:
+    // Para download:
     // const blob = new Blob([updatedXml], { type: "text/xml" });
     // const url = URL.createObjectURL(blob);
     // const link = document.createElement("a");
@@ -164,24 +164,7 @@ export async function gerarIdentificador() {
   }
 }
 
-// Define os dados do evento
-type Period = "Manha" | "Tarde" | "ManhaTarde";
-
-type Schedule = { dia: string; periodo?: Period };
-
-type DaySchedule = {
-  instrutorA: Schedule[];
-  instrutorB: Schedule[];
-};
-
-type EventSchedule = DaySchedule;
-
-type Pages = {
-  instrutorA: { paginas: number; dias: Schedule[] }[];
-  instrutorB: { paginas: number; dias: Schedule[] }[];
-};
-
-function calcularPaginas(
+export function calcularPaginas(
   eventSchedule: EventSchedule,
   numParticipantes: number
 ): Pages {
@@ -217,11 +200,6 @@ function calcularPaginas(
   organizarHorarios(eventSchedule.instrutorA, paginasInstrutorA);
   organizarHorarios(eventSchedule.instrutorB, paginasInstrutorB);
 
-  // Calcula o número de páginas necessárias para cada período
-  // const calcularNumeroDePaginas = (dias: Schedule[]) => {
-  //   return Math.ceil(numParticipantes / 10);
-  // };
-
   // Formata as páginas com o número total de páginas
   const formatarPaginas = (paginas: typeof paginasInstrutorA) => {
     return [
@@ -239,25 +217,6 @@ function calcularPaginas(
     instrutorB: formatarPaginas(paginasInstrutorB),
   };
 }
-
-// Exemplo de uso
-// const eventSchedule: EventSchedule = {
-//   instrutorA: [
-//     { dia: "30/12/2024", periodo: "Manha" },
-//     { dia: "31/12/2024", periodo: "Tarde" },
-//     { dia: "01/01/2025", periodo: "ManhaTarde" },
-//     { dia: "02/01/2025", periodo: "Manha" },
-//   ],
-//   instrutorB: [
-//     { dia: "30/12/2024", periodo: "Tarde" },
-//     { dia: "31/12/2024", periodo: "Manha" },
-//     { dia: "01/01/2025" },
-//     { dia: "02/01/2025", periodo: "Tarde" },
-//   ],
-// };
-
-// const numParticipantes = 55;
-// console.log(calcularPaginas(eventSchedule, numParticipantes));
 
 function substituirOcorrencias(
   texto: string,
