@@ -57,55 +57,17 @@ const Eventos = () => {
   const [loading, setLoading] = useState(false);
   const [eventoInEditMode, seteventoInEditMode] = useState<string | number>("");
   const [newEvento, setNewEvento] = useState({
-    status: {
-      id: 1,
-      name: "",
-    },
-    instrutor: {
-      status: {
-        name: "",
-      },
-      id: "",
-      name: "",
-      createdAt: "",
-      updatedAt: "",
-    },
-    treinamento: {
-      status: {
-        name: "",
-      },
-      id: "",
-      courseModality: "",
-      courseType: "",
-      description: "",
-      courseValidaty: "",
-      courseHours: "",
-      name: "",
-      createdAt: "",
-      updatedAt: "",
-    },
-    empresa: {
-      id: "",
-      cnpj: "",
-      name: "",
-      endereco: "",
-      createdAt: "",
-      updatedAt: "",
-      status: {
-        name: "",
-      },
-    },
-    courseLocation: "",
-    responsavelTecnico: "",
+    empresa: "",
+    treinamento: "",
+    courseLocation1: "",
+    courseLocation2: "",
+    courseDate: "",
     completionDate: "",
     courseTime: "",
-    courseDate: "",
-    createdAt: "",
-    updatedAt: "",
+    courseInterval: "",
   });
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  // const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
   const fetchEventos = async () => {
@@ -120,10 +82,8 @@ const Eventos = () => {
       setLoading(true);
       await fetchEventos();
       const empresaResp = await api.get("empresas");
-      // const instrutorResp = await api.get("instrutores");
       const treinamentoResp = await api.get("treinamentos");
       setEmpresas(empresaResp.data.data);
-      // setInstrutores(instrutorResp.data.data);
       setTreinamentos(treinamentoResp.data.data);
       setLoading(false);
     };
@@ -131,73 +91,16 @@ const Eventos = () => {
     inicializarFetch();
   }, []);
 
-  useEffect(() => {
-    if (newEvento.treinamento.id) {
-      const treinamentoSelecionado = treinamentos.find(
-        (treinamento) => treinamento.id === newEvento.treinamento.id
-      );
-
-      if (treinamentoSelecionado) {
-        setNewEvento((prev) => ({
-          ...prev,
-          treinamento: {
-            ...prev.treinamento,
-            courseType: treinamentoSelecionado.courseType,
-            courseHours: treinamentoSelecionado.courseHours,
-            courseModality: treinamentoSelecionado.courseModality,
-          },
-        }));
-      }
-    }
-  }, [newEvento.treinamento.id, treinamentos]);
-
   const resetEventoState = () => {
     setNewEvento({
-      status: {
-        id: 1,
-        name: "",
-      },
-      instrutor: {
-        status: {
-          name: "",
-        },
-        id: "",
-        name: "",
-        createdAt: "",
-        updatedAt: "",
-      },
-      treinamento: {
-        status: {
-          name: "",
-        },
-        id: "",
-        courseModality: "",
-        courseType: "",
-        description: "",
-        courseValidaty: "",
-        courseHours: "",
-        name: "",
-        createdAt: "",
-        updatedAt: "",
-      },
-      empresa: {
-        status: {
-          name: "",
-        },
-        id: "",
-        cnpj: "",
-        name: "",
-        endereco: "",
-        createdAt: "",
-        updatedAt: "",
-      },
-      courseLocation: "",
-      responsavelTecnico: "",
+      empresa: "",
+      treinamento: "",
+      courseLocation1: "",
+      courseLocation2: "",
+      courseDate: "",
       completionDate: "",
       courseTime: "",
-      courseDate: "",
-      createdAt: "",
-      updatedAt: "",
+      courseInterval: "",
     });
   };
 
@@ -224,20 +127,7 @@ const Eventos = () => {
 
     try {
       await api.post("Eventos", {
-        courseLocation: newEvento.courseLocation,
-        responsavelTecnico: newEvento.responsavelTecnico,
-        completionDate: newEvento.completionDate,
-        courseTime: newEvento.courseTime,
-        courseDate: newEvento.courseDate,
-        instrutor: {
-          id: newEvento.instrutor.id,
-        },
-        empresa: {
-          id: newEvento.empresa.id,
-        },
-        treinamento: {
-          id: newEvento.treinamento.id,
-        },
+        ...newEvento,
       });
 
       fetchEventos();
@@ -254,44 +144,14 @@ const Eventos = () => {
 
     if (evento) {
       setNewEvento({
-        status: evento.status,
-        treinamento: {
-          status: evento.treinamento.status,
-          id: evento.treinamento.id,
-          courseModality: evento.treinamento.courseModality,
-          courseType: evento.treinamento.courseType,
-          description: evento.treinamento.description,
-          courseValidaty: evento.treinamento.courseValidaty,
-          courseHours: evento.treinamento.courseHours,
-          name: evento.treinamento.name,
-          createdAt: evento.treinamento.createdAt,
-          updatedAt: evento.treinamento.updatedAt,
-        },
-        instrutor: {
-          status: {
-            name: evento.instrutor.name,
-          },
-          id: evento.instrutor.id,
-          name: evento.instrutor.name,
-          createdAt: evento.instrutor.createdAt,
-          updatedAt: evento.instrutor.updatedAt,
-        },
-        empresa: {
-          status: evento.empresa.status,
-          id: evento.empresa.id,
-          cnpj: evento.empresa.cnpj,
-          name: evento.empresa.name,
-          endereco: evento.empresa.endereco,
-          createdAt: evento.empresa.createdAt,
-          updatedAt: evento.empresa.updatedAt,
-        },
-        courseLocation: evento.courseLocation,
-        responsavelTecnico: evento.responsavelTecnico,
+        empresa: evento.empresa.id,
+        treinamento: evento.treinamento.id,
+        courseLocation1: evento.courseLocation1,
+        courseLocation2: evento.courseLocation2,
+        courseDate: evento.courseDate,
         completionDate: evento.completionDate,
         courseTime: evento.courseTime,
-        courseDate: evento.courseDate,
-        createdAt: evento.createdAt,
-        updatedAt: evento.updatedAt,
+        courseInterval: evento.courseInterval,
       });
     }
   };
@@ -332,7 +192,9 @@ const Eventos = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px] lg:max-w-[650px]">
               <DialogHeader>
-                <DialogTitle>Adicionar nova evento</DialogTitle>
+                <DialogTitle>
+                  {eventoInEditMode ? "Editar" : "Adicionar"} Evento
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 ">
@@ -343,13 +205,10 @@ const Eventos = () => {
                         onValueChange={(value) => {
                           setNewEvento((prev) => ({
                             ...prev,
-                            empresa: {
-                              ...prev.empresa,
-                              id: value,
-                            },
+                            empresa: value,
                           }));
                         }}
-                        value={newEvento.empresa.id}
+                        value={newEvento.empresa}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione uma empresa" />
@@ -369,18 +228,15 @@ const Eventos = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="name">Treinamento</Label>
+                      <Label htmlFor="treinamento">Treinamento</Label>
                       <Select
                         onValueChange={(value) => {
                           setNewEvento((prev) => ({
                             ...prev,
-                            treinamento: {
-                              ...prev.treinamento,
-                              id: value,
-                            },
+                            treinamento: value,
                           }));
                         }}
-                        value={newEvento.treinamento.id}
+                        value={newEvento.treinamento}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione um treinamento" />
@@ -403,27 +259,27 @@ const Eventos = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseLocation">
+                      <Label htmlFor="courseLocation1">
                         Local de treinamento 1
                       </Label>
                       <Input
-                        id="courseLocation"
-                        name="courseLocation"
-                        value={newEvento.courseLocation}
+                        id="courseLocation1"
+                        name="courseLocation1"
+                        value={newEvento.courseLocation1}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseLocation">
+                      <Label htmlFor="courseLocation2">
                         Local de treinamento 2
                       </Label>
                       <Input
                         className="border-dashed text-center"
-                        id="courseLocation"
-                        name="courseLocation"
+                        id="courseLocation2"
+                        name="courseLocation2"
                         placeholder="Clique para adicionar"
-                        value={newEvento.courseLocation}
+                        value={newEvento.courseLocation2}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
@@ -542,9 +398,8 @@ const Eventos = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Evento</TableHead>
-              <TableHead>Responsável</TableHead>
-              <TableHead>Instrutor</TableHead>
-              <TableHead>Data</TableHead>
+              <TableHead>Contrante </TableHead>
+              <TableHead>Datas</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
@@ -584,13 +439,13 @@ const Eventos = () => {
                   >
                     {evento.treinamento.name}
                   </TableCell>
+                  <TableCell className="py-2">{evento.empresa.name}</TableCell>
                   <TableCell className="py-2">
-                    {evento.responsavelTecnico}
+                    {new Date(evento.courseDate).toLocaleDateString("pt-BR")} -{" "}
+                    {new Date(evento.completionDate).toLocaleDateString(
+                      "pt-BR"
+                    )}
                   </TableCell>
-                  <TableCell className="py-2">
-                    {evento.instrutor.name}
-                  </TableCell>
-                  <TableCell className="py-2">{evento.courseDate}</TableCell>
                   <TableCell className="py-2">
                     {evento.status.id !== 2 ? "Ativo" : "Inativo"}
                   </TableCell>

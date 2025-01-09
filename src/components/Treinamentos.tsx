@@ -46,12 +46,13 @@ interface Status {
 }
 
 interface Treinamento {
+  name: string;
   courseModality: string;
+  courseMethodology: string;
   courseType: string;
-  description: string;
   courseValidaty: string;
   courseHours: string;
-  name: string;
+  coursePortaria: string;
   id: string;
   status: Status;
 }
@@ -63,18 +64,20 @@ const Treinamentos = () => {
     string | number
   >("");
   const [newTreinamento, setNewTreinamento] = useState({
+    name: "",
     courseModality: "",
+    courseMethodology: "",
     courseType: "",
-    description: "",
     courseValidaty: "",
     courseHours: "",
-    name: "",
+    coursePortaria: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
   const fetchTreinamentos = async () => {
     try {
       const response = await api.get("treinamentos");
+      console.log(response.data.data);
       setTreinamentos(response.data.data);
     } catch (error) {}
   };
@@ -89,8 +92,21 @@ const Treinamentos = () => {
     inicializarFetch();
   }, []);
 
+  const clearForm = () => {
+    setNewTreinamento({
+      name: "",
+      courseModality: "",
+      courseMethodology: "",
+      courseType: "",
+      courseValidaty: "",
+      courseHours: "",
+      coursePortaria: "",
+    });
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log(name, value);
     setNewTreinamento((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -100,25 +116,19 @@ const Treinamentos = () => {
     if (treinamentoInEditMode) {
       try {
         await api.patch(`treinamentos/${treinamentoInEditMode}`, {
+          name: newTreinamento.name,
           courseModality: newTreinamento.courseModality,
           courseType: newTreinamento.courseType,
-          description: newTreinamento.description,
+          courseMethodology: newTreinamento.courseMethodology,
           courseValidaty: newTreinamento.courseValidaty,
           courseHours: newTreinamento.courseHours,
-          name: newTreinamento.name,
+          coursePortaria: newTreinamento.coursePortaria,
         });
 
         fetchTreinamentos();
         setIsModalOpen(false);
         toast.success("Treinamento atualizado com sucesso!");
-        setNewTreinamento({
-          courseModality: "",
-          courseType: "",
-          description: "",
-          courseValidaty: "",
-          courseHours: "",
-          name: "",
-        });
+        clearForm();
       } catch (error) {
         toast.error("Erro ao atualizar treinamento");
       }
@@ -127,25 +137,21 @@ const Treinamentos = () => {
 
     try {
       await api.post("treinamentos", {
+        name: newTreinamento.name,
         courseModality: newTreinamento.courseModality,
         courseType: newTreinamento.courseType,
-        description: newTreinamento.description,
+        courseMethodology: newTreinamento.courseMethodology,
         courseValidaty: newTreinamento.courseValidaty,
         courseHours: newTreinamento.courseHours,
-        name: newTreinamento.name,
+        coursePortaria: newTreinamento.coursePortaria,
       });
+
+      console.log(newTreinamento);
 
       fetchTreinamentos();
       setIsModalOpen(false);
       toast.success("Treinamento adicionado com sucesso!");
-      setNewTreinamento({
-        courseModality: "",
-        courseType: "",
-        description: "",
-        courseValidaty: "",
-        courseHours: "",
-        name: "",
-      });
+      clearForm();
     } catch (error) {}
   };
 
@@ -159,12 +165,13 @@ const Treinamentos = () => {
 
     if (treinamento) {
       setNewTreinamento({
+        name: treinamento.name,
         courseModality: treinamento.courseModality,
+        courseMethodology: treinamento.courseMethodology,
         courseType: treinamento.courseType,
-        description: treinamento.description,
         courseValidaty: treinamento.courseValidaty,
         courseHours: treinamento.courseHours,
-        name: treinamento.name,
+        coursePortaria: treinamento.coursePortaria,
       });
     }
   };
@@ -201,16 +208,7 @@ const Treinamentos = () => {
             open={isModalOpen}
             onOpenChange={(open) => {
               setIsModalOpen(open);
-              if (!open)
-                setNewTreinamento({
-                  courseModality: "",
-                  courseType: "",
-                  description: "",
-                  courseValidaty: "",
-                  courseHours: "",
-                  name: "",
-                });
-              setTreinamentoInEditMode("");
+              if (!open) clearForm(), setTreinamentoInEditMode("");
             }}
           >
             <DialogTrigger asChild>
@@ -220,7 +218,9 @@ const Treinamentos = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar novo treinamento</DialogTitle>
+                <DialogTitle>
+                  {treinamentoInEditMode ? "Editar" : "Adicionar"} Treinamento
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-2">
                 <div className="space-y-2">
@@ -229,6 +229,7 @@ const Treinamentos = () => {
                     id="name"
                     name="name"
                     value={newTreinamento.name}
+                    placeholder="Ex: Treinamento de NR10"
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
@@ -238,28 +239,31 @@ const Treinamentos = () => {
                   <Input
                     id="courseModality"
                     name="courseModality"
+                    placeholder="Ex: Presencial, EAD, Semipresencial"
                     value={newTreinamento.courseModality}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="courseModality">Modulo</Label>
+                  <Label htmlFor="courseMethodology">Metodologia</Label>
                   <Input
-                    id="courseModality"
-                    name="courseModality"
-                    value={newTreinamento.courseModality}
+                    id="courseMethodology"
+                    name="courseMethodology"
+                    placeholder="Ex: Teórico, Prático, Teórico-Prático"
+                    value={newTreinamento.courseMethodology}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="courseType">Tipo</Label>
+                  <Label htmlFor="courseType">Tipo de Formação</Label>
                   <Input
                     id="courseType"
                     name="courseType"
                     value={newTreinamento.courseType}
                     onChange={handleInputChange}
+                    placeholder="Ex: Formação ou Atualização Periódica"
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
@@ -269,6 +273,7 @@ const Treinamentos = () => {
                     id="courseValidaty"
                     name="courseValidaty"
                     value={newTreinamento.courseValidaty}
+                    placeholder="Ex: 12 meses"
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
@@ -278,20 +283,22 @@ const Treinamentos = () => {
                   <Input
                     id="courseHours"
                     name="courseHours"
+                    type="number"
                     value={newTreinamento.courseHours}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="portariaTreinamento">
+                  <Label htmlFor="coursePortaria">
                     Portaria do treinamento
                   </Label>
                   <Input
-                    id="portariaTreinamento"
-                    name="portariaTreinamento"
-                    value=""
+                    id="coursePortaria"
+                    name="coursePortaria"
+                    value={newTreinamento.coursePortaria}
                     onChange={handleInputChange}
+                    placeholder="Ex: Portaria 321/2019"
                     required={treinamentoInEditMode ? false : true}
                   />
                 </div>
@@ -301,14 +308,8 @@ const Treinamentos = () => {
                     variant="outline"
                     onClick={() => {
                       setIsModalOpen(false),
-                        setNewTreinamento({
-                          courseModality: "",
-                          courseType: "",
-                          description: "",
-                          courseValidaty: "",
-                          courseHours: "",
-                          name: "",
-                        });
+                        clearForm(),
+                        setTreinamentoInEditMode("");
                     }}
                   >
                     Cancelar
