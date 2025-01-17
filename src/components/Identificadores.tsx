@@ -103,8 +103,6 @@ export const Identificadores = () => {
    */
   const fetchData = async () => {
     try {
-      // Poderíamos fazer as 4 requisições em paralelo (Promise.all),
-      // mas somente se o backend suportar bem. Isso diminui o tempo total de loading.
       const [response, eventosResp, pessoasResp, instrutoresResp] =
         await Promise.all([
           api.get("documentos/identificadores"),
@@ -118,7 +116,6 @@ export const Identificadores = () => {
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);
     } catch (error) {
-      // Um console.error é mais indicado do que console.log em caso de erro
       console.error(error);
     }
   };
