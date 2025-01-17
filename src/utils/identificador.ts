@@ -40,7 +40,8 @@ function processInstrutor(
   xmlPage: string,
   diasManha: string,
   diasTarde: string,
-  diasManhaTarde: string
+  diasManhaTarde: string,
+  courseTime: string
 ) {
   let result = "";
   instrutor.forEach((item) => {
@@ -55,13 +56,14 @@ function processInstrutor(
       repetition,
       instrutorName,
       dias,
-      item.periodo
+      item.periodo,
+      courseTime
     );
   });
   return result;
 }
 
-function formatarPaginas(pages: Pages, xmlPage: string) {
+function formatarPaginas(pages: Pages, xmlPage: string, courseTime: string) {
   const diasManhaA = getDias(pages.instrutorA, "manha");
   const diasTardeA = getDias(pages.instrutorA, "tarde");
   const diasManhaTardeA = getDias(pages.instrutorA, "manhaTarde");
@@ -76,7 +78,8 @@ function formatarPaginas(pages: Pages, xmlPage: string) {
     xmlPage,
     diasManhaA,
     diasTardeA,
-    diasManhaTardeA
+    diasManhaTardeA,
+    courseTime
   );
   newXmlPages += processInstrutor(
     pages.instrutorB,
@@ -84,7 +87,8 @@ function formatarPaginas(pages: Pages, xmlPage: string) {
     xmlPage,
     diasManhaB,
     diasTardeB,
-    diasManhaTardeB
+    diasManhaTardeB,
+    courseTime
   );
   return newXmlPages;
 }
@@ -92,7 +96,8 @@ function formatarPaginas(pages: Pages, xmlPage: string) {
 export async function gerarIdentificador(
   docData: Record<string, unknown>,
   pages: EventSchedule,
-  numeroParticipantes: number
+  numeroParticipantes: number,
+  courseTime: string
 ) {
   const formattedPages = calcularPaginas(pages, numeroParticipantes);
   const TAG_NAME = "<!--aux-page-->";
@@ -115,7 +120,7 @@ export async function gerarIdentificador(
 
     const updatedXml = mainXmlContent
       .split(TAG_NAME)
-      .join(formatarPaginas(formattedPages, xmlNewContent));
+      .join(formatarPaginas(formattedPages, xmlNewContent, courseTime));
 
     loadFile(
       "/templates/identificacao-do-participante.docx",
@@ -229,7 +234,8 @@ function substituirOcorrencias(
   texto: string,
   instrutor: string,
   data: string,
-  periodo: "manha" | "tarde" | "manhaTarde"
+  periodo: "manha" | "tarde" | "manhaTarde",
+  courseTime: string
 ): string {
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
@@ -239,13 +245,13 @@ function substituirOcorrencias(
     "\\[instrutor\\]": () => `[${instrutor}]`,
     "\\[data_frequencia\\]": () => data,
     "\\[manha\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde" ? "manhã" : "",
+      periodo === "manha" || periodo === courseTime ? "manhã" : "",
     "\\[tarde\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde" ? "tarde" : "",
+      periodo === "tarde" || periodo === courseTime ? "tarde" : "",
     "\\[manha_h\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde" ? "manhã_horário" : "",
+      periodo === "manha" || periodo === courseTime ? "manhã_horário" : "",
     "\\[tarde_h\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde" ? "tarde_horário" : "",
+      periodo === "tarde" || periodo === courseTime ? "tarde_horário" : "",
   };
 
   const contador = { pi: 0, p_nome: 0, p_matricula: 0, p_codigo: 0 };

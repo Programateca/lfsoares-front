@@ -35,7 +35,7 @@ import {
   formatarDatas,
   gerarIdentificador,
   Period,
-} from "@/utils/aux";
+} from "@/utils/identificador";
 
 /**
  * Definição de tipos auxiliares
@@ -55,6 +55,10 @@ type FormData = {
   objetivoTreinamento?: string;
   instrutorA: Record<string, { periodo?: Period }>;
   instrutorB: Record<string, { periodo?: Period }>;
+};
+
+type Identificador = {
+  nome: string;
 };
 
 /**
@@ -81,9 +85,9 @@ export const Identificadores = () => {
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
-  const [identificadoresGerados, setIdentificadoresGerados] = useState<any[]>(
-    []
-  );
+  const [identificadoresGerados, setIdentificadoresGerados] = useState<
+    Identificador[]
+  >([]); // TODO terminar de criar o type Identificador
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
@@ -275,7 +279,7 @@ export const Identificadores = () => {
 
         return acc;
       },
-      {}
+      {} as ParticipanteMap
     );
 
     // Ajuste para múltiplo de 10
@@ -372,7 +376,12 @@ export const Identificadores = () => {
     /**
      * Chama a função geradora de identificadores
      */
-    gerarIdentificador(dataGerador, instrutorDates, data.participantes.length);
+    gerarIdentificador(
+      dataGerador,
+      instrutorDates,
+      data.participantes.length,
+      selectedEvento.courseTime // TODO verificar se é o campo correto
+    );
   };
 
   return (
