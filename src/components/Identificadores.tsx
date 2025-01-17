@@ -93,7 +93,6 @@ export const Identificadores = () => {
     instrutorB: "Selecione o Instrutor",
   });
 
-  console.log(identificadoresGerados);
   const conteudo = watch("conteudoAplicado");
 
   /**
@@ -314,15 +313,16 @@ export const Identificadores = () => {
     };
 
     // Salva no banco
-    const save = await api.post("documentos", {
+    const newIdentificador = {
       modelType: "identificador",
       documentData: JSON.stringify(dataGerador),
-    });
+    };
+    const saveResponse = await api.post("documentos", newIdentificador);
 
     // TODO Remover alerts
-    if (save.status === 201) {
+    if (saveResponse.status === 201) {
       alert("Identificador gerado com sucesso!");
-      setIdentificadoresGerados((prev) => [...prev, save.data.data]);
+      setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
     } else {
       alert("Erro ao gerar identificador!");
     }
