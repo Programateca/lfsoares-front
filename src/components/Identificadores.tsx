@@ -24,48 +24,104 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { api } from "@/lib/axios";
+
 import { Evento } from "@/@types/Evento";
-import { MultiSelect } from "@/components/multi-select";
 import { Pessoa } from "@/@types/Pessoa";
 import { Instrutor } from "@/@types/Instrutor";
-import { EventSchedule, gerarIdentificador, Period } from "@/utils/aux";
 
+import { MultiSelect } from "@/components/multi-select";
+import {
+  EventSchedule,
+  formatarDatas,
+  gerarIdentificador,
+  Period,
+} from "@/utils/aux";
+
+/**
+ * Definição de tipos auxiliares
+ */
+type Dias = {
+  instrutorA: Record<string, { periodo?: Period }>;
+  instrutorB: Record<string, { periodo?: Period }>;
+};
+
+type FormData = {
+  evento: string;
+  certificadoTipo: string;
+  conteudoAplicado: string;
+  participantes: string[];
+  assinatura: { titulo?: string; assinante?: string }[];
+  motivoTreinamento?: string;
+  objetivoTreinamento?: string;
+  instrutorA: Record<string, { periodo?: Period }>;
+  instrutorB: Record<string, { periodo?: Period }>;
+};
+
+/**
+ * Componente principal de Identificadores
+ */
 export const Identificadores = () => {
-  const { control, register, handleSubmit, watch, setValue } = useForm();
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm<FormData>();
+
+  // Estados
   const [days, setDays] = useState<string[]>([]);
   const [disabledFields, setDisabledFields] = useState<
     Record<string, { instrutorA: boolean; instrutorB: boolean }>
   >({});
-
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
-
-  const conteudo = watch("conteudoAplicado");
-
-  const [identificadoresGerados, setIdentificadoresGerados] = useState([]);
+  const [identificadoresGerados, setIdentificadoresGerados] = useState<any[]>(
+    []
+  );
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [instrutoresSelecionados, setInstrutoresSelecionados] = useState({
+    instrutorA: "Selecione o Instrutor",
+    instrutorB: "Selecione o Instrutor",
+  });
 
+  const conteudo = watch("conteudoAplicado");
+
+  /**
+   * Busca dados iniciais do servidor
+   */
   const fetchData = async () => {
     try {
-      const response = await api.get("documentos/identificadores");
-      const eventosResp = await api.get("eventos");
-      const pessoasResp = await api.get("pessoas");
-      const instrutoresResp = await api.get("instrutores");
-      console.log(response);
-      setParticipantes(pessoasResp.data.data);
+      // Poderíamos fazer as 4 requisições em paralelo (Promise.all),
+      // mas somente se o backend suportar bem. Isso diminui o tempo total de loading.
+      const [response, eventosResp, pessoasResp, instrutoresResp] =
+        await Promise.all([
+          api.get("documentos/identificadores"),
+          api.get("eventos"),
+          api.get("pessoas"),
+          api.get("instrutores"),
+        ]);
+
       setIdentificadoresGerados(response.data.data);
-      setInstrutores(instrutoresResp.data.data);
       setEventos(eventosResp.data.data);
+      setParticipantes(pessoasResp.data.data);
+      setInstrutores(instrutoresResp.data.data);
     } catch (error) {
-      console.log(error);
+      // Um console.error é mais indicado do que console.log em caso de erro
+      console.error(error);
     }
   };
 
+  /**
+   * Carregando dados quando o componente é montado
+   */
   useEffect(() => {
     const inicializarFetch = async () => {
       setLoading(true);
@@ -76,26 +132,29 @@ export const Identificadores = () => {
     inicializarFetch();
   }, []);
 
+  /**
+   * Ajusta exibição de assinaturas com base no tipo selecionado
+   */
   const handleSignatureCount = (value: string) => {
     setShowIdentificationConfig(value !== "2");
-
     setSignatureCount(Number(value));
   };
 
+  /**
+   * Ajusta os períodos de instrutores conforme a seleção.
+   */
   const handlePeriodChange = (
     day: string,
-    instructor: string,
-    value: string
+    instructor: "instrutorA" | "instrutorB",
+    value: Period
   ) => {
     setDisabledFields((prev) => {
       const newState = { ...prev };
-
-      // Ajusta o estado do período baseado na seleção
       if (!newState[day]) {
         newState[day] = { instrutorA: false, instrutorB: false };
       }
 
-      // Regras para ajustar o período do outro instrutor
+      // Regras para o instrutor A
       if (instructor === "instrutorA") {
         if (value === "manha") {
           setValue(`instrutorB.${day}.periodo`, "tarde");
@@ -104,7 +163,9 @@ export const Identificadores = () => {
         } else if (value === "manhaTarde") {
           setValue(`instrutorB.${day}.periodo`, undefined);
         }
-      } else if (instructor === "instrutorB") {
+      }
+      // Regras para o instrutor B
+      if (instructor === "instrutorB") {
         if (value === "manha") {
           setValue(`instrutorA.${day}.periodo`, "tarde");
         } else if (value === "tarde") {
@@ -118,50 +179,56 @@ export const Identificadores = () => {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  /**
+   * Mantém numeração automática das linhas de texto.
+   */
+  const handleChangeConteudo = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const linhas = e.target.value.split("\n");
     const linhasNumeradas = linhas.map((linha, index) => {
+      // Remove qualquer numeração existente
       const linhaSemNumero = linha.replace(/^\d+\.\s*/, "");
       return `${index + 1}. ${linhaSemNumero}`;
     });
     setValue("conteudoAplicado", linhasNumeradas.join("\n"));
   };
 
-  const handleEventoSelect = (value: string) => {
-    const evento = eventos.find((evento) => evento.id === value);
+  /**
+   * Gera lista de dias entre duas datas (início e fim) no formato "pt-BR".
+   */
+  const gerarDias = (inicio: string, fim: string): string[] => {
+    const dias: string[] = [];
+    const dataInicio = new Date(inicio.split("/").reverse().join("-"));
+    const dataFim = new Date(fim.split("/").reverse().join("-"));
+
+    const dataAtual = new Date(dataInicio);
+    while (dataAtual <= dataFim) {
+      dias.push(
+        dataAtual.toLocaleDateString("pt-BR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+      );
+      dataAtual.setDate(dataAtual.getDate() + 1);
+    }
+    return dias;
+  };
+
+  /**
+   * Quando selecionamos o evento, atualizamos a lista de dias
+   */
+  const handleEventoSelect = (eventoId: string) => {
+    const evento = eventos.find((ev) => ev.id === eventoId);
     if (!evento) return;
 
     const { courseDate, completionDate } = evento;
-
-    const gerarDias = (inicio: string, fim: string): string[] => {
-      const dias: string[] = [];
-      const dataInicio = new Date(inicio.split("/").reverse().join("-")); // "20/12/2024" -> "2024-12-20"
-      const dataFim = new Date(fim.split("/").reverse().join("-")); // "22/12/2024" -> "2024-12-22"
-
-      const dataAtual = new Date(dataInicio);
-      while (dataAtual <= dataFim) {
-        dias.push(
-          dataAtual.toLocaleDateString("pt-BR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-        );
-        dataAtual.setDate(dataAtual.getDate() + 1); // Incrementa 1 dia
-      }
-      return dias;
-    };
-
     const diasGerados = gerarDias(courseDate, completionDate);
     setDays(diasGerados);
-    console.log(diasGerados); // Para verificar os dias gerados
   };
 
-  type Dias = {
-    instrutorA: Record<string, { periodo?: Period }>;
-    instrutorB: Record<string, { periodo?: Period }>;
-  };
-
+  /**
+   * Retorna dados formatados de instrutorA e instrutorB
+   */
   const formatDays = (dias: Dias): EventSchedule => ({
     instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
       dia,
@@ -173,69 +240,140 @@ export const Identificadores = () => {
     })),
   });
 
-  // type Data = {
-  //   conteudoAplicado: string;
-  //   motivoTreinamento: string;
-  //   objetivoTreinamento: string;
-  //   evento: string;
-  //   certificadoTipo: string;
-  //   participantes: string[];
-  //   assinatura: { titulo: string; assinante: string }[];
-  //   instrutorA: Record<string, { periodo?: Period }>;
-  //   instrutorB: Record<string, { periodo?: Period }>;
-  // };
+  /**
+   * Lógica de submit do formulário
+   */
+  const onSubmit = (data: FormData) => {
+    // Caso não existam participantes selecionados
+    if (!data.participantes?.length) {
+      // Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
+      alert("Selecione os participantes");
+      return;
+    }
 
-  function onSubmit(data: any) {
-    const dataTeste = {
-      conteudoAplicado: "1. Incendio\n2. Seguranca\n3. Equipamentos",
-      motivoTreinamento: "Atualização",
-      objetivoTreinamento: "Objetivo da LF Soares Treinamentos e Serviços",
-      evento: "bd5b2ff4-3fdb-47ac-9134-e60744458e42",
-      certificadoTipo: "3",
-      participantes: ["11b30ab0-d725-4d78-90ef-70477b98baa0"],
-      assinatura: [
-        {
-          titulo: "Instrutor 1",
-          assinante: "c054e21e-257e-4c1c-a0cb-0d99f7018b3d",
-        },
-        {
-          titulo: "Instrutor 2",
-          assinante: "7e9191df-6f1d-40c2-99f6-051ab1868492",
-        },
-        {
-          titulo: "Instrutor 3",
-          assinante: "d91aeeaf-ff64-4f94-9826-0016fd488374",
-        },
-      ],
-      instrutorA: {
-        "30/12/2024": {
-          periodo: "Manha",
-        },
-        "31/12/2024": {
-          periodo: "Manha",
-        },
-        "01/01/2025": {},
-        "02/01/2025": {},
+    const selectedEvento = eventos.find((evento) => evento.id === data.evento);
+    if (!selectedEvento) {
+      alert("Evento selecionado não foi encontrado!");
+      return;
+    }
+
+    /**
+     * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
+     */
+    interface ParticipanteMap {
+      [key: string]: string;
+    }
+
+    const participantesMap: ParticipanteMap = data.participantes.reduce(
+      (acc, id, index) => {
+        const participante = participantes.find((pessoa) => pessoa.id === id);
+        const rowIndex = index + 1;
+
+        acc[`p_nome${rowIndex}`] = participante?.name || "";
+        acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
+        acc[`p_codigo${rowIndex}`] = participante ? "codigo-mudar" : "";
+
+        return acc;
       },
-      instrutorB: {
-        "30/12/2024": {},
-        "31/12/2024": {},
-        "01/01/2025": {
-          periodo: "Tarde",
-        },
-        "02/01/2025": {
-          periodo: "Tarde",
-        },
-      },
+      {}
+    );
+
+    // Ajuste para múltiplo de 10
+    const totalParticipants = data.participantes.length;
+    const nextMultipleOfTen = Math.ceil(totalParticipants / 10) * 10;
+    const padding = nextMultipleOfTen - totalParticipants;
+
+    for (let i = 1; i <= padding; i++) {
+      const index = totalParticipants + i;
+      participantesMap[`p_nome${index}`] = "";
+      participantesMap[`p_matricula${index}`] = "";
+      participantesMap[`p_codigo${index}`] = "";
+    }
+
+    /**
+     * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
+     * e formatamos para exibição
+     */
+    const todasAsDatas = new Set([
+      ...Object.keys(data.instrutorA),
+      ...Object.keys(data.instrutorB),
+    ]);
+    const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
+
+    /**
+     * Corpo de dados principal que será passado para gerarIdentificador()
+     */
+    const dataGerador = {
+      mudar_modulo: "Teórico e Prático FIXO",
+      mudar_horarios: "08:00 às 17:00 FIXO",
+      id_code: "codigo-mudar",
+      id_data: "data-mudar",
+      responsavel_tecnico: "Nome do Responsável Técnico",
+
+      // Mapeamento de participantes
+      ...participantesMap,
+
+      conteudo_aplicado: data.conteudoAplicado,
+      motivo_treinamento:
+        "Cumprir Norma Regulamentadora – NR33 - (Portaria SEPRT 1690, de 15/06/2022);\nCapacitar profissional na função de Supervisor de Espaço Confinado, ciente dos riscos, medidas de controle e procedimentos de trabalho;\nHabilitar profissional treinado e considerado apto, conforme requisitos técnicos e plano de ensino LF SOARES TREINAMENTOS E SERVIÇOS",
+      objetivo_lf:
+        "Fornecer informações atualizadas referente as normas e procedimentos, conscientizar empregado dos perigos e riscos, avaliar nível de conhecimento e comportamento mediante as atividades em sala de aula e exercícios práticos, habilitando aquele que pontuar média mínima de 8,0 e 100% de sua presença, conforme planejamento de ensino.",
+
+      treinamento: selectedEvento.treinamento.name,
+      treinamento_lista: selectedEvento.treinamento.name, // possivelmente igual
+      contratante: selectedEvento.empresa.name,
+      tipo: selectedEvento.treinamento.courseType,
+      carga_horaria: selectedEvento.treinamento.courseHours,
+      intervalo: selectedEvento.courseInterval,
+      endereco: selectedEvento.courseLocation,
+      empresa: selectedEvento.empresa.name,
+      datas: datasFormatadas,
+
+      // Assinaturas
+      assinante_titulo1: data?.assinatura[0]?.titulo
+        ? data.assinatura[0].titulo + ":"
+        : "",
+      assinante_titulo2: data?.assinatura[1]?.titulo
+        ? data.assinatura[1].titulo + ":"
+        : "",
+      assinante_titulo3: data?.assinatura[2]?.titulo
+        ? data.assinatura[2].titulo + ":"
+        : "",
+      assinante_titulo4: data?.assinatura[3]?.titulo
+        ? data.assinatura[3].titulo + ":"
+        : "",
+
+      assinante1:
+        instrutores.find((item) => item.id === data.assinatura[0]?.assinante)
+          ?.name || "",
+      assinante2:
+        instrutores.find((item) => item.id === data.assinatura[1]?.assinante)
+          ?.name || "",
+      assinante3:
+        instrutores.find((item) => item.id === data.assinatura[2]?.assinante)
+          ?.name || "",
+      assinante4:
+        instrutores.find((item) => item.id === data.assinatura[3]?.assinante)
+          ?.name || "",
+
+      // Exemplo fixo. Talvez queira buscar do backend.
+      instrutor_a: "Nome Do Instrutor A",
+      instrutor_b: "Nome Do Instrutor B",
     };
 
+    /**
+     * Formata data para instrutorA e instrutorB
+     */
     const instrutorDates = formatDays({
       instrutorA: data.instrutorA,
       instrutorB: data.instrutorB,
     });
 
-    gerarIdentificador({}, instrutorDates, dataTeste.participantes.length);
-  }
+    /**
+     * Chama a função geradora de identificadores
+     */
+    gerarIdentificador(dataGerador, instrutorDates, data.participantes.length);
+  };
 
   return (
     <Card className="shadow-md">
@@ -244,15 +382,17 @@ export const Identificadores = () => {
           Lista de Identificadores
         </CardTitle>
       </CardHeader>
+
       <CardContent>
+        {/* Botão para mostrar/ocultar formulário */}
         <div className="flex justify-between mb-4">
           <Button
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
-            onClick={() => setFormsOpen(!formsOpen)}
+            onClick={() => setFormsOpen((prev) => !prev)}
           >
             {formsOpen ? (
               <>
-                <ArrowLeft className=" h-4 w-4" />
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar à Tabela
               </>
             ) : (
@@ -263,9 +403,12 @@ export const Identificadores = () => {
             )}
           </Button>
         </div>
+
+        {/* Formulário de Criação/Edição */}
         {formsOpen ? (
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex gap-4 w-full">
+            {/* Linha de Seleção de Evento e Certificado */}
+            <div className="flex flex-col md:flex-row gap-4 w-full">
               <div className="w-full">
                 <Label>Evento</Label>
                 <Controller
@@ -296,6 +439,7 @@ export const Identificadores = () => {
                   )}
                 />
               </div>
+
               <div className="w-full">
                 <Label>Tipo de Certificado</Label>
                 <Controller
@@ -331,39 +475,40 @@ export const Identificadores = () => {
                 />
               </div>
             </div>
-            <div className="my-4 flex flex-row gap-4">
+
+            {/* Linha de assinaturas e conteúdo aplicado */}
+            <div className="my-4 flex flex-col md:flex-row gap-4">
               <div className="w-full">
                 {Array.from({ length: signatureCount }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex justify-start items-end gap-5 mb-3"
+                    className="flex flex-col md:flex-row items-start md:items-end gap-2 mb-3"
                   >
-                    <Label className="pb-4 text-nowrap">
+                    <Label className="md:pb-4 whitespace-nowrap">
                       Assinatura {index + 1}:
                     </Label>
-                    <div className="flex flex-col w-full gap-2 ">
+
+                    <div className="flex flex-col w-full gap-2">
                       <Label>Título</Label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col md:flex-row gap-2">
                         <Input
-                          {...register(`assinatura[${index}].titulo`)}
+                          {...register(`assinatura.${index}.titulo`)}
                           className="w-full"
                           value={
-                            // Define "Instrutor" para os dois primeiros inputs em certificados com 3 ou mais assinaturas
+                            // Define "Instrutor" em posições específicas
                             (index < 2 && signatureCount >= 3) ||
                             (index === 0 && signatureCount === 2)
                               ? "Instrutor"
-                              : undefined
+                              : getValues(`assinatura.${index}.titulo`) || ""
                           }
                           onChange={(e) => {
-                            // Permite edição somente para campos que não estão fixos como "Instrutor"
+                            // Permite edição somente para campos não fixos
                             if (
-                              !(
-                                (index < 2 && signatureCount >= 3) ||
-                                (index === 0 && signatureCount === 2)
-                              )
+                              !(index < 2 && signatureCount >= 3) &&
+                              !(index === 0 && signatureCount === 2)
                             ) {
                               setValue(
-                                `assinatura[${index}].titulo`,
+                                `assinatura.${index}.titulo`,
                                 e.target.value
                               );
                             }
@@ -371,14 +516,33 @@ export const Identificadores = () => {
                           readOnly={
                             (index < 2 && signatureCount >= 3) ||
                             (index === 0 && signatureCount === 2)
-                          } // Torna os campos fixos somente leitura
+                          }
                         />
                         <Controller
-                          name={`assinatura[${index}].assinante`}
+                          name={`assinatura.${index}.assinante`}
                           control={control}
                           render={({ field }) => (
                             <Select
-                              onValueChange={field.onChange}
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                if (index === 0) {
+                                  const selectedInstrutor =
+                                    instrutores.find((i) => i.id === value)
+                                      ?.name || "Selecione o Instrutor";
+                                  setInstrutoresSelecionados((prev) => ({
+                                    ...prev,
+                                    instrutorA: selectedInstrutor,
+                                  }));
+                                } else if (index === 1) {
+                                  const selectedInstrutor =
+                                    instrutores.find((i) => i.id === value)
+                                      ?.name || "Selecione o Instrutor";
+                                  setInstrutoresSelecionados((prev) => ({
+                                    ...prev,
+                                    instrutorB: selectedInstrutor,
+                                  }));
+                                }
+                              }}
                               value={field.value}
                             >
                               <SelectTrigger>
@@ -389,8 +553,8 @@ export const Identificadores = () => {
                                   <SelectLabel>Assinante</SelectLabel>
                                   {instrutores.map((instrutor) => (
                                     <SelectItem
-                                      value={instrutor.id}
                                       key={instrutor.id}
+                                      value={instrutor.id}
                                     >
                                       {instrutor.name}
                                     </SelectItem>
@@ -405,59 +569,66 @@ export const Identificadores = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Conteúdo aplicado */}
               <div className="w-full">
                 <Label>Conteúdo Aplicado</Label>
                 <Textarea
                   {...register("conteudoAplicado")}
-                  value={conteudo}
-                  onChange={handleChange}
+                  value={conteudo || ""}
+                  onChange={handleChangeConteudo}
                   className="h-full w-full p-2 border rounded"
                 />
               </div>
             </div>
 
-            <Label>Participantes</Label>
+            {/* Seleção de participantes */}
+            <div className="mt-2">
+              <Label>Participantes</Label>
+              <Controller
+                name="participantes"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    options={participantes.map((pessoa) => ({
+                      label: pessoa.name,
+                      value: pessoa.id,
+                    }))}
+                    onValueChange={(value) => field.onChange(value)}
+                    defaultValue={field.value || []}
+                    placeholder="Selecione os participantes"
+                    variant="inverted"
+                    animation={2}
+                    maxCount={3}
+                  />
+                )}
+              />
+            </div>
 
-            <Controller
-              name="participantes"
-              control={control}
-              render={({ field }) => (
-                <MultiSelect
-                  options={participantes.map((pessoa) => ({
-                    label: pessoa.name,
-                    value: pessoa.id,
-                  }))}
-                  onValueChange={(value) => field.onChange(value)}
-                  defaultValue={field.value || []}
-                  placeholder="Select frameworks"
-                  variant="inverted"
-                  animation={2}
-                  maxCount={3}
-                />
-              )}
-            />
+            {/* Separador */}
             {showIdentificationConfig && (
-              <div className="w-full h-[2px] bg-gray-300  rounded-lg  my-5">
-                <span className=""></span>
-              </div>
+              <div className="w-full h-[2px] bg-gray-300 rounded-lg my-5" />
             )}
 
+            {/* Seleção de instrutores por dia */}
             {showIdentificationConfig && (
-              <div className="mt-4 flex gap-4 flex-col">
-                <p className="my-1 w-full">Configurar Lista:</p>
+              <div className="mt-4 flex flex-col">
+                <p className="my-1 w-full">Configurar Lista de Instrutores:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
                   {days.map((day, index) => (
-                    <div key={index} className="border p-4 mb-4 w-full">
+                    <div key={index} className="border p-4 w-full rounded">
                       <Label>Dia: {day}</Label>
-                      <div className="flex gap-4 items-center">
-                        <div>
-                          <Label>Instrutor A</Label>
+
+                      {/* Instrutor A */}
+                      <div className="flex gap-4 items-center mt-2">
+                        <div className="w-full">
+                          <Label>{instrutoresSelecionados.instrutorA}</Label>
                           <Controller
                             name={`instrutorA.${day}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select
-                                onValueChange={(value) => {
+                                onValueChange={(value: Period) => {
                                   field.onChange(value);
                                   handlePeriodChange(day, "instrutorA", value);
                                 }}
@@ -467,7 +638,7 @@ export const Identificadores = () => {
                                 }
                               >
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Selecione o período" />
+                                  <SelectValue placeholder="Período" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -484,15 +655,17 @@ export const Identificadores = () => {
                           />
                         </div>
                       </div>
+
+                      {/* Instrutor B */}
                       <div className="flex gap-4 items-center mt-2">
-                        <div>
-                          <Label>Instrutor B</Label>
+                        <div className="w-full">
+                          <Label>{instrutoresSelecionados.instrutorB}</Label>
                           <Controller
                             name={`instrutorB.${day}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select
-                                onValueChange={(value) => {
+                                onValueChange={(value: Period) => {
                                   field.onChange(value);
                                   handlePeriodChange(day, "instrutorB", value);
                                 }}
@@ -502,7 +675,7 @@ export const Identificadores = () => {
                                 }
                               >
                                 <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Selecione o período" />
+                                  <SelectValue placeholder="Período" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup>
@@ -525,20 +698,32 @@ export const Identificadores = () => {
               </div>
             )}
 
-            <div className="w-full h-[2px] bg-gray-300  rounded-lg  my-5">
-              <span className=""></span>
+            {/* Separador */}
+            <div className="w-full h-[2px] bg-gray-300 rounded-lg my-5" />
+
+            {/* Observações complementares */}
+            <div className="flex flex-col gap-4">
+              <div>
+                <Label>Motivo do Treinamento</Label>
+                <Textarea {...register("motivoTreinamento")} className="mb-4" />
+              </div>
+              <div>
+                <Label>Objetivo da LF Soares Treinamentos e Serviços:</Label>
+                <Textarea {...register("objetivoTreinamento")} />
+              </div>
             </div>
 
-            <Label>Motivo do Treinamento</Label>
-            <Textarea {...register("motivoTreinamento")} className="mb-4" />
-            <Label>Objetivo da LF Soares Treinamentos e Serviços:</Label>
-            <Textarea {...register("objetivoTreinamento")} />
-
-            <Button type="submit" className="bg-black text-white mt-5">
-              Salvar
+            {/* Botão de submit */}
+            <Button
+              type="submit"
+              className="bg-black text-white mt-5"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Salvando..." : "Salvar"}
             </Button>
           </form>
         ) : (
+          /* Tabela de Identificadores Gerados */
           <Table>
             <TableHeader>
               <TableRow>
@@ -551,8 +736,8 @@ export const Identificadores = () => {
                 <TableRow>
                   <TableCell colSpan={5} className="text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <div className="loader"></div>
                       <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
+                      <p>Carregando...</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -562,30 +747,30 @@ export const Identificadores = () => {
                     <div className="flex items-center justify-center space-x-2">
                       <CircleX className="h-6 w-6 text-red-400" />
                       <p className="text-sm text-red-400">
-                        Os ultimos certificados gerados aparecerão aqui.
+                        Os últimos certificados gerados aparecerão aqui.
                       </p>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                identificadoresGerados.map(() => (
-                  <TableRow>
+                identificadoresGerados.map((identificador, idx) => (
+                  <TableRow key={idx}>
                     <TableCell className="font-medium py-2">
-                      Certificado
+                      {identificador.nome || "Certificado"}
                     </TableCell>
                     <TableCell className="text-end py-2">
                       <Button
-                        variant={"outline"}
+                        variant="outline"
                         className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       >
-                        <Edit />
+                        <Edit className="mr-2 h-4 w-4" />
                         Editar
                       </Button>
                       <Button
-                        variant={"outline"}
+                        variant="outline"
                         className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       >
-                        <BookUp2 />
+                        <BookUp2 className="mr-2 h-4 w-4" />
                         Baixar
                       </Button>
                     </TableCell>

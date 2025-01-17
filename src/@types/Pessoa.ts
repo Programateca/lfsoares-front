@@ -5,6 +5,7 @@ export interface Pessoa {
   name: string;
   cpf: string;
   id: string;
+  matricula: string;
   createdAt: string;
   updatedAt: string;
 }

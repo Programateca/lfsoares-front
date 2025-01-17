@@ -6,7 +6,7 @@ export interface Evento {
   status: Status;
   empresa: Empresa;
   treinamento: Treinamento;
-  courseLocation1: string;
+  courseLocation: string;
   courseLocation2: string;
   courseDate: string;
   completionDate: string;
