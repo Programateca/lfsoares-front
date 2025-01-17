@@ -31,19 +31,22 @@ import { Instrutor } from "@/@types/Instrutor";
 
 import { MultiSelect } from "@/components/multi-select";
 import {
-  EventSchedule,
   formatarDatas,
+  formatDays,
+  gerarDias,
   gerarIdentificador,
   Period,
 } from "@/utils/identificador";
+import { DocumentData } from "@/@types/Document";
+import { Identificador } from "@/@types/Identificador";
 
 /**
  * Definição de tipos auxiliares
  */
-type Dias = {
-  instrutorA: Record<string, { periodo?: Period }>;
-  instrutorB: Record<string, { periodo?: Period }>;
-};
+
+interface ParticipanteMap {
+  [key: string]: string;
+}
 
 type FormData = {
   evento: string;
@@ -57,13 +60,8 @@ type FormData = {
   instrutorB: Record<string, { periodo?: Period }>;
 };
 
-type Identificador = {
-  nome: string;
-};
+// TODO Terminar o type do Identificador
 
-/**
- * Componente principal de Identificadores
- */
 export const Identificadores = () => {
   const {
     control,
@@ -75,7 +73,6 @@ export const Identificadores = () => {
     formState: { isSubmitting },
   } = useForm<FormData>();
 
-  // Estados
   const [days, setDays] = useState<string[]>([]);
   const [disabledFields, setDisabledFields] = useState<
     Record<string, { instrutorA: boolean; instrutorB: boolean }>
@@ -86,7 +83,7 @@ export const Identificadores = () => {
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
   const [identificadoresGerados, setIdentificadoresGerados] = useState<
-    Identificador[]
+    DocumentData[]
   >([]); // TODO terminar de criar o type Identificador
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
@@ -96,6 +93,7 @@ export const Identificadores = () => {
     instrutorB: "Selecione o Instrutor",
   });
 
+  console.log(identificadoresGerados);
   const conteudo = watch("conteudoAplicado");
 
   /**
@@ -105,7 +103,7 @@ export const Identificadores = () => {
     try {
       const [response, eventosResp, pessoasResp, instrutoresResp] =
         await Promise.all([
-          api.get("documentos/identificadores"),
+          api.get("documentos/identificador"),
           api.get("eventos"),
           api.get("pessoas"),
           api.get("instrutores"),
@@ -119,19 +117,6 @@ export const Identificadores = () => {
       console.error(error);
     }
   };
-
-  /**
-   * Carregando dados quando o componente é montado
-   */
-  useEffect(() => {
-    const inicializarFetch = async () => {
-      setLoading(true);
-      await fetchData();
-      setLoading(false);
-    };
-
-    inicializarFetch();
-  }, []);
 
   /**
    * Ajusta exibição de assinaturas com base no tipo selecionado
@@ -194,28 +179,6 @@ export const Identificadores = () => {
   };
 
   /**
-   * Gera lista de dias entre duas datas (início e fim) no formato "pt-BR".
-   */
-  const gerarDias = (inicio: string, fim: string): string[] => {
-    const dias: string[] = [];
-    const dataInicio = new Date(inicio.split("/").reverse().join("-"));
-    const dataFim = new Date(fim.split("/").reverse().join("-"));
-
-    const dataAtual = new Date(dataInicio);
-    while (dataAtual <= dataFim) {
-      dias.push(
-        dataAtual.toLocaleDateString("pt-BR", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })
-      );
-      dataAtual.setDate(dataAtual.getDate() + 1);
-    }
-    return dias;
-  };
-
-  /**
    * Quando selecionamos o evento, atualizamos a lista de dias
    */
   const handleEventoSelect = (eventoId: string) => {
@@ -228,26 +191,11 @@ export const Identificadores = () => {
   };
 
   /**
-   * Retorna dados formatados de instrutorA e instrutorB
-   */
-  const formatDays = (dias: Dias): EventSchedule => ({
-    instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
-      dia,
-      periodo,
-    })),
-    instrutorB: Object.entries(dias.instrutorB).map(([dia, { periodo }]) => ({
-      dia,
-      periodo,
-    })),
-  });
-
-  /**
    * Lógica de submit do formulário
    */
-  const onSubmit = (data: FormData) => {
-    // Caso não existam participantes selecionados
+  const onSubmit = async (data: FormData) => {
     if (!data.participantes?.length) {
-      // Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
+      // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
       alert("Selecione os participantes");
       return;
     }
@@ -257,14 +205,9 @@ export const Identificadores = () => {
       alert("Evento selecionado não foi encontrado!");
       return;
     }
-
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
      */
-    interface ParticipanteMap {
-      [key: string]: string;
-    }
-
     const participantesMap: ParticipanteMap = data.participantes.reduce(
       (acc, id, index) => {
         const participante = participantes.find((pessoa) => pessoa.id === id);
@@ -305,6 +248,7 @@ export const Identificadores = () => {
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
+      // TODO Mudar dados fixos
       mudar_modulo: "Teórico e Prático FIXO",
       mudar_horarios: "08:00 às 17:00 FIXO",
       id_code: "codigo-mudar",
@@ -313,6 +257,7 @@ export const Identificadores = () => {
 
       // Mapeamento de participantes
       ...participantesMap,
+      numeroParticipantes: totalParticipants,
 
       conteudo_aplicado: data.conteudoAplicado,
       motivo_treinamento:
@@ -321,7 +266,7 @@ export const Identificadores = () => {
         "Fornecer informações atualizadas referente as normas e procedimentos, conscientizar empregado dos perigos e riscos, avaliar nível de conhecimento e comportamento mediante as atividades em sala de aula e exercícios práticos, habilitando aquele que pontuar média mínima de 8,0 e 100% de sua presença, conforme planejamento de ensino.",
 
       treinamento: selectedEvento.treinamento.name,
-      treinamento_lista: selectedEvento.treinamento.name, // possivelmente igual
+      treinamento_lista: selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: selectedEvento.treinamento.courseHours,
@@ -357,30 +302,51 @@ export const Identificadores = () => {
         instrutores.find((item) => item.id === data.assinatura[3]?.assinante)
           ?.name || "",
 
-      // Exemplo fixo. Talvez queira buscar do backend.
-      instrutor_a: "Nome Do Instrutor A",
-      instrutor_b: "Nome Do Instrutor B",
+      instrutor_a: instrutoresSelecionados.instrutorA,
+      instrutor_b: instrutoresSelecionados.instrutorB,
+      /**
+       * Formata data para instrutorA e instrutorB
+       */
+      instrutorDates: formatDays({
+        instrutorA: data.instrutorA,
+        instrutorB: data.instrutorB,
+      }),
     };
 
-    /**
-     * Formata data para instrutorA e instrutorB
-     */
-    const instrutorDates = formatDays({
-      instrutorA: data.instrutorA,
-      instrutorB: data.instrutorB,
+    // Salva no banco
+    const save = await api.post("documentos", {
+      modelType: "identificador",
+      documentData: JSON.stringify(dataGerador),
     });
+
+    // TODO Remover alerts
+    if (save.status === 201) {
+      alert("Identificador gerado com sucesso!");
+      setIdentificadoresGerados((prev) => [...prev, save.data.data]);
+    } else {
+      alert("Erro ao gerar identificador!");
+    }
 
     /**
      * Chama a função geradora de identificadores
      */
-    gerarIdentificador(
-      dataGerador,
-      instrutorDates,
-      data.participantes.length,
-      selectedEvento.courseTime // TODO verificar se é o campo correto
-    );
+    // gerarIdentificador(
+    //   dataGerador,
+    //   dataGerador.instrutorDates,
+    //   data.participantes.length,
+    //   selectedEvento.courseTime // TODO verificar se é o campo correto
+    // );
   };
 
+  useEffect(() => {
+    const inicializarFetch = async () => {
+      setLoading(true);
+      await fetchData();
+      setLoading(false);
+    };
+
+    inicializarFetch();
+  }, []);
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -759,29 +725,42 @@ export const Identificadores = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                identificadoresGerados.map((identificador, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell className="font-medium py-2">
-                      {identificador.nome || "Certificado"}
-                    </TableCell>
-                    <TableCell className="text-end py-2">
-                      <Button
-                        variant="outline"
-                        className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                      >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Editar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                      >
-                        <BookUp2 className="mr-2 h-4 w-4" />
-                        Baixar
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                identificadoresGerados.map((identificador, idx) => {
+                  const identificadorParsed = JSON.parse(
+                    identificador.documentData
+                  ) as Identificador;
+                  return (
+                    <TableRow key={idx}>
+                      <TableCell className="font-medium py-2">
+                        {identificadorParsed.treinamento}
+                      </TableCell>
+                      <TableCell className="text-end py-2">
+                        <Button
+                          variant="outline"
+                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Editar
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                          onClick={() =>
+                            gerarIdentificador(
+                              identificadorParsed,
+                              identificadorParsed.instrutorDates,
+                              identificadorParsed.numeroParticipantes,
+                              "hora do curso - FIXO"
+                            )
+                          }
+                        >
+                          <BookUp2 className="mr-2 h-4 w-4" />
+                          Baixar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>

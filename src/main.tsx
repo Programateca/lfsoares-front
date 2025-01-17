@@ -7,16 +7,11 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Home from "./pages/Home.tsx";
 import { AuthProvider } from "./context/AuthContextProvider.tsx";
 import { Toaster } from "react-hot-toast";
-import { TesteComponent } from "./pages/Teste.tsx";
 
 if (!import.meta.env.VITE_BACKEND_DOMAIN)
   throw new Error("Env VITE_BACKEND_DOMAIN missing");
 
 const router = createBrowserRouter([
-  {
-    path: "/teste",
-    element: <TesteComponent />,
-  },
   {
     path: "/",
     element: <Home />,

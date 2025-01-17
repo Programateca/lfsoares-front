@@ -3,6 +3,7 @@ import Docxtemplater from "docxtemplater";
 import { saveAs } from "file-saver";
 import PizZipUtils from "pizzip/utils";
 import expressionParser from "docxtemplater/expressions";
+import { Identificador } from "@/@types/Identificador";
 
 export type Period = "manha" | "tarde" | "manhaTarde";
 export type Schedule = { dia: string; periodo?: Period };
@@ -94,7 +95,7 @@ function formatarPaginas(pages: Pages, xmlPage: string, courseTime: string) {
 }
 
 export async function gerarIdentificador(
-  docData: Record<string, unknown>,
+  docData: Identificador,
   pages: EventSchedule,
   numeroParticipantes: number,
   courseTime: string
@@ -261,4 +262,41 @@ function substituirOcorrencias(
       result.replace(new RegExp(pattern, "g"), replacer),
     texto
   );
+}
+
+export function gerarDias(inicio: string, fim: string): string[] {
+  const dias: string[] = [];
+  const dataInicio = new Date(inicio.split("/").reverse().join("-"));
+  const dataFim = new Date(fim.split("/").reverse().join("-"));
+
+  const dataAtual = new Date(dataInicio);
+  while (dataAtual <= dataFim) {
+    dias.push(
+      dataAtual.toLocaleDateString("pt-BR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+    );
+    dataAtual.setDate(dataAtual.getDate() + 1);
+  }
+  return dias;
+}
+
+type Dias = {
+  instrutorA: Record<string, { periodo?: Period }>;
+  instrutorB: Record<string, { periodo?: Period }>;
+};
+
+export function formatDays(dias: Dias): EventSchedule {
+  return {
+    instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
+      dia,
+      periodo,
+    })),
+    instrutorB: Object.entries(dias.instrutorB).map(([dia, { periodo }]) => ({
+      dia,
+      periodo,
+    })),
+  };
 }
