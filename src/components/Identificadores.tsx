@@ -39,6 +39,7 @@ import {
 } from "@/utils/identificador";
 import { DocumentData } from "@/@types/Document";
 import { Identificador } from "@/@types/Identificador";
+import toast from "react-hot-toast";
 
 /**
  * Definição de tipos auxiliares
@@ -71,6 +72,7 @@ export const Identificadores = () => {
     setValue,
     getValues,
     formState: { isSubmitting },
+    reset,
   } = useForm<FormData>();
 
   const [days, setDays] = useState<string[]>([]);
@@ -93,7 +95,6 @@ export const Identificadores = () => {
     instrutorB: "Selecione o Instrutor",
   });
 
-  console.log(identificadoresGerados);
   const conteudo = watch("conteudoAplicado");
 
   /**
@@ -196,13 +197,13 @@ export const Identificadores = () => {
   const onSubmit = async (data: FormData) => {
     if (!data.participantes?.length) {
       // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
-      alert("Selecione os participantes");
+      toast.error("Selecione os participantes");
       return;
     }
 
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
     if (!selectedEvento) {
-      alert("Evento selecionado não foi encontrado!");
+      toast.error("Evento selecionado não foi encontrado!");
       return;
     }
     /**
@@ -233,16 +234,18 @@ export const Identificadores = () => {
       participantesMap[`p_matricula${index}`] = "";
       participantesMap[`p_codigo${index}`] = "";
     }
-
-    /**
-     * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
-     * e formatamos para exibição
-     */
-    const todasAsDatas = new Set([
-      ...Object.keys(data.instrutorA),
-      ...Object.keys(data.instrutorB),
-    ]);
-    const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
+    let datasFormatadas = "";
+    if (data.certificadoTipo !== "2") {
+      /**
+       * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
+       * e formatamos para exibição
+       */
+      const todasAsDatas = new Set([
+        ...Object.keys(data.instrutorA),
+        ...Object.keys(data.instrutorB),
+      ]);
+      datasFormatadas = formatarDatas(Array.from(todasAsDatas));
+    }
 
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
@@ -321,8 +324,11 @@ export const Identificadores = () => {
 
     // TODO Remover alerts
     if (save.status === 201) {
-      alert("Identificador gerado com sucesso!");
-      setIdentificadoresGerados((prev) => [...prev, save.data.data]);
+      toast.success("Identificador gerado com sucesso!");
+      setFormsOpen(false);
+      reset();
+      setSignatureCount(0);
+      setShowIdentificationConfig(false);
     } else {
       alert("Erro ao gerar identificador!");
     }
@@ -346,7 +352,8 @@ export const Identificadores = () => {
     };
 
     inicializarFetch();
-  }, []);
+  }, [formsOpen]);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -360,7 +367,11 @@ export const Identificadores = () => {
         <div className="flex justify-between mb-4">
           <Button
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
-            onClick={() => setFormsOpen((prev) => !prev)}
+            onClick={() => {
+              setFormsOpen((prev) => !prev), reset();
+              setSignatureCount(0);
+              setShowIdentificationConfig(false);
+            }}
           >
             {formsOpen ? (
               <>
@@ -466,7 +477,7 @@ export const Identificadores = () => {
                         <Input
                           {...register(`assinatura.${index}.titulo`)}
                           className="w-full"
-                          value={
+                          defaultValue={
                             // Define "Instrutor" em posições específicas
                             (index < 2 && signatureCount >= 3) ||
                             (index === 0 && signatureCount === 2)
@@ -726,13 +737,13 @@ export const Identificadores = () => {
                 </TableRow>
               ) : (
                 identificadoresGerados.map((identificador, idx) => {
-                  const identificadorParsed = JSON.parse(
-                    identificador.documentData
-                  ) as Identificador;
+                  const identificadorParsed = identificador.documentData
+                    ? (JSON.parse(identificador.documentData) as Identificador)
+                    : null;
                   return (
                     <TableRow key={idx}>
-                      <TableCell className="font-medium py-2">
-                        {identificadorParsed.treinamento}
+                      <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
+                        {identificadorParsed?.treinamento}
                       </TableCell>
                       <TableCell className="text-end py-2">
                         <Button
@@ -745,14 +756,16 @@ export const Identificadores = () => {
                         <Button
                           variant="outline"
                           className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                          onClick={() =>
-                            gerarIdentificador(
-                              identificadorParsed,
-                              identificadorParsed.instrutorDates,
-                              identificadorParsed.numeroParticipantes,
-                              "hora do curso - FIXO"
-                            )
-                          }
+                          onClick={() => {
+                            if (identificadorParsed) {
+                              gerarIdentificador(
+                                identificadorParsed,
+                                identificadorParsed.instrutorDates,
+                                identificadorParsed.numeroParticipantes,
+                                "hora do curso - FIXO"
+                              );
+                            }
+                          }}
                         >
                           <BookUp2 className="mr-2 h-4 w-4" />
                           Baixar
