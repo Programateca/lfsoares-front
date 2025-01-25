@@ -39,6 +39,8 @@ import {
 } from "@/utils/identificador";
 import { DocumentData } from "@/@types/Document";
 import { Identificador } from "@/@types/Identificador";
+import { getLastDocumentCode } from "@/utils/get-last-document-code";
+import { ModelType } from "@/@types/ModeType";
 import toast from "react-hot-toast";
 
 /**
@@ -234,28 +236,40 @@ export const Identificadores = () => {
       participantesMap[`p_matricula${index}`] = "";
       participantesMap[`p_codigo${index}`] = "";
     }
-    let datasFormatadas = "";
-    if (data.certificadoTipo !== "2") {
-      /**
-       * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
-       * e formatamos para exibição
-       */
-      const todasAsDatas = new Set([
+
+    /**
+     * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
+     * e formatamos para exibição
+     */
+    let todasAsDatas;
+
+    if (signatureCount === 2) {
+      todasAsDatas = new Set(days.flatMap((day) => [day]));
+    } else {
+      todasAsDatas = new Set([
         ...Object.keys(data.instrutorA),
         ...Object.keys(data.instrutorB),
       ]);
-      datasFormatadas = formatarDatas(Array.from(todasAsDatas));
     }
 
+    const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
+
+    const fullYear = new Date().getFullYear().toString();
+    const lastCode = await getLastDocumentCode(
+      fullYear,
+      ModelType.IDENTIFICADOR
+    );
+
+    const certCode = String(lastCode + 1).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
       // TODO Mudar dados fixos
-      mudar_modulo: "Teórico e Prático FIXO",
+      mudar_modulo: "Teórico e Prático FIXO", // OLHA AQUI
       mudar_horarios: "08:00 às 17:00 FIXO",
-      id_code: "codigo-mudar",
-      id_data: "data-mudar",
+      id_code: certCode,
+      id_data: fullYear,
       responsavel_tecnico: "Nome do Responsável Técnico",
 
       // Mapeamento de participantes
@@ -311,24 +325,30 @@ export const Identificadores = () => {
        * Formata data para instrutorA e instrutorB
        */
       instrutorDates: formatDays({
-        instrutorA: data.instrutorA,
-        instrutorB: data.instrutorB,
+        instrutorA:
+          signatureCount !== 2
+            ? data.instrutorA
+            : Object.fromEntries(
+                days.map((day) => [day, { periodo: "manhaTarde" }])
+              ),
+        instrutorB: signatureCount === 2 ? null : data.instrutorB,
       }),
     };
 
     // Salva no banco
-    const save = await api.post("documentos", {
+    const newIdentificador: DocumentData = {
       modelType: "identificador",
       documentData: JSON.stringify(dataGerador),
-    });
+      certificateCode: Number(lastCode),
+      certificateYear: String(fullYear),
+    };
+
+    const saveResponse = await api.post("documentos", newIdentificador);
 
     // TODO Remover alerts
-    if (save.status === 201) {
-      toast.success("Identificador gerado com sucesso!");
-      setFormsOpen(false);
-      reset();
-      setSignatureCount(0);
-      setShowIdentificationConfig(false);
+    if (saveResponse.status === 201) {
+      alert("Identificador gerado com sucesso!");
+      setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
     } else {
       alert("Erro ao gerar identificador!");
     }

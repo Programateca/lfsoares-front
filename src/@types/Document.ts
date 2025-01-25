@@ -1,9 +1,11 @@
 export interface DocumentData {
-  expires: boolean;
-  expiryDate: string | null;
+  // expires: boolean;
+  // expiryDate: string | null;
   documentData: string;
   modelType: string;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
+  certificateYear: string;
+  certificateCode: number;
+  // id: string;
+  // createdAt: string;
+  // updatedAt: string;
 }
