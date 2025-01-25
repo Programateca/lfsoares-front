@@ -111,7 +111,7 @@ export const Identificadores = () => {
           api.get("pessoas"),
           api.get("instrutores"),
         ]);
-
+      console.log(response.data.data);
       setIdentificadoresGerados(response.data.data);
       setEventos(eventosResp.data.data);
       setParticipantes(pessoasResp.data.data);
@@ -219,6 +219,7 @@ export const Identificadores = () => {
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
         acc[`p_codigo${rowIndex}`] = participante ? "codigo-mudar" : "";
+        acc[`p_id${rowIndex}`] = participante ? participante.id : "";
 
         return acc;
       },
@@ -235,6 +236,7 @@ export const Identificadores = () => {
       participantesMap[`p_nome${index}`] = "";
       participantesMap[`p_matricula${index}`] = "";
       participantesMap[`p_codigo${index}`] = "";
+      participantesMap[`p_id${index}`] = "";
     }
 
     /**
@@ -283,6 +285,7 @@ export const Identificadores = () => {
         "Fornecer informações atualizadas referente as normas e procedimentos, conscientizar empregado dos perigos e riscos, avaliar nível de conhecimento e comportamento mediante as atividades em sala de aula e exercícios práticos, habilitando aquele que pontuar média mínima de 8,0 e 100% de sua presença, conforme planejamento de ensino.",
 
       treinamento: selectedEvento.treinamento.name,
+      evento_id: selectedEvento.id,
       treinamento_lista: selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
@@ -290,7 +293,9 @@ export const Identificadores = () => {
       intervalo: selectedEvento.courseInterval,
       endereco: selectedEvento.courseLocation,
       empresa: selectedEvento.empresa.name,
+      empresa_id: selectedEvento.empresa.id,
       datas: datasFormatadas,
+      tipo_certificado: data.certificadoTipo,
 
       // Assinaturas
       assinante_titulo1: data?.assinatura[0]?.titulo
@@ -342,13 +347,14 @@ export const Identificadores = () => {
       certificateCode: Number(lastCode),
       certificateYear: String(fullYear),
     };
-
+    console.log(newIdentificador);
     const saveResponse = await api.post("documentos", newIdentificador);
 
     // TODO Remover alerts
     if (saveResponse.status === 201) {
-      alert("Identificador gerado com sucesso!");
+      toast.success("Identificador gerado com sucesso!");
       setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
+      setFormsOpen(false);
     } else {
       alert("Erro ao gerar identificador!");
     }
@@ -763,7 +769,7 @@ export const Identificadores = () => {
                   return (
                     <TableRow key={idx}>
                       <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
-                        {identificadorParsed?.treinamento}
+                        {idx + 1} - {identificadorParsed?.treinamento}
                       </TableCell>
                       <TableCell className="text-end py-2">
                         <Button

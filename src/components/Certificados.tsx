@@ -29,6 +29,8 @@ import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { gerarCertificado } from "@/utils/gerar-certificado";
 import { Identificador } from "@/@types/Identificador";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
 
 const defaultValues = {
   documento_identificador: "",
@@ -44,13 +46,13 @@ const defaultValues = {
   cnpj: "",
   realizacao_data_e_hora: "",
   carga_hora: "",
-  codigo_certificado: "",
+  codigo_certificado: [] as string[],
   local_emissao: "",
   // Verso
   nome_instrutor: "",
   matricula_instrutor: "",
   formacao_instrutor: "",
-  descricao: "",
+  conteudo_aplicado: "",
   tipo_formacao: "",
   nome_responsavel_tecnico: "",
   formacao_responsavel_tecnico: "",
@@ -78,7 +80,6 @@ const Certificados = () => {
 
   const [newCertificado, setNewCertificado] =
     useState<NewCertificado>(defaultValues);
-  console.log(newCertificado);
   const fetchData = async () => {
     try {
       const response = await api.get("documentos/identificador");
@@ -110,17 +111,59 @@ const Certificados = () => {
   }, []);
 
   const handleInputChange = (name: string, value: string) => {
+    console.log(name, value);
     setNewCertificado((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // const identificador = documentosIdentificador.map((identificador) => {
-    //   if (identificador.id !== newCertificado.documento_identificador) return;
-    //   console.log(identificador.id);
-    //   console.log(newCertificado.documento_identificador);
-    //   return console.log(identificador);
-    // });
+    console.log(newCertificado.documento_identificador);
+    console.log(documentosIdentificador); 
+    const teste = documentosIdentificador.map((identificador) => JSON.parse(identificador.documentData))
+    console.log(teste)
+    const identificador = documentosIdentificador.find(
+      (identificador) => identificador.id === newCertificado.documento_identificador
+    );
+    if (!identificador) {
+      throw new AppError("Identificador não encontrado", 404);
+    }
+    const dataIdentificador = JSON.parse(identificador.documentData);
+    console.log(dataIdentificador)
+    setNewCertificado((prev) => ({
+      ...prev,
+      tipo_certificado: dataIdentificador.tipo_certificado,
+      evento: { id: dataIdentificador.evento_id },
+      instrutor: { id: "" },
+      empresa: { id: dataIdentificador.empresa_id },
+      participantes: Object.keys(dataIdentificador)
+        .filter((key) => key.startsWith("p_id"))
+        .map((key) => ({ id: dataIdentificador[key] })),
+      // Frente
+      nome_participante: "",
+      portaria_treinamento: dataIdentificador.coursePortaria,
+      nome_treinamento: "",
+      cnpj: "",
+      realizacao_data_e_hora: "",
+      carga_hora: "",
+      local_emissao: "",
+      codigo_certificado: Object.keys(dataIdentificador)
+        .filter((key) => key.startsWith("p_codigo"))
+        .map((key) => dataIdentificador[key]),
+      // Verso
+      nome_instrutor: "",
+      matricula_instrutor: "",
+      formacao_instrutor: "",
+      conteudo_aplicado: dataIdentificador.conteudo_aplicado,
+      tipo_formacao: "",
+      nome_responsavel_tecnico: "",
+      formacao_responsavel_tecnico: "",
+      crea_responsavel_tecnico: "",
+      local_treinamento: "",
+      contratante: "",
+      image1: "",
+      image2: "",
+    }));
+    console.log(newCertificado.participantes)
 
     const selectedParticipantes = participantes.filter((participante) =>
       newCertificado?.participantes?.some((p) => p.id === participante.id)
@@ -131,65 +174,68 @@ const Certificados = () => {
     const selectedEvento = eventos.find(
       (evento) => evento.id === newCertificado?.evento?.id
     );
-    const selectedInstrutor = instrutores.find(
-      (instrutor) => instrutor.id === newCertificado?.instrutor?.id
-    );
+    // const selectedInstrutor = instrutores.find(
+    //   (instrutor) => instrutor.id === newCertificado?.instrutor?.id
+    // );
     if (!selectedParticipantes.length)
       throw new AppError("Selecione um participante", 404);
     if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
     if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
-    if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
+    // if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
 
     const dataRealizada1 = selectedEvento.courseDate.split("T")[0].split("-"); // [YYYY,MM,DD]
     const dataRealizada2 = selectedEvento.completionDate
       .split("T")[0]
       .split("-"); // [HH,MM]
-    console.log(dataRealizada1.length);
-    let dataRealizada = "";
+
+      let dataRealizada = "";
     if (dataRealizada2.length < 2) {
       dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
     } else {
       dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
-    }
-
+    } 
     const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
     const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
-
     const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
-
     const schema = {
       // Dois lados
-      carga_hora: selectedEvento.treinamento.courseHours,
+      carga_horaria: selectedEvento.treinamento.courseHours,
       // Frente
-      portaria_treinamento: newCertificado.portaria_treinamento,
       nome_treinamento: selectedEvento.treinamento.name,
+      titulo_trenamento: selectedEvento.treinamento.name,
       empresa: selectedEmpresa.name,
       cnpj: selectedEmpresa.cnpj,
       data_realizada: dataRealizada,
       r_hora_1: timeRealizada1, // Hora de Realização
-      r_horas_2: timeRealizada2, // Minutos de Realização
+      r_hora_2: timeRealizada2, // Minutos de Realização
       e_dia: dataEmissao[2], // Dia de Emissão
       e_mes: dataEmissao[1], // Mes de Emissão
-      codigo: newCertificado.codigo_certificado,
       local_emissao: newCertificado.local_emissao,
       // Verso
-      nome_instrutor: selectedInstrutor.name,
-      matricula_instrutor: selectedInstrutor.matricula ?? "",
-      formacao_instrutor: selectedInstrutor.qualificacaoProfissional ?? "",
-      descricao: selectedEvento.treinamento.description,
+      // nome_instrutor: selectedInstrutor.name,
+      // matricula_instrutor: selectedInstrutor.matricula ?? "",
+      // formacao_instrutor: selectedInstrutor.qualificacaoProfissional ?? "",
+      // formacao_responsavel_tecnico: newCertificado.formacao_responsavel_tecnico,
+      // crea_responsavel_tecnico: newCertificado.crea_responsavel_tecnico,
+      conteudo: newCertificado.conteudo_aplicado,
+      modalidade: selectedEvento.treinamento.courseModality,
+      metodologia: selectedEvento.treinamento.courseMethodology,
+      portaria_treinamento: selectedEvento.treinamento.coursePortaria,
       tipo_formacao: selectedEvento.treinamento.courseType,
       nome_responsavel_tecnico: newCertificado.nome_responsavel_tecnico,
-      formacao_responsavel_tecnico: newCertificado.formacao_responsavel_tecnico,
-      crea_responsavel_tecnico: newCertificado.crea_responsavel_tecnico,
-      local_treinamento: selectedEvento.courseLocation,
+      local_treinamento: selectedEvento.courseLocation2
+      ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
+      : selectedEvento.courseLocation,
       contratante: selectedEmpresa.name,
+      contratante_cnpj: selectedEmpresa.cnpj
     };
+    let dados = []
     for (let pessoa of newCertificado.participantes) {
       const nome_participante = participantes.find(
         (p) => p.id === pessoa.id
       )?.name;
-      console.log(nome_participante);
       const cpf = participantes.find((p) => p.id === pessoa.id)?.cpf;
+      const codigo = newCertificado.codigo_certificado.shift();
 
       if (!nome_participante) throw new AppError("Participante invalido", 404);
       // se nao tiver cpf, passar vazio
@@ -197,9 +243,9 @@ const Certificados = () => {
       //   gerarCertificado({ ...schema, nome_participante }, imageMap);
       //   continue;
       // }
-
-      gerarCertificado({ ...schema, nome_participante, cpf }, imageMap);
+      dados.push({ ...schema, nome_participante, cpf, codigo })
     }
+    console.log(dados)
   };
 
   const resetForm = () => {
@@ -207,7 +253,7 @@ const Certificados = () => {
       ...defaultValues,
     });
   };
-  console.log();
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -246,6 +292,19 @@ const Certificados = () => {
                     <p className="text-sm text-gray-500">
                       O certificado gerado sera o modelo de{" "}
                     </p>
+                  </div>
+                  <div className="col-span-3 space-y-2">
+                    <Label>Local de Emissão</Label>
+                    <Input
+                      type="text"
+                      className="w-full"
+                      placeholder="Ex: São Paulo"
+                      value={newCertificado.local_emissao}
+                      onChange={(e) =>
+                        handleInputChange("local_emissao", e.target.value)
+                      }
+                      required
+                    />
                   </div>
                   <div className="col-span-3 flex justify-between gap-4">
                     <div className="space-y-2 col-span-3">

@@ -3,6 +3,8 @@ import { Status } from "./Status";
 export interface Treinamento {
   status: Status;
   courseModality: string;
+  courseMethodology: string;
+  coursePortaria: string;
   courseType: string;
   description: string;
   courseValidaty: string;

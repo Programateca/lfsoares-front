@@ -4,6 +4,8 @@ type DaySchedule = { instrutorA: Schedule[]; instrutorB: Schedule[] };
 type EventSchedule = DaySchedule;
 
 export interface Identificador {
+  id: string;
+  documentData: string;
   mudar_modulo: string;
   mudar_horarios: string;
   id_code: string;

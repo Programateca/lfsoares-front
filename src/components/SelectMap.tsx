@@ -36,13 +36,13 @@ export function SelectMap({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup className="text-start">
-            {itens.map((item) => {
+            {itens.map((item, idx) => {
               const identificadorParsed = item.documentData
                 ? JSON.parse(item.documentData)
                 : null;
               return (
                 <SelectItem key={item.id} value={item.id}>
-                  {identificadorParsed?.treinamento || item.name}
+                  {idx + 1} {identificadorParsed?.treinamento || item.name}
                 </SelectItem>
               );
             })}

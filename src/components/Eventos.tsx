@@ -57,8 +57,8 @@ const Eventos = () => {
   const [loading, setLoading] = useState(false);
   const [eventoInEditMode, seteventoInEditMode] = useState<string | number>("");
   const [newEvento, setNewEvento] = useState({
-    empresa: "",
-    treinamento: "",
+    empresa: {id: ""},
+    treinamento: {id: ""},
     courseLocation1: "",
     courseLocation2: "",
     courseDate: "",
@@ -93,8 +93,8 @@ const Eventos = () => {
 
   const resetEventoState = () => {
     setNewEvento({
-      empresa: "",
-      treinamento: "",
+      empresa: {id: ""},
+      treinamento: {id: ""},
       courseLocation1: "",
       courseLocation2: "",
       courseDate: "",
@@ -144,9 +144,9 @@ const Eventos = () => {
 
     if (evento) {
       setNewEvento({
-        empresa: evento.empresa.id,
-        treinamento: evento.treinamento.id,
-        courseLocation1: evento.courseLocation1,
+        empresa: { id: evento.empresa.id },
+        treinamento: { id:evento.treinamento.id },
+        courseLocation1: evento.courseLocation,
         courseLocation2: evento.courseLocation2,
         courseDate: evento.courseDate,
         completionDate: evento.completionDate,
@@ -205,10 +205,10 @@ const Eventos = () => {
                         onValueChange={(value) => {
                           setNewEvento((prev) => ({
                             ...prev,
-                            empresa: value,
+                            empresa: {id: value},
                           }));
                         }}
-                        value={newEvento.empresa}
+                        value={newEvento.empresa.id}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione uma empresa" />
@@ -233,10 +233,12 @@ const Eventos = () => {
                         onValueChange={(value) => {
                           setNewEvento((prev) => ({
                             ...prev,
-                            treinamento: value,
+                            treinamento: {
+                              id: value,
+                            },
                           }));
                         }}
-                        value={newEvento.treinamento}
+                        value={newEvento.treinamento.id}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione um treinamento" />
@@ -281,7 +283,6 @@ const Eventos = () => {
                         placeholder="Clique para adicionar"
                         value={newEvento.courseLocation2}
                         onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
                       />
                     </div>
                   </div>
