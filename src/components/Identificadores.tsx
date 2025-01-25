@@ -262,7 +262,7 @@ export const Identificadores = () => {
       ModelType.IDENTIFICADOR
     );
 
-    const certCode = String(lastCode + 1).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
+    const certCode = String(lastCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
@@ -737,6 +737,7 @@ export const Identificadores = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
+                <TableHead>Código</TableHead>
                 <TableHead className="text-end">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -770,6 +771,9 @@ export const Identificadores = () => {
                     <TableRow key={idx}>
                       <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
                         {idx + 1} - {identificadorParsed?.treinamento}
+                      </TableCell>
+                      <TableCell className="font-medium py-2">
+                        {identificadorParsed.id_code}
                       </TableCell>
                       <TableCell className="text-end py-2">
                         <Button
