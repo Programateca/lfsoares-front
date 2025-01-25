@@ -400,7 +400,8 @@ export const Identificadores = () => {
           <Button
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
             onClick={() => {
-              setFormsOpen((prev) => !prev), reset();
+              setFormsOpen((prev) => !prev);
+              reset();
               setSignatureCount(0);
               setShowIdentificationConfig(false);
             }}
