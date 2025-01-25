@@ -280,8 +280,14 @@ export const Identificadores = () => {
       objetivo_lf:
         "Fornecer informações atualizadas referente as normas e procedimentos, conscientizar empregado dos perigos e riscos, avaliar nível de conhecimento e comportamento mediante as atividades em sala de aula e exercícios práticos, habilitando aquele que pontuar média mínima de 8,0 e 100% de sua presença, conforme planejamento de ensino.",
 
-      treinamento: selectedEvento.treinamento.name,
-      treinamento_lista: selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
+      treinamento:
+        selectedEvento.treinamento.name.length > 70
+          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
+          : selectedEvento.treinamento.name,
+      treinamento_lista:
+        selectedEvento.treinamento.name.length > 70
+          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
+          : selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: selectedEvento.treinamento.courseHours,
