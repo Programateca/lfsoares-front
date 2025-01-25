@@ -41,6 +41,7 @@ import { DocumentData } from "@/@types/Document";
 import { Identificador } from "@/@types/Identificador";
 import { getLastDocumentCode } from "@/utils/get-last-document-code";
 import { ModelType } from "@/@types/ModeType";
+import toast from "react-hot-toast";
 
 /**
  * Definição de tipos auxiliares
@@ -73,6 +74,7 @@ export const Identificadores = () => {
     setValue,
     getValues,
     formState: { isSubmitting },
+    reset,
   } = useForm<FormData>();
 
   const [days, setDays] = useState<string[]>([]);
@@ -109,7 +111,7 @@ export const Identificadores = () => {
           api.get("pessoas"),
           api.get("instrutores"),
         ]);
-
+      console.log(response.data.data);
       setIdentificadoresGerados(response.data.data);
       setEventos(eventosResp.data.data);
       setParticipantes(pessoasResp.data.data);
@@ -197,13 +199,13 @@ export const Identificadores = () => {
   const onSubmit = async (data: FormData) => {
     if (!data.participantes?.length) {
       // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
-      alert("Selecione os participantes");
+      toast.error("Selecione os participantes");
       return;
     }
 
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
     if (!selectedEvento) {
-      alert("Evento selecionado não foi encontrado!");
+      toast.error("Evento selecionado não foi encontrado!");
       return;
     }
     /**
@@ -217,6 +219,7 @@ export const Identificadores = () => {
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
         acc[`p_codigo${rowIndex}`] = participante ? "codigo-mudar" : "";
+        acc[`p_id${rowIndex}`] = participante ? participante.id : "";
 
         return acc;
       },
@@ -233,6 +236,7 @@ export const Identificadores = () => {
       participantesMap[`p_nome${index}`] = "";
       participantesMap[`p_matricula${index}`] = "";
       participantesMap[`p_codigo${index}`] = "";
+      participantesMap[`p_id${index}`] = "";
     }
 
     /**
@@ -288,13 +292,16 @@ export const Identificadores = () => {
         selectedEvento.treinamento.name.length > 70
           ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
           : selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
+      evento_id: selectedEvento.id,
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: selectedEvento.treinamento.courseHours,
       intervalo: selectedEvento.courseInterval,
       endereco: selectedEvento.courseLocation,
       empresa: selectedEvento.empresa.name,
+      empresa_id: selectedEvento.empresa.id,
       datas: datasFormatadas,
+      tipo_certificado: data.certificadoTipo,
 
       // Assinaturas
       assinante_titulo1: data?.assinatura[0]?.titulo
@@ -346,15 +353,16 @@ export const Identificadores = () => {
       certificateCode: Number(lastCode),
       certificateYear: String(fullYear),
     };
-
+    console.log(newIdentificador);
     const saveResponse = await api.post("documentos", newIdentificador);
 
     // TODO Remover alerts
     if (saveResponse.status === 201) {
-      alert("Identificador gerado com sucesso!");
+      toast.success("Identificador gerado com sucesso!");
       setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
+      setFormsOpen(false);
     } else {
-      alert("Erro ao gerar identificador!");
+      toast.error("Erro ao gerar identificador!");
     }
 
     /**
@@ -376,7 +384,8 @@ export const Identificadores = () => {
     };
 
     inicializarFetch();
-  }, []);
+  }, [formsOpen]);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -390,7 +399,11 @@ export const Identificadores = () => {
         <div className="flex justify-between mb-4">
           <Button
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
-            onClick={() => setFormsOpen((prev) => !prev)}
+            onClick={() => {
+              setFormsOpen((prev) => !prev), reset();
+              setSignatureCount(0);
+              setShowIdentificationConfig(false);
+            }}
           >
             {formsOpen ? (
               <>
@@ -496,7 +509,7 @@ export const Identificadores = () => {
                         <Input
                           {...register(`assinatura.${index}.titulo`)}
                           className="w-full"
-                          value={
+                          defaultValue={
                             // Define "Instrutor" em posições específicas
                             (index < 2 && signatureCount >= 3) ||
                             (index === 0 && signatureCount === 2)
@@ -757,16 +770,16 @@ export const Identificadores = () => {
                 </TableRow>
               ) : (
                 identificadoresGerados.map((identificador, idx) => {
-                  const identificadorParsed = JSON.parse(
-                    identificador.documentData
-                  ) as Identificador;
+                  const identificadorParsed = identificador.documentData
+                    ? (JSON.parse(identificador.documentData) as Identificador)
+                    : null;
                   return (
                     <TableRow key={idx}>
-                      <TableCell className="font-medium py-2">
-                        {identificadorParsed.treinamento}
+                      <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
+                        {idx + 1} - {identificadorParsed?.treinamento}
                       </TableCell>
                       <TableCell className="font-medium py-2">
-                        {identificadorParsed.id_code}
+                        {identificadorParsed?.id_code ?? ""}
                       </TableCell>
                       <TableCell className="text-end py-2">
                         <Button
@@ -779,14 +792,16 @@ export const Identificadores = () => {
                         <Button
                           variant="outline"
                           className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                          onClick={() =>
-                            gerarIdentificador(
-                              identificadorParsed,
-                              identificadorParsed.instrutorDates,
-                              identificadorParsed.numeroParticipantes,
-                              "hora do curso - FIXO"
-                            )
-                          }
+                          onClick={() => {
+                            if (identificadorParsed) {
+                              gerarIdentificador(
+                                identificadorParsed,
+                                identificadorParsed.instrutorDates,
+                                identificadorParsed.numeroParticipantes,
+                                "hora do curso - FIXO"
+                              );
+                            }
+                          }}
                         >
                           <BookUp2 className="mr-2 h-4 w-4" />
                           Baixar

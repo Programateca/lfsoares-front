@@ -20,7 +20,13 @@ interface SelectMapProps {
   onChange: (value: string) => void;
 }
 
-export function SelectMap({ itens, placeholder, input_name, label, onChange }: SelectMapProps) {
+export function SelectMap({
+  itens,
+  placeholder,
+  input_name,
+  label,
+  onChange,
+}: SelectMapProps) {
   return (
     <>
       <Label htmlFor={input_name}>{label}</Label>
@@ -30,10 +36,13 @@ export function SelectMap({ itens, placeholder, input_name, label, onChange }: S
         </SelectTrigger>
         <SelectContent>
           <SelectGroup className="text-start">
-            {itens.map((item) => {
+            {itens.map((item, idx) => {
+              const identificadorParsed = item.documentData
+                ? JSON.parse(item.documentData)
+                : null;
               return (
                 <SelectItem key={item.id} value={item.id}>
-                  {"treinamento" in item ? item.treinamento.name : item.name}
+                  {idx + 1} {identificadorParsed?.treinamento || item.name}
                 </SelectItem>
               );
             })}
