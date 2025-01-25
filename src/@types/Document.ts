@@ -3,6 +3,8 @@ export interface DocumentData {
   // expiryDate: string | null;
   documentData: string;
   modelType: string;
+  certificateYear: string;
+  certificateCode: number;
   // id: string;
   // createdAt: string;
   // updatedAt: string;

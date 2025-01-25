@@ -7,7 +7,7 @@ import { Identificador } from "@/@types/Identificador";
 
 export type Period = "manha" | "tarde" | "manhaTarde";
 export type Schedule = { dia: string; periodo?: Period };
-type DaySchedule = { instrutorA: Schedule[]; instrutorB: Schedule[] };
+type DaySchedule = { instrutorA: Schedule[]; instrutorB: Schedule[] | null };
 export type EventSchedule = DaySchedule;
 
 type Instrutor = {
@@ -184,7 +184,9 @@ export function calcularPaginas(
   }
 
   organizarHorarios(eventSchedule.instrutorA, paginasInstrutorA);
-  organizarHorarios(eventSchedule.instrutorB, paginasInstrutorB);
+  if (eventSchedule.instrutorB) {
+    organizarHorarios(eventSchedule.instrutorB, paginasInstrutorB);
+  }
 
   function formatarPaginasPorPeriodo(paginas: typeof paginasInstrutorA) {
     const numeroPaginas = Math.ceil(numParticipantes / 10);
@@ -285,7 +287,7 @@ export function gerarDias(inicio: string, fim: string): string[] {
 
 type Dias = {
   instrutorA: Record<string, { periodo?: Period }>;
-  instrutorB: Record<string, { periodo?: Period }>;
+  instrutorB: Record<string, { periodo?: Period }> | null;
 };
 
 export function formatDays(dias: Dias): EventSchedule {
@@ -294,9 +296,11 @@ export function formatDays(dias: Dias): EventSchedule {
       dia,
       periodo,
     })),
-    instrutorB: Object.entries(dias.instrutorB).map(([dia, { periodo }]) => ({
-      dia,
-      periodo,
-    })),
+    instrutorB: dias.instrutorB
+      ? Object.entries(dias.instrutorB).map(([dia, { periodo }]) => ({
+          dia,
+          periodo,
+        }))
+      : null,
   };
 }
