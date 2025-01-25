@@ -356,7 +356,7 @@ export const Identificadores = () => {
       setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
       setFormsOpen(false);
     } else {
-      alert("Erro ao gerar identificador!");
+      toast.error("Erro ao gerar identificador!");
     }
 
     /**
@@ -773,7 +773,7 @@ export const Identificadores = () => {
                         {idx + 1} - {identificadorParsed?.treinamento}
                       </TableCell>
                       <TableCell className="font-medium py-2">
-                        {identificadorParsed.id_code}
+                        {identificadorParsed?.id_code ?? ""}
                       </TableCell>
                       <TableCell className="text-end py-2">
                         <Button

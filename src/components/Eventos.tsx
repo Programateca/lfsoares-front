@@ -59,7 +59,7 @@ const Eventos = () => {
   const [newEvento, setNewEvento] = useState({
     empresa: {id: ""},
     treinamento: {id: ""},
-    courseLocation1: "",
+    courseLocation: "",
     courseLocation2: "",
     courseDate: "",
     completionDate: "",
@@ -73,6 +73,7 @@ const Eventos = () => {
   const fetchEventos = async () => {
     try {
       const response = await api.get("eventos");
+      console.log(response.data.data);
       setEventos(response.data.data);
     } catch (error) {}
   };
@@ -95,7 +96,7 @@ const Eventos = () => {
     setNewEvento({
       empresa: {id: ""},
       treinamento: {id: ""},
-      courseLocation1: "",
+      courseLocation: "",
       courseLocation2: "",
       courseDate: "",
       completionDate: "",
@@ -146,7 +147,7 @@ const Eventos = () => {
       setNewEvento({
         empresa: { id: evento.empresa.id },
         treinamento: { id:evento.treinamento.id },
-        courseLocation1: evento.courseLocation,
+        courseLocation: evento.courseLocation,
         courseLocation2: evento.courseLocation2,
         courseDate: evento.courseDate,
         completionDate: evento.completionDate,
@@ -261,13 +262,13 @@ const Eventos = () => {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseLocation1">
+                      <Label htmlFor="courseLocation">
                         Local de treinamento 1
                       </Label>
                       <Input
-                        id="courseLocation1"
-                        name="courseLocation1"
-                        value={newEvento.courseLocation1}
+                        id="courseLocation"
+                        name="courseLocation"
+                        value={newEvento.courseLocation}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
                       />
@@ -344,7 +345,7 @@ const Eventos = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="courseTime">Intervalo</Label>
+                      <Label htmlFor="courseInterval">Intervalo</Label>
                       <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
                           type="time"
@@ -355,10 +356,10 @@ const Eventos = () => {
                               newEvento.courseTime.split(" ÀS ")[1] || "";
                             setNewEvento((prev) => ({
                               ...prev,
-                              courseTime: `${startTime} ÀS ${endTime}`,
+                              courseInterval: `${startTime} ÀS ${endTime}`,
                             }));
                           }}
-                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                          value={newEvento.courseInterval.split(" ÀS ")[0] || ""}
                         />
                         <span>ÀS</span>
                         <Input
@@ -370,10 +371,10 @@ const Eventos = () => {
                             const endTime = e.target.value;
                             setNewEvento((prev) => ({
                               ...prev,
-                              courseTime: `${startTime} ÀS ${endTime}`,
+                              courseInterval: `${startTime} ÀS ${endTime}`,
                             }));
                           }}
-                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                          value={newEvento.courseInterval.split(" ÀS ")[1] || ""}
                         />
                       </div>
                     </div>

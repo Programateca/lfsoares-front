@@ -31,6 +31,7 @@ import { gerarCertificado } from "@/utils/gerar-certificado";
 import { Identificador } from "@/@types/Identificador";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { DocumentData } from "@/@types/Document";
 
 const defaultValues = {
   documento_identificador: "",
@@ -111,16 +112,11 @@ const Certificados = () => {
   }, []);
 
   const handleInputChange = (name: string, value: string) => {
-    console.log(name, value);
     setNewCertificado((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(newCertificado.documento_identificador);
-    console.log(documentosIdentificador); 
-    const teste = documentosIdentificador.map((identificador) => JSON.parse(identificador.documentData))
-    console.log(teste)
     const identificador = documentosIdentificador.find(
       (identificador) => identificador.id === newCertificado.documento_identificador
     );
@@ -128,16 +124,19 @@ const Certificados = () => {
       throw new AppError("Identificador não encontrado", 404);
     }
     const dataIdentificador = JSON.parse(identificador.documentData);
-    console.log(dataIdentificador)
+    const participantesIdentificador = Object.keys(dataIdentificador)
+    .filter((key) => key.startsWith("p_id"))
+    .map((key) => ({ id: dataIdentificador[key].trim() })) // Remove espaços desnecessários
+    .filter((p) => p.id);
+    const empresaIdentificador = dataIdentificador.empresa_id;
+    const eventoIdentificador = dataIdentificador.evento_id;
     setNewCertificado((prev) => ({
       ...prev,
       tipo_certificado: dataIdentificador.tipo_certificado,
       evento: { id: dataIdentificador.evento_id },
       instrutor: { id: "" },
       empresa: { id: dataIdentificador.empresa_id },
-      participantes: Object.keys(dataIdentificador)
-        .filter((key) => key.startsWith("p_id"))
-        .map((key) => ({ id: dataIdentificador[key] })),
+      participantes: participantesIdentificador,
       // Frente
       nome_participante: "",
       portaria_treinamento: dataIdentificador.coursePortaria,
@@ -163,16 +162,16 @@ const Certificados = () => {
       image1: "",
       image2: "",
     }));
-    console.log(newCertificado.participantes)
-
+    console.log(eventoIdentificador)
     const selectedParticipantes = participantes.filter((participante) =>
-      newCertificado?.participantes?.some((p) => p.id === participante.id)
+      participantesIdentificador.map((p) => p.id).includes(participante.id)
     );
+
     const selectedEmpresa = empresas.find(
-      (empresa) => empresa.id === newCertificado?.empresa?.id
+      (empresa) => empresa.id === empresaIdentificador
     );
     const selectedEvento = eventos.find(
-      (evento) => evento.id === newCertificado?.evento?.id
+      (evento) => evento.id === eventoIdentificador
     );
     // const selectedInstrutor = instrutores.find(
     //   (instrutor) => instrutor.id === newCertificado?.instrutor?.id
@@ -197,6 +196,7 @@ const Certificados = () => {
     const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
     const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
     const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
+    console.log(selectedEvento)
     const schema = {
       // Dois lados
       carga_horaria: selectedEvento.treinamento.courseHours,
@@ -245,7 +245,22 @@ const Certificados = () => {
       // }
       dados.push({ ...schema, nome_participante, cpf, codigo })
     }
-    console.log(dados)
+    console.log({dados})
+    const newCertificados: DocumentData = {
+      modelType: "certificado",
+      documentData: JSON.stringify(dados),
+      certificateCode: Number(lastCode),
+      certificateYear: String(fullYear),
+    };
+    const saveResponse = await api.post("documentos", newCertificados);
+
+    if (saveResponse.status === 201) {
+      toast.success("Identificador gerado com sucesso!");
+      setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
+      setFormsOpen(false);
+    } else {
+      toast.error("Erro ao gerar identificador!");
+    }
   };
 
   const resetForm = () => {
