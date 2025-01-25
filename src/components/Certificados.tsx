@@ -28,8 +28,10 @@ import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { gerarCertificado } from "@/utils/gerar-certificado";
+import { Identificador } from "@/@types/Identificador";
 
 const defaultValues = {
+  documento_identificador: "",
   tipo_certificado: "",
   evento: { id: "" },
   instrutor: { id: "" },
@@ -64,33 +66,23 @@ type NewCertificado = typeof defaultValues;
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [certificadosGerados, setCertificadosGerados] = useState<any[]>([]);
+  const [documentosIdentificador, setIdentificadores] = useState<
+    Identificador[]
+  >([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
-  const tiposCertificados = [
-    {
-      id: "certificado-frente-verso",
-      name: "Certificado Frente e Verso",
-    },
-    {
-      id: "certificado-ponte-rolante",
-      name: "Certificado Ponte",
-    },
-    {
-      id: "certificado-verso",
-      name: "Certificado Verso",
-    },
-  ];
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [certificados, setCertificados] = useState<any[]>([]);
 
   const [newCertificado, setNewCertificado] =
     useState<NewCertificado>(defaultValues);
-
+  console.log(newCertificado);
   const fetchData = async () => {
     try {
-      const response = await api.get("documentos/certificado");
+      const response = await api.get("documentos/identificador");
+      const certificadosResp = await api.get("documentos/certificado");
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
       const instrutoresResp = await api.get("instrutores");
@@ -98,7 +90,8 @@ const Certificados = () => {
 
       setEmpresas(empresasResp.data.data);
       setParticipantes(pessoasResp.data.data);
-      setCertificadosGerados(response.data.data);
+      setCertificados(certificadosResp.data.data);
+      setIdentificadores(response.data.data);
       setInstrutores(instrutoresResp.data.data);
       setEventos(eventosResp.data.data);
     } catch (error) {
@@ -116,13 +109,18 @@ const Certificados = () => {
     inicializarFetch();
   }, []);
 
-  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setNewCertificado((prev) => ({ ...prev, [name]: value }));
-  // };
+  const handleInputChange = (name: string, value: string) => {
+    setNewCertificado((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // const identificador = documentosIdentificador.map((identificador) => {
+    //   if (identificador.id !== newCertificado.documento_identificador) return;
+    //   console.log(identificador.id);
+    //   console.log(newCertificado.documento_identificador);
+    //   return console.log(identificador);
+    // });
 
     const selectedParticipantes = participantes.filter((participante) =>
       newCertificado?.participantes?.some((p) => p.id === participante.id)
@@ -204,31 +202,12 @@ const Certificados = () => {
     }
   };
 
-  // const handleParticipante = (
-  //   isChecked: boolean | string,
-  //   participante: Pessoa
-  // ) => {
-  //   if (isChecked) {
-  //     setNewCertificado((prev) => ({
-  //       ...prev,
-  //       participantes: [...prev.participantes, { id: participante.id }],
-  //     }));
-  //   } else {
-  //     setNewCertificado((prev) => ({
-  //       ...prev,
-  //       participantes: prev.participantes.filter(
-  //         (p) => p.id !== participante.id
-  //       ),
-  //     }));
-  //   }
-  // };
-
   const resetForm = () => {
     setNewCertificado({
       ...defaultValues,
     });
   };
-
+  console.log();
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -256,15 +235,12 @@ const Certificados = () => {
                 <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
                   <div className="space-y-2 col-span-3">
                     <SelectMap
-                      input_name="tipo_certificado"
-                      itens={tiposCertificados}
-                      label="Para gerar o's certificado's, selecione um dos identificadores de participantes abaixo:"
+                      input_name="documento_identificador"
+                      itens={documentosIdentificador}
+                      label="Para gerar os certificados, selecione um dos identificadores de participantes abaixo:"
                       placeholder="Selecione um documento"
-                      onChange={(value) =>
-                        setNewCertificado((prev) => ({
-                          ...prev,
-                          tipo_certificado: value,
-                        }))
+                      onChange={(e) =>
+                        handleInputChange("documento_identificador", e)
                       }
                     />
                     <p className="text-sm text-gray-500">
@@ -364,7 +340,7 @@ const Certificados = () => {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : certificadosGerados.length === 0 ? (
+            ) : certificados.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -376,7 +352,7 @@ const Certificados = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              certificadosGerados.map((certificado) => (
+              certificados.map((certificado) => (
                 <TableRow key={certificado.id}>
                   <TableCell
                     className="font-medium max-w-[20rem]
