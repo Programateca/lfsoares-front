@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 
 import { api } from "@/lib/axios";
@@ -15,26 +15,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Evento } from "@/@types/Evento";
 
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
-import { Pessoa } from "@/@types/Pessoa";
-import { gerarLista } from "@/utils/gerar-lista";
 import {
   Table,
   TableBody,
@@ -44,108 +35,124 @@ import {
   TableRow,
 } from "./ui/table";
 import toast from "react-hot-toast";
+import { DocumentData } from "@/@types/Document";
+import { gerarLista } from "@/utils/gerar-lista";
+import { Label } from "./ui/label";
 
-interface ListaDiaTodo {
+interface Evento {
+  identificador_id: string;
+  mudar_modulo: string;
+  mudar_horarios: string;
+  id_code: string;
+  id_data: string;
+  responsavel_tecnico: string;
+  p_nome1: string;
+  p_matricula1: string;
+  p_codigo1: string;
+  p_id1: string;
+  p_nome2: string;
+  p_matricula2: string;
+  p_codigo2: string;
+  p_id2: string;
+  p_nome3: string;
+  p_matricula3: string;
+  p_codigo3: string;
+  p_id3: string;
+  p_nome4: string;
+  p_matricula4: string;
+  p_codigo4: string;
+  p_id4: string;
+  p_nome5: string;
+  p_matricula5: string;
+  p_codigo5: string;
+  p_id5: string;
+  p_nome6: string;
+  p_matricula6: string;
+  p_codigo6: string;
+  p_id6: string;
+  p_nome7: string;
+  p_matricula7: string;
+  p_codigo7: string;
+  p_id7: string;
+  p_nome8: string;
+  p_matricula8: string;
+  p_codigo8: string;
+  p_id8: string;
+  p_nome9: string;
+  p_matricula9: string;
+  p_codigo9: string;
+  p_id9: string;
+  p_nome10: string;
+  p_matricula10: string;
+  p_codigo10: string;
+  p_id10: string;
+  numeroParticipantes: number;
+  conteudo_aplicado: string;
+  motivo_treinamento: string;
+  objetivo_lf: string;
+  treinamento: string;
+  treinamento_lista: string;
+  evento_id: string;
+  contratante: string;
+  tipo: string;
+  carga_horaria: string;
+  intervalo: string;
+  endereco: string;
+  empresa: string;
+  empresa_id: string;
+  datas: string;
+  tipo_certificado: string;
+  assinante_titulo1: string;
+  assinante_titulo2: string;
+  assinante_titulo3: string;
+  assinante_titulo4: string;
+  assinante1: string;
+  assinante2: string;
+  assinante3: string;
+  assinante4: string;
+  instrutor_a: string;
+  instrutor_b: string;
+  instrutorDates: {
+    instrutorA: { dia: string; periodo: string }[];
+    instrutorB: { dia: string; periodo: string }[];
+  };
+}
+
+interface FormData {
+  identificadores: string;
   tipo_lista: string;
-  evento: string;
-  nome_treinamento: string;
-  tipo: string; // FORMAÇÃO OU ATUALIZAÇÃO PERIODICA
-  intervalo: string; // XX:XX ÀS XX:XX
-  cidade: string; // TRÊS LAGOAS / MS
-  nome_instrutor: string;
-  horario: string; // XX:XX ÀS XX:XX
-  modulo: string; // TEÓRICO OU PRÁTICO / OU TEORICO E PRÁTICO
-  carga_horaria: string; // 08 HORAS AULA
-  datas: string; // XX/XX/XXXX À XX/XX/XXXX
-  endereco: string; // RUA PEDRO PIERRE, N° 3150, JARDIM MOÇAMBIQUE
-  nome_empresa: string;
-  cnpj: string; // XX.XXX.XXX/XX-XX
-  participante_1: string;
-  participante_2: string;
-  participante_3: string;
-  participante_4: string;
-  participante_5: string;
-  participante_6: string;
-  participante_7: string;
-  participante_8: string;
-  participante_9: string;
-  participante_10: string;
+  cidade: string;
 }
 
 const ListaPresenca = () => {
+  const [identificadores, setIdentificadores] = useState<DocumentData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [participantes, setParticipantes] = useState<string[]>([]);
-  const [eventos, setEventos] = useState<Evento[]>([]);
-  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
-  const [documentos, setDocumentos] = useState<any[]>([]);
+  const [documentos, setDocumentos] = useState<
+    { id: string; modelType: string; createdAt: string; documentData: string }[]
+  >([]);
 
-  const form = useForm<ListaDiaTodo>();
+  const eventos: Evento[] = identificadores.map((identificadores) => ({
+    ...JSON.parse(identificadores.documentData),
+    identificador_id: identificadores.id,
+  }));
 
-  const onSubmit = async (data: ListaDiaTodo) => {
-    const eventoFiltrado = eventos.find((evento) => evento.id === data.evento);
+  console.log("eventos", eventos);
 
-    if (!data.tipo_lista) {
-      toast.error("Selecione o tipo de lista");
-      return;
-    }
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    reset,
+  } = useForm<FormData>();
 
-    if (!eventoFiltrado) {
-      toast.error("Evento não encontrado");
-      return;
-    }
-    if (!data.modulo) {
-      toast.error("Informe o módulo");
-      return;
-    }
-    if (!data.cidade) {
-      toast.error("Informe a cidade");
-      return;
-    }
+  console.log("Renderizado");
 
-    if (participantes.length === 0) {
-      toast.error("Selecione ao menos um participante");
-      return;
-    }
-
-    const schema: { [key: string]: string | undefined } = {
-      cidade: data.cidade,
-      nome_empresa: eventoFiltrado?.empresa.name,
-      nome_treinamento: eventoFiltrado?.treinamento.name,
-      nome_instrutor: eventoFiltrado?.instrutor.name,
-      tipo: eventoFiltrado?.treinamento.courseType,
-      horario: eventoFiltrado?.courseTime,
-      modulo: data.modulo,
-      carga_horaria: eventoFiltrado?.treinamento.courseHours,
-      datas: eventoFiltrado?.courseDate,
-      endereco: eventoFiltrado?.courseLocation,
-      intervalo: data.intervalo || "N/A",
-      cnpj: eventoFiltrado?.empresa.cnpj,
-    };
-
-    participantes.forEach((participanteId, index) => {
-      schema[`participante_${index + 1}`] =
-        pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
-    });
-
-    for (let i = participantes.length; i < 10; i++) {
-      schema[`participante_${i + 1}`] = "";
-    }
-
-    const filteredSchema: Record<string, string> = Object.fromEntries(
-      Object.entries(schema).filter(([_, value]) => value !== undefined)
-    ) as Record<string, string>;
-
-    await api.post("documentos", {
-      modelType: data.tipo_lista,
-      documentData: JSON.stringify(filteredSchema),
-    });
-
-    setIsModalOpen(false);
-    form.reset();
-    setParticipantes([]);
-    fetchData();
-    toast.success("Lista de presença gerada com sucesso");
+  const onSubmit = async (data: FormData) => {
+    console.log("data", data);
+    // gerarLista()
   };
 
   const fetchData = async () => {
@@ -153,34 +160,19 @@ const ListaPresenca = () => {
       const documentosResp = await api.get(
         "documentos/lista-dia-todo,lista-meio-periodo"
       );
-      const treinamentosResp = await api.get("eventos");
-      const participantesResp = await api.get("pessoas");
+      const identificadoresResp = await api.get("documentos/identificador");
 
+      setIdentificadores(identificadoresResp.data.data);
       setDocumentos(documentosResp.data.data);
-      setEventos(treinamentosResp.data.data);
-      setPessoas(participantesResp.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const handleParticipante = (
-  //   isChecked: boolean | string,
-  //   participante: Pessoa
-  // ) => {
-  //   if (isChecked) {
-  //     setParticipantes((prev) => [...prev, participante.id]);
-  //   } else {
-  //     setParticipantes((prev) =>
-  //       prev.filter((participanteId) => participanteId !== participante.id)
-  //     );
-  //   }
-  // };
-
   const handleDownload = async (documentoId: string) => {
     const response = await api.get(`documentos`);
     const documentoFiltrado = response.data.data.find(
-      (documento: any) => documento.id === documentoId
+      (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
     gerarLista(data);
@@ -202,7 +194,7 @@ const ListaPresenca = () => {
             open={isModalOpen}
             onOpenChange={(open) => {
               if (!open) {
-                form.reset();
+                reset();
                 setParticipantes([]);
               }
               setIsModalOpen(open);
@@ -218,73 +210,99 @@ const ListaPresenca = () => {
                 <DialogTitle>Lista de Presença</DialogTitle>
                 <DialogDescription></DialogDescription>
               </DialogHeader>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-2 flex flex-col gap-5"
-                >
-                  <div className="space-y-2">
-                    <FormField
-                      control={form.control}
-                      name="tipo_lista"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tipo de lista</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione o tipo de lista" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="lista-dia-todo">
-                                  Lista do Dia Todo
-                                </SelectItem>
-                                <SelectItem value="lista-meio-periodo">
-                                  Lista do Meio Período
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="cidade"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cidade</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Cidade" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setIsModalOpen(false);
-                        form.reset();
-                        setParticipantes([]);
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit" className="w-28 ">
-                      Gerar
-                    </Button>
-                  </div>
-                </form>
-              </Form>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-2 flex flex-col gap-5"
+              >
+                <div className="space-y-2">
+                  <Controller
+                    name="identificadores"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um Evento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Eventos</SelectLabel>
+                            {eventos.map((evento) => (
+                              <SelectItem
+                                key={evento.identificador_id}
+                                value={evento.identificador_id}
+                              >
+                                {evento.treinamento}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+
+                  <Controller
+                    name="tipo_lista"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <Label className="text-sm font-medium">
+                          Tipo de lista
+                        </Label>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o tipo de lista" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="lista-dia-todo">
+                              Lista do Dia Todo
+                            </SelectItem>
+                            <SelectItem value="lista-meio-periodo">
+                              Lista do Meio Período
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="cidade"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <label className="text-sm font-medium">Cidade</label>
+                        <Input placeholder="Cidade" {...field} />
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      reset();
+                      setParticipantes([]);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button type="submit" className="w-28 ">
+                    Gerar
+                  </Button>
+                </div>
+              </form>
             </DialogContent>
           </Dialog>
         </div>
@@ -347,7 +365,7 @@ const ListaPresenca = () => {
                       className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       onClick={() => handleDownload(documento.id)}
                     >
-                      <BookUp2 className="" />
+                      <BookUp2 />
                       Baixar
                     </Button>
                   </TableCell>

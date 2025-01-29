@@ -5,7 +5,7 @@ export interface DocumentData {
   modelType: string;
   certificateYear: string;
   certificateCode: number;
-  // id: string;
+  id?: string;
   // createdAt: string;
   // updatedAt: string;
 }
