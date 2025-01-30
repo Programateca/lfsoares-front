@@ -116,14 +116,18 @@ const Pessoas = () => {
 
     if (pessoaInEditMode) {
       try {
+        console.log(pessoaInEditMode);
+        console.log(newPessoa);
         await api.patch(`pessoas/${pessoaInEditMode}`, {
           name: newPessoa.name,
-          cpf: newPessoa.cpf,
-          matricula: newPessoa.matricula,
+          cpf: newPessoa.cpf || "",
+          matricula: newPessoa.matricula || "",
           empresa: {
             id:
-              newPessoa.empresa.id === pessoa?.empresa.id ||
-              newPessoa.empresa.id === ""
+              pessoa &&
+              pessoa.empresa &&
+              (newPessoa.empresa.id === pessoa.empresa.id ||
+                newPessoa.empresa.id === "")
                 ? null
                 : newPessoa.empresa.id,
           },
@@ -143,7 +147,9 @@ const Pessoas = () => {
           },
         });
         setPessoaInEditMode("");
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
       return;
     }
 
@@ -177,7 +183,7 @@ const Pessoas = () => {
     setPessoaInEditMode(id);
     setIsModalOpen(true);
     const pessoa = pessoas.find((pessoa) => pessoa.id === id);
-
+    console.log(pessoa);
     if (pessoa) {
       setNewPessoa({
         id: pessoa.id,
@@ -185,14 +191,15 @@ const Pessoas = () => {
         cpf: pessoa.cpf,
         matricula: pessoa.matricula,
         empresa: {
-          id: pessoa.empresa.id,
-          name: pessoa.empresa.name,
+          id: pessoa.empresa?.id || "",
+          name: pessoa.empresa?.name || "",
         },
       });
     }
   };
 
   const handleUpdateStatus = async (id: string, status: number) => {
+    console.log(id, status);
     try {
       await api.patch(`pessoas/${id}`, {
         status: {
@@ -244,7 +251,9 @@ const Pessoas = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar nova pessoa</DialogTitle>
+                <DialogTitle>
+                  {pessoaInEditMode ? "Editar" : "Adicionar nova"} pessoa
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -331,7 +340,9 @@ const Pessoas = () => {
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit">Adicionar</Button>
+                  <Button type="submit">
+                    {pessoaInEditMode ? "Editar" : "Adicionar"}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
