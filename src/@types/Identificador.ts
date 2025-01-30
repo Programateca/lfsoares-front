@@ -40,4 +40,8 @@ export interface Identificador {
   instrutor_b: string;
 
   instrutorDates: EventSchedule;
+
+  // add
+  certificateYear?: string | number;
+  certificateCode?: number | string;
 }
