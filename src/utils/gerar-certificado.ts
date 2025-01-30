@@ -23,30 +23,34 @@ function replaceImage(zip: any, imageMap: Record<string, string>) {
   });
 }
 
-export function gerarCertificado(data: any, imageMap: any) {
-  loadFile("/templates/frente-verso-2a.pptx", (error: any, content: any) => {
-    if (error) {
-      throw error;
+export function gerarCertificado(data: any, imageMap: any, type: string) {
+  loadFile(
+    `/templates/frente-verso-${type}.pptx`,
+    (error: any, content: any) => {
+      if (error) {
+        throw error;
+      }
+
+      const zip = new PizZip(content);
+
+      replaceImage(zip, imageMap);
+
+      const doc = new Docxtemplater(zip, {
+        delimiters: { start: "[", end: "]" },
+        paragraphLoop: true,
+        linebreaks: true,
+        parser: expressionParser,
+      });
+
+      doc.render(data);
+
+      const out = doc.getZip().generate({
+        type: "blob",
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      });
+
+      saveAs(out, "output.pptx");
     }
-
-    const zip = new PizZip(content);
-
-    replaceImage(zip, imageMap);
-
-    const doc = new Docxtemplater(zip, {
-      delimiters: { start: "[", end: "]" },
-      paragraphLoop: true,
-      linebreaks: true,
-      parser: expressionParser,
-    });
-
-    doc.render(data);
-
-    const out = doc.getZip().generate({
-      type: "blob",
-      mimeType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    });
-
-    saveAs(out, "output.pptx");
-  });
+  );
 }
