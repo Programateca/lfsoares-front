@@ -34,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { DocumentData } from "@/@types/Document";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
@@ -128,7 +128,7 @@ const ListaPresenca = () => {
   const [identificadores, setIdentificadores] = useState<DocumentData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [participantes, setParticipantes] = useState<string[]>([]);
+  // const [participantes, setParticipantes] = useState<string[]>([]);
   const [documentos, setDocumentos] = useState<
     { id: string; modelType: string; createdAt: string; documentData: string }[]
   >([]);
@@ -142,9 +142,9 @@ const ListaPresenca = () => {
 
   const {
     control,
-    register,
+    // register,
     handleSubmit,
-    formState: { isSubmitting },
+    // formState: { isSubmitting },
     reset,
   } = useForm<FormData>();
 
@@ -195,7 +195,7 @@ const ListaPresenca = () => {
             onOpenChange={(open) => {
               if (!open) {
                 reset();
-                setParticipantes([]);
+                // setParticipantes([]);
               }
               setIsModalOpen(open);
             }}
@@ -293,7 +293,7 @@ const ListaPresenca = () => {
                     onClick={() => {
                       setIsModalOpen(false);
                       reset();
-                      setParticipantes([]);
+                      // setParticipantes([]);
                     }}
                   >
                     Cancelar
