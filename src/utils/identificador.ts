@@ -248,13 +248,13 @@ function substituirOcorrencias(
     "\\[instrutor\\]": () => `[${instrutor}]`,
     "\\[data_frequencia\\]": () => data,
     "\\[manha\\]": () =>
-      periodo === "manha" || periodo === courseTime ? "manhã" : "",
+      periodo === "manhaTarde" || periodo === courseTime ? "manhã" : "",
     "\\[tarde\\]": () =>
-      periodo === "tarde" || periodo === courseTime ? "tarde" : "",
+      periodo === "manhaTarde" || periodo === courseTime ? "tarde" : "",
     "\\[manha_h\\]": () =>
-      periodo === "manha" || periodo === courseTime ? "manhã_horário" : "",
+      periodo === "manhaTarde" || periodo === courseTime ? "manhã_horário" : "",
     "\\[tarde_h\\]": () =>
-      periodo === "tarde" || periodo === courseTime ? "tarde_horário" : "",
+      periodo === "manhaTarde" || periodo === courseTime ? "tarde_horário" : "",
   };
 
   const contador = { pi: 0, p_nome: 0, p_matricula: 0, p_codigo: 0 };

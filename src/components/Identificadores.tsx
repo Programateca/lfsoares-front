@@ -111,7 +111,7 @@ export const Identificadores = () => {
           api.get("pessoas"),
           api.get("instrutores"),
         ]);
-      console.log(response.data.data);
+
       setIdentificadoresGerados(response.data.data);
       setEventos(eventosResp.data.data);
       setParticipantes(pessoasResp.data.data);
@@ -197,6 +197,8 @@ export const Identificadores = () => {
    * Lógica de submit do formulário
    */
   const onSubmit = async (data: FormData) => {
+    console.log("data", data);
+
     if (!data.participantes?.length) {
       // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
       toast.error("Selecione os participantes");
@@ -204,6 +206,7 @@ export const Identificadores = () => {
     }
 
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
+    console.log("selectedEvento", selectedEvento);
     if (!selectedEvento) {
       toast.error("Evento selecionado não foi encontrado!");
       return;
@@ -211,6 +214,12 @@ export const Identificadores = () => {
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
      */
+    const fullYear = new Date().getFullYear().toString();
+    const lastCertificadoCode = await getLastDocumentCode(
+      fullYear,
+      ModelType.CERTIFICADO_2A
+    );
+
     const participantesMap: ParticipanteMap = data.participantes.reduce(
       (acc, id, index) => {
         const participante = participantes.find((pessoa) => pessoa.id === id);
@@ -218,7 +227,12 @@ export const Identificadores = () => {
 
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
-        acc[`p_codigo${rowIndex}`] = participante ? "codigo-mudar" : "";
+        acc[`p_codigo${rowIndex}`] = participante
+          ? `LFTS ${String(lastCertificadoCode + index).padStart(
+              4,
+              "0"
+            )}/${fullYear}`
+          : "";
         acc[`p_id${rowIndex}`] = participante ? participante.id : "";
 
         return acc;
@@ -256,34 +270,29 @@ export const Identificadores = () => {
 
     const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
 
-    const fullYear = new Date().getFullYear().toString();
-    const lastCode = await getLastDocumentCode(
+    const lastIdentificadorCode = await getLastDocumentCode(
       fullYear,
       ModelType.IDENTIFICADOR
     );
 
-    const certCode = String(lastCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
+    const certCode = String(lastIdentificadorCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
-      // TODO Mudar dados fixos
-      mudar_modulo: "Teórico e Prático FIXO", // OLHA AQUI
-      mudar_horarios: "08:00 às 17:00 FIXO",
+      mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
+      mudar_horarios: selectedEvento?.courseTime,
       id_code: certCode,
       id_data: fullYear,
-      responsavel_tecnico: "Nome do Responsável Técnico",
+      responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
       // Mapeamento de participantes
       ...participantesMap,
       numeroParticipantes: totalParticipants,
 
       conteudo_aplicado: data.conteudoAplicado,
-      motivo_treinamento:
-        "Cumprir Norma Regulamentadora – NR33 - (Portaria SEPRT 1690, de 15/06/2022);\nCapacitar profissional na função de Supervisor de Espaço Confinado, ciente dos riscos, medidas de controle e procedimentos de trabalho;\nHabilitar profissional treinado e considerado apto, conforme requisitos técnicos e plano de ensino LF SOARES TREINAMENTOS E SERVIÇOS",
-      objetivo_lf:
-        "Fornecer informações atualizadas referente as normas e procedimentos, conscientizar empregado dos perigos e riscos, avaliar nível de conhecimento e comportamento mediante as atividades em sala de aula e exercícios práticos, habilitando aquele que pontuar média mínima de 8,0 e 100% de sua presença, conforme planejamento de ensino.",
-
+      motivo_treinamento: data.motivoTreinamento,
+      objetivo_lf: data.objetivoTreinamento,
       treinamento:
         selectedEvento.treinamento.name.length > 70
           ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
@@ -350,10 +359,10 @@ export const Identificadores = () => {
     const newIdentificador: DocumentData = {
       modelType: "identificador",
       documentData: JSON.stringify(dataGerador),
-      certificateCode: Number(lastCode),
+      certificateCode: Number(lastIdentificadorCode),
       certificateYear: String(fullYear),
     };
-    console.log(newIdentificador);
+
     const saveResponse = await api.post("documentos", newIdentificador);
 
     // TODO Remover alerts
