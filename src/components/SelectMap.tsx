@@ -42,7 +42,7 @@ export function SelectMap({
                 : null;
               return (
                 <SelectItem key={item.id} value={item.id}>
-                  {idx + 1} {identificadorParsed?.treinamento || item.name}
+                  {identificadorParsed?.treinamento || item.name}
                 </SelectItem>
               );
             })}
