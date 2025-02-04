@@ -238,7 +238,7 @@ const Certificados = () => {
           ...schema,
           nome_participante: participanteEncontrado.name,
           cpf: participanteEncontrado.cpf || "não informado",
-          codigo: newCertificado.codigo_certificado.shift(),
+          codigo: newCertificado.codigo_certificado.shift().split(" ")[1],
         });
       }
       const newCertificados: DocumentData = {
@@ -247,6 +247,7 @@ const Certificados = () => {
         certificateCode: identificadorValido.certificateCode,
         certificateYear: identificadorValido.certificateYear,
       };
+
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {
@@ -263,7 +264,7 @@ const Certificados = () => {
     }
   };
 
-  const handleDownload = async (certificados: any[], modelType) => {
+  const handleDownload = async (certificados: any, modelType: any) => {
     const certificadosData = JSON.parse(certificados.documentData);
     console.log("Certificados:", certificadosData);
     certificadosData.forEach((certificado: any) => {
