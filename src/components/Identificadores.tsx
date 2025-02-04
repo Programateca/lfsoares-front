@@ -83,6 +83,7 @@ export const Identificadores = () => {
   >({});
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
+  const [identificadorInEditMode, setIdentificadorInEditMode] = useState("");
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
@@ -228,7 +229,7 @@ export const Identificadores = () => {
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
         acc[`p_codigo${rowIndex}`] = participante
-          ? `LFTS ${String(lastCertificadoCode + index).padStart(
+          ? `LFSTS ${String(lastCertificadoCode + index).padStart(
               4,
               "0"
             )}/${fullYear}`
@@ -385,6 +386,35 @@ export const Identificadores = () => {
     // );
   };
 
+  /**
+   * Lógica de edição de identificador
+   */
+  const handleEdit = (id: any) => {
+    console.log("Editando", id);
+    setIdentificadorInEditMode(id);
+
+    // const identificador = identificadoresGerados.find((item) => item.id === id);
+    // console.log("identificador", JSON.parse(identificador.documentData));
+    // const data = JSON.parse(identificador.documentData) as Identificador;
+    // const eventoTeste = data.evento_id;
+    // const tipoCertificadoTeste = data.tipo_certificado;
+    // const conteudoAplicadoTeste = data.conteudo_aplicado;
+    // const motivoTreinamentoTeste = data.motivo_treinamento;
+    // const objetivoTreinamentoTeste = data.objetivo_lf;
+    // const participantesIds = Object.keys(data)
+    //   .filter((key) => key.startsWith("p_id"))
+    //   .map((key) => data[key]);
+
+    // console.log({
+    //   eventoTeste,
+    //   tipoCertificadoTeste,
+    //   conteudoAplicadoTeste,
+    //   motivoTreinamentoTeste,
+    //   objetivoTreinamentoTeste,
+    //   participantesIds,
+    // });
+  };
+
   useEffect(() => {
     const inicializarFetch = async () => {
       setLoading(true);
@@ -523,7 +553,7 @@ export const Identificadores = () => {
                             // Define "Instrutor" em posições específicas
                             (index < 2 && signatureCount >= 3) ||
                             (index === 0 && signatureCount === 2)
-                              ? "Instrutor"
+                              ? "INSTRUTOR"
                               : getValues(`assinatura.${index}.titulo`) || ""
                           }
                           onChange={(e) => {
@@ -763,7 +793,6 @@ export const Identificadores = () => {
                   <TableCell colSpan={5} className="text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                      <p>Carregando...</p>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -786,15 +815,16 @@ export const Identificadores = () => {
                   return (
                     <TableRow key={idx}>
                       <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
-                        {idx + 1} - {identificadorParsed?.treinamento}
+                        {identificadorParsed?.treinamento}
                       </TableCell>
                       <TableCell className="font-medium py-2">
                         {identificadorParsed?.id_code ?? ""}
                       </TableCell>
-                      <TableCell className="text-end py-2">
+                      <TableCell className="text-end py-2 flex justify-end">
                         <Button
                           variant="outline"
                           className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                          onClick={() => handleEdit(identificador.id)}
                         >
                           <Edit className="mr-2 h-4 w-4" />
                           Editar
