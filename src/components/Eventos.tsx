@@ -51,14 +51,15 @@ import { Empresa } from "@/@types/Empresa";
 // import { Instrutor } from "@/@types/Instrutor";
 import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
+import toast from "react-hot-toast";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [eventoInEditMode, seteventoInEditMode] = useState<string | number>("");
   const [newEvento, setNewEvento] = useState({
-    empresa: {id: ""},
-    treinamento: {id: ""},
+    empresa: { id: "" },
+    treinamento: { id: "" },
     courseLocation: "",
     courseLocation2: "",
     courseDate: "",
@@ -73,7 +74,6 @@ const Eventos = () => {
   const fetchEventos = async () => {
     try {
       const response = await api.get("eventos");
-      console.log(response.data.data);
       setEventos(response.data.data);
     } catch (error) {}
   };
@@ -94,8 +94,8 @@ const Eventos = () => {
 
   const resetEventoState = () => {
     setNewEvento({
-      empresa: {id: ""},
-      treinamento: {id: ""},
+      empresa: { id: "" },
+      treinamento: { id: "" },
       courseLocation: "",
       courseLocation2: "",
       courseDate: "",
@@ -121,6 +121,7 @@ const Eventos = () => {
 
         fetchEventos();
         setIsModalOpen(false);
+        toast.success("Evento atualizado com sucesso");
         resetEventoState();
       } catch (error) {}
       return;
@@ -133,6 +134,7 @@ const Eventos = () => {
 
       fetchEventos();
       setIsModalOpen(false);
+      toast.success("Evento criado com sucesso");
       resetEventoState();
     } catch (error) {}
   };
@@ -146,7 +148,7 @@ const Eventos = () => {
     if (evento) {
       setNewEvento({
         empresa: { id: evento.empresa.id },
-        treinamento: { id:evento.treinamento.id },
+        treinamento: { id: evento.treinamento.id },
         courseLocation: evento.courseLocation,
         courseLocation2: evento.courseLocation2,
         courseDate: evento.courseDate,
@@ -206,7 +208,7 @@ const Eventos = () => {
                         onValueChange={(value) => {
                           setNewEvento((prev) => ({
                             ...prev,
-                            empresa: {id: value},
+                            empresa: { id: value },
                           }));
                         }}
                         value={newEvento.empresa.id}
@@ -278,12 +280,22 @@ const Eventos = () => {
                         Local de treinamento 2
                       </Label>
                       <Input
-                        className="border-dashed text-center"
+                        className={`${
+                          newEvento.courseLocation2
+                            ? ""
+                            : "border-dashed text-center"
+                        }`}
                         id="courseLocation2"
                         name="courseLocation2"
                         placeholder="Clique para adicionar"
                         value={newEvento.courseLocation2}
                         onChange={handleInputChange}
+                        onFocus={(e) => {
+                          e.target.classList.remove(
+                            "border-dashed",
+                            "text-center"
+                          );
+                        }}
                       />
                     </div>
                   </div>
@@ -305,6 +317,7 @@ const Eventos = () => {
                         id="completionDate"
                         name="completionDate"
                         type="date"
+                        pattern="\d{4}-\d{2}-\d{2}"
                         value={newEvento.completionDate}
                         onChange={handleInputChange}
                         required={eventoInEditMode ? false : true}
@@ -359,7 +372,9 @@ const Eventos = () => {
                               courseInterval: `${startTime} ÀS ${endTime}`,
                             }));
                           }}
-                          value={newEvento.courseInterval.split(" ÀS ")[0] || ""}
+                          value={
+                            newEvento.courseInterval.split(" ÀS ")[0] || ""
+                          }
                         />
                         <span>ÀS</span>
                         <Input
@@ -374,7 +389,9 @@ const Eventos = () => {
                               courseInterval: `${startTime} ÀS ${endTime}`,
                             }));
                           }}
-                          value={newEvento.courseInterval.split(" ÀS ")[1] || ""}
+                          value={
+                            newEvento.courseInterval.split(" ÀS ")[1] || ""
+                          }
                         />
                       </div>
                     </div>
@@ -386,6 +403,7 @@ const Eventos = () => {
                     variant="outline"
                     onClick={() => {
                       setIsModalOpen(false);
+                      resetEventoState();
                     }}
                   >
                     Cancelar

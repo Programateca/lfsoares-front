@@ -127,7 +127,7 @@ const Usuarios = () => {
     }
 
     if (newUser.password !== newUser.confirmPassword) {
-      return console.log("Senhas não conferem");
+      return toast.error("As senhas não coincidem");
     }
 
     try {

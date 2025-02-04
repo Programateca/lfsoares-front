@@ -284,6 +284,7 @@ const Treinamentos = () => {
                     id="courseHours"
                     name="courseHours"
                     type="number"
+                    placeholder="Ex: 40"
                     value={newTreinamento.courseHours}
                     onChange={handleInputChange}
                     required={treinamentoInEditMode ? false : true}
