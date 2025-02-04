@@ -138,8 +138,6 @@ const ListaPresenca = () => {
     identificador_id: identificadores.id,
   }));
 
-  console.log("eventos", eventos);
-
   const {
     control,
     register,
@@ -147,8 +145,6 @@ const ListaPresenca = () => {
     formState: { isSubmitting },
     reset,
   } = useForm<FormData>();
-
-  console.log("Renderizado");
 
   const onSubmit = async (data: FormData) => {
     console.log("data", data);
