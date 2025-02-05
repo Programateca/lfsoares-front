@@ -36,7 +36,7 @@ export function SelectMap({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup className="text-start">
-            {itens.map((item, idx) => {
+            {itens.map((item) => {
               const identificadorParsed = item.documentData
                 ? JSON.parse(item.documentData)
                 : null;

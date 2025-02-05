@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "./ui/button";
 
@@ -34,7 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { DocumentData } from "@/@types/Document";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
@@ -128,7 +129,7 @@ const ListaPresenca = () => {
   const [identificadores, setIdentificadores] = useState<DocumentData[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [participantes, setParticipantes] = useState<string[]>([]);
+  // const [participantes, setParticipantes] = useState<string[]>([]);
   const [documentos, setDocumentos] = useState<
     { id: string; modelType: string; createdAt: string; documentData: string }[]
   >([]);
@@ -138,13 +139,7 @@ const ListaPresenca = () => {
     identificador_id: identificadores.id,
   }));
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-    reset,
-  } = useForm<FormData>();
+  const { control, handleSubmit, reset } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     console.log("data", data);
@@ -191,7 +186,7 @@ const ListaPresenca = () => {
             onOpenChange={(open) => {
               if (!open) {
                 reset();
-                setParticipantes([]);
+                // setParticipantes([]);
               }
               setIsModalOpen(open);
             }}
@@ -289,7 +284,7 @@ const ListaPresenca = () => {
                     onClick={() => {
                       setIsModalOpen(false);
                       reset();
-                      setParticipantes([]);
+                      // setParticipantes([]);
                     }}
                   >
                     Cancelar

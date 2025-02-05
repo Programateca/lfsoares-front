@@ -83,7 +83,8 @@ export const Identificadores = () => {
   >({});
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
-  const [identificadorInEditMode, setIdentificadorInEditMode] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [identificadorInEditMode, setIdentificadorInEditMode] = useState("");
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
@@ -348,11 +349,26 @@ export const Identificadores = () => {
       instrutorDates: formatDays({
         instrutorA:
           signatureCount !== 2
-            ? data.instrutorA
+            ? days.reduce((acc, day) => {
+                acc[day] = {
+                  periodo:
+                    data.instrutorA?.[day]?.periodo || ("manhaTarde" as Period),
+                };
+                return acc;
+              }, {} as Record<string, { periodo?: Period }>)
             : Object.fromEntries(
-                days.map((day) => [day, { periodo: "manhaTarde" }])
+                days.map((day) => [day, { periodo: "manhaTarde" as Period }])
               ),
-        instrutorB: signatureCount === 2 ? null : data.instrutorB,
+        instrutorB:
+          signatureCount === 2
+            ? null
+            : days.reduce((acc, day) => {
+                acc[day] = {
+                  periodo:
+                    data.instrutorB?.[day]?.periodo || ("manhaTarde" as Period),
+                };
+                return acc;
+              }, {} as Record<string, { periodo?: Period }>),
       }),
     };
 
@@ -389,9 +405,9 @@ export const Identificadores = () => {
   /**
    * Lógica de edição de identificador
    */
-  const handleEdit = (id: any) => {
+  const handleEdit = (id: string) => {
     console.log("Editando", id);
-    setIdentificadorInEditMode(id);
+    // setIdentificadorInEditMode(id);
 
     // const identificador = identificadoresGerados.find((item) => item.id === id);
     // console.log("identificador", JSON.parse(identificador.documentData));
@@ -824,7 +840,7 @@ export const Identificadores = () => {
                         <Button
                           variant="outline"
                           className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                          onClick={() => handleEdit(identificador.id)}
+                          onClick={() => handleEdit(identificador.id!)}
                         >
                           <Edit className="mr-2 h-4 w-4" />
                           Editar

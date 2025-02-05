@@ -240,6 +240,8 @@ function substituirOcorrencias(
   periodo: "manha" | "tarde" | "manhaTarde",
   courseTime: string
 ): string {
+  console.log("Substituindo ocorrências...");
+  console.log("periodo:", periodo);
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
     "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
@@ -291,6 +293,7 @@ type Dias = {
 };
 
 export function formatDays(dias: Dias): EventSchedule {
+  console.log("Formatando dias...", dias);
   return {
     instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
       dia,

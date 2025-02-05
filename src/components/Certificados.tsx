@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "./ui/button";
 
 import { api } from "@/lib/axios";
@@ -24,7 +25,7 @@ import {
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
-import { Instrutor } from "@/@types/Instrutor";
+// import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { gerarCertificado } from "@/utils/gerar-certificado";
@@ -51,7 +52,7 @@ const Certificados = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
-  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  // const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [certificados, setCertificados] = useState<any[]>([]);
 
@@ -71,7 +72,7 @@ const Certificados = () => {
         ]);
       const eventosResp = await api.get("eventos");
       const pessoasResp = await api.get("pessoas");
-      const instrutoresResp = await api.get("instrutores");
+      // const instrutoresResp = await api.get("instrutores");
       const empresasResp = await api.get("empresas");
       setEmpresas(empresasResp.data.data);
       setParticipantes(pessoasResp.data.data);
@@ -81,7 +82,7 @@ const Certificados = () => {
         ...certificados4aResp.data.data,
       ]);
       setIdentificadores(response.data.data);
-      setInstrutores(instrutoresResp.data.data);
+      // setInstrutores(instrutoresResp.data.data);
       setEventos(eventosResp.data.data);
     } catch (error) {
       console.log(error);
@@ -126,7 +127,7 @@ const Certificados = () => {
         .filter((p) => p.id);
       const empresaIdentificador = dataIdentificador.empresa_id;
       const eventoIdentificador = dataIdentificador.evento_id;
-      let newCertificado = {
+      const newCertificado = {
         tipo_certificado: dataIdentificador.tipo_certificado,
         evento: { id: dataIdentificador.evento_id },
         instrutor: { id: "" },
@@ -222,8 +223,8 @@ const Certificados = () => {
         contratante_cnpj: selectedEmpresa.cnpj,
       };
 
-      let dados = [];
-      for (let pessoa of participantesIdentificador) {
+      const dados = [];
+      for (const pessoa of participantesIdentificador) {
         const participanteEncontrado = participantes.find(
           (p) => p.id === pessoa.id
         );
@@ -390,7 +391,8 @@ const Certificados = () => {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setIsModalOpen(false), resetForm();
+                      setIsModalOpen(false);
+                      resetForm();
                     }}
                   >
                     Cancelar
