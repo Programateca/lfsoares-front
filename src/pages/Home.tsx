@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import Usuarios from "@/components/Usuarios";
 import Treinamentos from "@/components/Treinamentos";
-import Instrutores from "@/components/Instrutores";
+import Integrantes from "@/components/Integrantes";
 import Pessoas from "@/components/Pessoas";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
@@ -20,7 +20,7 @@ const componentsMap = {
   Usuários: Usuarios,
   Eventos,
   Treinamentos,
-  Instrutores,
+  Integrantes,
   Pessoas,
   Empresas,
   Certificados,

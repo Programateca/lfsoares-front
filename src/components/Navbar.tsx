@@ -17,7 +17,7 @@ type ComponentKeys =
   | "Usuários"
   | "Eventos"
   | "Treinamentos"
-  | "Instrutores"
+  | "Integrantes"
   | "Pessoas"
   | "Empresas"
   | "Certificados"
@@ -96,9 +96,9 @@ export const Navbar = ({
               <Button
                 variant="ghost"
                 className={`w-full justify-start ${
-                  selectedOption === "Instrutores" ? "bg-gray-100" : ""
+                  selectedOption === "Integrantes" ? "bg-gray-100" : ""
                 }`}
-                onClick={() => handleSelectedOption("Instrutores")}
+                onClick={() => handleSelectedOption("Integrantes")}
               >
                 <IdCard className="mr-2 h-4 w-4" />
                 Integrantes

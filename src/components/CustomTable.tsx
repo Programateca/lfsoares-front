@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -25,6 +25,7 @@ import {
 interface Column {
   key: string;
   label: string;
+  render?: (value: any, row: any) => React.ReactNode;
 }
 
 interface CustomTableProps<T extends { id: string | number }> {
@@ -102,8 +103,7 @@ const CustomTable = <T extends { id: string | number }>({
 
       return 0;
     });
-  console.log(filteredData.map((item) => getValue(item, statusKey) !== 2));
-  console.log(onRestore);
+  console.log(filteredData);
   return (
     <>
       {searchable && (
@@ -163,7 +163,9 @@ const CustomTable = <T extends { id: string | number }>({
               >
                 {columns.map((col) => (
                   <TableCell key={col.key}>
-                    {String(getValue(item, col.key))}
+                    {col.render
+                      ? col.render(getValue(item, col.key), item)
+                      : getValue(item, col.key)}
                   </TableCell>
                 ))}
                 <TableCell className="text-end space-x-2">
