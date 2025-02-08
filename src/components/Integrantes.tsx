@@ -1,12 +1,5 @@
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Dialog,
@@ -17,29 +10,13 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  CircleX,
-  Trash2Icon,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
+
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 interface Status {
   id: number;
@@ -54,7 +31,7 @@ interface Instrutor {
   status: Status;
 }
 
-const Instrutores = () => {
+const Integrantes = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [instrutorInEditMode, setInstrutorInEditMode] = useState<
@@ -133,7 +110,7 @@ const Instrutores = () => {
     } catch (error) {}
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     setInstrutorInEditMode(id);
     setIsModalOpen(true);
 
@@ -149,7 +126,7 @@ const Instrutores = () => {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
       await api.patch(`instrutores/${id}`, {
         status: {
@@ -272,123 +249,27 @@ const Instrutores = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome Completo</TableHead>
-              <TableHead>Qualificação profissional</TableHead>
-              <TableHead>Registro profissional</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : instrutores.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum instrutor encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              instrutores.map((instrutor) => (
-                <TableRow
-                  key={instrutor.id}
-                  className={instrutor.status.id !== 1 ? "line-through" : ""}
-                >
-                  <TableCell
-                    className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                  >
-                    {instrutor.name}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {instrutor.qualificacaoProfissional}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {instrutor.registroProfissional}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {instrutor.status.id !== 2 ? "Ativo" : "Inativo"}
-                  </TableCell>
-                  <TableCell className="text-end py-2">
-                    <Button
-                      onClick={() => handleEdit(instrutor.id)}
-                      variant={"outline"}
-                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                      disabled={instrutor.status.id !== 1}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {instrutor.status.id === 1 ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant={"outline"}
-                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                          >
-                            <Trash2Icon className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que deseja inativar este instrutor?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Está ação podera ser revertida posteriormente. Mas
-                              o instrutor não poderá ser vinculado a novos
-                              eventos.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="w-20">
-                              Não
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              className="w-20"
-                              onClick={() =>
-                                handleUpdateStatus(instrutor.id, 2)
-                              }
-                            >
-                              Sim
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateStatus(instrutor.id, 1)}
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "name", label: "Nome Completo" },
+            {
+              key: "qualificacaoProfissional",
+              label: "Qualificação Profissional",
+            },
+            { key: "registroProfissional", label: "Registro Profissional" },
+            { key: "status.name", label: "Status" },
+          ]}
+          data={instrutores}
+          onEdit={handleEdit}
+          onDelete={handleUpdateStatus}
+          onRestore={handleUpdateStatus}
+          loading={loading}
+          entityLabel="Instrutor"
+          searchable
+        />
       </CardContent>
     </Card>
   );
 };
 
-export default Instrutores;
+export default Integrantes;

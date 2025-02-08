@@ -52,6 +52,7 @@ import { Empresa } from "@/@types/Empresa";
 import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -139,7 +140,7 @@ const Eventos = () => {
     } catch (error) {}
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     seteventoInEditMode(id);
     setIsModalOpen(true);
 
@@ -159,7 +160,7 @@ const Eventos = () => {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
       await api.patch(`Eventos/${id}`, {
         status: {
@@ -414,119 +415,24 @@ const Eventos = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Evento</TableHead>
-              <TableHead>Contrante </TableHead>
-              <TableHead>Datas</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : eventos.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum evento encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              eventos.map((evento) => (
-                <TableRow
-                  key={evento.id}
-                  className={evento.status.id !== 1 ? "line-through" : ""}
-                >
-                  <TableCell
-                    className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                  >
-                    {evento.treinamento.name}
-                  </TableCell>
-                  <TableCell className="py-2">{evento.empresa.name}</TableCell>
-                  <TableCell className="py-2">
-                    {new Date(evento.courseDate).toLocaleDateString("pt-BR")} -{" "}
-                    {new Date(evento.completionDate).toLocaleDateString(
-                      "pt-BR"
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {evento.status.id !== 2 ? "Ativo" : "Inativo"}
-                  </TableCell>
-                  <TableCell className="text-end py-2">
-                    <Button
-                      onClick={() => handleEdit(evento.id)}
-                      variant={"outline"}
-                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                      disabled={evento.status.id !== 1}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {evento.status.id === 1 ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant={"outline"}
-                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                          >
-                            <Trash2Icon className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que deseja inativar este evento?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Está ação podera ser revertida posteriormente. Mas
-                              o evento não podera ser utilizada enquanto estiver
-                              inativa.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="w-20">
-                              Não
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              className="w-20"
-                              onClick={() => handleUpdateStatus(evento.id, 2)}
-                            >
-                              Sim
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateStatus(evento.id, 1)}
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "treinamento.name", label: "Treinamento" },
+            { key: "empresa.name", label: "Contratante" },
+            {
+              key: "createdAt",
+              label: "Data",
+              render: (value) => new Date(value).toLocaleDateString("pt-BR"),
+            },
+          ]}
+          data={eventos}
+          onEdit={handleEdit}
+          onDelete={handleUpdateStatus}
+          onRestore={handleUpdateStatus}
+          loading={loading}
+          entityLabel="Evento"
+          searchable
+        />
       </CardContent>
     </Card>
   );

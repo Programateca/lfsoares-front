@@ -1,22 +1,8 @@
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  Trash2Icon,
-  CircleX,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,21 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
+
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 interface Status {
   id: number;
@@ -53,7 +30,7 @@ interface Treinamento {
   courseValidaty: string;
   courseHours: string;
   coursePortaria: string;
-  id: string;
+  id: string | number;
   status: Status;
 }
 
@@ -155,7 +132,7 @@ const Treinamentos = () => {
     } catch (error) {}
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     setTreinamentoInEditMode(id);
     setIsModalOpen(true);
 
@@ -176,7 +153,7 @@ const Treinamentos = () => {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
       await api.patch(`treinamentos/${id}`, {
         status: {
@@ -321,115 +298,21 @@ const Treinamentos = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Treinamento</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Modalidade</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : treinamentos.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum treinamento encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              treinamentos.map((treinamento) => (
-                <TableRow
-                  key={treinamento.id}
-                  className={treinamento.status.id !== 1 ? "line-through" : ""}
-                >
-                  <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
-                    {treinamento.name}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {treinamento.courseType}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {treinamento.courseModality}
-                  </TableCell>
-                  <TableCell className="py-2">
-                    {treinamento.status.id !== 2 ? "Ativo" : "Inativo"}
-                  </TableCell>
-                  <TableCell className="text-end py-2">
-                    <Button
-                      onClick={() => handleEdit(treinamento.id)}
-                      variant={"outline"}
-                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                      disabled={treinamento.status.id !== 1}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {treinamento.status.id === 1 ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant={"outline"}
-                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                          >
-                            <Trash2Icon className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que deseja inativar este treinamento?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Está ação podera ser revertida posteriormente. Mas
-                              o treinamento não podera ser utilizada enquanto
-                              estiver inativa.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="w-20">
-                              Não
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              className="w-20"
-                              onClick={() =>
-                                handleUpdateStatus(treinamento.id, 2)
-                              }
-                            >
-                              Sim
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateStatus(treinamento.id, 1)}
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "name", label: "Treinamento" },
+            { key: "courseType", label: "Tipo" },
+            { key: "courseModality", label: "Modalidade" },
+            { key: "status.name", label: "Status" },
+          ]}
+          data={treinamentos}
+          onEdit={handleEdit}
+          onDelete={handleUpdateStatus}
+          onRestore={handleUpdateStatus}
+          loading={loading}
+          entityLabel="Treinamento"
+          searchable
+        />
       </CardContent>
     </Card>
   );

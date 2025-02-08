@@ -1,44 +1,19 @@
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  Trash2Icon,
-  CircleX,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { api } from "@/lib/axios";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 interface Role {
   id: number;
@@ -152,7 +127,7 @@ const Usuarios = () => {
     } catch (error) {}
   };
 
-  const handleEditUser = (id: number) => {
+  const handleEditUser = (id: number | string) => {
     setUserInEditMode(id);
     setIsModalOpen(true);
 
@@ -169,7 +144,10 @@ const Usuarios = () => {
     }
   };
 
-  const handleUpdateStatusUser = async (id: number, status: number) => {
+  const handleUpdateStatusUser = async (
+    id: number | string,
+    status: number
+  ) => {
     try {
       await api.patch(`users/${id}`, {
         status: {
@@ -290,108 +268,20 @@ const Usuarios = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhum usuário encontrado
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className={user.status.id !== 1 ? "line-through" : ""}
-                >
-                  <TableCell className="font-medium py-2">
-                    {user.name}
-                  </TableCell>
-                  <TableCell className="py-2">{user.email}</TableCell>
-                  <TableCell className="py-2">
-                    {user.status.id !== 2 ? "Ativo" : "Inativo"}
-                  </TableCell>
-                  <TableCell className="py-2 text-end">
-                    <Button
-                      onClick={() => handleEditUser(user.id)}
-                      variant={"outline"}
-                      className={`mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200
-                      `}
-                      disabled={user.status.id !== 1}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {user.status.id !== 2 ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant={"outline"}
-                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                          >
-                            <Trash2Icon className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que deseja inativar este usuário?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Está ação podera ser revertida posteriormente. Mas
-                              o usuário não poderá acessar o sistema enquanto
-                              estiver inativo.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="w-20">
-                              Não
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              className="w-20"
-                              onClick={() => handleUpdateStatusUser(user.id, 2)}
-                            >
-                              Sim
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateStatusUser(user.id, 1)}
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "name", label: "Nome" },
+            { key: "email", label: "Email" },
+            { key: "status.name", label: "Status" },
+          ]}
+          data={users}
+          onEdit={handleEditUser}
+          onDelete={handleUpdateStatusUser}
+          onRestore={handleUpdateStatusUser}
+          loading={loading}
+          entityLabel="Usuário"
+          searchable
+        />
       </CardContent>
     </Card>
   );

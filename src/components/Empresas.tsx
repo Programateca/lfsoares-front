@@ -1,22 +1,8 @@
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  CircleX,
-  Trash2Icon,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,21 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 interface Status {
   id: number;
@@ -128,7 +104,7 @@ const Empresas = () => {
       });
     } catch (error) {}
   };
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     setEmpresaInEditMode(id);
     setIsModalOpen(true);
 
@@ -143,7 +119,7 @@ const Empresas = () => {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
       await api.patch(`empresas/${id}`, {
         status: {
@@ -247,116 +223,20 @@ const Empresas = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>CPNJ</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : empresas.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhuma empresa encontrada
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              empresas
-                .sort((a, b) => (a.name > b.name ? 1 : -1))
-                .map((empresa) => (
-                  <TableRow
-                    key={empresa.id}
-                    className={empresa.status.id !== 1 ? "line-through" : ""}
-                  >
-                    <TableCell
-                      className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                    >
-                      {empresa.name}
-                    </TableCell>
-                    <TableCell className="py-2">{empresa.cnpj}</TableCell>
-                    <TableCell className="py-2">
-                      {empresa.status.id !== 2 ? "Ativo" : "Inativo"}
-                    </TableCell>
-                    <TableCell className="text-end py-2">
-                      <Button
-                        onClick={() => handleEdit(empresa.id)}
-                        variant={"outline"}
-                        className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                        disabled={empresa.status.id !== 1}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      {empresa.status.id === 1 ? (
-                        <AlertDialog>
-                          <AlertDialogTrigger>
-                            <Button
-                              variant={"outline"}
-                              className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                            >
-                              <Trash2Icon className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Tem certeza que deseja inativar esta empresa?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Está ação podera ser revertida posteriormente.
-                                Mas a empresa não podera ser utilizada enquanto
-                                estiver inativa.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel className="w-20">
-                                Não
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                className="w-20"
-                                onClick={() =>
-                                  handleUpdateStatus(empresa.id, 2)
-                                }
-                              >
-                                Sim
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      ) : (
-                        <Button
-                          onClick={() => handleUpdateStatus(empresa.id, 1)}
-                          variant={"outline"}
-                          className="p-2 h-fit hover:bg-green-100 hover:border-green-200"
-                        >
-                          <RotateCcw className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "name", label: "Nome" },
+            { key: "cnpj", label: "CNPJ" },
+            { key: "status.name", label: "Status" },
+          ]}
+          data={empresas}
+          onEdit={handleEdit}
+          onDelete={handleUpdateStatus}
+          onRestore={handleUpdateStatus}
+          loading={loading}
+          entityLabel="Empresa"
+          searchable
+        />
       </CardContent>
     </Card>
   );

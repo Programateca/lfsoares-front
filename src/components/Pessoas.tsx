@@ -1,22 +1,8 @@
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  CircleX,
-  Trash2Icon,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,17 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 import {
   Select,
   SelectContent,
@@ -48,6 +24,7 @@ import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 interface Status {
   id: number;
@@ -179,7 +156,7 @@ const Pessoas = () => {
     } catch (error) {}
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     setPessoaInEditMode(id);
     setIsModalOpen(true);
     const pessoa = pessoas.find((pessoa) => pessoa.id === id);
@@ -198,7 +175,7 @@ const Pessoas = () => {
     }
   };
 
-  const handleUpdateStatus = async (id: string, status: number) => {
+  const handleUpdateStatus = async (id: string | number, status: number) => {
     console.log(id, status);
     try {
       await api.patch(`pessoas/${id}`, {
@@ -267,13 +244,14 @@ const Pessoas = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF (opcional)</Label>
+                  <Label htmlFor="cpf">CPF </Label>
                   <Input
                     id="cpf"
                     name="cpf"
                     type="cpf"
                     value={newPessoa.cpf}
                     onChange={handleInputChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -308,6 +286,7 @@ const Pessoas = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Empresas:</SelectLabel>
+                        <SelectItem value="0">Nenhuma</SelectItem>
                         {empresas.map((empresa) => {
                           return (
                             <SelectItem key={empresa.id} value={empresa.id}>
@@ -348,120 +327,22 @@ const Pessoas = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>CPF</TableHead>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Matricula</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-end">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="loader"></div>
-                    <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : pessoas.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <CircleX className="h-6 w-6 text-red-400" />
-                    <p className="text-sm text-red-400">
-                      Nenhuma pessoa encontrada
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              pessoas.map((pessoa) => (
-                <TableRow
-                  key={pessoa.id}
-                  className={pessoa.status.id !== 1 ? "line-through" : ""}
-                >
-                  <TableCell
-                    className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                  >
-                    {pessoa.name}
-                  </TableCell>
-                  <TableCell className="py-2">{pessoa.cpf}</TableCell>
-                  <TableCell className="py-2">
-                    {pessoa.empresa?.name
-                      ? pessoa.empresa.name
-                      : "Não informada"}
-                  </TableCell>
-                  <TableCell className="py-2">{pessoa.matricula}</TableCell>
-                  <TableCell className="py-2">
-                    {pessoa.status.id === 1 ? "Ativo" : "Inativo"}
-                  </TableCell>
-                  <TableCell className="text-end py-2">
-                    <Button
-                      onClick={() => handleEdit(pessoa.id)}
-                      variant={"outline"}
-                      className="mr-2 p-2 h-fit hover:bg-blue-100 hover:border-blue-200"
-                      disabled={pessoa.status.id !== 1}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    {pessoa.status.id === 1 ? (
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant={"outline"}
-                            className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
-                          >
-                            <Trash2Icon className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Tem certeza que deseja inativar essa pessoa?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Está ação podera ser revertida posteriormente. Mas
-                              a pessoa não podera ser vinculada a nenhum layout
-                              gerado.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="w-20">
-                              Não
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              className="w-20"
-                              onClick={() => handleUpdateStatus(pessoa.id, 2)}
-                            >
-                              Sim
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdateStatus(pessoa.id, 1)}
-                        variant={"outline"}
-                        className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <CustomTable
+          columns={[
+            { key: "name", label: "Nome" },
+            { key: "cpf", label: "CPF" },
+            { key: "empresa.name", label: "Empresa" },
+            { key: "matricula", label: "Matricula" },
+            { key: "status.name", label: "Status" },
+          ]}
+          data={pessoas}
+          onEdit={handleEdit}
+          onDelete={handleUpdateStatus}
+          onRestore={handleUpdateStatus}
+          loading={loading}
+          entityLabel="Pessoa"
+          searchable
+        />
       </CardContent>
     </Card>
   );
