@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContextProvider";
 import { api } from "@/lib/axios";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -26,6 +26,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const emailInput = useRef<HTMLInputElement>(null);
   const senhaInput = useRef<HTMLInputElement>(null);
@@ -88,14 +89,35 @@ export default function Login() {
             </div>
             <div className="space-y-2 pb-4">
               <Label htmlFor="senha">Senha</Label>
-              <Input
-                ref={senhaInput}
-                id="senha"
-                type="password"
-                placeholder="********"
-                required
-                className="focus-visible:ring-green-800 text-gray-700 text-base"
-              />
+              <div className="relative">
+                <Input
+                  ref={senhaInput}
+                  id="senha"
+                  type="password"
+                  placeholder="********"
+                  required
+                  className="focus-visible:ring-green-800 text-gray-700 text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (senhaInput.current) {
+                      senhaInput.current.type =
+                        senhaInput.current.type === "password"
+                          ? "text"
+                          : "password";
+                      setShowPassword((prev) => !prev);
+                    }
+                  }}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                >
+                  {showPassword ? (
+                    <Eye className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    <EyeClosed className="h-5 w-5 text-gray-500" />
+                  )}
+                </button>
+              </div>
             </div>
             <Button
               type="submit"
