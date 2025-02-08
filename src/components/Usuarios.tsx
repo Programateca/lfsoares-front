@@ -1,40 +1,14 @@
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import {
-  Plus,
-  Edit,
-  Trash2Icon,
-  CircleX,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { api } from "@/lib/axios";
@@ -153,7 +127,7 @@ const Usuarios = () => {
     } catch (error) {}
   };
 
-  const handleEditUser = (id: number) => {
+  const handleEditUser = (id: number | string) => {
     setUserInEditMode(id);
     setIsModalOpen(true);
 
@@ -170,7 +144,10 @@ const Usuarios = () => {
     }
   };
 
-  const handleUpdateStatusUser = async (id: number, status: number) => {
+  const handleUpdateStatusUser = async (
+    id: number | string,
+    status: number
+  ) => {
     try {
       await api.patch(`users/${id}`, {
         status: {
