@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login.tsx";
-import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Home from "./pages/Home.tsx";
 import { AuthProvider } from "./context/AuthContextProvider.tsx";
 import { Toaster } from "react-hot-toast";
@@ -19,10 +18,6 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
-  },
-  {
-    path: "/esqueceu-senha",
-    element: <ForgotPassword />,
   },
 ]);
 

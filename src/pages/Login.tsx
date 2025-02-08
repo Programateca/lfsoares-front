@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { api } from "@/lib/axios";
 import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Role = "User";
 
@@ -109,14 +109,6 @@ export default function Login() {
               )}
             </Button>
           </form>
-          <div className="text-center">
-            <Link
-              to="/esqueceu-senha"
-              className="text-sm text-primary hover:underline"
-            >
-              Esqueceu sua senha?
-            </Link>
-          </div>
         </div>
       </div>
     </div>
