@@ -22,30 +22,30 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface Column<T> {
+interface Column {
   key: string;
   label: string;
 }
 
-interface CustomTableProps<T> {
-  columns: Column<T>[];
+interface CustomTableProps<T extends { id: string | number }> {
+  columns: Column[];
   data: T[];
-  onEdit: (id: number) => void;
-  onDelete: (id: number, status: number) => void;
-  onRestore?: (id: number, status: number) => void;
+  onEdit: (id: string | number) => void;
+  onDelete: (id: string | number, status: number) => void;
+  onRestore?: (id: string | number, status: number) => void;
   loading?: boolean;
   searchable?: boolean;
   statusKey?: string;
-  entityLabel?: string; // Nome da entidade para exibir no modal (ex: "Usuário", "Produto", "Pedido")
-  deleteMessage?: string; // Mensagem personalizada para inativação
-  restoreMessage?: string; // Mensagem personalizada para reativação
+  entityLabel?: string;
+  deleteMessage?: string;
+  restoreMessage?: string;
 }
 
 const getValue = (obj: any, key: string): any => {
   return key.split(".").reduce((o, i) => (o ? o[i] : ""), obj);
 };
 
-const CustomTable = <T extends { id: number }>({
+const CustomTable = <T extends { id: string | number }>({
   columns,
   data,
   onEdit,
@@ -62,7 +62,7 @@ const CustomTable = <T extends { id: number }>({
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedItem, setSelectedItem] = useState<{
-    id: number;
+    id: string | number;
     status: number;
   } | null>(null);
 
@@ -102,10 +102,10 @@ const CustomTable = <T extends { id: number }>({
 
       return 0;
     });
-
+  console.log(filteredData.map((item) => getValue(item, statusKey) !== 2));
+  console.log(onRestore);
   return (
     <>
-      {/* Campo de busca */}
       {searchable && (
         <div className="mb-4">
           <Input
@@ -171,6 +171,7 @@ const CustomTable = <T extends { id: number }>({
                     onClick={() => onEdit(item.id)}
                     variant="outline"
                     className="p-2 h-fit"
+                    disabled={getValue(item, statusKey) !== 1}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
