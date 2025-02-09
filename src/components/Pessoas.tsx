@@ -136,7 +136,7 @@ const Pessoas = () => {
         cpf: newPessoa.cpf,
         matricula: newPessoa.matricula,
         empresa: {
-          id: newPessoa.empresa.id,
+          id: newPessoa.empresa.id === "0" ? null : newPessoa.empresa.id,
         },
       });
 
