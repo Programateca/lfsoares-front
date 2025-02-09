@@ -27,6 +27,8 @@ import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
+import { format, parseISO, isValid, parse } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -82,7 +84,92 @@ const Eventos = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    if (name === "courseDate" || name === "completionDate") {
+      setNewEvento((prev) => ({ ...prev, [name]: value }));
+      return;
+    }
     setNewEvento((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const formatDateForInput = (date: string) => {
+    if (!date) return "";
+    try {
+      return format(parseISO(date), "dd/MM/yyyy", { locale: ptBR });
+    } catch {
+      return date;
+    }
+  };
+
+  const formatTimeForInput = (time: string) => {
+    if (!time) return ["", ""]; // Se não houver horário, retorna array vazio
+
+    const times = time.split(" ÀS "); // Divide o horário no " ÀS "
+    return [times[0] || "", times[1] || ""]; // Retorna os dois valores corretamente
+  };
+
+  const formatDateForStorage = (date: string) => {
+    try {
+      const parsedDate = parse(date, "dd/MM/yyyy", new Date());
+      if (isValid(parsedDate)) {
+        return format(parsedDate, "yyyy-MM-dd");
+      }
+      return date;
+    } catch {
+      return date;
+    }
+  };
+
+  const formatTimeForStorage = (time: string) => {
+    try {
+      const parsedTime = parse(time, "HH:mm", new Date());
+      return isValid(parsedTime) ? format(parsedTime, "HH:mm") : time;
+    } catch {
+      return time;
+    }
+  };
+
+  const handleTimeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isStart: boolean,
+    field: "courseTime" | "courseInterval"
+  ) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
+
+    if (value.length > 2) value = value.replace(/^(\d{2})/, "$1:"); // Adiciona `:` após HH
+    if (value.length > 5) return; // Impede mais de 5 caracteres
+
+    const [hh, mm] = value.split(":");
+
+    if (hh && parseInt(hh) > 23) return; // Bloqueia horas inválidas (> 23)
+    if (mm && parseInt(mm) > 59) return; // Bloqueia minutos inválidos (> 59)
+
+    // Atualizar o horário correto sem afetar o outro valor
+    setNewEvento((prev) => {
+      let [startTime, endTime] = prev[field].split(" ÀS ");
+      startTime = isStart ? value : startTime || "";
+      endTime = isStart ? endTime || "" : value;
+
+      return {
+        ...prev,
+        [field]: `${startTime} ÀS ${endTime}`,
+      };
+    });
+  };
+
+  // Função para lidar com a mudança no input de data
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+
+    if (value.length > 2) value = value.replace(/^(\d{2})/, "$1/"); // Adiciona `/` após o dia
+    if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})/, "$1/$2/"); // Adiciona `/` após o mês
+
+    if (value.length > 10) return; // Impede mais de 10 caracteres
+
+    setNewEvento((prev) => ({
+      ...prev,
+      [e.target.name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,6 +179,10 @@ const Eventos = () => {
       try {
         await api.patch(`eventos/${eventoInEditMode}`, {
           ...newEvento,
+          courseDate: formatDateForStorage(newEvento.courseDate),
+          completionDate: formatDateForStorage(newEvento.completionDate),
+          courseTime: formatTimeForStorage(newEvento.courseTime),
+          courseInterval: formatTimeForStorage(newEvento.courseInterval),
         });
 
         fetchEventos();
@@ -121,15 +212,20 @@ const Eventos = () => {
     const evento = eventos.find((evento) => evento.id === id);
 
     if (evento) {
+      const [startTime, endTime] = formatTimeForInput(evento.courseTime);
+      const [intervalStart, intervalEnd] = formatTimeForInput(
+        evento.courseInterval
+      );
+
       setNewEvento({
         empresa: { id: evento.empresa.id },
         treinamento: { id: evento.treinamento.id },
         courseLocation: evento.courseLocation,
         courseLocation2: evento.courseLocation2,
-        courseDate: evento.courseDate,
-        completionDate: evento.completionDate,
-        courseTime: evento.courseTime,
-        courseInterval: evento.courseInterval,
+        courseDate: formatDateForInput(evento.courseDate),
+        completionDate: formatDateForInput(evento.completionDate),
+        courseTime: `${startTime} ÀS ${endTime}`, // Preenchendo corretamente o estado
+        courseInterval: `${intervalStart} ÀS ${intervalEnd}`, // Preenchendo corretamente o estado
       });
     }
   };
@@ -280,10 +376,12 @@ const Eventos = () => {
                       <Input
                         id="courseDate"
                         name="courseDate"
-                        type="date"
+                        type="text"
+                        placeholder="DD/MM/AAAA"
                         value={newEvento.courseDate}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
+                        onChange={handleDateChange}
+                        maxLength={10} // Evita mais de 10 caracteres
+                        required
                       />
                     </div>
                     <div className="space-y-2">
@@ -291,82 +389,72 @@ const Eventos = () => {
                       <Input
                         id="completionDate"
                         name="completionDate"
-                        type="date"
-                        pattern="\d{4}-\d{2}-\d{2}"
+                        type="text"
+                        placeholder="DD/MM/AAAA"
                         value={newEvento.completionDate}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
+                        onChange={handleDateChange}
+                        maxLength={10}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseTime">Horário</Label>
                       <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
-                          type="time"
-                          placeholder="Início"
-                          onChange={(e) => {
-                            const startTime = e.target.value;
-                            const endTime =
-                              newEvento.courseTime.split(" ÀS ")[1] || "";
-                            setNewEvento((prev) => ({
-                              ...prev,
-                              courseTime: `${startTime} ÀS ${endTime}`,
-                            }));
-                          }}
-                          value={newEvento.courseTime.split(" ÀS ")[0] || ""}
+                          type="text"
+                          name="courseTimeStart"
+                          placeholder="HH:MM"
+                          onChange={(e) =>
+                            handleTimeChange(e, true, "courseTime")
+                          }
+                          value={
+                            formatTimeForInput(newEvento.courseTime)[0] || ""
+                          }
+                          maxLength={5}
                         />
                         <span>ÀS</span>
                         <Input
-                          type="time"
-                          placeholder="Fim"
-                          onChange={(e) => {
-                            const startTime =
-                              newEvento.courseTime.split(" ÀS ")[0] || "";
-                            const endTime = e.target.value;
-                            setNewEvento((prev) => ({
-                              ...prev,
-                              courseTime: `${startTime} ÀS ${endTime}`,
-                            }));
-                          }}
-                          value={newEvento.courseTime.split(" ÀS ")[1] || ""}
+                          type="text"
+                          name="courseTimeEnd"
+                          placeholder="HH:MM"
+                          onChange={(e) =>
+                            handleTimeChange(e, false, "courseTime")
+                          }
+                          value={
+                            formatTimeForInput(newEvento.courseTime)[1] || ""
+                          }
+                          maxLength={5}
                         />
                       </div>
-                    </div>
-                    <div className="space-y-2">
+
                       <Label htmlFor="courseInterval">Intervalo</Label>
                       <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
-                          type="time"
-                          placeholder="Início"
-                          onChange={(e) => {
-                            const startTime = e.target.value;
-                            const endTime =
-                              newEvento.courseTime.split(" ÀS ")[1] || "";
-                            setNewEvento((prev) => ({
-                              ...prev,
-                              courseInterval: `${startTime} ÀS ${endTime}`,
-                            }));
-                          }}
-                          value={
-                            newEvento.courseInterval.split(" ÀS ")[0] || ""
+                          type="text"
+                          name="courseIntervalStart"
+                          placeholder="HH:MM"
+                          onChange={(e) =>
+                            handleTimeChange(e, true, "courseInterval")
                           }
+                          value={
+                            formatTimeForInput(newEvento.courseInterval)[0] ||
+                            ""
+                          }
+                          maxLength={5}
                         />
                         <span>ÀS</span>
                         <Input
-                          type="time"
-                          placeholder="Fim"
-                          onChange={(e) => {
-                            const startTime =
-                              newEvento.courseTime.split(" ÀS ")[0] || "";
-                            const endTime = e.target.value;
-                            setNewEvento((prev) => ({
-                              ...prev,
-                              courseInterval: `${startTime} ÀS ${endTime}`,
-                            }));
-                          }}
-                          value={
-                            newEvento.courseInterval.split(" ÀS ")[1] || ""
+                          type="text"
+                          name="courseIntervalEnd"
+                          placeholder="HH:MM"
+                          onChange={(e) =>
+                            handleTimeChange(e, false, "courseInterval")
                           }
+                          value={
+                            formatTimeForInput(newEvento.courseInterval)[1] ||
+                            ""
+                          }
+                          maxLength={5}
                         />
                       </div>
                     </div>
