@@ -36,7 +36,7 @@ import {
   TableRow,
 } from "./ui/table";
 // import toast from "react-hot-toast";
-import { DocumentData } from "@/@types/Document";
+import { DocumentData } from "@/@types/DocumentData";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
 

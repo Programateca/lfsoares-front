@@ -32,7 +32,7 @@ import { gerarCertificado } from "@/utils/gerar-certificado";
 import { Identificador } from "@/@types/Identificador";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { DocumentData } from "@/@types/Document";
+import { DocumentData } from "@/@types/DocumentData";
 import toast from "react-hot-toast";
 
 const defaultValues = {

@@ -29,11 +29,11 @@ import {
   gerarIdentificador,
   Period,
 } from "@/utils/identificador";
-import { DocumentData } from "@/@types/Document";
 import { getLastDocumentCode } from "@/utils/get-last-document-code";
 import { ModelType } from "@/@types/ModeType";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
+import { IdentificadorData } from "@/@types/IdentificadorData";
 
 /**
  * Definição de tipos auxiliares
@@ -75,13 +75,13 @@ export const Identificadores = () => {
   >({});
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   // const [identificadorInEditMode, setIdentificadorInEditMode] = useState("");
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
   const [identificadoresGerados, setIdentificadoresGerados] = useState<
-    DocumentData[]
+    IdentificadorData[]
   >([]); // TODO terminar de criar o type Identificador
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
@@ -98,15 +98,15 @@ export const Identificadores = () => {
    */
   const fetchData = async () => {
     try {
-      const [response, eventosResp, pessoasResp, instrutoresResp] =
+      const [identificadores, eventosResp, pessoasResp, instrutoresResp] =
         await Promise.all([
-          api.get("documentos/identificador"),
+          api.get("identificadores"),
           api.get("eventos"),
           api.get("pessoas"),
           api.get("instrutores"),
         ]);
 
-      setIdentificadoresGerados(response.data.data);
+      setIdentificadoresGerados(identificadores.data.data);
       setEventos(eventosResp.data.data);
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);
@@ -361,19 +361,21 @@ export const Identificadores = () => {
       }),
     };
 
-    const newIdentificador: DocumentData = {
-      modelType: "identificador",
+    const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
-      documentData: JSON.stringify(dataGerador),
-      certificateCode: Number(lastIdentificadorCode),
-      certificateYear: String(fullYear),
+      identificadorData: JSON.stringify(dataGerador),
+      code: Number(lastIdentificadorCode),
+      year: String(fullYear),
     };
 
-    const saveResponse = await api.post("documentos", newIdentificador);
+    const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
-      setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
+      setIdentificadoresGerados((prev) => [
+        ...prev,
+        saveResponse.data as IdentificadorData,
+      ]);
       setFormsOpen(false);
     } else {
       toast.error("Erro ao gerar identificador!");
@@ -779,7 +781,7 @@ export const Identificadores = () => {
           <CustomTable
             columns={[
               { key: "id", label: "Treinamento" },
-              { key: "certificateCode", label: "Código" },
+              { key: "code", label: "Código" },
             ]}
             data={identificadoresGerados.map((item, index) => ({
               ...item,
@@ -789,8 +791,8 @@ export const Identificadores = () => {
             onDownload={(_, row) => {
               try {
                 // ✅ Parseando documentData antes de chamar gerarIdentificador
-                const identificadorParsed = row.documentData
-                  ? JSON.parse(row.documentData)
+                const identificadorParsed = row.identificadorData
+                  ? JSON.parse(row.identificadorData)
                   : null;
 
                 if (!identificadorParsed) {
