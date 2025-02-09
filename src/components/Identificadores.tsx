@@ -102,7 +102,7 @@ export const Identificadores = () => {
         await Promise.all([
           api.get("identificadores"),
           api.get("eventos"),
-          api.get("pessoas"),
+          api.get("pessoas?limit=20"), // TODO Paginação
           api.get("instrutores"),
         ]);
 
@@ -269,22 +269,40 @@ export const Identificadores = () => {
       tarde_horario = `${intervaloFim} ÀS ${fim}`;
     }
 
+    const fullDateNow = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    let conteudoAplicado = "";
+    if (data.conteudoAplicado) {
+      conteudoAplicado = data.conteudoAplicado;
+    } else if (selectedEvento.treinamento.conteudoAplicado) {
+      conteudoAplicado = selectedEvento.treinamento.conteudoAplicado;
+    }
+
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
+      // Header
+      header_revisao: "CLEDIONE SANTOS FIXO", // Nome de quem revisou
+      header_data: fullDateNow,
+      revisao: "00 FIXO",
+
       manha_horario,
       tarde_horario,
       mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
       mudar_horarios: selectedEvento?.courseTime,
-      id_data: fullYear,
+      id_data: fullDateNow.replace(/\//g, "."), // Troca / por . para seguir o padrão apresentado pelo modelo deles
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
       // Mapeamento de participantes
       ...participantesMap,
       numeroParticipantes: totalParticipants,
 
-      conteudo_aplicado: data.conteudoAplicado,
+      conteudo_aplicado: conteudoAplicado,
       motivo_treinamento: data.motivoTreinamento,
       objetivo_lf: data.objetivoTreinamento,
       treinamento:

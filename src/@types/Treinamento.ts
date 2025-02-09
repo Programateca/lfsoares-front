@@ -1,6 +1,7 @@
 import { Status } from "./Status";
 
 export interface Treinamento {
+  conteudoAplicado: string | null;
   status: Status;
   courseModality: string;
   courseMethodology: string;
