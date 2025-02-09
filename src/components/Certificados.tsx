@@ -119,7 +119,6 @@ const Certificados = () => {
     try {
       const dataIdentificador = JSON.parse(identificadorValido.documentData);
       // Log 4: Verificar os dados após o parse
-      console.log("Dados após parse:", dataIdentificador);
 
       const participantesIdentificador = Object.keys(dataIdentificador)
         .filter((key) => key.startsWith("p_id") && dataIdentificador[key])
@@ -267,7 +266,6 @@ const Certificados = () => {
 
   const handleDownload = async (certificados: any, modelType: any) => {
     const certificadosData = JSON.parse(certificados.documentData);
-    console.log("Certificados:", certificadosData);
     certificadosData.forEach((certificado: any) => {
       gerarCertificado(certificado, imageMap, modelType.split("-")[1]);
     });

@@ -9,7 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2Icon, RotateCcw, Loader2, CircleX } from "lucide-react";
+import {
+  Edit,
+  Trash2Icon,
+  RotateCcw,
+  Loader2,
+  CircleX,
+  BookUp2,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,8 +39,9 @@ interface CustomTableProps<T extends { id: string | number }> {
   columns: Column[];
   data: T[];
   onEdit: (id: string | number) => void;
-  onDelete: (id: string | number, status: number) => void;
+  onDelete?: (id: string | number, status: number) => void;
   onRestore?: (id: string | number, status: number) => void;
+  onDownload?: (id: string | number, row: T) => void; // ✅ Nova prop para download
   loading?: boolean;
   searchable?: boolean;
   statusKey?: string;
@@ -52,6 +60,7 @@ const CustomTable = <T extends { id: string | number }>({
   onEdit,
   onDelete,
   onRestore,
+  onDownload, // ✅ Nova prop para download
   loading = false,
   searchable = false,
   statusKey = "status.id",
@@ -158,7 +167,9 @@ const CustomTable = <T extends { id: string | number }>({
               <TableRow
                 key={item.id}
                 className={
-                  getValue(item, statusKey) !== 1 ? "line-through" : ""
+                  !onDownload && getValue(item, statusKey) !== 1
+                    ? "line-through"
+                    : ""
                 }
               >
                 {columns.map((col) => (
@@ -173,12 +184,21 @@ const CustomTable = <T extends { id: string | number }>({
                     onClick={() => onEdit(item.id)}
                     variant="outline"
                     className="p-2 h-fit"
-                    disabled={getValue(item, statusKey) !== 1}
+                    disabled={!onDownload && getValue(item, statusKey) !== 1}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
+                  {onDownload && ( // ✅ Mostra o botão de download se `onDownload` for fornecido
+                    <Button
+                      onClick={() => onDownload(item.id, item)}
+                      variant="outline"
+                      className="p-2 h-fit hover:bg-gray-200"
+                    >
+                      <BookUp2 className="h-4 w-4" />
+                    </Button>
+                  )}
 
-                  {getValue(item, statusKey) !== 2 ? (
+                  {onDelete && getValue(item, statusKey) !== 2 ? (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -208,7 +228,11 @@ const CustomTable = <T extends { id: string | number }>({
                             className="w-20"
                             onClick={() => {
                               if (selectedItem)
-                                onDelete(selectedItem.id, selectedItem.status);
+                                onDelete &&
+                                  onDelete(
+                                    selectedItem.id,
+                                    selectedItem.status
+                                  );
                               setSelectedItem(null);
                             }}
                           >
