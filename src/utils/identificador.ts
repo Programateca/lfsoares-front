@@ -228,7 +228,12 @@ export function formatarDatas(dates: string[]): string {
 
   const resultado: string[] = [];
   for (const [monthYear, days] of Object.entries(formatado)) {
-    resultado.push(`${days.join(", ")} ${monthYear}`);
+    const lastDay = days.pop();
+    if (days.length > 0) {
+      resultado.push(`${days.join(", ")} E ${lastDay}/${monthYear}`);
+    } else if (lastDay) {
+      resultado.push(`${lastDay}/${monthYear}`);
+    }
   }
   return resultado.join("; ");
 }
