@@ -29,11 +29,11 @@ import {
   gerarIdentificador,
   Period,
 } from "@/utils/identificador";
-import { getLastDocumentCode } from "@/utils/get-last-document-code";
-import { ModelType } from "@/@types/ModeType";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
 import { IdentificadorData } from "@/@types/IdentificadorData";
+// import { ModelType } from "@/@types/ModeType";
+// import { getLastDocumentCode } from "@/utils/get-last-document-code";
 
 /**
  * Definição de tipos auxiliares
@@ -206,10 +206,10 @@ export const Identificadores = () => {
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
      */
     const fullYear = new Date().getFullYear().toString();
-    const lastCertificadoCode = await getLastDocumentCode(
-      fullYear,
-      ModelType.CERTIFICADO_2A
-    );
+    // const lastCertificadoCode = await getLastDocumentCode(
+    //   fullYear,
+    //   ModelType.CERTIFICADO_2A
+    // );
 
     const participantesMap: ParticipanteMap = data.participantes.reduce(
       (acc, id, index) => {
@@ -219,10 +219,7 @@ export const Identificadores = () => {
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
         acc[`p_codigo${rowIndex}`] = participante
-          ? `LFSTS ${String(lastCertificadoCode + index).padStart(
-              4,
-              "0"
-            )}/${fullYear}`
+          ? `LFSTS ${String(1 + index).padStart(4, "0")}/${fullYear}`
           : "";
         acc[`p_id${rowIndex}`] = participante ? participante.id : "";
 
@@ -261,19 +258,19 @@ export const Identificadores = () => {
 
     const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
 
-    const lastIdentificadorCode = await getLastDocumentCode(
-      fullYear,
-      ModelType.IDENTIFICADOR
-    );
+    // const lastIdentificadorCode = await getLastDocumentCode(
+    //   fullYear,
+    //   ModelType.IDENTIFICADOR
+    // );
 
-    const certCode = String(lastIdentificadorCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
+    // const certCode = String(lastIdentificadorCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
       mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
       mudar_horarios: selectedEvento?.courseTime,
-      id_code: certCode,
+      // id_code: certCode,
       id_data: fullYear,
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
@@ -364,7 +361,6 @@ export const Identificadores = () => {
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
-      code: Number(lastIdentificadorCode),
       year: String(fullYear),
     };
 
@@ -780,7 +776,7 @@ export const Identificadores = () => {
           /* Tabela de Identificadores Gerados */
           <CustomTable
             columns={[
-              { key: "id", label: "Treinamento" },
+              { key: "treinamento", label: "Treinamento" },
               { key: "code", label: "Código" },
             ]}
             data={identificadoresGerados.map((item, index) => ({
@@ -804,6 +800,7 @@ export const Identificadores = () => {
                   identificadorParsed,
                   identificadorParsed.instrutorDates,
                   identificadorParsed.numeroParticipantes,
+
                   "hora do curso - FIXO"
                 );
               } catch (error) {
