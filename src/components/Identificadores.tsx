@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "./ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./ui/table";
-import { ArrowLeft, BookUp2, CircleX, Edit, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "./ui/input";
@@ -38,10 +30,10 @@ import {
   Period,
 } from "@/utils/identificador";
 import { DocumentData } from "@/@types/Document";
-import { Identificador } from "@/@types/Identificador";
 import { getLastDocumentCode } from "@/utils/get-last-document-code";
 import { ModelType } from "@/@types/ModeType";
 import toast from "react-hot-toast";
+import CustomTable from "./CustomTable";
 
 /**
  * Definição de tipos auxiliares
@@ -199,8 +191,6 @@ export const Identificadores = () => {
    * Lógica de submit do formulário
    */
   const onSubmit = async (data: FormData) => {
-    console.log("data", data);
-
     if (!data.participantes?.length) {
       // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
       toast.error("Selecione os participantes");
@@ -208,7 +198,6 @@ export const Identificadores = () => {
     }
 
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
-    console.log("selectedEvento", selectedEvento);
     if (!selectedEvento) {
       toast.error("Evento selecionado não foi encontrado!");
       return;
@@ -372,9 +361,9 @@ export const Identificadores = () => {
       }),
     };
 
-    // Salva no banco
     const newIdentificador: DocumentData = {
       modelType: "identificador",
+      treinamento: selectedEvento.treinamento.name,
       documentData: JSON.stringify(dataGerador),
       certificateCode: Number(lastIdentificadorCode),
       certificateYear: String(fullYear),
@@ -382,7 +371,6 @@ export const Identificadores = () => {
 
     const saveResponse = await api.post("documentos", newIdentificador);
 
-    // TODO Remover alerts
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
       setIdentificadoresGerados((prev) => [...prev, newIdentificador]);
@@ -390,22 +378,12 @@ export const Identificadores = () => {
     } else {
       toast.error("Erro ao gerar identificador!");
     }
-
-    /**
-     * Chama a função geradora de identificadores
-     */
-    // gerarIdentificador(
-    //   dataGerador,
-    //   dataGerador.instrutorDates,
-    //   data.participantes.length,
-    //   selectedEvento.courseTime // TODO verificar se é o campo correto
-    // );
   };
 
   /**
    * Lógica de edição de identificador
    */
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: string | number) => {
     console.log("Editando", id);
     // setIdentificadorInEditMode(id);
 
@@ -643,7 +621,7 @@ export const Identificadores = () => {
 
               {/* Conteúdo aplicado */}
               <div className="w-full">
-                <Label>Conteúdo Aplicado</Label>
+                <Label>Conteúdo Aplicado (opcional)</Label>
                 <Textarea
                   {...register("conteudoAplicado")}
                   value={conteudo || ""}
@@ -663,6 +641,9 @@ export const Identificadores = () => {
                   <MultiSelect
                     options={participantes.map((pessoa) => ({
                       label: pessoa.name,
+                      cpf: pessoa.cpf,
+                      matricula: pessoa.matricula,
+                      empresa: pessoa?.empresa?.name,
                       value: pessoa.id,
                     }))}
                     onValueChange={(value) => field.onChange(value)}
@@ -795,80 +776,42 @@ export const Identificadores = () => {
           </form>
         ) : (
           /* Tabela de Identificadores Gerados */
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Código</TableHead>
-                <TableHead className="text-end">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : identificadoresGerados.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <CircleX className="h-6 w-6 text-red-400" />
-                      <p className="text-sm text-red-400">
-                        Os últimos certificados gerados aparecerão aqui.
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                identificadoresGerados.map((identificador, idx) => {
-                  const identificadorParsed = identificador.documentData
-                    ? (JSON.parse(identificador.documentData) as Identificador)
-                    : null;
-                  return (
-                    <TableRow key={idx}>
-                      <TableCell className="font-medium py-2 overflow-hidden whitespace-nowrap overflow-ellipsis max-w-[400px]">
-                        {identificadorParsed?.treinamento}
-                      </TableCell>
-                      <TableCell className="font-medium py-2">
-                        {identificadorParsed?.id_code ?? ""}
-                      </TableCell>
-                      <TableCell className="text-end py-2 flex justify-end">
-                        <Button
-                          variant="outline"
-                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                          onClick={() => handleEdit(identificador.id!)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Editar
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
-                          onClick={() => {
-                            if (identificadorParsed) {
-                              gerarIdentificador(
-                                identificadorParsed,
-                                identificadorParsed.instrutorDates,
-                                identificadorParsed.numeroParticipantes,
-                                "hora do curso - FIXO"
-                              );
-                            }
-                          }}
-                        >
-                          <BookUp2 className="mr-2 h-4 w-4" />
-                          Baixar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
+          <CustomTable
+            columns={[
+              { key: "id", label: "Treinamento" },
+              { key: "certificateCode", label: "Código" },
+            ]}
+            data={identificadoresGerados.map((item, index) => ({
+              ...item,
+              id: item.id ?? `temp-${index}`, // Garante que id nunca será undefined
+            }))}
+            onEdit={handleEdit}
+            onDownload={(_, row) => {
+              try {
+                // ✅ Parseando documentData antes de chamar gerarIdentificador
+                const identificadorParsed = row.documentData
+                  ? JSON.parse(row.documentData)
+                  : null;
+
+                if (!identificadorParsed) {
+                  console.warn("Dados do identificador inválidos:", row);
+                  return;
+                }
+
+                gerarIdentificador(
+                  identificadorParsed,
+                  identificadorParsed.instrutorDates,
+                  identificadorParsed.numeroParticipantes,
+                  "hora do curso - FIXO"
+                );
+              } catch (error) {
+                console.error("Erro ao processar o identificador:", error);
+              }
+            }}
+            loading={loading}
+            entityLabel="Identificador"
+            searchable
+          />
         )}
       </CardContent>
     </Card>
