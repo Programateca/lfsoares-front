@@ -242,6 +242,7 @@ function substituirOcorrencias(
 ): string {
   console.log("Substituindo ocorrências...");
   console.log("periodo:", periodo);
+  console.log("courseTime:", courseTime);
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
     "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
@@ -250,13 +251,13 @@ function substituirOcorrencias(
     "\\[instrutor\\]": () => `[${instrutor}]`,
     "\\[data_frequencia\\]": () => data,
     "\\[manha\\]": () =>
-      periodo === "manhaTarde" || periodo === courseTime ? "manhã" : "",
+      periodo === "manha" || periodo === "manhaTarde" ? "Manhã" : "",
     "\\[tarde\\]": () =>
-      periodo === "manhaTarde" || periodo === courseTime ? "tarde" : "",
+      periodo === "tarde" || periodo === "manhaTarde" ? "Tarde" : "",
     "\\[manha_h\\]": () =>
-      periodo === "manhaTarde" || periodo === courseTime ? "manhã_horário" : "",
+      periodo === "manha" || periodo === "manhaTarde" ? "[manha_horario]" : "",
     "\\[tarde_h\\]": () =>
-      periodo === "manhaTarde" || periodo === courseTime ? "tarde_horário" : "",
+      periodo === "tarde" || periodo === "manhaTarde" ? "[tarde_horario]" : "",
   };
 
   const contador = { pi: 0, p_nome: 0, p_matricula: 0, p_codigo: 0 };
