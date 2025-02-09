@@ -103,7 +103,7 @@ const CustomTable = <T extends { id: string | number }>({
 
       return 0;
     });
-  console.log(filteredData);
+
   return (
     <>
       {searchable && (
