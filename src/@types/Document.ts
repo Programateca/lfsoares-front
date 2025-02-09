@@ -6,6 +6,7 @@ export interface DocumentData {
   certificateYear?: string | number;
   certificateCode?: number | string;
   id?: string;
+  treinamento: string;
   // createdAt: string;
   // updatedAt: string;
 }
