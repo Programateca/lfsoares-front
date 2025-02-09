@@ -16,6 +16,7 @@ import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
+import { Textarea } from "./ui/textarea";
 
 interface Status {
   id: number;
@@ -30,6 +31,7 @@ interface Treinamento {
   courseValidaty: string;
   courseHours: string;
   coursePortaria: string;
+  conteudoAplicado: string;
   id: string | number;
   status: Status;
 }
@@ -48,6 +50,7 @@ const Treinamentos = () => {
     courseValidaty: "",
     courseHours: "",
     coursePortaria: "",
+    conteudoAplicado: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
@@ -78,6 +81,7 @@ const Treinamentos = () => {
       courseValidaty: "",
       courseHours: "",
       coursePortaria: "",
+      conteudoAplicado: "",
     });
   };
 
@@ -85,6 +89,20 @@ const Treinamentos = () => {
     const { name, value } = e.target;
     console.log(name, value);
     setNewTreinamento((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const linhas = e.target.value.split("\n");
+    const linhasNumeradas = linhas.map((linha, index) => {
+      // Remove qualquer numeração existente
+      const linhaSemNumero = linha.replace(/^\d+\.\s*/, "");
+      return `${index + 1}. ${linhaSemNumero}`;
+    });
+
+    setNewTreinamento((prev) => ({
+      ...prev,
+      conteudoAplicado: linhasNumeradas.join("\n"),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,6 +118,7 @@ const Treinamentos = () => {
           courseValidaty: newTreinamento.courseValidaty,
           courseHours: newTreinamento.courseHours,
           coursePortaria: newTreinamento.coursePortaria,
+          conteudoAplicado: newTreinamento.conteudoAplicado,
         });
 
         fetchTreinamentos();
@@ -121,6 +140,7 @@ const Treinamentos = () => {
         courseValidaty: newTreinamento.courseValidaty,
         courseHours: newTreinamento.courseHours,
         coursePortaria: newTreinamento.coursePortaria,
+        conteudoAplicado: newTreinamento.conteudoAplicado,
       });
 
       console.log(newTreinamento);
@@ -149,6 +169,7 @@ const Treinamentos = () => {
         courseValidaty: treinamento.courseValidaty,
         courseHours: treinamento.courseHours,
         coursePortaria: treinamento.coursePortaria,
+        conteudoAplicado: treinamento.conteudoAplicado,
       });
     }
   };
@@ -193,92 +214,105 @@ const Treinamentos = () => {
                 <Plus className="mr-2 h-4 w-4" /> Adicionar Treinamento
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[800px]">
               <DialogHeader>
                 <DialogTitle>
                   {treinamentoInEditMode ? "Editar" : "Adicionar"} Treinamento
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome do treinamento</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={newTreinamento.name}
-                    placeholder="Ex: Treinamento de NR10"
-                    onChange={handleInputChange}
-                    required={treinamentoInEditMode ? false : true}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome do treinamento</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={newTreinamento.name}
+                      placeholder="Ex: Treinamento de NR10"
+                      onChange={handleInputChange}
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseModality">Modalidade</Label>
+                    <Input
+                      id="courseModality"
+                      name="courseModality"
+                      placeholder="Ex: Presencial, EAD, Semipresencial"
+                      value={newTreinamento.courseModality}
+                      onChange={handleInputChange}
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseMethodology">Metodologia</Label>
+                    <Input
+                      id="courseMethodology"
+                      name="courseMethodology"
+                      placeholder="Ex: Teórico, Prático, Teórico-Prático"
+                      value={newTreinamento.courseMethodology}
+                      onChange={handleInputChange}
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseType">Tipo de Formação</Label>
+                    <Input
+                      id="courseType"
+                      name="courseType"
+                      value={newTreinamento.courseType}
+                      onChange={handleInputChange}
+                      placeholder="Ex: Formação ou Atualização Periódica"
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="courseModality">Modalidade</Label>
-                  <Input
-                    id="courseModality"
-                    name="courseModality"
-                    placeholder="Ex: Presencial, EAD, Semipresencial"
-                    value={newTreinamento.courseModality}
-                    onChange={handleInputChange}
-                    required={treinamentoInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="courseMethodology">Metodologia</Label>
-                  <Input
-                    id="courseMethodology"
-                    name="courseMethodology"
-                    placeholder="Ex: Teórico, Prático, Teórico-Prático"
-                    value={newTreinamento.courseMethodology}
-                    onChange={handleInputChange}
-                    required={treinamentoInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="courseType">Tipo de Formação</Label>
-                  <Input
-                    id="courseType"
-                    name="courseType"
-                    value={newTreinamento.courseType}
-                    onChange={handleInputChange}
-                    placeholder="Ex: Formação ou Atualização Periódica"
-                    required={treinamentoInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="courseValidaty">Validade do curso</Label>
-                  <Input
-                    id="courseValidaty"
-                    name="courseValidaty"
-                    value={newTreinamento.courseValidaty}
-                    placeholder="Ex: 12 meses"
-                    onChange={handleInputChange}
-                    required={treinamentoInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="courseHours">Horas do curso</Label>
-                  <Input
-                    id="courseHours"
-                    name="courseHours"
-                    type="number"
-                    placeholder="Ex: 40"
-                    value={newTreinamento.courseHours}
-                    onChange={handleInputChange}
-                    required={treinamentoInEditMode ? false : true}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coursePortaria">
-                    Portaria do treinamento
-                  </Label>
-                  <Input
-                    id="coursePortaria"
-                    name="coursePortaria"
-                    value={newTreinamento.coursePortaria}
-                    onChange={handleInputChange}
-                    placeholder="Ex: Portaria 321/2019"
-                    required={treinamentoInEditMode ? false : true}
-                  />
+                <div>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseValidaty">Validade do curso</Label>
+                    <Input
+                      id="courseValidaty"
+                      name="courseValidaty"
+                      value={newTreinamento.courseValidaty}
+                      placeholder="Ex: 12 meses"
+                      onChange={handleInputChange}
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="courseHours">Horas do curso</Label>
+                    <Input
+                      id="courseHours"
+                      name="courseHours"
+                      type="number"
+                      placeholder="Ex: 40"
+                      value={newTreinamento.courseHours}
+                      onChange={handleInputChange}
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="coursePortaria">
+                      Portaria do treinamento
+                    </Label>
+                    <Input
+                      id="coursePortaria"
+                      name="coursePortaria"
+                      value={newTreinamento.coursePortaria}
+                      onChange={handleInputChange}
+                      placeholder="Ex: Portaria 321/2019"
+                      required={treinamentoInEditMode ? false : true}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Conteúdo Aplicado</Label>
+                    <Textarea
+                      name="conteudoAplicado"
+                      value={newTreinamento.conteudoAplicado}
+                      onChange={handleTextareaChange}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="flex justify-end space-x-2">
                   <Button
