@@ -255,11 +255,26 @@ export const Identificadores = () => {
     const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
 
     /**
+     * Formata as datas para manha e tarde
+     */
+    const datas = selectedEvento?.courseTime;
+    const intervalo = selectedEvento?.courseInterval;
+    let manha_horario = "";
+    let tarde_horario = "";
+    if (datas && intervalo) {
+      const [inicio, fim] = datas.split(" ÀS ");
+      const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
+
+      manha_horario = `${inicio} ÀS ${intervaloInicio}`;
+      tarde_horario = `${intervaloFim} ÀS ${fim}`;
+    }
+
+    /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
-      manha_horario: "",
-      tarde_horario: "",
+      manha_horario,
+      tarde_horario,
       mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
       mudar_horarios: selectedEvento?.courseTime,
       id_data: fullYear,
