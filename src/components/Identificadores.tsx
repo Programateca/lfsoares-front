@@ -202,15 +202,12 @@ export const Identificadores = () => {
       toast.error("Evento selecionado não foi encontrado!");
       return;
     }
+
+    const fullYear = new Date().getFullYear().toString();
+
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
      */
-    const fullYear = new Date().getFullYear().toString();
-    // const lastCertificadoCode = await getLastDocumentCode(
-    //   fullYear,
-    //   ModelType.CERTIFICADO_2A
-    // );
-
     const participantesMap: ParticipanteMap = data.participantes.reduce(
       (acc, id, index) => {
         const participante = participantes.find((pessoa) => pessoa.id === id);
@@ -246,7 +243,6 @@ export const Identificadores = () => {
      * e formatamos para exibição
      */
     let todasAsDatas;
-
     if (signatureCount === 2) {
       todasAsDatas = new Set(days.flatMap((day) => [day]));
     } else {
@@ -258,19 +254,14 @@ export const Identificadores = () => {
 
     const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
 
-    // const lastIdentificadorCode = await getLastDocumentCode(
-    //   fullYear,
-    //   ModelType.IDENTIFICADOR
-    // );
-
-    // const certCode = String(lastIdentificadorCode).padStart(3, "0"); // TODO Tratar possivel erro do getLastDocumentCode
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
     const dataGerador = {
+      manha_horario: "",
+      tarde_horario: "",
       mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
       mudar_horarios: selectedEvento?.courseTime,
-      // id_code: certCode,
       id_data: fullYear,
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
@@ -797,7 +788,10 @@ export const Identificadores = () => {
                 }
 
                 gerarIdentificador(
-                  identificadorParsed,
+                  {
+                    ...identificadorParsed,
+                    id_code: String(row.code).padStart(3, "0"),
+                  },
                   identificadorParsed.instrutorDates,
                   identificadorParsed.numeroParticipantes,
 
