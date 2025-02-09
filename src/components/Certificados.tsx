@@ -25,7 +25,7 @@ import {
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
-// import { Instrutor } from "@/@types/Instrutor";
+import { Instrutor } from "@/@types/Instrutor";
 import { AppError } from "@/utils/AppError";
 import { Empresa } from "@/@types/Empresa";
 import { gerarCertificado } from "@/utils/gerar-certificado";
@@ -52,7 +52,7 @@ const Certificados = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
-  // const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [certificados, setCertificados] = useState<any[]>([]);
 
@@ -63,29 +63,29 @@ const Certificados = () => {
 
   const fetchData = async () => {
     try {
-      const response = await api.get("documentos/identificador");
+      const response = await api.get("identificadores");
+      setIdentificadores(response.data.data);
+      const eventosResp = await api.get("eventos");
+      const pessoasResp = await api.get("pessoas");
+      const instrutoresResp = await api.get("instrutores");
+      const empresasResp = await api.get("empresas");
+      setEmpresas(empresasResp.data.data);
+      setParticipantes(pessoasResp.data.data);
+      setInstrutores(instrutoresResp.data.data);
+      setEventos(eventosResp.data.data);
       const [certificados2aResp, certificados3aResp, certificados4aResp] =
         await Promise.all([
           api.get("documentos/certificado-2a"),
           api.get("documentos/certificado-3a"),
           api.get("documentos/certificado-4a"),
         ]);
-      const eventosResp = await api.get("eventos");
-      const pessoasResp = await api.get("pessoas");
-      // const instrutoresResp = await api.get("instrutores");
-      const empresasResp = await api.get("empresas");
-      setEmpresas(empresasResp.data.data);
-      setParticipantes(pessoasResp.data.data);
       setCertificados([
         ...certificados2aResp.data.data,
         ...certificados3aResp.data.data,
         ...certificados4aResp.data.data,
       ]);
-      setIdentificadores(response.data.data);
-      // setInstrutores(instrutoresResp.data.data);
-      setEventos(eventosResp.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error("Erro ao buscar dados");
     }
   };
 
@@ -99,10 +99,16 @@ const Certificados = () => {
     inicializarFetch();
   }, [isModalOpen]);
 
+  /**
+   * Função para capturar os valores dos inputs
+   * **/
   const handleInputChange = (name: string, value: string) => {
     setNewCertificado((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   *  Função para gerar os certificados
+   * **/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -117,7 +123,9 @@ const Certificados = () => {
     }
 
     try {
-      const dataIdentificador = JSON.parse(identificadorValido.documentData);
+      const dataIdentificador = JSON.parse(
+        identificadorValido.identificadorData
+      );
       // Log 4: Verificar os dados após o parse
 
       const participantesIdentificador = Object.keys(dataIdentificador)
@@ -242,12 +250,35 @@ const Certificados = () => {
         });
       }
       const newCertificados: DocumentData = {
+        treinamento: selectedEvento.treinamento.name,
         modelType: `certificado-${newCertificado.tipo_certificado}a`,
         documentData: JSON.stringify(dados),
         certificateCode: identificadorValido.certificateCode,
         certificateYear: identificadorValido.certificateYear,
       };
 
+      const certificadosData = JSON.parse(newCertificados.documentData);
+
+      gerarCertificado(
+        certificadosData,
+        imageMap,
+        newCertificados.modelType.split("-")[1]
+      );
+      // certificadosData.forEach((certificado: any) => {
+      //   gerarCertificado(
+      //     certificado,
+      //     imageMap,
+      //     newCertificados.modelType.split("-")[1]
+      //   );
+      // });
+      // fazer download direto
+      // gerarCertificado(
+      //   newCertificados,
+      //   imageMap,
+      //   newCertificados.modelType.split("-")[1]
+      // );
+
+      return;
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {
@@ -264,6 +295,9 @@ const Certificados = () => {
     }
   };
 
+  /**
+   * Função para baixar os certificados
+   * **/
   const handleDownload = async (certificados: any, modelType: any) => {
     const certificadosData = JSON.parse(certificados.documentData);
     certificadosData.forEach((certificado: any) => {
@@ -271,6 +305,9 @@ const Certificados = () => {
     });
   };
 
+  /**
+   * Função para resetar os valores do formulário
+   * **/
   const resetForm = () => {
     setNewCertificado({
       ...defaultValues,
@@ -312,9 +349,6 @@ const Certificados = () => {
                         handleInputChange("documento_identificador", e)
                       }
                     />
-                    <p className="text-sm text-gray-500">
-                      O certificado gerado sera o modelo de{" "}
-                    </p>
                   </div>
                   <div className="col-span-3 space-y-2">
                     <Label>Local de Emissão</Label>

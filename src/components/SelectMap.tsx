@@ -37,11 +37,12 @@ export function SelectMap({
         <SelectContent>
           <SelectGroup className="text-start">
             {itens.map((item) => {
-              const identificadorParsed = item.documentData
-                ? JSON.parse(item.documentData)
+              const identificadorParsed = item.identificadorData
+                ? JSON.parse(item.identificadorData)
                 : null;
               return (
                 <SelectItem key={item.id} value={item.id}>
+                  Identificador {item.code} ={" "}
                   {identificadorParsed?.treinamento || item.name}
                 </SelectItem>
               );

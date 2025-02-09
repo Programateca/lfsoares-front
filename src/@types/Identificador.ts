@@ -5,7 +5,7 @@ type EventSchedule = DaySchedule;
 
 export interface Identificador {
   id: string;
-  documentData: string;
+  identificadorData: string;
   mudar_modulo: string;
   mudar_horarios: string;
   id_code: string;
