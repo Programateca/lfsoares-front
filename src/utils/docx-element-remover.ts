@@ -16,7 +16,7 @@ class DocxElementRemover {
       filterParagraphsByContent?: (paragraphContent: string) => boolean;
       filterTableRowsByContent?: (rowContent: string) => boolean;
     } = {}
-  ): Promise<void> {
+  ): Promise<Buffer> {
     try {
       // Read the DOCX file
       const content = fs.readFileSync(inputPath);
@@ -142,19 +142,19 @@ class DocxElementRemover {
 }
 
 // Example usage
-async function main() {
-  try {
-    // const meioperiodo = "teste/templates/lista-meio-periodo.docx";
-    const diatodo = "teste/templates/lista-dia-todo.docx";
-    await DocxElementRemover.removeElements(diatodo, {
-      removeTableCount: 2, // Usar na lista de dia todo e não usar na de meio periodo cada 1 remove 1 pagina
-      removeParagraphCount: 4, // Usar na lista de dia todo e não usar na de meio periodo precisa ser o dobro do removeTableCount
-      // removeTableRowCount: 10 * 7, // Usar na lista de meio período 7 remove uma pagina então 10*7 remove 10 paginas
-    });
-  } catch (error) {
-    console.error("Example usage error:", error);
-  }
-}
+// async function main() {
+//   try {
+//     // const meioperiodo = "teste/templates/lista-meio-periodo.docx";
+//     const diatodo = "teste/templates/lista-dia-todo.docx";
+//     await DocxElementRemover.removeElements(diatodo, {
+//       removeTableCount: 2, // Usar na lista de dia todo e não usar na de meio periodo cada 1 remove 1 pagina
+//       removeParagraphCount: 4, // Usar na lista de dia todo e não usar na de meio periodo precisa ser o dobro do removeTableCount
+//       // removeTableRowCount: 10 * 7, // Usar na lista de meio período 7 remove uma pagina então 10*7 remove 10 paginas
+//     });
+//   } catch (error) {
+//     console.error("Example usage error:", error);
+//   }
+// }
 
 // Uncomment to run the example
 // main();

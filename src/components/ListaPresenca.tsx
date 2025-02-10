@@ -34,92 +34,92 @@ import {
   TableRow,
 } from "./ui/table";
 // import toast from "react-hot-toast";
-import { DocumentData } from "@/@types/DocumentData";
+// import { DocumentData } from "@/@types/DocumentData";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
-import { DocxElementRemover } from "@/utils/docx-element-remover";
-import { ModelType } from "@/@types/ModeType";
+// import { DocxElementRemover } from "@/utils/docx-element-remover";
+// import { ModelType } from "@/@types/ModeType";
 
-interface Evento {
-  identificador_id: string;
-  mudar_modulo: string;
-  mudar_horarios: string;
-  id_code: string;
-  id_data: string;
-  responsavel_tecnico: string;
-  p_nome1: string;
-  p_matricula1: string;
-  p_codigo1: string;
-  p_id1: string;
-  p_nome2: string;
-  p_matricula2: string;
-  p_codigo2: string;
-  p_id2: string;
-  p_nome3: string;
-  p_matricula3: string;
-  p_codigo3: string;
-  p_id3: string;
-  p_nome4: string;
-  p_matricula4: string;
-  p_codigo4: string;
-  p_id4: string;
-  p_nome5: string;
-  p_matricula5: string;
-  p_codigo5: string;
-  p_id5: string;
-  p_nome6: string;
-  p_matricula6: string;
-  p_codigo6: string;
-  p_id6: string;
-  p_nome7: string;
-  p_matricula7: string;
-  p_codigo7: string;
-  p_id7: string;
-  p_nome8: string;
-  p_matricula8: string;
-  p_codigo8: string;
-  p_id8: string;
-  p_nome9: string;
-  p_matricula9: string;
-  p_codigo9: string;
-  p_id9: string;
-  p_nome10: string;
-  p_matricula10: string;
-  p_codigo10: string;
-  p_id10: string;
-  numeroParticipantes: number;
-  conteudo_aplicado: string;
-  motivo_treinamento: string;
-  objetivo_lf: string;
-  treinamento: string;
-  treinamento_lista: string;
-  evento_id: string;
-  contratante: string;
-  tipo: string;
-  carga_horaria: string;
-  intervalo: string;
-  endereco: string;
-  empresa: string;
-  empresa_id: string;
-  datas: string;
-  tipo_certificado: string;
-  assinante_titulo1: string;
-  assinante_titulo2: string;
-  assinante_titulo3: string;
-  assinante_titulo4: string;
-  assinante1: string;
-  assinante2: string;
-  assinante3: string;
-  assinante4: string;
-  instrutor_a: string;
-  instrutor_b: string;
-  instrutorDates: {
-    instrutorA: { dia: string; periodo: string }[];
-    instrutorB: { dia: string; periodo: string }[];
-  };
-}
+// interface Evento {
+//   identificador_id: string;
+//   mudar_modulo: string;
+//   mudar_horarios: string;
+//   id_code: string;
+//   id_data: string;
+//   responsavel_tecnico: string;
+//   p_nome1: string;
+//   p_matricula1: string;
+//   p_codigo1: string;
+//   p_id1: string;
+//   p_nome2: string;
+//   p_matricula2: string;
+//   p_codigo2: string;
+//   p_id2: string;
+//   p_nome3: string;
+//   p_matricula3: string;
+//   p_codigo3: string;
+//   p_id3: string;
+//   p_nome4: string;
+//   p_matricula4: string;
+//   p_codigo4: string;
+//   p_id4: string;
+//   p_nome5: string;
+//   p_matricula5: string;
+//   p_codigo5: string;
+//   p_id5: string;
+//   p_nome6: string;
+//   p_matricula6: string;
+//   p_codigo6: string;
+//   p_id6: string;
+//   p_nome7: string;
+//   p_matricula7: string;
+//   p_codigo7: string;
+//   p_id7: string;
+//   p_nome8: string;
+//   p_matricula8: string;
+//   p_codigo8: string;
+//   p_id8: string;
+//   p_nome9: string;
+//   p_matricula9: string;
+//   p_codigo9: string;
+//   p_id9: string;
+//   p_nome10: string;
+//   p_matricula10: string;
+//   p_codigo10: string;
+//   p_id10: string;
+//   numeroParticipantes: number;
+//   conteudo_aplicado: string;
+//   motivo_treinamento: string;
+//   objetivo_lf: string;
+//   treinamento: string;
+//   treinamento_lista: string;
+//   evento_id: string;
+//   contratante: string;
+//   tipo: string;
+//   carga_horaria: string;
+//   intervalo: string;
+//   endereco: string;
+//   empresa: string;
+//   empresa_id: string;
+//   datas: string;
+//   tipo_certificado: string;
+//   assinante_titulo1: string;
+//   assinante_titulo2: string;
+//   assinante_titulo3: string;
+//   assinante_titulo4: string;
+//   assinante1: string;
+//   assinante2: string;
+//   assinante3: string;
+//   assinante4: string;
+//   instrutor_a: string;
+//   instrutor_b: string;
+//   instrutorDates: {
+//     instrutorA: { dia: string; periodo: string }[];
+//     instrutorB: { dia: string; periodo: string }[];
+//   };
+// }
 
 interface FormData {
   documento_identificador: string;
@@ -131,9 +131,11 @@ const ListaPresenca = () => {
   const [identificadores, setIdentificadores] = useState<IdentificadorData[]>(
     []
   );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [empresas, setEmpresas] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [documentos, setDocumentos] = useState<any[]>([]);
   const { control, handleSubmit, reset, setValue } = useForm<FormData>();
 
@@ -153,7 +155,7 @@ const ListaPresenca = () => {
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
 
-      const schema: { [key: string]: any } = {
+      const schema: Record<string, string> = {
         nome_treinamento: dataIdentificador.treinamento,
         tipo: dataIdentificador.tipo,
         carga_horaria: `${dataIdentificador.carga_horaria} HORAS/AULA`,
@@ -189,9 +191,9 @@ const ListaPresenca = () => {
         schema[`participante_${i + 1}`] = "";
       }
 
-      const filteredSchema: Record<string, string> = Object.fromEntries(
-        Object.entries(schema).filter(([_, value]) => value !== undefined)
-      ) as Record<string, string>;
+      // const filteredSchema: Record<string, string> = Object.fromEntries(
+      //   Object.entries(schema).filter(([_, value]) => value !== undefined)
+      // ) as Record<string, string>;
     } else {
       console.error("Identificador inválido");
     }
