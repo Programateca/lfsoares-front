@@ -1,5 +1,7 @@
-import { parseStringPromise, Builder, Parser } from "xml2js";
 import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import expressionParser from "docxtemplater/expressions";
+import { parseStringPromise, Builder, Parser } from "xml2js";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
 
@@ -21,11 +23,13 @@ function replaceImage(zip: PizZip, imageMap: Record<string, ArrayBuffer>) {
 export async function gerarCertificado(
   data: Record<string, string>[],
   imageMap: Record<string, ArrayBuffer>,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _type: string
+  type: string
 ): Promise<void> {
-  const fileArrayBuffer = await loadFile(`/templates/frente.pptx`);
-  const zip = new PizZip(fileArrayBuffer);
+  const fileArrayBufferFrente = await loadFile(`/templates/frente.pptx`);
+  const fileArrayBufferVerso = await loadFile(`/templates/verso-${type}.pptx`);
+
+  // // Frente
+  const zip = new PizZip(fileArrayBufferFrente);
   if (imageMap) {
     replaceImage(zip, imageMap);
   }
@@ -36,7 +40,25 @@ export async function gerarCertificado(
     mimeType:
       "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   });
-  saveAs(out, "certificados.pptx");
+  saveAs(out, "certificados-frente.pptx");
+
+  // Verso
+  const zipVerso = new PizZip(fileArrayBufferVerso);
+
+  const doc = new Docxtemplater(zipVerso, {
+    delimiters: { start: "[", end: "]" },
+    paragraphLoop: true,
+    linebreaks: true,
+    parser: expressionParser,
+  });
+
+  doc.render(data[0]);
+  const outVerso = doc.getZip().generate({
+    type: "blob",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  });
+  saveAs(outVerso, "certificados-verso.pptx");
 }
 
 async function duplicateSlide(
