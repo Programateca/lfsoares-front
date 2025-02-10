@@ -223,6 +223,7 @@ const ListaPresenca = () => {
       (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
+    return data;
     const participantes = JSON.parse(data.participantes);
     const maxPages = 12;
     const participantsPerPage = 5;
