@@ -20,9 +20,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
@@ -39,6 +37,10 @@ import {
 import { DocumentData } from "@/@types/DocumentData";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
+import { SelectMap } from "./SelectMap";
+import { IdentificadorData } from "@/@types/IdentificadorData";
+import { DocxElementRemover } from "@/utils/docx-element-remover";
+import { ModelType } from "@/@types/ModeType";
 
 interface Evento {
   identificador_id: string;
@@ -120,30 +122,79 @@ interface Evento {
 }
 
 interface FormData {
-  identificadores: string;
+  documento_identificador: string;
   tipo_lista: string;
   cidade: string;
 }
 
 const ListaPresenca = () => {
-  const [identificadores, setIdentificadores] = useState<DocumentData[]>([]);
+  const [identificadores, setIdentificadores] = useState<IdentificadorData[]>(
+    []
+  );
+  const [empresas, setEmpresas] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [participantes, setParticipantes] = useState<string[]>([]);
-  const [documentos, setDocumentos] = useState<
-    { id: string; modelType: string; createdAt: string; documentData: string }[]
-  >([]);
-
-  const eventos: Evento[] = identificadores.map((identificadores) => ({
-    ...JSON.parse(identificadores.documentData),
-    identificador_id: identificadores.id,
-  }));
-
-  const { control, handleSubmit, reset } = useForm<FormData>();
+  const [documentos, setDocumentos] = useState<any[]>([]);
+  const { control, handleSubmit, reset, setValue } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
-    console.log("data", data);
-    // gerarLista()
+    console.log(data);
+    const identificadorSelecionado = data.documento_identificador;
+    const identificadorValido = identificadores.find(
+      (doc) => doc.id === identificadorSelecionado
+    );
+
+    if (identificadorValido) {
+      const dataIdentificador = JSON.parse(
+        identificadorValido.identificadorData
+      );
+
+      const empresaCnpj = empresas.find(
+        (empresa) => empresa.id === dataIdentificador.empresa_id
+      ).cnpj;
+
+      const schema: { [key: string]: any } = {
+        nome_treinamento: dataIdentificador.treinamento,
+        tipo: dataIdentificador.tipo,
+        carga_horaria: `${dataIdentificador.carga_horaria} HORAS/AULA`,
+        datas: dataIdentificador.datas,
+        horario: dataIdentificador.mudar_horarios,
+        intervalo: dataIdentificador.intervalo,
+        modulo: dataIdentificador.mudar_modulo,
+        endereco: dataIdentificador.endereco,
+        nome_instrutor: dataIdentificador.assinante1,
+        cidade: data.cidade,
+        nome_empresa: dataIdentificador.empresa,
+        cpnj: empresaCnpj,
+      };
+
+      const pessoas: { id: string; name: string }[] = [];
+
+      for (let i = 1; i <= 60; i++) {
+        const pessoaId = dataIdentificador[`p_id${i}`];
+        const pessoaNome = dataIdentificador[`p_nome${i}`];
+        if (pessoaId && pessoaNome) {
+          pessoas.push({ id: pessoaId, name: pessoaNome });
+        }
+      }
+
+      const participantes = pessoas.map((pessoa) => pessoa.id);
+
+      participantes.forEach((participanteId, index) => {
+        schema[`participante_${index + 1}`] =
+          pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
+      });
+
+      for (let i = participantes.length; i < 60; i++) {
+        schema[`participante_${i + 1}`] = "";
+      }
+
+      const filteredSchema: Record<string, string> = Object.fromEntries(
+        Object.entries(schema).filter(([_, value]) => value !== undefined)
+      ) as Record<string, string>;
+    } else {
+      console.error("Identificador inválido");
+    }
   };
 
   const fetchData = async () => {
@@ -151,13 +202,19 @@ const ListaPresenca = () => {
       const documentosResp = await api.get(
         "documentos/lista-dia-todo,lista-meio-periodo"
       );
-      const identificadoresResp = await api.get("documentos/identificador");
+      const identificadoresResp = await api.get("identificadores");
+      const response = await api.get("empresas");
 
+      setEmpresas(response.data.data);
       setIdentificadores(identificadoresResp.data.data);
       setDocumentos(documentosResp.data.data);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleInputChange = (name: string, value: string) => {
+    setValue(name as keyof FormData, value);
   };
 
   const handleDownload = async (documentoId: string) => {
@@ -166,7 +223,25 @@ const ListaPresenca = () => {
       (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
-    gerarLista(data);
+    return data;
+    const participantes = JSON.parse(data.participantes);
+    const maxPages = 12;
+    const participantsPerPage = 5;
+    const requiredPages = Math.ceil(participantes.length / participantsPerPage);
+    const countRemovedPages = maxPages - requiredPages;
+
+    gerarLista(
+      data,
+      data.tipo_lista === "lista-dia-todo"
+        ? {
+            removeTableCount: countRemovedPages,
+            removeParagraphCount: countRemovedPages,
+          }
+        : {
+            removeTableRowCount: countRemovedPages * 7,
+            removeParagraphCount: 2,
+          }
+    );
   };
 
   useEffect(() => {
@@ -207,36 +282,15 @@ const ListaPresenca = () => {
                 className="space-y-2 flex flex-col gap-5"
               >
                 <div className="space-y-2">
-                  <Controller
-                    name="identificadores"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                        }}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um Evento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Eventos</SelectLabel>
-                            {eventos.map((evento) => (
-                              <SelectItem
-                                key={evento.identificador_id}
-                                value={evento.identificador_id}
-                              >
-                                {evento.treinamento}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
+                  <SelectMap
+                    input_name="documento_identificador"
+                    itens={identificadores}
+                    label="Para gerar os certificados, selecione um dos identificadores de participantes abaixo:"
+                    placeholder="Selecione um documento"
+                    onChange={(e) =>
+                      handleInputChange("documento_identificador", e)
+                    }
                   />
-
                   <Controller
                     name="tipo_lista"
                     control={control}

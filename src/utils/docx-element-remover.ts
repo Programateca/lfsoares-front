@@ -5,7 +5,6 @@ import * as fs from "fs";
 class DocxElementRemover {
   static async removeElements(
     inputPath: string,
-    outputPath: string,
     options: {
       removeTableCount?: number;
       removeParagraphCount?: number;
@@ -116,9 +115,7 @@ class DocxElementRemover {
 
       // Write the modified DOCX file
       const modifiedBuffer = zip.generate({ type: "nodebuffer" });
-      fs.writeFileSync(outputPath, modifiedBuffer);
-
-      console.log("Document modified successfully");
+      return modifiedBuffer;
     } catch (error) {
       console.error("Error modifying document:", error);
       throw error;
@@ -130,7 +127,9 @@ class DocxElementRemover {
    * @param element XML element to extract text from
    * @returns Extracted text content
    */
-  private static extractElementText(element: import("@xmldom/xmldom").Element): string {
+  private static extractElementText(
+    element: import("@xmldom/xmldom").Element
+  ): string {
     const textElements = element.getElementsByTagName("w:t");
     let elementText = "";
 
@@ -147,21 +146,17 @@ async function main() {
   try {
     // const meioperiodo = "teste/templates/lista-meio-periodo.docx";
     const diatodo = "teste/templates/lista-dia-todo.docx";
-    await DocxElementRemover.removeElements(
-      diatodo,
-      "teste/output/output-element-removal.docx",
-      {
-        removeTableCount: 2, // Usar na lista de dia todo e não usar na de meio periodo cada 1 remove 1 pagina
-        removeParagraphCount: 4, // Usar na lista de dia todo e não usar na de meio periodo precisa ser o dobro do removeTableCount
-        // removeTableRowCount: 10 * 7, // Usar na lista de meio período 7 remove uma pagina então 10*7 remove 10 paginas
-      }
-    );
+    await DocxElementRemover.removeElements(diatodo, {
+      removeTableCount: 2, // Usar na lista de dia todo e não usar na de meio periodo cada 1 remove 1 pagina
+      removeParagraphCount: 4, // Usar na lista de dia todo e não usar na de meio periodo precisa ser o dobro do removeTableCount
+      // removeTableRowCount: 10 * 7, // Usar na lista de meio período 7 remove uma pagina então 10*7 remove 10 paginas
+    });
   } catch (error) {
     console.error("Example usage error:", error);
   }
 }
 
 // Uncomment to run the example
-main();
+// main();
 
 export { DocxElementRemover };
