@@ -1,28 +1,7 @@
 import { parseStringPromise, Builder, Parser } from "xml2js";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
-
-function loadFile(url: string): Promise<ArrayBuffer> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.responseType = "arraybuffer";
-
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        resolve(xhr.response);
-      } else {
-        reject(new Error("Failed to load file"));
-      }
-    };
-
-    xhr.onerror = function () {
-      reject(new Error("Network error"));
-    };
-
-    xhr.send();
-  });
-}
+import { loadFile } from "./load-file";
 
 function replaceImage(zip: PizZip, imageMap: Record<string, ArrayBuffer>) {
   const mediaFolder = "ppt/media/";
@@ -47,15 +26,11 @@ export async function gerarCertificado(
 ): Promise<void> {
   const fileArrayBuffer = await loadFile(`/templates/frente.pptx`);
   const zip = new PizZip(fileArrayBuffer);
-
   if (imageMap) {
     replaceImage(zip, imageMap);
   }
-
   const numeroDeCertificados = data.length;
-
   await duplicateSlide(zip, numeroDeCertificados, data);
-
   const out = zip.generate({
     type: "blob",
     mimeType:
