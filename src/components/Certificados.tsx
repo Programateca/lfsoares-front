@@ -257,31 +257,11 @@ const Certificados = () => {
         modelType: `certificado-${newCertificado.tipo_certificado}a`,
         documentData: JSON.stringify(dados),
         // certificateCode: 10,
-        year: identificadorValido.certificateYear,
+        year: String(identificadorValido.certificateYear),
       };
 
-      const certificadosData = JSON.parse(newCertificados.documentData);
+      // const certificadosData = JSON.parse(newCertificados.documentData);
 
-      gerarCertificado(
-        certificadosData,
-        imageMap,
-        newCertificados.modelType.split("-")[1]
-      );
-      // certificadosData.forEach((certificado: any) => {
-      //   gerarCertificado(
-      //     certificado,
-      //     imageMap,
-      //     newCertificados.modelType.split("-")[1]
-      //   );
-      // });
-      // fazer download direto
-      // gerarCertificado(
-      //   newCertificados,
-      //   imageMap,
-      //   newCertificados.modelType.split("-")[1]
-      // );
-
-      return;
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {
