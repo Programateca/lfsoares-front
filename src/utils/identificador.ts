@@ -1,9 +1,10 @@
+import { loadFile } from "./load-file";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
-import { saveAs } from "file-saver";
-import PizZipUtils from "pizzip/utils";
 import expressionParser from "docxtemplater/expressions";
-import { Identificador } from "@/@types/Identificador";
+import { saveAs } from "file-saver";
+
+import type { Identificador } from "@/@types/Identificador";
 
 export type Period = "manha" | "tarde" | "manhaTarde";
 export type Schedule = { dia: string; periodo?: Period };
@@ -20,13 +21,6 @@ type Pages = {
   instrutorA: Instrutor;
   instrutorB: Instrutor;
 };
-
-function loadFile(
-  url: string,
-  callback: (error: Error | null, data?: string | ArrayBuffer) => void
-) {
-  PizZipUtils.getBinaryContent(url, callback);
-}
 
 function getDias(
   instrutor: { paginas: number; dias: string; periodo: string }[],
@@ -123,31 +117,27 @@ export async function gerarIdentificador(
       .split(TAG_NAME)
       .join(formatarPaginas(formattedPages, xmlNewContent, courseTime));
 
-    loadFile(
-      "/templates/identificacao-do-participante.docx",
-      (error: Error | null, data?: string | ArrayBuffer) => {
-        if (error) throw error;
-        if (!data) throw new Error("No data received");
-
-        const zip = new PizZip(data);
-        zip.file("word/document.xml", updatedXml);
-
-        const doc = new Docxtemplater(zip, {
-          delimiters: { start: "[", end: "]" },
-          paragraphLoop: true,
-          linebreaks: true,
-          parser: expressionParser,
-        });
-
-        doc.render(docData);
-        const out = doc.getZip().generate({
-          type: "blob",
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        });
-        saveAs(out, "output.docx");
-      }
+    const fileArrayBuffer = await loadFile(
+      "/templates/identificacao-do-participante.docx"
     );
+
+    const zip = new PizZip(fileArrayBuffer);
+    zip.file("word/document.xml", updatedXml);
+
+    const doc = new Docxtemplater(zip, {
+      delimiters: { start: "[", end: "]" },
+      paragraphLoop: true,
+      linebreaks: true,
+      parser: expressionParser,
+    });
+
+    doc.render(docData);
+    const out = doc.getZip().generate({
+      type: "blob",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    saveAs(out, "output.docx");
   } catch (error) {
     console.error("Erro ao processar os arquivos XML:", error);
   }
