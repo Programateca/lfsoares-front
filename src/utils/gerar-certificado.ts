@@ -45,6 +45,10 @@ export async function gerarCertificado(
   // Verso
   const zipVerso = new PizZip(fileArrayBufferVerso);
 
+  if (imageMap) {
+    replaceImage(zipVerso, imageMap);
+  }
+
   const doc = new Docxtemplater(zipVerso, {
     delimiters: { start: "[", end: "]" },
     paragraphLoop: true,
