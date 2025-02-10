@@ -176,7 +176,6 @@ const Pessoas = () => {
   };
 
   const handleUpdateStatus = async (id: string | number, status: number) => {
-    console.log(id, status);
     try {
       await api.patch(`pessoas/${id}`, {
         status: {
@@ -241,17 +240,32 @@ const Pessoas = () => {
                     value={newPessoa.name}
                     onChange={handleInputChange}
                     required
+                    placeholder="Ex: João da Silva"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF </Label>
+                  <Label htmlFor="cpf">CPF</Label>
                   <Input
                     id="cpf"
                     name="cpf"
-                    type="cpf"
+                    type="text"
                     value={newPessoa.cpf}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      const formattedValue = value
+                        .replace(/\D/g, "")
+                        .replace(/(\d{3})(\d)/, "$1.$2")
+                        .replace(/(\d{3})(\d)/, "$1.$2")
+                        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                      setNewPessoa((prev) => ({
+                        ...prev,
+                        cpf: formattedValue,
+                      }));
+                    }}
                     required
+                    pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                    placeholder="000.000.000-00"
+                    maxLength={14}
                   />
                 </div>
                 <div className="space-y-2">
@@ -259,7 +273,8 @@ const Pessoas = () => {
                   <Input
                     id="matricula"
                     name="matricula"
-                    type="matricula"
+                    type="text"
+                    placeholder="Ex: 000000"
                     value={newPessoa.matricula}
                     onChange={handleInputChange}
                   />
