@@ -69,7 +69,6 @@ async function duplicateSlide(
   numTimes: number,
   data: Record<string, string>[]
 ) {
-  // Inicializa o zip usando o PizZip com os dados do PPTX.
   const slideNumber = 1;
   const ctPath = "[Content_Types].xml";
 
@@ -204,13 +203,4 @@ async function duplicateSlide(
   zip.file(presentationPath, newPresentationXml);
   zip.file(relsPath, newRelsXml);
   zip.file(ctPath, newCtXml);
-
-  return zip;
-  // Gera o arquivo final.
-  // const out = zip.generate({
-  //   type: "blob",
-  //   mimeType:
-  //     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-  // });
-  // saveAs(out, "certificados.pptx");
 }
