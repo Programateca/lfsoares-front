@@ -303,6 +303,11 @@ export const Identificadores = () => {
       header_data: fullDateNow,
       revisao: "00 FIXO",
 
+      nome2: "CLEDIONE JUNQUEIRA DE ABREU FIXO",
+      qualificação_profissional2:
+        "ENGENHEIRA ELETRICISTA \nENGENHEIRA DE SEGURANÇA DO TRABALHO FIXO",
+      registro_profissional2: "CREA N° 9949-MS FIXO",
+
       manha_horario,
       tarde_horario,
       mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
