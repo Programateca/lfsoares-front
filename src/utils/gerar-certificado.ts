@@ -1,6 +1,3 @@
-// import Docxtemplater from "docxtemplater";
-// import PizZip from "pizzip";
-// import expressionParser from "docxtemplater/expressions";
 import { parseStringPromise, Builder, Parser } from "xml2js";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
@@ -41,58 +38,6 @@ function replaceImage(zip: PizZip, imageMap: Record<string, ArrayBuffer>) {
     }
   });
 }
-
-// export async function gerarCertificado(
-//   data: Record<string, string>[],
-//   imageMap: Record<string, ArrayBuffer>,
-//   type: string
-// ): Promise<void> {
-//   console.log("data", data);
-//   // console.log("imageMap", imageMap);
-//   // console.log("type", type);
-//   try {
-//     const processedSlides: PizZip[] = [];
-
-//     // Processar cada conjunto de dados separadamente
-//     for (const itemData of data) {
-//       // Carregar template novamente para cada slide
-//       const content = await loadFile(`/templates/frente-${type}.pptx`);
-//       const zip = new PizZip(content);
-
-//       // Substituir imagens
-//       replaceImage(zip, imageMap);
-
-//       // Criar nova instância do Docxtemplater
-//       const doc = new Docxtemplater(zip, {
-//         delimiters: { start: "[", end: "]" },
-//         paragraphLoop: true,
-//         linebreaks: true,
-//         parser: expressionParser,
-//       });
-
-//       // Renderizar com os dados do certificado atual
-//       doc.render(itemData);
-//       // Guardar o ZIP processado
-//       processedSlides.push(doc.getZip());
-//     }
-
-//     // Combinar todos os slides em uma única apresentação
-//     const finalZip = mergeSlides(processedSlides);
-
-//     // Gerar arquivo final
-//     const out = finalZip.generate({
-//       type: "blob",
-//       mimeType:
-//         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-//     });
-
-//     // Salvar arquivo
-//     saveAs(out, "certificados.pptx");
-//   } catch (error) {
-//     console.error("Erro ao gerar certificados:", error);
-//     throw error;
-//   }
-// }
 
 export async function gerarCertificado(
   data: Record<string, string>[],
