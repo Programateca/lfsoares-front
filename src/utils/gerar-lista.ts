@@ -1,14 +1,11 @@
 import Docxtemplater from "docxtemplater";
-import PizZip from "pizzip";
-import PizZipUtils from "pizzip/utils/index.js";
-import { saveAs } from "file-saver";
 import expressionParser from "docxtemplater/expressions";
+import PizZip from "pizzip";
+import { saveAs } from "file-saver";
+import { loadFile } from "./load-file";
+// import { loadFile } from "./load-file";
 
-function loadFile(url: string, callback: any) {
-  PizZipUtils.getBinaryContent(url, callback);
-}
-
-export function gerarLista(
+export async function gerarLista(
   data: Record<string, string>,
   options: {
     removeTableCount?: number;
@@ -22,120 +19,111 @@ export function gerarLista(
     filterTableRowsByContent?: (rowContent: string) => boolean;
   } = {}
 ) {
-  loadFile(
-    "/templates/lista-meio-periodo.docx",
-    (error: Error, content: any) => {
-      if (error) {
-        throw error;
+  const fileArrayBuffer = await loadFile("/templates/lista-meio-periodo.docx");
+
+  const zip = new PizZip(fileArrayBuffer);
+
+  // Extract the document.xml
+  const documentXml = zip.file("word/document.xml")!.asText();
+
+  // Parse the XML
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(documentXml, "text/xml");
+
+  // Remove first N tables
+  if (options.removeTableCount) {
+    const tables = xmlDoc.getElementsByTagName("w:tbl");
+    const tablesArray = Array.from(tables);
+    const tablesToRemove = tablesArray.slice(0, options.removeTableCount);
+
+    tablesToRemove.forEach((table) => {
+      if (table.parentNode) {
+        table.parentNode.removeChild(table);
       }
-      const zip = new PizZip(content);
+    });
+  }
 
-      // Extract the document.xml
-      const documentXml = zip.file("word/document.xml")!.asText();
+  // Remove first N paragraphs
+  if (options.removeParagraphCount) {
+    const paragraphs = xmlDoc.getElementsByTagName("w:p");
+    const paragraphsArray = Array.from(paragraphs);
+    const paragraphsToRemove = paragraphsArray.slice(
+      0,
+      options.removeParagraphCount
+    );
 
-      // Parse the XML
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(documentXml, "text/xml");
-
-      // Remove first N tables
-      if (options.removeTableCount) {
-        const tables = xmlDoc.getElementsByTagName("w:tbl");
-        const tablesArray = Array.from(tables);
-        const tablesToRemove = tablesArray.slice(0, options.removeTableCount);
-
-        tablesToRemove.forEach((table) => {
-          if (table.parentNode) {
-            table.parentNode.removeChild(table);
-          }
-        });
+    paragraphsToRemove.forEach((paragraph) => {
+      if (paragraph.parentNode) {
+        paragraph.parentNode.removeChild(paragraph);
       }
+    });
+  }
 
-      // Remove first N paragraphs
-      if (options.removeParagraphCount) {
-        const paragraphs = xmlDoc.getElementsByTagName("w:p");
-        const paragraphsArray = Array.from(paragraphs);
-        const paragraphsToRemove = paragraphsArray.slice(
-          0,
-          options.removeParagraphCount
-        );
+  // Remove first N table rows
+  if (options.removeTableRowCount) {
+    const tableRows = xmlDoc.getElementsByTagName("w:tr");
+    const tableRowsArray = Array.from(tableRows);
+    const rowsToRemove = tableRowsArray.slice(0, options.removeTableRowCount);
 
-        paragraphsToRemove.forEach((paragraph) => {
-          if (paragraph.parentNode) {
-            paragraph.parentNode.removeChild(paragraph);
-          }
-        });
+    rowsToRemove.forEach((row) => {
+      if (row.parentNode) {
+        row.parentNode.removeChild(row);
       }
+    });
+  }
 
-      // Remove first N table rows
-      if (options.removeTableRowCount) {
-        const tableRows = xmlDoc.getElementsByTagName("w:tr");
-        const tableRowsArray = Array.from(tableRows);
-        const rowsToRemove = tableRowsArray.slice(
-          0,
-          options.removeTableRowCount
-        );
+  // Remove specific table rows
+  if (options.removeSpecificTableRows) {
+    const tableRows = xmlDoc.getElementsByTagName("w:tr");
+    const tableRowsArray = Array.from(tableRows);
 
-        rowsToRemove.forEach((row) => {
+    options.removeSpecificTableRows
+      .sort((a, b) => b - a) // Remove from end to avoid index shifting
+      .forEach((index) => {
+        if (index >= 0 && index < tableRowsArray.length) {
+          const row = tableRowsArray[index];
           if (row.parentNode) {
             row.parentNode.removeChild(row);
           }
-        });
-      }
-
-      // Remove specific table rows
-      if (options.removeSpecificTableRows) {
-        const tableRows = xmlDoc.getElementsByTagName("w:tr");
-        const tableRowsArray = Array.from(tableRows);
-
-        options.removeSpecificTableRows
-          .sort((a, b) => b - a) // Remove from end to avoid index shifting
-          .forEach((index) => {
-            if (index >= 0 && index < tableRowsArray.length) {
-              const row = tableRowsArray[index];
-              if (row.parentNode) {
-                row.parentNode.removeChild(row);
-              }
-            }
-          });
-      }
-
-      // Filter table rows by content
-      if (options.filterTableRowsByContent) {
-        const tableRows = xmlDoc.getElementsByTagName("w:tr");
-        const tableRowsArray = Array.from(tableRows);
-
-        tableRowsArray.forEach((row) => {
-          const rowText = extractElementText(
-            row as unknown as import("@xmldom/xmldom").Element
-          );
-          if (!options.filterTableRowsByContent!(rowText)) {
-            if (row.parentNode) {
-              row.parentNode.removeChild(row);
-            }
-          }
-        });
-      }
-
-      // Serialize the modified XML
-      const serializer = new XMLSerializer();
-      const modifiedXml = serializer.serializeToString(xmlDoc);
-      zip.file("word/document.xml", modifiedXml);
-
-      const doc = new Docxtemplater(zip, {
-        delimiters: { start: "[", end: "]" },
-        paragraphLoop: true,
-        linebreaks: true,
-        parser: expressionParser,
+        }
       });
-      doc.render(data);
-      const out = doc.getZip().generate({
-        type: "blob",
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      }); //Output the document using Data-URI
-      saveAs(out, "output.docx");
-    }
-  );
+  }
+
+  // Filter table rows by content
+  if (options.filterTableRowsByContent) {
+    const tableRows = xmlDoc.getElementsByTagName("w:tr");
+    const tableRowsArray = Array.from(tableRows);
+
+    tableRowsArray.forEach((row) => {
+      const rowText = extractElementText(
+        row as unknown as import("@xmldom/xmldom").Element
+      );
+      if (!options.filterTableRowsByContent!(rowText)) {
+        if (row.parentNode) {
+          row.parentNode.removeChild(row);
+        }
+      }
+    });
+  }
+
+  // Serialize the modified XML
+  const serializer = new XMLSerializer();
+  const modifiedXml = serializer.serializeToString(xmlDoc);
+  zip.file("word/document.xml", modifiedXml);
+
+  const doc = new Docxtemplater(zip, {
+    delimiters: { start: "[", end: "]" },
+    paragraphLoop: true,
+    linebreaks: true,
+    parser: expressionParser,
+  });
+  doc.render(data);
+  const out = doc.getZip().generate({
+    type: "blob",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  }); //Output the document using Data-URI
+  saveAs(out, "output.docx");
 }
 
 function extractElementText(element: import("@xmldom/xmldom").Element): string {
