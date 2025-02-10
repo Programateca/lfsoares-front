@@ -78,7 +78,9 @@ export const Identificadores = () => {
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
 
-  // const [identificadorInEditMode, setIdentificadorInEditMode] = useState("");
+  const [identificadorInEditMode, setIdentificadorInEditMode] = useState<
+    string | number
+  >("");
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
@@ -404,7 +406,8 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-
+    console.log("newIdentificador", newIdentificador);
+    return;
     const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
@@ -420,32 +423,266 @@ export const Identificadores = () => {
   };
 
   /**
+   * Lógica de atualizar identificador
+   */
+  const onEdit = async (data: FormData) => {
+    if (!data.participantes?.length) {
+      toast.error("Selecione os participantes");
+      return;
+    }
+
+    const selectedEvento = eventos.find((evento) => evento.id === data.evento);
+    if (!selectedEvento) {
+      toast.error("Evento selecionado não foi encontrado!");
+      return;
+    }
+
+    const fullYear = new Date().getFullYear().toString();
+
+    const participantesMap: ParticipanteMap = data.participantes.reduce(
+      (acc, id, index) => {
+        const participante = participantes.find((pessoa) => pessoa.id === id);
+        const rowIndex = index + 1;
+
+        acc[`p_nome${rowIndex}`] = participante?.name || "";
+        acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
+        acc[`p_codigo${rowIndex}`] = participante
+          ? `LFSTS ${String(1 + index).padStart(4, "0")}/${fullYear}`
+          : "";
+        acc[`p_id${rowIndex}`] = participante ? participante.id : "";
+
+        return acc;
+      },
+      {} as ParticipanteMap
+    );
+
+    const totalParticipants = data.participantes.length;
+    const nextMultipleOfTen = Math.ceil(totalParticipants / 10) * 10;
+    const padding = nextMultipleOfTen - totalParticipants;
+
+    for (let i = 1; i <= padding; i++) {
+      const index = totalParticipants + i;
+      participantesMap[`p_nome${index}`] = "";
+      participantesMap[`p_matricula${index}`] = "";
+      participantesMap[`p_codigo${index}`] = "";
+      participantesMap[`p_id${index}`] = "";
+    }
+
+    let todasAsDatas;
+    if (signatureCount === 2) {
+      todasAsDatas = new Set(days.flatMap((day) => [day]));
+    } else {
+      todasAsDatas = new Set([
+        ...Object.keys(data.instrutorA),
+        ...Object.keys(data.instrutorB),
+      ]);
+    }
+
+    const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
+
+    const datas = selectedEvento?.courseTime;
+    const intervalo = selectedEvento?.courseInterval;
+    let manha_horario = "";
+    let tarde_horario = "";
+    if (datas && intervalo) {
+      const [inicio, fim] = datas.split(" ÀS ");
+      const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
+
+      manha_horario = `${inicio} ÀS ${intervaloInicio}`;
+      tarde_horario = `${intervaloFim} ÀS ${fim}`;
+    }
+
+    const fullDateNow = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    let conteudoAplicado = "";
+    if (data.conteudoAplicado) {
+      conteudoAplicado = data.conteudoAplicado;
+    } else if (selectedEvento.treinamento.conteudoAplicado) {
+      conteudoAplicado = selectedEvento.treinamento.conteudoAplicado;
+    }
+
+    if (!user) {
+      return toast.error(
+        "Parece que você não esta logado no sistema, por favor faça login novamente."
+      );
+    }
+
+    const dataGerador = {
+      header_revisao: user.name,
+      header_data: fullDateNow,
+      revisao: "00 FIXO",
+
+      nome2: "CLEDIONE JUNQUEIRA DE ABREU FIXO",
+      qualificação_profissional2:
+        "ENGENHEIRA ELETRICISTA \nENGENHEIRA DE SEGURANÇA DO TRABALHO FIXO",
+      registro_profissional2: "CREA N° 9949-MS FIXO",
+
+      manha_horario,
+      tarde_horario,
+      mudar_modulo: selectedEvento?.treinamento.courseMethodology,
+      mudar_horarios: selectedEvento?.courseTime,
+      id_data: fullDateNow.replace(/\//g, "."),
+      responsavel_tecnico: "",
+
+      ...participantesMap,
+      numeroParticipantes: totalParticipants,
+
+      conteudo_aplicado: conteudoAplicado,
+      motivo_treinamento: data.motivoTreinamento,
+      objetivo_lf: data.objetivoTreinamento,
+      treinamento:
+        selectedEvento.treinamento.name.length > 70
+          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
+          : selectedEvento.treinamento.name,
+      treinamento_lista:
+        selectedEvento.treinamento.name.length > 70
+          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
+          : selectedEvento.treinamento.name,
+      evento_id: selectedEvento.id,
+      contratante: selectedEvento.empresa.name,
+      tipo: selectedEvento.treinamento.courseType,
+      carga_horaria: selectedEvento.treinamento.courseHours,
+      intervalo: selectedEvento.courseInterval,
+      endereco: selectedEvento.courseLocation,
+      empresa: selectedEvento.empresa.name,
+      empresa_id: selectedEvento.empresa.id,
+      datas: datasFormatadas,
+      tipo_certificado: data.certificadoTipo,
+
+      assinante_titulo1: data?.assinatura[0]?.titulo
+        ? data.assinatura[0].titulo + ":"
+        : "",
+      assinante_titulo2: data?.assinatura[1]?.titulo
+        ? data.assinatura[1].titulo + ":"
+        : "",
+      assinante_titulo3: data?.assinatura[2]?.titulo
+        ? data.assinatura[2].titulo + ":"
+        : "",
+      assinante_titulo4: data?.assinatura[3]?.titulo
+        ? data.assinatura[3].titulo + ":"
+        : "",
+
+      assinante1:
+        instrutores.find((item) => item.id === data.assinatura[0]?.assinante)
+          ?.name || "",
+      assinante2:
+        instrutores.find((item) => item.id === data.assinatura[1]?.assinante)
+          ?.name || "",
+      assinante3:
+        instrutores.find((item) => item.id === data.assinatura[2]?.assinante)
+          ?.name || "",
+      assinante4:
+        instrutores.find((item) => item.id === data.assinatura[3]?.assinante)
+          ?.name || "",
+
+      instrutor_a: instrutoresSelecionados.instrutorA,
+      instrutor_b: instrutoresSelecionados.instrutorB,
+      instrutorDates: formatDays({
+        instrutorA:
+          signatureCount !== 2
+            ? days.reduce((acc, day) => {
+                acc[day] = {
+                  periodo:
+                    data.instrutorA?.[day]?.periodo || ("manhaTarde" as Period),
+                };
+                return acc;
+              }, {} as Record<string, { periodo?: Period }>)
+            : Object.fromEntries(
+                days.map((day) => [day, { periodo: "manhaTarde" as Period }])
+              ),
+        instrutorB:
+          signatureCount === 2
+            ? null
+            : days.reduce((acc, day) => {
+                acc[day] = {
+                  periodo:
+                    data.instrutorB?.[day]?.periodo || ("manhaTarde" as Period),
+                };
+                return acc;
+              }, {} as Record<string, { periodo?: Period }>),
+      }),
+    };
+
+    const updatedIdentificador: Partial<IdentificadorData> = {
+      treinamento: selectedEvento.treinamento.name,
+      identificadorData: JSON.stringify(dataGerador),
+      year: String(fullYear),
+    };
+    console.log("updatedIdentificador", updatedIdentificador);
+    return;
+    const saveResponse = await api.put(
+      `identificadores/${identificadorInEditMode}`,
+      updatedIdentificador
+    );
+
+    if (saveResponse.status === 200) {
+      toast.success("Identificador atualizado com sucesso!");
+      setIdentificadoresGerados((prev) =>
+        prev.map((item) =>
+          item.id === identificadorInEditMode
+            ? (saveResponse.data as IdentificadorData)
+            : item
+        )
+      );
+      setFormsOpen(false);
+    } else {
+      toast.error("Erro ao atualizar identificador!");
+    }
+  };
+  /**
    * Lógica de edição de identificador
    */
   const handleEdit = (id: string | number) => {
-    console.log("Editando", id);
-    // setIdentificadorInEditMode(id);
+    setIdentificadorInEditMode(id);
 
-    // const identificador = identificadoresGerados.find((item) => item.id === id);
+    const identificador = identificadoresGerados.find((item) => item.id === id);
     // console.log("identificador", JSON.parse(identificador.documentData));
-    // const data = JSON.parse(identificador.documentData) as Identificador;
-    // const eventoTeste = data.evento_id;
-    // const tipoCertificadoTeste = data.tipo_certificado;
-    // const conteudoAplicadoTeste = data.conteudo_aplicado;
-    // const motivoTreinamentoTeste = data.motivo_treinamento;
-    // const objetivoTreinamentoTeste = data.objetivo_lf;
-    // const participantesIds = Object.keys(data)
-    //   .filter((key) => key.startsWith("p_id"))
-    //   .map((key) => data[key]);
+    if (!identificador?.identificadorData) {
+      return;
+    }
+    const data = JSON.parse(
+      identificador.identificadorData
+    ) as IdentificadorData;
+    console.log("data", data);
+    const eventoTeste = data.evento_id;
+    const tipoCertificadoTeste = data.tipo_certificado;
+    const conteudoAplicadoTeste = data.conteudo_aplicado;
+    const motivoTreinamentoTeste = data.motivo_treinamento;
+    const objetivoTreinamentoTeste = data.objetivo_lf;
+    const participantesIds = Object.keys(data)
+      .filter((key) => key.startsWith("p_id") && data[key])
+      .map((key) => data[key]);
 
-    // console.log({
-    //   eventoTeste,
-    //   tipoCertificadoTeste,
-    //   conteudoAplicadoTeste,
-    //   motivoTreinamentoTeste,
-    //   objetivoTreinamentoTeste,
-    //   participantesIds,
-    // });
+    // atualizar o forms
+    setValue("evento", eventoTeste);
+    handleEventoSelect(eventoTeste);
+    setValue("certificadoTipo", tipoCertificadoTeste);
+    handleSignatureCount(tipoCertificadoTeste);
+    setValue("conteudoAplicado", conteudoAplicadoTeste);
+    setValue("motivoTreinamento", motivoTreinamentoTeste);
+    setValue("objetivoTreinamento", objetivoTreinamentoTeste);
+    setValue("participantes", participantesIds);
+    const assinaturas = [
+      { titulo: data.assinante_titulo1, assinante: data.assinante1 },
+      { titulo: data.assinante_titulo2, assinante: data.assinante2 },
+      { titulo: data.assinante_titulo3, assinante: data.assinante3 },
+      { titulo: data.assinante_titulo4, assinante: data.assinante4 },
+    ];
+    assinaturas
+      .slice(0, Number(tipoCertificadoTeste))
+      .forEach((assinatura, index) => {
+        const instrutorId = instrutores.find(
+          (i) => i.name === assinatura.assinante
+        )?.id;
+        setValue(`assinatura.${index}.titulo`, assinatura.titulo);
+        setValue(`assinatura.${index}.assinante`, instrutorId);
+      });
+
+    setFormsOpen(true);
   };
 
   useEffect(() => {
@@ -494,7 +731,9 @@ export const Identificadores = () => {
 
         {/* Formulário de Criação/Edição */}
         {formsOpen ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form
+            onSubmit={handleSubmit(identificadorInEditMode ? onEdit : onSubmit)}
+          >
             {/* Linha de Seleção de Evento e Certificado */}
             <div className="flex flex-col md:flex-row gap-4 w-full">
               <div className="w-full">
@@ -583,28 +822,19 @@ export const Identificadores = () => {
                           {...register(`assinatura.${index}.titulo`)}
                           className="w-full"
                           defaultValue={
-                            // Define "Instrutor" em posições específicas
-                            (index < 2 && signatureCount >= 3) ||
-                            (index === 0 && signatureCount === 2)
+                            index === 0
                               ? "INSTRUTOR"
                               : getValues(`assinatura.${index}.titulo`) || ""
                           }
                           onChange={(e) => {
-                            // Permite edição somente para campos não fixos
-                            if (
-                              !(index < 2 && signatureCount >= 3) &&
-                              !(index === 0 && signatureCount === 2)
-                            ) {
+                            if (index !== 0) {
                               setValue(
                                 `assinatura.${index}.titulo`,
                                 e.target.value
                               );
                             }
                           }}
-                          readOnly={
-                            (index < 2 && signatureCount >= 3) ||
-                            (index === 0 && signatureCount === 2)
-                          }
+                          readOnly={index === 0}
                         />
                         <Controller
                           name={`assinatura.${index}.assinante`}
@@ -688,9 +918,8 @@ export const Identificadores = () => {
                     onValueChange={(value) => field.onChange(value)}
                     defaultValue={field.value || []}
                     placeholder="Selecione os participantes"
-                    variant="inverted"
+                    variant="default"
                     animation={2}
-                    maxCount={3}
                   />
                 )}
               />
