@@ -42,6 +42,6 @@ export interface Identificador {
   instrutorDates: EventSchedule;
 
   // add
-  certificateYear?: string | number;
+  certificateYear: string;
   certificateCode?: number | string;
 }

@@ -3,10 +3,9 @@ export interface DocumentData {
   // expiryDate: string | null;
   documentData: string;
   modelType: string;
-  certificateYear?: string | number;
-  certificateCode?: number | string;
   id?: string;
   treinamento: string;
+  year: string;
   // createdAt: string;
   // updatedAt: string;
 }

@@ -52,7 +52,9 @@ const Certificados = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
-  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [certificados, setCertificados] = useState<any[]>([]);
 
@@ -85,6 +87,7 @@ const Certificados = () => {
         ...certificados4aResp.data.data,
       ]);
     } catch (error) {
+      console.log(error);
       toast.error("Erro ao buscar dados");
     }
   };
@@ -253,8 +256,8 @@ const Certificados = () => {
         treinamento: selectedEvento.treinamento.name,
         modelType: `certificado-${newCertificado.tipo_certificado}a`,
         documentData: JSON.stringify(dados),
-        certificateCode: identificadorValido.certificateCode,
-        certificateYear: identificadorValido.certificateYear,
+        // certificateCode: 10,
+        year: identificadorValido.certificateYear,
       };
 
       const certificadosData = JSON.parse(newCertificados.documentData);
@@ -298,11 +301,20 @@ const Certificados = () => {
   /**
    * Função para baixar os certificados
    * **/
-  const handleDownload = async (certificados: any, modelType: any) => {
-    const certificadosData = JSON.parse(certificados.documentData);
-    certificadosData.forEach((certificado: any) => {
-      gerarCertificado(certificado, imageMap, modelType.split("-")[1]);
-    });
+  const handleDownload = async (
+    certificados: DocumentData,
+    modelType: string
+  ) => {
+    // console.log("TESTE");
+    const data = JSON.parse(certificados.documentData) as Record<
+      string,
+      string
+    >[];
+    // console.log(data);
+    // return;
+    // data.forEach((certificado: Record<string, string>) => {
+    gerarCertificado(data, imageMap, modelType.split("-")[1]);
+    // });
   };
 
   /**
