@@ -185,10 +185,23 @@ const Empresas = () => {
                   <Input
                     id="cnpj"
                     name="cnpj"
-                    type="cnpj"
+                    type="text"
                     value={newEmpresa.cnpj}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      const formattedValue = value
+                        .replace(/\D/g, "")
+                        .replace(/^(\d{2})(\d)/, "$1.$2")
+                        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+                        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+                        .replace(/(\d{4})(\d)/, "$1-$2");
+                      setNewEmpresa((prev) => ({
+                        ...prev,
+                        cnpj: formattedValue,
+                      }));
+                    }}
                     required={empresaInEditMode ? false : true}
+                    maxLength={18}
                   />
                 </div>
                 <div className="space-y-2">

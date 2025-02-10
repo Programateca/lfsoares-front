@@ -70,8 +70,30 @@ const Usuarios = () => {
     setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  const validateEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateEmail(newUser.email)) {
+      return toast.error("Email inválido. Certifique-se de que contém '@'.");
+    }
+
+    if (!userInEditMode && !validatePassword(newUser.password)) {
+      return toast.error(
+        "A senha deve ter pelo menos 6 caracteres, incluindo letras e números."
+      );
+    }
+
+    if (newUser.password !== newUser.confirmPassword) {
+      return toast.error("As senhas não coincidem");
+    }
 
     const user = users.find((user) => user.id === newUser.id);
 
@@ -101,10 +123,6 @@ const Usuarios = () => {
       return;
     }
 
-    if (newUser.password !== newUser.confirmPassword) {
-      return toast.error("As senhas não coincidem");
-    }
-
     try {
       await api.post("users", {
         email: newUser.email,
@@ -127,48 +145,6 @@ const Usuarios = () => {
     } catch (error) {}
   };
 
-  const handleEditUser = (id: number | string) => {
-    setUserInEditMode(id);
-    setIsModalOpen(true);
-
-    const user = users.find((user) => user.id === id);
-
-    if (user) {
-      setNewUser({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        password: "",
-        confirmPassword: "",
-      });
-    }
-  };
-
-  const handleUpdateStatusUser = async (
-    id: number | string,
-    status: number
-  ) => {
-    try {
-      await api.patch(`users/${id}`, {
-        status: {
-          id: status,
-        },
-      });
-
-      if (status === 1)
-        toast("Usuário ativado!", {
-          icon: "🚀",
-          duration: 2000,
-        });
-      else
-        toast("Usuário inativado!", {
-          icon: "🗑️",
-          duration: 2000,
-        });
-      fetchUsers();
-    } catch (error) {}
-  };
-
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -180,7 +156,7 @@ const Usuarios = () => {
             open={isModalOpen}
             onOpenChange={(open) => {
               setIsModalOpen(open);
-              if (!open)
+              if (!open) {
                 setNewUser({
                   id: 0,
                   name: "",
@@ -188,7 +164,8 @@ const Usuarios = () => {
                   password: "",
                   confirmPassword: "",
                 });
-              setUserInEditMode("");
+                setUserInEditMode("");
+              }
             }}
           >
             <DialogTrigger asChild>
@@ -198,7 +175,9 @@ const Usuarios = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Adicionar novo usuário</DialogTitle>
+                <DialogTitle>
+                  {userInEditMode ? "Editar Usuário" : "Adicionar novo usuário"}
+                </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -208,7 +187,7 @@ const Usuarios = () => {
                     name="name"
                     value={newUser.name}
                     onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -219,7 +198,7 @@ const Usuarios = () => {
                     type="email"
                     value={newUser.email}
                     onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -230,7 +209,7 @@ const Usuarios = () => {
                     type="password"
                     value={newUser.password}
                     onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
+                    required={!userInEditMode}
                   />
                 </div>
                 <div className="space-y-2">
@@ -241,7 +220,7 @@ const Usuarios = () => {
                     type="password"
                     value={newUser.confirmPassword}
                     onChange={handleInputChange}
-                    required={userInEditMode ? false : true}
+                    required={!userInEditMode}
                   />
                 </div>
                 <div className="flex justify-end space-x-2">
@@ -249,20 +228,22 @@ const Usuarios = () => {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setIsModalOpen(false),
-                        setNewUser({
-                          id: 0,
-                          name: "",
-                          email: "",
-                          password: "",
-                          confirmPassword: "",
-                        });
+                      setIsModalOpen(false);
+                      setNewUser({
+                        id: 0,
+                        name: "",
+                        email: "",
+                        password: "",
+                        confirmPassword: "",
+                      });
                       setUserInEditMode("");
                     }}
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit">Adicionar</Button>
+                  <Button type="submit">
+                    {userInEditMode ? "Salvar Alterações" : "Adicionar"}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
@@ -275,9 +256,22 @@ const Usuarios = () => {
             { key: "status.name", label: "Status" },
           ]}
           data={users}
-          onEdit={handleEditUser}
-          onDelete={handleUpdateStatusUser}
-          onRestore={handleUpdateStatusUser}
+          onEdit={(id) => {
+            setUserInEditMode(id);
+            setIsModalOpen(true);
+            const user = users.find((user) => user.id === id);
+            if (user) {
+              setNewUser({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                password: "",
+                confirmPassword: "",
+              });
+            }
+          }}
+          onDelete={() => {}}
+          onRestore={() => {}}
           loading={loading}
           entityLabel="Usuário"
           searchable
