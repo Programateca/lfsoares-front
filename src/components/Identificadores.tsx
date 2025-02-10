@@ -32,6 +32,8 @@ import {
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
 import { IdentificadorData } from "@/@types/IdentificadorData";
+import { useAuth } from "@/context/AuthContextProvider";
+import { useNavigate } from "react-router-dom";
 // import { ModelType } from "@/@types/ModeType";
 // import { getLastDocumentCode } from "@/utils/get-last-document-code";
 
@@ -90,6 +92,10 @@ export const Identificadores = () => {
     instrutorA: "Selecione o Instrutor",
     instrutorB: "Selecione o Instrutor",
   });
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  if (!user) navigate("/login");
 
   const conteudo = watch("conteudoAplicado");
 
@@ -285,9 +291,15 @@ export const Identificadores = () => {
     /**
      * Corpo de dados principal que será passado para gerarIdentificador()
      */
+    if (!user) {
+      return toast.error(
+        "Parece que você não esta logado no sistema, por favor faça login novamente."
+      );
+    }
+
     const dataGerador = {
       // Header
-      header_revisao: "CLEDIONE SANTOS FIXO", // Nome de quem revisou
+      header_revisao: user.name, // Nome de quem revisou
       header_data: fullDateNow,
       revisao: "00 FIXO",
 

@@ -263,7 +263,7 @@
                     <w:sz w:val="28" />
                     <w:szCs w:val="28" />
                 </w:rPr>
-                <w:t xml:space="preserve"> - REV.: 0</w:t>
+                <w:t xml:space="preserve"> - REV.: [revisao</w:t>
             </w:r>
             <w:r w:rsidR="005E2579">
                 <w:rPr>
@@ -272,7 +272,7 @@
                     <w:sz w:val="28" />
                     <w:szCs w:val="28" />
                 </w:rPr>
-                <w:t>0</w:t>
+                <w:t>]</w:t>
             </w:r>
         </w:p>
         <w:p w14:paraId="66B21299" w14:textId="77777777" w:rsidR="001B71E3"
