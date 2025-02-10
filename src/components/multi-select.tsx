@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CheckIcon, XCircle, XIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,25 +18,16 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
+const multiSelectVariants = cva("m-1 transition ease-in-out", {
+  variants: {
+    variant: {
+      default: "border-black text-foreground bg-white ",
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 interface MultiSelectProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -70,7 +61,6 @@ export const MultiSelect = React.forwardRef<
       defaultValue = [],
       placeholder = "Select options",
       animation = 0,
-      maxCount = 3,
       modalPopover = false,
       asChild = false,
       className,
@@ -84,15 +74,19 @@ export const MultiSelect = React.forwardRef<
     const [searchTerm, setSearchTerm] = React.useState("");
 
     const toggleOption = (option: string) => {
-      const newSelectedValues = selectedValues.includes(option)
-        ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option];
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      setSelectedValues((prevValues) => {
+        const newValues = prevValues.includes(option)
+          ? prevValues.filter((val) => val !== option)
+          : [...prevValues, option];
+        onValueChange(newValues);
+        return newValues;
+      });
     };
 
     const filteredOptions = options.filter((option) => {
-      const searchLower = searchTerm.toLowerCase();
+      const searchLower = searchTerm.trim().toLowerCase();
+      if (!searchLower) return true; // Exibir todos os itens se a busca estiver vazia
+
       return (
         option.label.toLowerCase().includes(searchLower) ||
         option.cpf?.toLowerCase().includes(searchLower) ||
@@ -100,6 +94,17 @@ export const MultiSelect = React.forwardRef<
         option.empresa?.toLowerCase().includes(searchLower)
       );
     });
+
+    const toggleAll = () => {
+      if (selectedValues.length === options.length) {
+        setSelectedValues([]);
+        onValueChange([]);
+      } else {
+        const allValues = options.map((option) => option.value);
+        setSelectedValues(allValues);
+        onValueChange(allValues);
+      }
+    };
 
     return (
       <Popover
@@ -111,42 +116,27 @@ export const MultiSelect = React.forwardRef<
           <Button
             ref={ref}
             {...props}
+            variant={"outline"}
             className={cn(
-              "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit",
+              "flex w-full h-full min-h-9 p-1 rounded-md border",
               className
             )}
           >
             {selectedValues.length > 0 ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-wrap items-center">
-                  {selectedValues.slice(0, maxCount).map((value) => {
+                  {selectedValues.map((value) => {
                     const option = options.find((o) => o.value === value);
                     return (
                       <Badge
                         key={value}
                         className={cn(multiSelectVariants({ variant }))}
-                        style={{ animationDuration: `${animation}s` }}
                       >
                         {option?.label}
-                        <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            toggleOption(value);
-                          }}
-                        />
                       </Badge>
                     );
                   })}
                 </div>
-                <XIcon
-                  className="h-4 mx-2 cursor-pointer text-muted-foreground"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setSelectedValues([]);
-                    onValueChange([]);
-                  }}
-                />
               </div>
             ) : (
               <span className="text-sm text-muted-foreground mx-3">
@@ -165,21 +155,40 @@ export const MultiSelect = React.forwardRef<
             <CommandList>
               <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
               <CommandGroup>
+                <CommandItem
+                  key="select_all"
+                  onSelect={toggleAll}
+                  className="cursor-pointer"
+                >
+                  <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+                    <CheckIcon
+                      className={
+                        selectedValues.length === options.length
+                          ? "h-4 w-4"
+                          : "opacity-0"
+                      }
+                    />
+                  </div>
+                  <span>
+                    {selectedValues.length === options.length
+                      ? "Remover todos"
+                      : "Selecionar todos"}
+                  </span>
+                </CommandItem>
                 {filteredOptions.map((option) => (
                   <CommandItem
                     key={option.value}
                     onSelect={() => toggleOption(option.value)}
                     className="cursor-pointer"
                   >
-                    <div
-                      className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                        selectedValues.includes(option.value)
-                          ? "bg-primary text-primary-foreground"
-                          : "opacity-50 [&_svg]:invisible"
-                      )}
-                    >
-                      <CheckIcon className="h-4 w-4" />
+                    <div className="mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary">
+                      <CheckIcon
+                        className={
+                          selectedValues.includes(option.value)
+                            ? "h-4 w-4"
+                            : "opacity-0"
+                        }
+                      />
                     </div>
                     <span>
                       {option.label}
