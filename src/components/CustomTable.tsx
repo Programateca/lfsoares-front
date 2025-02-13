@@ -38,7 +38,7 @@ interface Column {
 interface CustomTableProps<T extends { id: string | number }> {
   columns: Column[];
   data: T[];
-  onEdit: (id: string | number) => void;
+  onEdit?: (id: string | number) => void;
   onDelete?: (id: string | number, status: number) => void;
   onRestore?: (id: string | number, status: number) => void;
   onDownload?: (id: string | number, row: T) => void; // ✅ Nova prop para download
@@ -180,14 +180,17 @@ const CustomTable = <T extends { id: string | number }>({
                   </TableCell>
                 ))}
                 <TableCell className="text-end space-x-2">
-                  <Button
-                    onClick={() => onEdit(item.id)}
-                    variant="outline"
-                    className="p-2 h-fit"
-                    disabled={!onDownload && getValue(item, statusKey) !== 1}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  {onEdit && (
+                    <Button
+                      onClick={() => onEdit(item.id)}
+                      variant="outline"
+                      className="p-2 h-fit"
+                      disabled={!onDownload && getValue(item, statusKey) !== 1}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+
                   {onDownload && ( // ✅ Mostra o botão de download se `onDownload` for fornecido
                     <Button
                       onClick={() => onDownload(item.id, item)}
@@ -195,6 +198,7 @@ const CustomTable = <T extends { id: string | number }>({
                       className="p-2 h-fit hover:bg-gray-200"
                     >
                       <BookUp2 className="h-4 w-4" />
+                      Baixar Documento
                     </Button>
                   )}
 
