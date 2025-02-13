@@ -78,9 +78,6 @@ export const Identificadores = () => {
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
 
-  const [identificadorInEditMode, setIdentificadorInEditMode] = useState<
-    string | number
-  >("");
   const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
