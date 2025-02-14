@@ -471,8 +471,7 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-    console.log(dataGerador);
-    return;
+
     const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
