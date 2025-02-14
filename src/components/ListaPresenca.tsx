@@ -182,12 +182,12 @@ const ListaPresenca = () => {
 
       const participantes = pessoas.map((pessoa) => pessoa.id);
       participantes.forEach((participanteId, index) => {
-        schema[`participante_${index + 1}`] =
+        schema[`p_${index + 1}`] =
           pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
       });
 
       for (let i = participantes.length; i < 60; i++) {
-        schema[`participante_${i + 1}`] = "";
+        schema[`p_${i + 1}`] = " ";
       }
 
       // gerarLista(

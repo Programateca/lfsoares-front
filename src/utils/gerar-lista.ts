@@ -6,6 +6,7 @@ export async function gerarLista(
   data: Record<string, string | number>,
   tipo: string
 ) {
+  console.log(data);
   const maxPages = 12;
   const participantsPerPage = 5;
   const requiredPages = Math.ceil(
@@ -30,16 +31,32 @@ export async function gerarLista(
     1
   );
 
-  // Replace variables in the document
+  // Replace variables in the document and headers
   let xmlText = zip.files["word/document.xml"].asText();
 
-  // Replace each variable in the XML
+  // Get all header files (header1.xml, header2.xml, etc.)
+  const headerFiles = Object.keys(zip.files).filter(
+    (fileName) =>
+      fileName.startsWith("word/header") && fileName.endsWith(".xml")
+  );
+
+  // Replace variables in each header file
+  headerFiles.forEach((headerFile) => {
+    let headerText = zip.files[headerFile].asText();
+    Object.entries(data).forEach(([key, value]) => {
+      const regex = new RegExp(key, "g");
+      headerText = headerText.replace(regex, String(value));
+    });
+    zip.file(headerFile, headerText);
+  });
+
+  // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
-    const regex = new RegExp(`\\[${key}\\]`, "g");
+    const regex = new RegExp(key, "g");
     xmlText = xmlText.replace(regex, String(value));
   });
 
-  // Update the XML in the zip
+  // Update the document XML in the zip
   zip.file("word/document.xml", xmlText);
 
   const out = zip.generate({
