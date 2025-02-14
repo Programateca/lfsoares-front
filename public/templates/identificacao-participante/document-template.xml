@@ -738,7 +738,7 @@
                                 <w:sz w:val="22" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
-                            <w:t>RESPONSÁVEL TÉCNIC</w:t>
+                            <w:t>[assinante_titulo2</w:t>
                         </w:r>
                         <w:r w:rsidR="00FD3E69">
                             <w:rPr>
@@ -748,7 +748,7 @@
                                 <w:sz w:val="22" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
-                            <w:t>A</w:t>
+                            <w:t>]</w:t>
                         </w:r>
                     </w:p>
                     <w:p w14:paraId="08C87E7B" w14:textId="16E89447" w:rsidR="00536B3F"
