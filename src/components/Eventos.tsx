@@ -27,8 +27,17 @@ import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
-import { format, parseISO, isValid, parse } from "date-fns";
+import {
+  format,
+  parseISO,
+  isValid,
+  parse,
+  differenceInMinutes,
+  differenceInCalendarDays,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,6 +56,7 @@ const Eventos = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
   const fetchEventos = async () => {
     try {
@@ -60,9 +70,15 @@ const Eventos = () => {
       setLoading(true);
       await fetchEventos();
       const empresaResp = await api.get("empresas");
+      const empresasAtivas = empresaResp.data.data.filter(
+        (e: Empresa) => e.status.id === 1
+      );
+      setEmpresas(empresasAtivas);
       const treinamentoResp = await api.get("treinamentos");
-      setEmpresas(empresaResp.data.data);
-      setTreinamentos(treinamentoResp.data.data);
+      const treinamentosAtivos = treinamentoResp.data.data.filter(
+        (t: Treinamento) => t.status.id === 1
+      );
+      setTreinamentos(treinamentosAtivos);
       setLoading(false);
     };
 
@@ -158,32 +174,71 @@ const Eventos = () => {
   };
 
   // Função para lidar com a mudança no input de data
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+  // const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
 
-    if (value.length > 2) value = value.replace(/^(\d{2})/, "$1/"); // Adiciona `/` após o dia
-    if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})/, "$1/$2/"); // Adiciona `/` após o mês
+  //   if (value.length > 2) value = value.replace(/^(\d{2})/, "$1/"); // Adiciona `/` após o dia
+  //   if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})/, "$1/$2/"); // Adiciona `/` após o mês
 
-    if (value.length > 10) return; // Impede mais de 10 caracteres
+  //   if (value.length > 10) return; // Impede mais de 10 caracteres
 
-    setNewEvento((prev) => ({
-      ...prev,
-      [e.target.name]: value,
-    }));
-  };
+  //   setNewEvento((prev) => ({
+  //     ...prev,
+  //     [e.target.name]: value,
+  //   }));
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const formattedDates = selectedDates.map((date) =>
+      format(date, "yyyy-MM-dd")
+    );
+
+    const payload = {
+      ...newEvento,
+      courseDate: formattedDates,
+      completionDate: formattedDates[formattedDates.length - 1],
+      courseTime: formatTimeForStorage(newEvento.courseTime),
+      courseInterval: formatTimeForStorage(newEvento.courseInterval),
+    };
+
+    const startDateStr = formattedDates[0];
+    const endDateStr = formattedDates[formattedDates.length - 1];
+
+    const startDate = parse(startDateStr, "yyyy-MM-dd", new Date());
+    const endDate = parse(endDateStr, "yyyy-MM-dd", new Date());
+
+    const totalDays = differenceInCalendarDays(endDate, startDate) + 1;
+
+    const [startTimeStr, endTimeStr] = newEvento.courseTime
+      .split("ÀS")
+      .map((s) => s.trim());
+    const startTime = parse(startTimeStr, "HH:mm", new Date());
+    const endTime = parse(endTimeStr, "HH:mm", new Date());
+
+    const durationMinutes = differenceInMinutes(endTime, startTime);
+    const availableHoursPerDay = durationMinutes / 60;
+
+    const totalAvailableHours = totalDays * availableHoursPerDay;
+
+    const treinamento = treinamentos.find(
+      (t) => t.id === newEvento.treinamento.id
+    );
+    const requiredHours = Number(treinamento?.courseHours || "0");
+
+    if (totalAvailableHours < requiredHours) {
+      toast.error(
+        `O período informado (totalizando ${totalAvailableHours.toFixed(
+          2
+        )}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
+      );
+      return; // Interrompe o envio do formulário
+    }
+    console.log(payload);
     if (eventoInEditMode) {
       try {
-        await api.patch(`eventos/${eventoInEditMode}`, {
-          ...newEvento,
-          courseDate: formatDateForStorage(newEvento.courseDate),
-          completionDate: formatDateForStorage(newEvento.completionDate),
-          courseTime: formatTimeForStorage(newEvento.courseTime),
-          courseInterval: formatTimeForStorage(newEvento.courseInterval),
-        });
+        await api.patch(`eventos/${eventoInEditMode}`, payload);
 
         fetchEventos();
         setIsModalOpen(false);
@@ -194,9 +249,7 @@ const Eventos = () => {
     }
 
     try {
-      await api.post("Eventos", {
-        ...newEvento,
-      });
+      await api.post("Eventos", payload);
 
       fetchEventos();
       setIsModalOpen(false);
@@ -256,6 +309,7 @@ const Eventos = () => {
               if (!open) {
                 resetEventoState();
                 seteventoInEditMode("");
+                setSelectedDates([]);
               }
             }}
           >
@@ -372,30 +426,30 @@ const Eventos = () => {
                   </div>
                   <div className="space-y-3">
                     <div className="space-y-2">
-                      <Label htmlFor="courseDate">Data</Label>
-                      <Input
-                        id="courseDate"
-                        name="courseDate"
-                        type="text"
-                        placeholder="DD/MM/AAAA"
-                        value={newEvento.courseDate}
-                        onChange={handleDateChange}
-                        maxLength={10} // Evita mais de 10 caracteres
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="completionDate">Data de conclusão</Label>
-                      <Input
-                        id="completionDate"
-                        name="completionDate"
-                        type="text"
-                        placeholder="DD/MM/AAAA"
-                        value={newEvento.completionDate}
-                        onChange={handleDateChange}
-                        maxLength={10}
-                        required
-                      />
+                      <Label htmlFor="selectedDates">Datas do Evento</Label>
+                      <div>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="w-full flex justify-start"
+                            >
+                              Selecionar as datas
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DayPicker
+                              mode="multiple"
+                              locale={ptBR}
+                              selected={selectedDates}
+                              className="flex justify-center items-center self-center"
+                              onSelect={(dates) =>
+                                setSelectedDates(dates || [])
+                              }
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="courseTime">Horário</Label>
@@ -426,7 +480,8 @@ const Eventos = () => {
                           maxLength={5}
                         />
                       </div>
-
+                    </div>
+                    <div className="space-y-2">
                       <Label htmlFor="courseInterval">Intervalo</Label>
                       <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
                         <Input
@@ -467,6 +522,8 @@ const Eventos = () => {
                     onClick={() => {
                       setIsModalOpen(false);
                       resetEventoState();
+                      seteventoInEditMode("");
+                      setSelectedDates([]);
                     }}
                   >
                     Cancelar
