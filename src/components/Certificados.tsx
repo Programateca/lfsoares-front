@@ -187,10 +187,8 @@ const Certificados = () => {
       if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
       // if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
 
-      const dataRealizada1 = selectedEvento.courseDate.split("T")[0].split("-"); // [YYYY,MM,DD]
-      const dataRealizada2 = selectedEvento.completionDate
-        .split("T")[0]
-        .split("-"); // [HH,MM]
+      const datasRealizada = selectedEvento.courseDate;
+
       // let dataRealizada = "";
       // if (dataRealizada2.length < 2) {
       //   dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
@@ -202,8 +200,7 @@ const Certificados = () => {
       const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
 
       const dataRealizada = formatDataRealizada(
-        dataRealizada1,
-        dataRealizada2,
+        datasRealizada,
         selectedEvento.courseTime,
         selectedEvento.treinamento.courseHours
       );
@@ -242,7 +239,7 @@ const Certificados = () => {
       };
 
       const dados = [];
-      for (const pessoa of participantesIdentificador) {
+      for (const pessoa of selectedParticipantes) {
         const participanteEncontrado = participantes.find(
           (p) => p.id === pessoa.id
         );
@@ -475,11 +472,16 @@ const Certificados = () => {
                   </TableCell>
                   <TableCell className="py-2">
                     {certificado?.createdAt
-                      ? certificado.createdAt
-                          .split("T")[0]
-                          .split("-")
-                          .reverse()
-                          .join("/")
+                      ? new Date(certificado.createdAt).toLocaleString(
+                          "pt-BR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )
                       : "Data não disponível"}
                   </TableCell>
                   <TableCell className="text-end py-2">
