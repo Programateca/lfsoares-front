@@ -319,9 +319,9 @@ export const Identificadores = () => {
 
     const dataGerador = {
       // Header
-      header_revisao: user.name, // Nome de quem revisou
-      header_data: fullDateNow,
-      revisao: "00 FIXO",
+      header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
+      header_data: "14/02/2025",
+      revisao: "00",
 
       nome2: data?.assinatura[1]?.titulo ? data.assinatura[1].titulo + ":" : "",
       qualificacao_profissional2: instrutores.find(
