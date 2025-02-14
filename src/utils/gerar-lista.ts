@@ -6,7 +6,6 @@ export async function gerarLista(
   data: Record<string, string | number>,
   tipo: string
 ) {
-  console.log(data);
   const maxPages = 12;
   const participantsPerPage = 5;
   const requiredPages = Math.ceil(
@@ -53,10 +52,7 @@ export async function gerarLista(
   // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
     const regex = new RegExp(key, "g");
-    if (key.includes("p_")) {
-      console.log(`key: ${key}, value: ${value}`);
-      console.log(xmlText.match(regex));
-    }
+
     xmlText = xmlText.replace(regex, String(value));
   });
 
