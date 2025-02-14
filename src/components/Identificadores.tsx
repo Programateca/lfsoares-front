@@ -33,6 +33,7 @@ import CustomTable from "./CustomTable";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
+import { format, parseISO } from "date-fns";
 // import { ModelType } from "@/@types/ModeType";
 // import { getLastDocumentCode } from "@/utils/get-last-document-code";
 
@@ -90,6 +91,7 @@ export const Identificadores = () => {
     instrutorA: "Selecione o Instrutor",
     instrutorB: "Selecione o Instrutor",
   });
+  const [hasAfternoon, setHasAfternoon] = useState<boolean>(false);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -135,13 +137,25 @@ export const Identificadores = () => {
     instructor: "instrutorA" | "instrutorB",
     value: Period
   ) => {
+    // Se não há período da tarde, forçamos ambos os instrutores a usarem apenas o período da manhã.
+    if (!hasAfternoon) {
+      setValue(`${instructor}.${day}.periodo`, "manha");
+      // Opcional: se houver o outro instrutor, definimos também para ele.
+      setValue(
+        instructor === "instrutorA"
+          ? `instrutorB.${day}.periodo`
+          : `instrutorA.${day}.periodo`,
+        "manha"
+      );
+      return;
+    }
+
+    // Caso haja período da tarde, a lógica de alternância permanece:
     setDisabledFields((prev) => {
       const newState = { ...prev };
       if (!newState[day]) {
         newState[day] = { instrutorA: false, instrutorB: false };
       }
-
-      // Regras para o instrutor A
       if (instructor === "instrutorA") {
         if (value === "manha") {
           setValue(`instrutorB.${day}.periodo`, "tarde");
@@ -151,7 +165,6 @@ export const Identificadores = () => {
           setValue(`instrutorB.${day}.periodo`, undefined);
         }
       }
-      // Regras para o instrutor B
       if (instructor === "instrutorB") {
         if (value === "manha") {
           setValue(`instrutorA.${day}.periodo`, "tarde");
@@ -161,7 +174,6 @@ export const Identificadores = () => {
           setValue(`instrutorA.${day}.periodo`, undefined);
         }
       }
-
       return newState;
     });
   };
@@ -261,16 +273,26 @@ export const Identificadores = () => {
     /**
      * Formata as datas para manha e tarde
      */
-    const datas = selectedEvento?.courseTime;
+    const horas_aulas = selectedEvento?.courseTime;
     const intervalo = selectedEvento?.courseInterval;
     let manha_horario = "";
     let tarde_horario = "";
-    if (datas && intervalo) {
-      const [inicio, fim] = datas.split(" ÀS ");
+
+    if (horas_aulas && intervalo) {
+      const [inicio, fim] = horas_aulas.split(" ÀS ");
       const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
 
-      manha_horario = `${inicio} ÀS ${intervaloInicio}`;
-      tarde_horario = `${intervaloFim} ÀS ${fim}`;
+      // Se o final das aulas for igual ao início do intervalo,
+      // significa que não há aula à tarde.
+      if (fim === intervaloInicio) {
+        manha_horario = `${inicio} ÀS ${fim}`;
+        tarde_horario = ""; // ou alguma outra lógica se necessário
+        setHasAfternoon(false);
+      } else {
+        manha_horario = `${inicio} ÀS ${intervaloInicio}`;
+        tarde_horario = `${intervaloFim} ÀS ${fim}`;
+        setHasAfternoon(true);
+      }
     }
 
     const fullDateNow = new Date().toLocaleDateString("pt-BR", {
@@ -301,10 +323,13 @@ export const Identificadores = () => {
       header_data: fullDateNow,
       revisao: "00 FIXO",
 
-      nome2: "CLEDIONE JUNQUEIRA DE ABREU FIXO",
-      qualificação_profissional2:
-        "ENGENHEIRA ELETRICISTA \nENGENHEIRA DE SEGURANÇA DO TRABALHO FIXO",
-      registro_profissional2: "CREA N° 9949-MS FIXO",
+      nome2: data?.assinatura[1]?.titulo ? data.assinatura[1].titulo + ":" : "",
+      qualificacao_profissional2: instrutores.find(
+        (item) => item.id === data.assinatura[1]?.assinante
+      )?.qualificacaoProfissional,
+      registro_profissional2: instrutores.find(
+        (item) => item.id === data.assinatura[1]?.assinante
+      )?.registroProfissional,
 
       manha_horario,
       tarde_horario,
@@ -427,6 +452,29 @@ export const Identificadores = () => {
     inicializarFetch();
   }, [formsOpen]);
 
+  const getEventDisplay = (evento: Evento) => {
+    // Obter o id do evento
+    // Usar a primeira data do array de datas, se existir
+    const firstDate = evento.courseDate?.[0]
+      ? format(parseISO(evento.courseDate[0]), "dd/MM/yyyy")
+      : "";
+    const lastDate = evento.courseDate?.[evento.courseDate.length - 1]
+      ? format(
+          parseISO(evento.courseDate[evento.courseDate.length - 1]),
+          "dd/MM/yyyy"
+        )
+      : "";
+    const eventDates =
+      evento.courseDate?.length > 1
+        ? `Evento dos dias ${firstDate} até ${lastDate}`
+        : `Evento do dia ${firstDate}`;
+
+    // Obter o comprimento do evento
+    const eventLength = evento.courseDate?.length || 0;
+
+    return `${eventDates} - ${eventLength} dias`;
+  };
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -485,9 +533,9 @@ export const Identificadores = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Eventos</SelectLabel>
-                          {eventos.map((evento) => (
+                          {eventos.map((evento: Evento) => (
                             <SelectItem key={evento.id} value={evento.id}>
-                              {evento.treinamento.name}
+                              {getEventDisplay(evento)}
                             </SelectItem>
                           ))}
                         </SelectGroup>
