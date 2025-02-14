@@ -49,7 +49,6 @@ const Eventos = () => {
     courseLocation: "",
     courseLocation2: "",
     courseDate: "",
-    completionDate: "",
     courseTime: "",
     courseInterval: "",
   });
@@ -92,7 +91,6 @@ const Eventos = () => {
       courseLocation: "",
       courseLocation2: "",
       courseDate: "",
-      completionDate: "",
       courseTime: "",
       courseInterval: "",
     });
@@ -108,14 +106,14 @@ const Eventos = () => {
     setNewEvento((prev) => ({ ...prev, [name]: value }));
   };
 
-  const formatDateForInput = (date: string) => {
-    if (!date) return "";
-    try {
-      return format(parseISO(date), "dd/MM/yyyy", { locale: ptBR });
-    } catch {
-      return date;
-    }
-  };
+  // const formatDateForInput = (date: string) => {
+  //   if (!date) return "";
+  //   try {
+  //     return format(parseISO(date), "dd/MM/yyyy", { locale: ptBR });
+  //   } catch {
+  //     return date;
+  //   }
+  // };
 
   const formatTimeForInput = (time: string) => {
     if (!time) return ["", ""]; // Se não houver horário, retorna array vazio
@@ -275,11 +273,11 @@ const Eventos = () => {
         treinamento: { id: evento.treinamento.id },
         courseLocation: evento.courseLocation,
         courseLocation2: evento.courseLocation2,
-        courseDate: formatDateForInput(evento.courseDate),
-        completionDate: formatDateForInput(evento.completionDate),
+        courseDate: evento.courseDate.join(", "),
         courseTime: `${startTime} ÀS ${endTime}`, // Preenchendo corretamente o estado
         courseInterval: `${intervalStart} ÀS ${intervalEnd}`, // Preenchendo corretamente o estado
       });
+      setSelectedDates(evento.courseDate.map((date) => parseISO(date)));
     }
   };
 
