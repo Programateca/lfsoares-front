@@ -5,7 +5,7 @@ import { api } from "@/lib/axios";
 
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { BookUp2, CircleX, Loader2, Plus } from "lucide-react";
+import { BookUp2, CircleX, ImageDownIcon, Loader2, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -46,6 +46,7 @@ type NewCertificado = typeof defaultValues;
 
 const Certificados = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [loading, setLoading] = useState(false);
   const [documentosIdentificador, setIdentificadores] = useState<
     Identificador[]
@@ -55,7 +56,7 @@ const Certificados = () => {
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [certificados, setCertificados] = useState<any[]>([]);
 
@@ -78,6 +79,7 @@ const Certificados = () => {
       setEventos(eventosResp.data.data);
       const [certificados2aResp, certificados3aResp, certificados4aResp] =
         await Promise.all([
+          api.get("documentos/certificado-1a"),
           api.get("documentos/certificado-2a"),
           api.get("documentos/certificado-3a"),
           api.get("documentos/certificado-4a"),
@@ -136,6 +138,24 @@ const Certificados = () => {
         .filter((key) => key.startsWith("p_id") && dataIdentificador[key])
         .map((key) => ({ id: dataIdentificador[key].trim() }))
         .filter((p) => p.id);
+
+      const assinantesIdentificador = Object.keys(dataIdentificador)
+        .filter(
+          (key) => key.startsWith("assinante_titulo") && dataIdentificador[key]
+        )
+        .map((key) => ({ id: dataIdentificador[key].trim() }));
+      const assinantesIdentificadorNomes = Object.keys(dataIdentificador)
+        .filter(
+          (key) =>
+            key.startsWith("assinante") &&
+            !key.includes("titulo") &&
+            dataIdentificador[key]
+        )
+        .map((key) => {
+          const nome = dataIdentificador[key].split(" - ")[0].trim();
+          return { id: nome };
+        });
+
       const empresaIdentificador = dataIdentificador.empresa_id;
       const eventoIdentificador = dataIdentificador.evento_id;
       const newCertificado = {
@@ -144,6 +164,8 @@ const Certificados = () => {
         instrutor: { id: "" },
         empresa: { id: dataIdentificador.empresa_id },
         participantes: participantesIdentificador,
+        assinantes: assinantesIdentificador,
+        assinantes_nomes: assinantesIdentificadorNomes,
         // Frente
         nome_participante: "",
         portaria_treinamento: dataIdentificador.coursePortaria,
@@ -178,9 +200,7 @@ const Certificados = () => {
       const selectedEvento = eventos.find(
         (evento) => evento.id === eventoIdentificador
       );
-      // const selectedInstrutor = instrutores.find(
-      //   (instrutor) => instrutor.id === newCertificado?.instrutor?.id
-      // );
+
       if (!selectedParticipantes.length)
         throw new AppError("Selecione um participante", 404);
       if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
@@ -207,35 +227,83 @@ const Certificados = () => {
 
       const schema = {
         // Frente
-        nome_treinamento: selectedEvento.treinamento.name,
-        empresa: selectedEmpresa.name,
-        cnpj: selectedEmpresa.cnpj,
-        datas_realizadas: dataRealizada,
-        //        r_hora_1: timeRealizada1, // Hora de Realização
-        //        r_hora_2: timeRealizada2, // Minutos de Realização
-        e_dia: dataEmissao[2], // Dia de Emissão
-        e_mes: dataEmissao[1], // Mes de Emissão
-        carga_hora: selectedEvento.treinamento.courseHours,
-        local_emissao: newCertificado.local_emissao,
+        nome_treinamento: selectedEvento?.treinamento?.name || "",
+        cnpj: selectedEmpresa?.cnpj || "",
+        datas_realizadas: dataRealizada || "",
+        e_dia: dataEmissao[2] || "", // Dia de Emissão
+        e_mes: dataEmissao[1] || "", // Mes de Emissão
+        carga_hora: selectedEvento?.treinamento?.courseHours || "",
+        local_emissao: newCertificado.local_emissao || "",
         // Verso
-        // nome_instrutor: selectedInstrutor.name,
-        // matricula_instrutor: selectedInstrutor.matricula ?? "",
-        // formacao_instrutor: selectedInstrutor.qualificacaoProfissional ?? "",
-        // formacao_responsavel_tecnico: newCertificado.formacao_responsavel_tecnico,
-        // crea_responsavel_tecnico: newCertificado.crea_responsavel_tecnico,
-        titulo_treinamento: selectedEvento.treinamento.name,
-        portaria_treinamento: selectedEvento.treinamento.coursePortaria,
-        modalidade: selectedEvento.treinamento.courseModality,
-        metodologia: selectedEvento.treinamento.courseMethodology,
-        tipo_formacao: selectedEvento.treinamento.courseType,
-        carga_horaria: selectedEvento.treinamento.courseHours,
-        conteudo: newCertificado.conteudo_aplicado,
-        nome_responsavel_tecnico: newCertificado.nome_responsavel_tecnico,
-        local_treinamento: selectedEvento.courseLocation2
+        titulo_treinamento: selectedEvento?.treinamento?.name || "",
+        portaria_treinamento: selectedEvento?.treinamento?.coursePortaria || "",
+        modalidade: selectedEvento?.treinamento?.courseModality || "",
+        metodologia: selectedEvento?.treinamento?.courseMethodology || "",
+        tipo_formacao: selectedEvento?.treinamento?.courseType || "",
+        carga_horaria: selectedEvento?.treinamento?.courseHours || "",
+        conteudo: newCertificado.conteudo_aplicado || "",
+        nome_responsavel_tecnico: newCertificado.nome_responsavel_tecnico || "",
+        local_treinamento: selectedEvento?.courseLocation2
           ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
-          : selectedEvento.courseLocation,
-        contratante: selectedEmpresa.name,
-        contratante_cnpj: selectedEmpresa.cnpj,
+          : selectedEvento?.courseLocation || "",
+        contratante: selectedEmpresa?.name || "",
+        contratante_cnpj: selectedEmpresa?.cnpj || "",
+
+        assinatura_1: newCertificado?.assinantes[0]?.id || "",
+        assinatura_2: newCertificado?.assinantes[1]?.id || "",
+        assinatura_3: newCertificado?.assinantes[2]?.id || "",
+        assinatura_4: newCertificado?.assinantes[3]?.id || "",
+
+        nome1:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[0]?.id
+          )?.name || "",
+        nome2:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[1]?.id
+          )?.name || "",
+        nome3:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[2]?.id
+          )?.name || "",
+        nome4:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[3]?.id
+          )?.name || "",
+
+        qualificacao_profissional1:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[0]?.id
+          )?.qualificacaoProfissional || "",
+        qualificacao_profissional2:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[1]?.id
+          )?.qualificacaoProfissional || "",
+        qualificacao_profissional3:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[2]?.id
+          )?.qualificacaoProfissional || "",
+        qualificacao_profissional4:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[3]?.id
+          )?.qualificacaoProfissional || "",
+
+        registro_qualificacao1:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[0]?.id
+          )?.registroProfissional || "",
+        registro_qualificacao2:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[1]?.id
+          )?.registroProfissional || "",
+        registro_qualificacao3:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[2]?.id
+          )?.registroProfissional || "",
+        registro_qualificacao4:
+          instrutores.find(
+            (item) => item.name === newCertificado.assinantes_nomes[3]?.id
+          )?.registroProfissional || "",
       };
 
       const dados = [];
@@ -257,13 +325,21 @@ const Certificados = () => {
           codigo: newCertificado.codigo_certificado.shift().split(" ")[1],
         });
       }
+
+      const assinaturasCount = [
+        newCertificado?.assinantes[0]?.id,
+        newCertificado?.assinantes[1]?.id,
+        newCertificado?.assinantes[2]?.id,
+        newCertificado?.assinantes[3]?.id,
+      ].filter(Boolean).length;
+
       const newCertificados: DocumentData = {
         treinamento: selectedEvento.treinamento.name,
-        modelType: `certificado-${newCertificado.tipo_certificado}a`,
+        modelType: `certificado-${assinaturasCount}a`,
         documentData: JSON.stringify(dados),
         year: String(identificadorValido.certificateYear),
       };
-
+      console.log(schema);
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {
@@ -292,6 +368,21 @@ const Certificados = () => {
     >[];
 
     gerarCertificado(data, imageMap, modelType.split("-")[1]);
+  };
+
+  const handleDownload2 = async (
+    e: React.FormEvent,
+    certificados: DocumentData
+  ) => {
+    e.preventDefault();
+
+    const data = JSON.parse(certificados.documentData) as Record<
+      string,
+      string
+    >[];
+    gerarCertificado(data, imageMap, certificados.modelType.split("-")[1]);
+    setIsModalOpen2(false);
+    resetForm();
   };
 
   /**
@@ -350,62 +441,6 @@ const Certificados = () => {
                       required
                     />
                   </div>
-                  <div className="col-span-3 flex justify-between gap-4">
-                    <div className="space-y-2 col-span-3">
-                      <label
-                        htmlFor="image-upload"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Selecione a capa de frente
-                      </label>
-                      <input
-                        type="file"
-                        id="image-upload"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              setImageMap((prev) => ({
-                                ...prev,
-                                ["image1.jpeg"]: reader.result as ArrayBuffer,
-                              }));
-                            };
-                            reader.readAsArrayBuffer(file);
-                          }
-                        }}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      />
-                    </div>
-                    <div className="space-y-2 col-span-3">
-                      <label
-                        htmlFor="image-upload"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Selecione a capa do verso
-                      </label>
-                      <input
-                        type="file"
-                        id="image-upload"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                              setImageMap((prev) => ({
-                                ...prev,
-                                ["image2.jpeg"]: reader.result as ArrayBuffer,
-                              }));
-                            };
-                            reader.readAsArrayBuffer(file);
-                          }
-                        }}
-                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                      />
-                    </div>
-                  </div>
                 </div>
                 <div className="flex justify-end space-x-2 mt-5">
                   <Button
@@ -459,7 +494,6 @@ const Certificados = () => {
               certificados.map((certificado, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
-                    {index + 1}{" "}
                     {certificado?.modelType // Verifica se modelType existe
                       ? `CT${
                           certificado.modelType.split("-")[1] || ""
@@ -485,6 +519,101 @@ const Certificados = () => {
                       : "Data não disponível"}
                   </TableCell>
                   <TableCell className="text-end py-2">
+                    <Dialog open={isModalOpen2} onOpenChange={setIsModalOpen2}>
+                      <DialogTrigger asChild>
+                        <Button
+                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                          variant={"outline"}
+                        >
+                          <ImageDownIcon className="" />
+                          Alterar Capas
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-3xl">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Geração de Certificado com nova capa
+                          </DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={(e) => handleDownload2(e, certificado)}>
+                          <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
+                            <div className="col-span-3 flex justify-between gap-4">
+                              <div className="space-y-2 col-span-3">
+                                <label
+                                  htmlFor="image-upload"
+                                  className="block text-sm font-medium text-gray-700"
+                                >
+                                  Selecione a capa de frente
+                                </label>
+                                <input
+                                  type="file"
+                                  id="image-upload"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onload = () => {
+                                        setImageMap((prev) => ({
+                                          ...prev,
+                                          ["image1.jpeg"]:
+                                            reader.result as ArrayBuffer,
+                                        }));
+                                      };
+                                      reader.readAsArrayBuffer(file);
+                                    }
+                                  }}
+                                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                />
+                              </div>
+                              <div className="space-y-2 col-span-3">
+                                <label
+                                  htmlFor="image-upload"
+                                  className="block text-sm font-medium text-gray-700"
+                                >
+                                  Selecione a capa do verso
+                                </label>
+                                <input
+                                  type="file"
+                                  id="image-upload"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onload = () => {
+                                        setImageMap((prev) => ({
+                                          ...prev,
+                                          ["image2.jpeg"]:
+                                            reader.result as ArrayBuffer,
+                                        }));
+                                      };
+                                      reader.readAsArrayBuffer(file);
+                                    }
+                                  }}
+                                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-end space-x-2 mt-5">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => {
+                                setIsModalOpen2(false);
+                                resetForm();
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button type="submit" className="w-28">
+                              Gerar
+                            </Button>
+                          </div>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
                     <Button
                       variant={"outline"}
                       className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
