@@ -1,6 +1,3 @@
-import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import Docxtemplater from "docxtemplater";
-import expressionParser from "docxtemplater/expressions";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
@@ -27,25 +24,29 @@ export async function gerarLista(
       removeTr: data.tipo_lista !== "lista-dia-todo",
       removeTc: false,
     },
-    countRemovedPages, // removalTableLimit
-    13 * 3, // removalParagraphLimit
-    9 * 7, // removalTrLimit
+    countRemovedPages,
+    13 * 3,
+    9 * 7,
     1
   );
 
-  const doc = new Docxtemplater(zip, {
-    delimiters: { start: "[", end: "]" },
-    // paragraphLoop: true,
-    // linebreaks: true,
-    parser: expressionParser,
+  // Replace variables in the document
+  let xmlText = zip.files["word/document.xml"].asText();
+
+  // Replace each variable in the XML
+  Object.entries(data).forEach(([key, value]) => {
+    const regex = new RegExp(`\\[${key}\\]`, "g");
+    xmlText = xmlText.replace(regex, String(value));
   });
-  doc.render(data);
+
+  // Update the XML in the zip
+  zip.file("word/document.xml", xmlText);
 
   const out = zip.generate({
     type: "blob",
     mimeType:
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  }); //Output the document using Data-URI
+  });
   saveAs(out, "output.docx");
 }
 
