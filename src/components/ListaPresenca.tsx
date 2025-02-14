@@ -39,6 +39,7 @@ import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
+import toast from "react-hot-toast";
 // import { DocxElementRemover } from "@/utils/docx-element-remover";
 // import { ModelType } from "@/@types/ModeType";
 
@@ -121,7 +122,7 @@ import { IdentificadorData } from "@/@types/IdentificadorData";
 //   };
 // }
 
-interface FormData {
+export interface ListaFormData {
   documento_identificador: string;
   tipo_lista: string;
   cidade: string;
@@ -137,10 +138,9 @@ const ListaPresenca = () => {
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [documentos, setDocumentos] = useState<any[]>([]);
-  const { control, handleSubmit, reset, setValue } = useForm<FormData>();
+  const { control, handleSubmit, reset, setValue } = useForm<ListaFormData>();
 
-  const onSubmit = async (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: ListaFormData) => {
     const identificadorSelecionado = data.documento_identificador;
     const identificadorValido = identificadores.find(
       (doc) => doc.id === identificadorSelecionado
@@ -151,7 +151,7 @@ const ListaPresenca = () => {
         identificadorValido.identificadorData
       );
 
-      const empresaCnpj = empresas.find(
+      const empresaCNPJ = empresas.find(
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
 
@@ -164,10 +164,10 @@ const ListaPresenca = () => {
         intervalo: dataIdentificador.intervalo,
         modulo: dataIdentificador.mudar_modulo,
         endereco: dataIdentificador.endereco,
-        nome_instrutor: dataIdentificador.assinante1,
+        instrutor: dataIdentificador.assinante1,
         cidade: data.cidade,
         nome_empresa: dataIdentificador.empresa,
-        cpnj: empresaCnpj,
+        cnpj: empresaCNPJ,
       };
 
       const pessoas: { id: string; name: string }[] = [];
@@ -181,7 +181,6 @@ const ListaPresenca = () => {
       }
 
       const participantes = pessoas.map((pessoa) => pessoa.id);
-
       participantes.forEach((participanteId, index) => {
         schema[`participante_${index + 1}`] =
           pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
@@ -191,11 +190,32 @@ const ListaPresenca = () => {
         schema[`participante_${i + 1}`] = "";
       }
 
-      // const filteredSchema: Record<string, string> = Object.fromEntries(
-      //   Object.entries(schema).filter(([_, value]) => value !== undefined)
-      // ) as Record<string, string>;
+      // gerarLista(
+      //   { ...schema, numberOfParticipantes: participantes.length },
+      //   data.tipo_lista
+      // );
+
+      const newLista = {
+        year: new Date().getFullYear().toString(),
+        modelType: data.tipo_lista,
+        documentData: JSON.stringify({
+          ...schema,
+          numberOfParticipantes: participantes.length,
+          tipo_lista: data.tipo_lista,
+        }),
+      };
+
+      setIsModalOpen(false);
+      const result = await api.post("documentos", newLista).catch((error) => {
+        console.error(error);
+        toast.error("Erro ao gerar lista de presença");
+      });
+
+      if (result && result.status === 201) {
+        toast.success("Lista de presença gerada com sucesso");
+      }
     } else {
-      console.error("Identificador inválido");
+      toast.error("Identificador inválido");
     }
   };
 
@@ -216,34 +236,16 @@ const ListaPresenca = () => {
   };
 
   const handleInputChange = (name: string, value: string) => {
-    setValue(name as keyof FormData, value);
+    setValue(name as keyof ListaFormData, value);
   };
 
   const handleDownload = async (documentoId: string) => {
-    const response = await api.get(`documentos`);
-    const documentoFiltrado = response.data.data.find(
+    const documentoFiltrado = documentos.find(
       (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
-    return data;
-    const participantes = JSON.parse(data.participantes);
-    const maxPages = 12;
-    const participantsPerPage = 5;
-    const requiredPages = Math.ceil(participantes.length / participantsPerPage);
-    const countRemovedPages = maxPages - requiredPages;
 
-    gerarLista(
-      data,
-      data.tipo_lista === "lista-dia-todo"
-        ? {
-            removeTableCount: countRemovedPages,
-            removeParagraphCount: countRemovedPages,
-          }
-        : {
-            removeTableRowCount: countRemovedPages * 7,
-            removeParagraphCount: 2,
-          }
-    );
+    gerarLista(data, data.tipo_lista);
   };
 
   useEffect(() => {

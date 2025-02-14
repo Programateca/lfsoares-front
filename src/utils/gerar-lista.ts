@@ -1,124 +1,47 @@
+import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import Docxtemplater from "docxtemplater";
 import expressionParser from "docxtemplater/expressions";
 import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
-// import { loadFile } from "./load-file";
 
 export async function gerarLista(
-  data: Record<string, string>,
-  options: {
-    removeTableCount?: number;
-    removeParagraphCount?: number;
-    removeTableRowCount?: number;
-    removeSpecificTables?: number[];
-    removeSpecificParagraphs?: number[];
-    removeSpecificTableRows?: number[];
-    filterTablesByContent?: (tableContent: string) => boolean;
-    filterParagraphsByContent?: (paragraphContent: string) => boolean;
-    filterTableRowsByContent?: (rowContent: string) => boolean;
-  } = {}
+  data: Record<string, string | number>,
+  tipo: string
 ) {
-  const fileArrayBuffer = await loadFile("/templates/lista-meio-periodo.docx");
+  const maxPages = 12;
+  const participantsPerPage = 5;
+  const requiredPages = Math.ceil(
+    Number(data.numberOfParticipantes) / participantsPerPage
+  );
+  const countRemovedPages = maxPages - requiredPages;
 
+  const fileArrayBuffer = await loadFile(`/templates/${tipo}.docx`);
   const zip = new PizZip(fileArrayBuffer);
 
-  // Extract the document.xml
-  const documentXml = zip.file("word/document.xml")!.asText();
-
-  // Parse the XML
-  const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(documentXml, "text/xml");
-
-  // Remove first N tables
-  if (options.removeTableCount) {
-    const tables = xmlDoc.getElementsByTagName("w:tbl");
-    const tablesArray = Array.from(tables);
-    const tablesToRemove = tablesArray.slice(0, options.removeTableCount);
-
-    tablesToRemove.forEach((table) => {
-      if (table.parentNode) {
-        table.parentNode.removeChild(table);
-      }
-    });
-  }
-
-  // Remove first N paragraphs
-  if (options.removeParagraphCount) {
-    const paragraphs = xmlDoc.getElementsByTagName("w:p");
-    const paragraphsArray = Array.from(paragraphs);
-    const paragraphsToRemove = paragraphsArray.slice(
-      0,
-      options.removeParagraphCount
-    );
-
-    paragraphsToRemove.forEach((paragraph) => {
-      if (paragraph.parentNode) {
-        paragraph.parentNode.removeChild(paragraph);
-      }
-    });
-  }
-
-  // Remove first N table rows
-  if (options.removeTableRowCount) {
-    const tableRows = xmlDoc.getElementsByTagName("w:tr");
-    const tableRowsArray = Array.from(tableRows);
-    const rowsToRemove = tableRowsArray.slice(0, options.removeTableRowCount);
-
-    rowsToRemove.forEach((row) => {
-      if (row.parentNode) {
-        row.parentNode.removeChild(row);
-      }
-    });
-  }
-
-  // Remove specific table rows
-  if (options.removeSpecificTableRows) {
-    const tableRows = xmlDoc.getElementsByTagName("w:tr");
-    const tableRowsArray = Array.from(tableRows);
-
-    options.removeSpecificTableRows
-      .sort((a, b) => b - a) // Remove from end to avoid index shifting
-      .forEach((index) => {
-        if (index >= 0 && index < tableRowsArray.length) {
-          const row = tableRowsArray[index];
-          if (row.parentNode) {
-            row.parentNode.removeChild(row);
-          }
-        }
-      });
-  }
-
-  // Filter table rows by content
-  if (options.filterTableRowsByContent) {
-    const tableRows = xmlDoc.getElementsByTagName("w:tr");
-    const tableRowsArray = Array.from(tableRows);
-
-    tableRowsArray.forEach((row) => {
-      const rowText = extractElementText(
-        row as unknown as import("@xmldom/xmldom").Element
-      );
-      if (!options.filterTableRowsByContent!(rowText)) {
-        if (row.parentNode) {
-          row.parentNode.removeChild(row);
-        }
-      }
-    });
-  }
-
-  // Serialize the modified XML
-  const serializer = new XMLSerializer();
-  const modifiedXml = serializer.serializeToString(xmlDoc);
-  zip.file("word/document.xml", modifiedXml);
+  await removeElementsFromDocx(
+    zip,
+    {
+      removeTable: data.tipo_lista === "lista-dia-todo",
+      removeParagraph: true,
+      removeTr: data.tipo_lista !== "lista-dia-todo",
+      removeTc: false,
+    },
+    countRemovedPages, // removalTableLimit
+    13 * 3, // removalParagraphLimit
+    9 * 7, // removalTrLimit
+    1
+  );
 
   const doc = new Docxtemplater(zip, {
     delimiters: { start: "[", end: "]" },
-    paragraphLoop: true,
-    linebreaks: true,
+    // paragraphLoop: true,
+    // linebreaks: true,
     parser: expressionParser,
   });
   doc.render(data);
-  const out = doc.getZip().generate({
+
+  const out = zip.generate({
     type: "blob",
     mimeType:
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -126,13 +49,121 @@ export async function gerarLista(
   saveAs(out, "output.docx");
 }
 
-function extractElementText(element: import("@xmldom/xmldom").Element): string {
-  const textElements = element.getElementsByTagName("w:t");
-  let elementText = "";
+interface RemovalOptions {
+  removeTable: boolean;
+  removeParagraph: boolean;
+  removeTr: boolean;
+  removeTc: boolean;
+}
 
-  for (let i = 0; i < textElements.length; i++) {
-    elementText += textElements[i].textContent || "";
+async function removeElementsFromDocx(
+  zip: PizZip,
+  // outputFilePath: string,
+  options: RemovalOptions,
+  removalTableLimit: number,
+  removalParagraphLimit: number,
+  removalTrLimit: number,
+  removalTcLimit: number
+) {
+  // Lê o arquivo DOCX e descompacta-o
+  // const fileArrayBuffer = await loadFile("/templates/lista-meio-periodo.docx");
+  // const zip = new PizZip(fileArrayBuffer);
+
+  // Carrega e parseia o document.xml
+  const xmlText = zip.files["word/document.xml"].asText();
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+
+  // Obtém o elemento <w:body>
+  const body = xmlDoc.getElementsByTagName("w:body")[0];
+  if (!body) {
+    throw new Error("Não foi encontrado <w:body> no document.xml");
   }
 
-  return elementText.trim();
+  // Remoção de parágrafos diretamente no <w:body>
+  if (options.removeParagraph) {
+    // Cria array reverso dos filhos para não alterar os índices durante a remoção.
+    const paragraphs = Array.from(body.childNodes).filter(
+      (node) => node.nodeName === "w:p"
+    );
+    let removedParagraphs = 0;
+    for (
+      let i = paragraphs.length - 1;
+      i >= 0 && removedParagraphs < removalParagraphLimit;
+      i--
+    ) {
+      const node = paragraphs[i];
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+        removedParagraphs++;
+      }
+    }
+  }
+
+  // Remoção de tabelas diretamente no <w:body>
+  if (options.removeTable) {
+    const tables = Array.from(body.childNodes).filter(
+      (node) => node.nodeName === "w:tbl"
+    );
+    let removedTables = 0;
+    for (
+      let i = tables.length - 1;
+      i >= 0 && removedTables < removalTableLimit;
+      i--
+    ) {
+      const node = tables[i];
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+        removedTables++;
+      }
+    }
+  }
+
+  // Remoção de linhas de tabela (<w:tr>) em todo o documento
+  if (options.removeTr) {
+    const trNodes = Array.from(xmlDoc.getElementsByTagName("w:tr"));
+    let removedTr = 0;
+    // Remover da lista reversa para evitar problemas de índice
+    for (
+      let i = trNodes.length - 1;
+      i >= 0 && removedTr < removalTrLimit;
+      i--
+    ) {
+      const node = trNodes[i];
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+        removedTr++;
+      }
+    }
+  }
+
+  // Remoção de células de tabela (<w:tc>) em todo o documento
+  if (options.removeTc) {
+    const tcNodes = Array.from(xmlDoc.getElementsByTagName("w:tc"));
+    let removedTc = 0;
+    for (
+      let i = tcNodes.length - 1;
+      i >= 0 && removedTc < removalTcLimit;
+      i--
+    ) {
+      const node = tcNodes[i];
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+        removedTc++;
+      }
+    }
+  }
+
+  // Serializa o XML atualizado e o coloca de volta no zip
+  const serializer = new XMLSerializer();
+  const newXml = serializer.serializeToString(xmlDoc);
+  zip.file("word/document.xml", newXml);
+
+  // Gera o documento atualizado e escreve em disco
+  zip.generate({
+    type: "blob",
+    compression: "DEFLATE",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  });
 }
