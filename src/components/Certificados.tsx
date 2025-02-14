@@ -210,7 +210,7 @@ const Certificados = () => {
         nome_treinamento: selectedEvento.treinamento.name,
         empresa: selectedEmpresa.name,
         cnpj: selectedEmpresa.cnpj,
-        dataRealizada: dataRealizada,
+        datas_realizadas: dataRealizada,
         //        r_hora_1: timeRealizada1, // Hora de Realização
         //        r_hora_2: timeRealizada2, // Minutos de Realização
         e_dia: dataEmissao[2], // Dia de Emissão
