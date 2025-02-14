@@ -293,6 +293,29 @@ const Eventos = () => {
     } catch (error) {}
   };
 
+  const getEventDisplay = (evento: Evento) => {
+    // Obter o id do evento
+    // Usar a primeira data do array de datas, se existir
+    const firstDate = evento.courseDate?.[0]
+      ? format(parseISO(evento.courseDate[0]), "dd/MM/yyyy")
+      : "";
+    const lastDate = evento.courseDate?.[evento.courseDate.length - 1]
+      ? format(
+          parseISO(evento.courseDate[evento.courseDate.length - 1]),
+          "dd/MM/yyyy"
+        )
+      : "";
+    const eventDates =
+      evento.courseDate?.length > 1
+        ? `Evento dos dias ${firstDate} até ${lastDate}`
+        : `Evento do dia ${firstDate}`;
+
+    // Obter o comprimento do evento
+    const eventLength = evento.courseDate?.length || 0;
+
+    return `${eventDates} - ${eventLength} dias`;
+  };
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -534,11 +557,16 @@ const Eventos = () => {
         </div>
         <CustomTable
           columns={[
+            {
+              key: "evento",
+              label: "Evento",
+              render: (_, rowData) => getEventDisplay(rowData),
+            },
             { key: "treinamento.name", label: "Treinamento" },
             { key: "empresa.name", label: "Contratante" },
             {
               key: "createdAt",
-              label: "Data",
+              label: "Data de Criação",
               render: (value) => new Date(value).toLocaleDateString("pt-BR"),
             },
           ]}
