@@ -124,17 +124,17 @@ const Eventos = () => {
     return [times[0] || "", times[1] || ""]; // Retorna os dois valores corretamente
   };
 
-  const formatDateForStorage = (date: string) => {
-    try {
-      const parsedDate = parse(date, "dd/MM/yyyy", new Date());
-      if (isValid(parsedDate)) {
-        return format(parsedDate, "yyyy-MM-dd");
-      }
-      return date;
-    } catch {
-      return date;
-    }
-  };
+  // const formatDateForStorage = (date: string) => {
+  //   try {
+  //     const parsedDate = parse(date, "dd/MM/yyyy", new Date());
+  //     if (isValid(parsedDate)) {
+  //       return format(parsedDate, "yyyy-MM-dd");
+  //     }
+  //     return date;
+  //   } catch {
+  //     return date;
+  //   }
+  // };
 
   const formatTimeForStorage = (time: string) => {
     try {
