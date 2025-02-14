@@ -34,6 +34,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { DocumentData } from "@/@types/DocumentData";
 import toast from "react-hot-toast";
+import { formatDataRealizada } from "@/utils/formatDataRealizada";
 
 const defaultValues = {
   documento_identificador: "",
@@ -190,24 +191,31 @@ const Certificados = () => {
       const dataRealizada2 = selectedEvento.completionDate
         .split("T")[0]
         .split("-"); // [HH,MM]
-      let dataRealizada = "";
-      if (dataRealizada2.length < 2) {
-        dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
-      } else {
-        dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
-      }
-      const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
-      const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
+      // let dataRealizada = "";
+      // if (dataRealizada2.length < 2) {
+      //   dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
+      // } else {
+      //   dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
+      // }
+      // const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
+      // const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
       const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
+
+      const dataRealizada = formatDataRealizada(
+        dataRealizada1,
+        dataRealizada2,
+        selectedEvento.courseTime,
+        selectedEvento.treinamento.courseHours
+      );
 
       const schema = {
         // Frente
         nome_treinamento: selectedEvento.treinamento.name,
         empresa: selectedEmpresa.name,
         cnpj: selectedEmpresa.cnpj,
-        data_realizada: dataRealizada,
-        r_hora_1: timeRealizada1, // Hora de Realização
-        r_hora_2: timeRealizada2, // Minutos de Realização
+        dataRealizada: dataRealizada,
+        //        r_hora_1: timeRealizada1, // Hora de Realização
+        //        r_hora_2: timeRealizada2, // Minutos de Realização
         e_dia: dataEmissao[2], // Dia de Emissão
         e_mes: dataEmissao[1], // Mes de Emissão
         carga_hora: selectedEvento.treinamento.courseHours,
@@ -256,11 +264,8 @@ const Certificados = () => {
         treinamento: selectedEvento.treinamento.name,
         modelType: `certificado-${newCertificado.tipo_certificado}a`,
         documentData: JSON.stringify(dados),
-        // certificateCode: 10,
         year: String(identificadorValido.certificateYear),
       };
-
-      // const certificadosData = JSON.parse(newCertificados.documentData);
 
       const saveResponse = await api.post("documentos", newCertificados);
 
@@ -271,7 +276,6 @@ const Certificados = () => {
       } else {
         toast.error("Erro ao gerar identificador!");
       }
-      // Continue com o resto do código...
     } catch (error) {
       console.error("Erro ao fazer parse do documentData:", error);
       throw new AppError("Erro ao processar dados do documento", 400);
@@ -285,16 +289,12 @@ const Certificados = () => {
     certificados: DocumentData,
     modelType: string
   ) => {
-    // console.log("TESTE");
     const data = JSON.parse(certificados.documentData) as Record<
       string,
       string
     >[];
-    // console.log(data);
-    // return;
-    // data.forEach((certificado: Record<string, string>) => {
+
     gerarCertificado(data, imageMap, modelType.split("-")[1]);
-    // });
   };
 
   /**
