@@ -207,8 +207,22 @@ export function calcularPaginas(
 
 export function formatarDatas(dates: string[]): string {
   const formatado: Record<string, string[]> = {};
+
   dates.forEach((date) => {
-    const [day, month, year] = date.split("/");
+    let day: string, month: string, year: string;
+
+    if (date.includes("-")) {
+      // Se estiver no formato "yyyy-MM-dd"
+      const [y, m, d] = date.split("-");
+      year = y;
+      month = m;
+      day = d;
+    } else {
+      // Assume o formato "dd/MM/yyyy"
+      [day, month, year] = date.split("/");
+    }
+
+    // Converter para o formato "dd/MM/yyyy" se necessário (aqui só usamos month e ano)
     const monthYear = `${month}/${year.slice(2)}`;
     if (!formatado[monthYear]) {
       formatado[monthYear] = [];
@@ -289,7 +303,6 @@ type Dias = {
 };
 
 export function formatDays(dias: Dias): EventSchedule {
-  console.log("Formatando dias...", dias);
   return {
     instrutorA: Object.entries(dias.instrutorA).map(([dia, { periodo }]) => ({
       dia,

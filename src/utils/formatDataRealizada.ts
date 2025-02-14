@@ -1,63 +1,33 @@
 /**
  * Formata dinamicamente o trecho de data e horário de realização do treinamento,
- * distribuindo a carga horária total pelos dias do período e agrupando dias com o mesmo horário final.
+ * distribuindo a carga horária total pelos dias informados e agrupando dias com o mesmo horário final.
  *
- * @param courseDate - Data de início ("YYYY-MM-DD" ou array ["YYYY", "MM", "DD"])
- * @param completionDate - Data de término ("YYYY-MM-DD" ou array ["YYYY", "MM", "DD"])
+ * @param courseDate - Array de datas (como string, em formato "dd/MM/yyyy" ou "yyyy-MM-dd")
  * @param courseTime - Horário padrão do dia no formato "HH:MM ÀS HH:MM"
  * @param courseHours - Carga horária total do treinamento (em horas, como string, ex: "20")
- * @returns Texto formatado dinamicamente conforme a distribuição das horas e agrupamento dos dias.
+ * @returns Texto formatado conforme a distribuição das horas e agrupamento dos dias.
  */
 export function formatDataRealizada(
   courseDate: string | string[],
-  completionDate: string | string[],
   courseTime: string,
   courseHours: string
 ): string {
-  console.log({
-    courseDate,
-    completionDate,
-    courseTime,
-    courseHours,
-  });
-  // Função auxiliar para construir uma data sem problemas de fuso horário.
-  function buildDate(dateInput: string | string[]): Date {
-    // Se for array:
-    if (Array.isArray(dateInput)) {
-      // Se o array tem apenas um item e esse item contém "/", assumimos que está no formato dd/MM/yyyy
-      if (dateInput.length === 1 && dateInput[0].includes("/")) {
-        const [day, month, year] = dateInput[0].split("/");
-        return new Date(Number(year), Number(month) - 1, Number(day));
-      }
-      // Caso contrário, assume que está no formato [YYYY, MM, DD]
-      const [year, month, day] = dateInput;
+  // Converte o parâmetro para um array de strings, caso seja uma única string.
+  let dateStrings: string[] =
+    typeof courseDate === "string" ? [courseDate] : courseDate;
+
+  // Converte cada data para um objeto Date, considerando os formatos "dd/MM/yyyy" ou "yyyy-MM-dd"
+  const dates: Date[] = dateStrings.map((d) => {
+    if (d.includes("/")) {
+      const [day, month, year] = d.split("/");
       return new Date(Number(year), Number(month) - 1, Number(day));
     }
-    // Se for string
-    if (dateInput.includes("/")) {
-      // Formato dd/MM/yyyy
-      const [day, month, year] = dateInput.split("/");
-      return new Date(Number(year), Number(month) - 1, Number(day));
-    }
-    // Caso padrão: assume o formato "YYYY-MM-DD"
-    const [year, month, day] = dateInput.split("-");
+    const [year, month, day] = d.split("-");
     return new Date(Number(year), Number(month) - 1, Number(day));
-  }
+  });
 
-  const startDateObj = buildDate(courseDate);
-  const endDateObj = buildDate(completionDate);
-
-  // Calcula o número de dias no período (inclusivo)
-  const diffTime = endDateObj.getTime() - startDateObj.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 3600 * 24)) + 1;
-
-  // Gera um array com todas as datas do período
-  let dates: Date[] = [];
-  for (let i = 0; i < diffDays; i++) {
-    let d = new Date(startDateObj);
-    d.setDate(d.getDate() + i);
-    dates.push(d);
-  }
+  // Ordena as datas em ordem crescente
+  dates.sort((a, b) => a.getTime() - b.getTime());
 
   // Extrai os horários padrão do dia
   const [startTimeStr, fullEndTimeStr] = courseTime
@@ -72,16 +42,14 @@ export function formatDataRealizada(
   const defaultDayDuration = (endTimeMinutes - startTimeMinutes) / 60;
   let remainingHours = Number(courseHours);
 
-  // Distribui as horas entre os dias disponíveis
+  // Distribui as horas entre os dias informados
   type DayAssignment = { date: Date; assignedHours: number };
   let assignments: DayAssignment[] = [];
   for (let i = 0; i < dates.length; i++) {
-    let assigned: number;
-    if (remainingHours >= defaultDayDuration) {
-      assigned = defaultDayDuration;
-    } else {
-      assigned = remainingHours;
-    }
+    const assigned =
+      remainingHours >= defaultDayDuration
+        ? defaultDayDuration
+        : remainingHours;
     assignments.push({ date: dates[i], assignedHours: assigned });
     remainingHours -= assigned;
     if (remainingHours <= 0) break;
@@ -129,35 +97,27 @@ export function formatDataRealizada(
     const day = a.date.getDate();
     const monthName = monthNames[a.date.getMonth()];
     const year = a.date.getFullYear();
-    if (groups.length === 0) {
+    // Se o grupo atual tem mesmo horário final, mês e ano, adiciona o dia, senão cria um novo grupo
+    const lastGroup = groups[groups.length - 1];
+    if (
+      lastGroup &&
+      lastGroup.computedEndTime === a.computedEndTime &&
+      lastGroup.month === monthName &&
+      lastGroup.year === year
+    ) {
+      lastGroup.days.push(day);
+    } else {
       groups.push({
         days: [day],
         month: monthName,
         year,
         computedEndTime: a.computedEndTime,
       });
-    } else {
-      const lastGroup = groups[groups.length - 1];
-      if (
-        lastGroup.computedEndTime === a.computedEndTime &&
-        lastGroup.month === monthName &&
-        lastGroup.year === year
-      ) {
-        lastGroup.days.push(day);
-      } else {
-        groups.push({
-          days: [day],
-          month: monthName,
-          year,
-          computedEndTime: a.computedEndTime,
-        });
-      }
     }
   });
 
   // Função auxiliar para formatar cada grupo
   function formatGroup(g: Group): string {
-    console.log(g);
     if (g.days.length === 1) {
       return `no dia ${g.days[0]} de ${g.month} de ${g.year}, das ${startTimeStr} às ${g.computedEndTime}`;
     } else {
