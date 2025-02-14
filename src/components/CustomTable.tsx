@@ -173,13 +173,13 @@ const CustomTable = <T extends { id: string | number }>({
                 }
               >
                 {columns.map((col) => (
-                  <TableCell key={col.key}>
+                  <TableCell key={col.key} className="whitespace-nowrap">
                     {col.render
                       ? col.render(getValue(item, col.key), item)
                       : getValue(item, col.key)}
                   </TableCell>
                 ))}
-                <TableCell className="text-end space-x-2">
+                <TableCell className="text-end space-x-2 whitespace-nowrap">
                   {onEdit && (
                     <Button
                       onClick={() => onEdit(item.id)}
