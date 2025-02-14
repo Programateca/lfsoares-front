@@ -53,6 +53,10 @@ export async function gerarLista(
   // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
     const regex = new RegExp(key, "g");
+    if (key.includes("p_")) {
+      console.log(`key: ${key}, value: ${value}`);
+      console.log(xmlText.match(regex));
+    }
     xmlText = xmlText.replace(regex, String(value));
   });
 

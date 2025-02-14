@@ -182,12 +182,15 @@ const ListaPresenca = () => {
 
       const participantes = pessoas.map((pessoa) => pessoa.id);
       participantes.forEach((participanteId, index) => {
-        schema[`p_${index + 1}`] =
+        const key = `p_${(index + 1).toString().padStart(2, "0")}`;
+        schema[key] =
           pessoas.find((pessoa) => pessoa.id === participanteId)?.name || "";
       });
 
-      for (let i = participantes.length; i < 60; i++) {
-        schema[`p_${i + 1}`] = " ";
+      const requiredFields = Math.ceil(participantes.length / 5) * 5;
+      for (let i = participantes.length; i < requiredFields; i++) {
+        const key = `p_${(i + 1).toString().padStart(2, "0")}`;
+        schema[key] = " ";
       }
 
       // gerarLista(
