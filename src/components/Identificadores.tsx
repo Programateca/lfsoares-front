@@ -323,7 +323,11 @@ export const Identificadores = () => {
       header_data: "14/02/2025",
       revisao: "00",
 
-      nome2: data?.assinatura[1]?.titulo ? data.assinatura[1].titulo + ":" : "",
+      titulo2: data?.assinatura[1]?.titulo ? data.assinatura[1].titulo : "",
+      nome2: data?.assinatura[1]?.assinante
+        ? instrutores.find((item) => item.id === data.assinatura[1]?.assinante)
+            ?.name + ":"
+        : "",
       qualificacao_profissional2: instrutores.find(
         (item) => item.id === data.assinatura[1]?.assinante
       )?.qualificacaoProfissional,
@@ -356,7 +360,7 @@ export const Identificadores = () => {
       evento_id: selectedEvento.id,
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
-      carga_horaria: selectedEvento.treinamento.courseHours,
+      carga_horaria: `${selectedEvento.treinamento.courseHours} HORAS/AULA`,
       intervalo: selectedEvento.courseInterval,
       endereco: selectedEvento.courseLocation,
       empresa: selectedEvento.empresa.name,
@@ -378,18 +382,58 @@ export const Identificadores = () => {
         ? data.assinatura[3].titulo + ":"
         : "",
 
-      assinante1:
-        instrutores.find((item) => item.id === data.assinatura[0]?.assinante)
-          ?.name || "",
-      assinante2:
-        instrutores.find((item) => item.id === data.assinatura[1]?.assinante)
-          ?.name || "",
-      assinante3:
-        instrutores.find((item) => item.id === data.assinatura[2]?.assinante)
-          ?.name || "",
-      assinante4:
-        instrutores.find((item) => item.id === data.assinatura[3]?.assinante)
-          ?.name || "",
+      assinante1: instrutores.find(
+        (item) => item.id === data.assinatura[0]?.assinante
+      )
+        ? `${
+            instrutores.find(
+              (item) => item.id === data.assinatura[0]?.assinante
+            )?.name
+          } - ${
+            instrutores.find(
+              (item) => item.id === data.assinatura[0]?.assinante
+            )?.registroProfissional
+          }`
+        : "",
+      assinante2: instrutores.find(
+        (item) => item.id === data.assinatura[1]?.assinante
+      )
+        ? `${
+            instrutores.find(
+              (item) => item.id === data.assinatura[1]?.assinante
+            )?.name
+          } - ${
+            instrutores.find(
+              (item) => item.id === data.assinatura[1]?.assinante
+            )?.registroProfissional
+          }`
+        : "",
+      assinante3: instrutores.find(
+        (item) => item.id === data.assinatura[2]?.assinante
+      )
+        ? `${
+            instrutores.find(
+              (item) => item.id === data.assinatura[2]?.assinante
+            )?.name
+          } - ${
+            instrutores.find(
+              (item) => item.id === data.assinatura[2]?.assinante
+            )?.registroProfissional
+          }`
+        : "",
+      assinante4: instrutores.find(
+        (item) => item.id === data.assinatura[3]?.assinante
+      )
+        ? `${
+            instrutores.find(
+              (item) => item.id === data.assinatura[3]?.assinante
+            )?.name
+          } - ${
+            instrutores.find(
+              (item) => item.id === data.assinatura[3]?.assinante
+            )?.registroProfissional
+          }`
+        : "",
 
       instrutor_a: instrutoresSelecionados.instrutorA,
       instrutor_b: instrutoresSelecionados.instrutorB,
@@ -427,7 +471,8 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-
+    console.log(dataGerador);
+    return;
     const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
