@@ -8,7 +8,7 @@ export interface Evento {
   treinamento: Treinamento;
   courseLocation: string;
   courseLocation2: string;
-  courseDate: string;
+  courseDate: string[];
   completionDate: string;
   courseTime: string;
   courseInterval: string;
