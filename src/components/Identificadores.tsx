@@ -25,7 +25,6 @@ import { MultiSelect } from "@/components/multi-select";
 import {
   formatarDatas,
   formatDays,
-  gerarDias,
   gerarIdentificador,
   Period,
 } from "@/utils/identificador";
@@ -187,9 +186,9 @@ export const Identificadores = () => {
     const evento = eventos.find((ev) => ev.id === eventoId);
     if (!evento) return;
 
-    const { courseDate, completionDate } = evento;
-    const diasGerados = gerarDias(courseDate, completionDate);
-    setDays(diasGerados);
+    // Agora usamos o campo courseData que já contém o array de datas
+    const dias = evento.courseDate;
+    setDays(dias);
   };
 
   /**
@@ -403,6 +402,7 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
+
     const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
@@ -778,10 +778,18 @@ export const Identificadores = () => {
             columns={[
               { key: "treinamento", label: "Treinamento" },
               { key: "code", label: "Código" },
+              { key: "createdAt", label: "Data de Criação" },
             ]}
             data={identificadoresGerados.map((item, index) => ({
               ...item,
               id: item.id ?? `temp-${index}`, // Garante que id nunca será undefined
+              createdAt: new Date(item.createdAt).toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             }))}
             onDownload={(_, row) => {
               try {
