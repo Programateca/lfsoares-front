@@ -117,7 +117,6 @@ const Certificados = () => {
    * **/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     // Log 1: Verificar o identificador selecionado
     const identificadorSelecionado = newCertificado.documento_identificador;
     const identificadorValido = documentosIdentificador.find(
