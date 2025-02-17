@@ -72,9 +72,7 @@ export const Identificadores = () => {
   } = useForm<FormData>();
 
   const [days, setDays] = useState<string[]>([]);
-  const [disabledFields, setDisabledFields] = useState<
-    Record<string, { instrutorA: boolean; instrutorB: boolean }>
-  >({});
+
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
 
@@ -137,10 +135,9 @@ export const Identificadores = () => {
     instructor: "instrutorA" | "instrutorB",
     value: Period
   ) => {
-    // Se não há período da tarde, forçamos ambos os instrutores a usarem apenas o período da manhã.
     if (!hasAfternoon) {
+      // Se não há aula à tarde, ambos devem ser "manha"
       setValue(`${instructor}.${day}.periodo`, "manha");
-      // Opcional: se houver o outro instrutor, definimos também para ele.
       setValue(
         instructor === "instrutorA"
           ? `instrutorB.${day}.periodo`
@@ -150,32 +147,25 @@ export const Identificadores = () => {
       return;
     }
 
-    // Caso haja período da tarde, a lógica de alternância permanece:
-    setDisabledFields((prev) => {
-      const newState = { ...prev };
-      if (!newState[day]) {
-        newState[day] = { instrutorA: false, instrutorB: false };
+    const otherInstructor =
+      instructor === "instrutorA" ? "instrutorB" : "instrutorA";
+
+    if (value === "manhaTarde") {
+      // Se um instrutor seleciona "manhaTarde", o outro fica sem valor
+      setValue(`${instructor}.${day}.periodo`, "manhaTarde");
+      setValue(`${otherInstructor}.${day}.periodo`, "nenhum");
+    } else {
+      // Para "manha" ou "tarde"
+      setValue(`${instructor}.${day}.periodo`, value);
+      // Determina o valor complementar
+      const complementaryValue = value === "manha" ? "tarde" : "manha";
+      // Lê o valor atual do outro instrutor para esse dia
+      const currentOtherValue = getValues(`${otherInstructor}.${day}.periodo`);
+      // Se o valor atual não for o complementar, atualiza
+      if (currentOtherValue !== complementaryValue) {
+        setValue(`${otherInstructor}.${day}.periodo`, complementaryValue);
       }
-      if (instructor === "instrutorA") {
-        if (value === "manha") {
-          setValue(`instrutorB.${day}.periodo`, "tarde");
-        } else if (value === "tarde") {
-          setValue(`instrutorB.${day}.periodo`, "manha");
-        } else if (value === "manhaTarde") {
-          setValue(`instrutorB.${day}.periodo`, undefined);
-        }
-      }
-      if (instructor === "instrutorB") {
-        if (value === "manha") {
-          setValue(`instrutorA.${day}.periodo`, "tarde");
-        } else if (value === "tarde") {
-          setValue(`instrutorA.${day}.periodo`, "manha");
-        } else if (value === "manhaTarde") {
-          setValue(`instrutorA.${day}.periodo`, undefined);
-        }
-      }
-      return newState;
-    });
+    }
   };
 
   /**
@@ -198,9 +188,15 @@ export const Identificadores = () => {
     const evento = eventos.find((ev) => ev.id === eventoId);
     if (!evento) return;
 
-    // Agora usamos o campo courseData que já contém o array de datas
-    const dias = evento.courseDate;
-    setDays(dias);
+    setDays(evento.courseDate);
+
+    if (evento.courseTime && evento.courseInterval) {
+      const [, fim] = evento.courseTime.split(" ÀS ");
+      const [intervaloInicio] = evento.courseInterval.split(" ÀS ");
+      // Se o horário de término não coincide com o início do intervalo,
+      // significa que há aula à tarde.
+      setHasAfternoon(fim !== intervaloInicio);
+    }
   };
 
   /**
@@ -212,7 +208,7 @@ export const Identificadores = () => {
       toast.error("Selecione os participantes");
       return;
     }
-
+    console.log(data);
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
     if (!selectedEvento) {
       toast.error("Evento selecionado não foi encontrado!");
@@ -277,18 +273,20 @@ export const Identificadores = () => {
     const intervalo = selectedEvento?.courseInterval;
     let manha_horario = "";
     let tarde_horario = "";
-
     if (horas_aulas && intervalo) {
       const [inicio, fim] = horas_aulas.split(" ÀS ");
       const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
 
+      console.log(horas_aulas);
       // Se o final das aulas for igual ao início do intervalo,
       // significa que não há aula à tarde.
       if (fim === intervaloInicio) {
+        console.log("Não há aula à tarde");
         manha_horario = `${inicio} ÀS ${fim}`;
         tarde_horario = ""; // ou alguma outra lógica se necessário
         setHasAfternoon(false);
       } else {
+        console.log("Há aula à tarde");
         manha_horario = `${inicio} ÀS ${intervaloInicio}`;
         tarde_horario = `${intervaloFim} ÀS ${fim}`;
         setHasAfternoon(true);
@@ -759,7 +757,7 @@ export const Identificadores = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
                   {days.map((day, index) => (
                     <div key={index} className="border p-4 w-full rounded">
-                      <Label>Dia: {day}</Label>
+                      <Label>Dia: {format(parseISO(day), "dd/MM/yyyy")}</Label>
 
                       {/* Instrutor A */}
                       <div className="flex gap-4 items-center mt-2">
@@ -775,9 +773,6 @@ export const Identificadores = () => {
                                   handlePeriodChange(day, "instrutorA", value);
                                 }}
                                 value={field.value}
-                                disabled={
-                                  disabledFields[day]?.instrutorA || false
-                                }
                               >
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder="Período" />
@@ -785,6 +780,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
+                                    <SelectItem value="nenhum">
+                                      Nenhum
+                                    </SelectItem>
                                     <SelectItem value="manha">Manhã</SelectItem>
                                     <SelectItem value="tarde">Tarde</SelectItem>
                                     <SelectItem value="manhaTarde">
@@ -812,9 +810,6 @@ export const Identificadores = () => {
                                   handlePeriodChange(day, "instrutorB", value);
                                 }}
                                 value={field.value}
-                                disabled={
-                                  disabledFields[day]?.instrutorB || false
-                                }
                               >
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder="Período" />
@@ -822,6 +817,9 @@ export const Identificadores = () => {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>Períodos</SelectLabel>
+                                    <SelectItem value="nenhum">
+                                      Nenhum
+                                    </SelectItem>
                                     <SelectItem value="manha">Manhã</SelectItem>
                                     <SelectItem value="tarde">Tarde</SelectItem>
                                     <SelectItem value="manhaTarde">

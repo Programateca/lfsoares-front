@@ -6,7 +6,7 @@ import { saveAs } from "file-saver";
 
 import type { Identificador } from "@/@types/Identificador";
 
-export type Period = "manha" | "tarde" | "manhaTarde";
+export type Period = "manha" | "tarde" | "manhaTarde" | "nenhum";
 export type Schedule = { dia: string; periodo?: Period };
 type DaySchedule = { instrutorA: Schedule[]; instrutorB: Schedule[] | null };
 export type EventSchedule = DaySchedule;
@@ -14,7 +14,7 @@ export type EventSchedule = DaySchedule;
 type Instrutor = {
   paginas: number;
   dias: string;
-  periodo: "manha" | "tarde" | "manhaTarde";
+  periodo: Period;
 }[];
 
 type Pages = {
@@ -39,22 +39,26 @@ function processInstrutor(
   courseTime: string
 ) {
   let result = "";
-  instrutor.forEach((item) => {
-    const repetition = xmlPage.repeat(item.paginas);
-    const dias =
-      item.periodo === "manha"
-        ? diasManha
-        : item.periodo === "tarde"
-        ? diasTarde
-        : diasManhaTarde;
-    result += substituirOcorrencias(
-      repetition,
-      instrutorName,
-      dias,
-      item.periodo,
-      courseTime
-    );
-  });
+  instrutor
+    .filter((item) => item.periodo !== "nenhum")
+    .forEach((item) => {
+      const repetition = xmlPage.repeat(item.paginas);
+      const dias =
+        item.periodo === "manha"
+          ? diasManha
+          : item.periodo === "tarde"
+          ? diasTarde
+          : diasManhaTarde;
+      if (item.periodo !== "nenhum") {
+        result += substituirOcorrencias(
+          repetition,
+          instrutorName,
+          dias,
+          item.periodo as "manha" | "tarde" | "manhaTarde",
+          courseTime
+        );
+      }
+    });
   return result;
 }
 
@@ -113,9 +117,20 @@ export async function gerarIdentificador(
       return;
     }
 
-    const updatedXml = mainXmlContent
-      .split(TAG_NAME)
-      .join(formatarPaginas(formattedPages, xmlNewContent, courseTime));
+    const updatedXml = mainXmlContent.split(TAG_NAME).join(
+      formatarPaginas(
+        {
+          instrutorA: formattedPages.instrutorA.filter(
+            (item) => item.periodo !== "nenhum"
+          ),
+          instrutorB: formattedPages.instrutorB.filter(
+            (item) => item.periodo !== "nenhum"
+          ),
+        },
+        xmlNewContent,
+        courseTime
+      )
+    );
 
     const fileArrayBuffer = await loadFile(
       "/templates/identificacao-do-participante.docx"
