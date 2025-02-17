@@ -48,11 +48,50 @@ const Usuarios = () => {
   });
   const [users, setUsers] = useState<User[]>([]);
 
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
   const fetchUsers = async () => {
     try {
-      const response = await api.get("users");
+      setLoading(true);
+      const response = await api.get("users", {
+        params: {
+          page,
+          limit,
+        },
+      });
       setUsers(response.data.data);
-    } catch (error) {}
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar usuários");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("users", {
+        params: { page: newPage, limit },
+      });
+
+      setUsers(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar usuários");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -275,6 +314,9 @@ const Usuarios = () => {
           loading={loading}
           entityLabel="Usuário"
           searchable
+          hasNextPage={hasNextPage}
+          page={page}
+          onPageChange={handlePageChange}
         />
       </CardContent>
     </Card>

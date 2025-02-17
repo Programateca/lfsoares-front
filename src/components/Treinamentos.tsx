@@ -54,12 +54,49 @@ const Treinamentos = () => {
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
 
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
   const fetchTreinamentos = async () => {
     try {
-      const response = await api.get("treinamentos");
-      console.log(response.data.data);
+      setLoading(true);
+      const response = await api.get("treinamentos", {
+        params: {
+          page,
+          limit,
+        },
+      });
       setTreinamentos(response.data.data);
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Erro ao buscar treinamentos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("treinamentos", {
+        params: { page: newPage, limit },
+      });
+
+      setTreinamentos(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar treinamentos");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -87,7 +124,6 @@ const Treinamentos = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setNewTreinamento((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -142,8 +178,6 @@ const Treinamentos = () => {
         coursePortaria: newTreinamento.coursePortaria,
         conteudoAplicado: newTreinamento.conteudoAplicado,
       });
-
-      console.log(newTreinamento);
 
       fetchTreinamentos();
       setIsModalOpen(false);
@@ -346,6 +380,9 @@ const Treinamentos = () => {
           loading={loading}
           entityLabel="Treinamento"
           searchable
+          hasNextPage={hasNextPage}
+          page={page}
+          onPageChange={handlePageChange}
         />
       </CardContent>
     </Card>

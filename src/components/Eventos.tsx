@@ -57,11 +57,49 @@ const Eventos = () => {
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
   const fetchEventos = async () => {
     try {
-      const response = await api.get("eventos");
+      setLoading(true);
+      const response = await api.get("eventos", {
+        params: {
+          page,
+          limit,
+        },
+      });
       setEventos(response.data.data);
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Erro ao buscar eventos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("eventos", {
+        params: { page: newPage, limit },
+      });
+
+      setEventos(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar eventos");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -233,7 +271,6 @@ const Eventos = () => {
       );
       return; // Interrompe o envio do formulário
     }
-    console.log(payload);
     if (eventoInEditMode) {
       try {
         await api.patch(`eventos/${eventoInEditMode}`, payload);
@@ -577,6 +614,9 @@ const Eventos = () => {
           loading={loading}
           entityLabel="Evento"
           searchable
+          hasNextPage={hasNextPage}
+          page={page}
+          onPageChange={handlePageChange}
         />
       </CardContent>
     </Card>

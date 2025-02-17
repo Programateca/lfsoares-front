@@ -42,11 +42,49 @@ const Empresas = () => {
   });
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
   const fetchEmpresas = async () => {
     try {
-      const response = await api.get("empresas");
+      setLoading(true);
+      const response = await api.get("empresas", {
+        params: {
+          page,
+          limit,
+        },
+      });
       setEmpresas(response.data.data);
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Erro ao buscar empresas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("empresas", {
+        params: { page: newPage, limit },
+      });
+
+      setEmpresas(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar empresas");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -249,6 +287,9 @@ const Empresas = () => {
           loading={loading}
           entityLabel="Empresa"
           searchable
+          hasNextPage={hasNextPage}
+          page={page}
+          onPageChange={handlePageChange}
         />
       </CardContent>
     </Card>

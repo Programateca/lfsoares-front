@@ -67,7 +67,6 @@ const Pessoas = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  // Função para buscar pessoas com paginação
   const fetchPessoas = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
@@ -75,18 +74,37 @@ const Pessoas = () => {
         params: { page: pageNumber, limit },
       });
       setPessoas(response.data.data);
-      // Supondo que a API retorne um campo "hasNextPage"
-      console.log(response.data.hasNextPage);
       setHasNextPage(response.data.hasNextPage);
     } catch (error) {
-      console.error(error);
+      toast.error("Erro ao buscar pessoas.");
     } finally {
       setLoading(false);
     }
   };
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("pessoas", {
+        params: { page: newPage, limit },
+      });
+
+      setPessoas(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar pessoas.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   // Busca pessoas sempre que a página muda
   useEffect(() => {
     fetchPessoas(page);
@@ -116,8 +134,6 @@ const Pessoas = () => {
 
     if (pessoaInEditMode) {
       try {
-        console.log(pessoaInEditMode);
-        console.log(newPessoa);
         await api.patch(`pessoas/${pessoaInEditMode}`, {
           name: newPessoa.name,
           cpf: newPessoa.cpf || "",
@@ -148,7 +164,7 @@ const Pessoas = () => {
         });
         setPessoaInEditMode("");
       } catch (error) {
-        console.log(error);
+        toast.error("Erro ao atualizar pessoa.");
       }
       return;
     }
@@ -183,7 +199,7 @@ const Pessoas = () => {
     setPessoaInEditMode(id);
     setIsModalOpen(true);
     const pessoa = pessoas.find((pessoa) => pessoa.id === id);
-    console.log(pessoa);
+
     if (pessoa) {
       setNewPessoa({
         id: pessoa.id,
@@ -216,7 +232,9 @@ const Pessoas = () => {
           duration: 2000,
         });
       fetchPessoas();
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Erro ao atualizar status da pessoa.");
+    }
   };
 
   return (
