@@ -216,6 +216,9 @@ export const Identificadores = () => {
     }
 
     const fullYear = new Date().getFullYear().toString();
+    const certificadoCode = Number(
+      (await api.get(`identificadores/last-certificado-code/${fullYear}`)).data
+    );
 
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
@@ -228,7 +231,10 @@ export const Identificadores = () => {
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
         acc[`p_codigo${rowIndex}`] = participante
-          ? `LFSTS ${String(1 + index).padStart(4, "0")}/${fullYear}`
+          ? `LFSTS ${String(certificadoCode + index).padStart(
+              4,
+              "0"
+            )}/${fullYear}`
           : "";
         acc[`p_id${rowIndex}`] = participante ? participante.id : "";
 
