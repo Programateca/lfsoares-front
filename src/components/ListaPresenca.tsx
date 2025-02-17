@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "./ui/button";
-
 import { api } from "@/lib/axios";
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -16,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-
 import {
   Select,
   SelectContent,
@@ -24,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-
 import {
   Table,
   TableBody,
@@ -33,94 +29,11 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-// import toast from "react-hot-toast";
-// import { DocumentData } from "@/@types/DocumentData";
 import { gerarLista } from "@/utils/gerar-lista";
 import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import toast from "react-hot-toast";
-// import { DocxElementRemover } from "@/utils/docx-element-remover";
-// import { ModelType } from "@/@types/ModeType";
-
-// interface Evento {
-//   identificador_id: string;
-//   mudar_modulo: string;
-//   mudar_horarios: string;
-//   id_code: string;
-//   id_data: string;
-//   responsavel_tecnico: string;
-//   p_nome1: string;
-//   p_matricula1: string;
-//   p_codigo1: string;
-//   p_id1: string;
-//   p_nome2: string;
-//   p_matricula2: string;
-//   p_codigo2: string;
-//   p_id2: string;
-//   p_nome3: string;
-//   p_matricula3: string;
-//   p_codigo3: string;
-//   p_id3: string;
-//   p_nome4: string;
-//   p_matricula4: string;
-//   p_codigo4: string;
-//   p_id4: string;
-//   p_nome5: string;
-//   p_matricula5: string;
-//   p_codigo5: string;
-//   p_id5: string;
-//   p_nome6: string;
-//   p_matricula6: string;
-//   p_codigo6: string;
-//   p_id6: string;
-//   p_nome7: string;
-//   p_matricula7: string;
-//   p_codigo7: string;
-//   p_id7: string;
-//   p_nome8: string;
-//   p_matricula8: string;
-//   p_codigo8: string;
-//   p_id8: string;
-//   p_nome9: string;
-//   p_matricula9: string;
-//   p_codigo9: string;
-//   p_id9: string;
-//   p_nome10: string;
-//   p_matricula10: string;
-//   p_codigo10: string;
-//   p_id10: string;
-//   numeroParticipantes: number;
-//   conteudo_aplicado: string;
-//   motivo_treinamento: string;
-//   objetivo_lf: string;
-//   treinamento: string;
-//   treinamento_lista: string;
-//   evento_id: string;
-//   contratante: string;
-//   tipo: string;
-//   carga_horaria: string;
-//   intervalo: string;
-//   endereco: string;
-//   empresa: string;
-//   empresa_id: string;
-//   datas: string;
-//   tipo_certificado: string;
-//   assinante_titulo1: string;
-//   assinante_titulo2: string;
-//   assinante_titulo3: string;
-//   assinante_titulo4: string;
-//   assinante1: string;
-//   assinante2: string;
-//   assinante3: string;
-//   assinante4: string;
-//   instrutor_a: string;
-//   instrutor_b: string;
-//   instrutorDates: {
-//     instrutorA: { dia: string; periodo: string }[];
-//     instrutorB: { dia: string; periodo: string }[];
-//   };
-// }
 
 export interface ListaFormData {
   documento_identificador: string;
@@ -132,25 +45,31 @@ const ListaPresenca = () => {
   const [identificadores, setIdentificadores] = useState<IdentificadorData[]>(
     []
   );
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [empresas, setEmpresas] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [documentos, setDocumentos] = useState<any[]>([]);
   const { control, handleSubmit, reset, setValue } = useForm<ListaFormData>();
+
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
+  // Estados para busca e ordenação
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const onSubmit = async (data: ListaFormData) => {
     const identificadorSelecionado = data.documento_identificador;
     const identificadorValido = identificadores.find(
       (doc) => doc.id === identificadorSelecionado
     );
-
     if (identificadorValido) {
       const dataIdentificador = JSON.parse(
         identificadorValido.identificadorData
       );
-
       const empresaCNPJ = empresas.find(
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
@@ -171,7 +90,6 @@ const ListaPresenca = () => {
       };
 
       const pessoas: { id: string; name: string }[] = [];
-
       for (let i = 1; i <= 60; i++) {
         const pessoaId = dataIdentificador[`p_id${i}`];
         const pessoaNome = dataIdentificador[`p_nome${i}`];
@@ -192,11 +110,6 @@ const ListaPresenca = () => {
         const key = `p_${(i + 1).toString().padStart(2, "0")}`;
         schema[key] = " ";
       }
-
-      // gerarLista(
-      //   { ...schema, numberOfParticipantes: participantes.length },
-      //   data.tipo_lista
-      // );
 
       const newLista = {
         year: new Date().getFullYear().toString(),
@@ -222,10 +135,12 @@ const ListaPresenca = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (pageNumber: number = 1) => {
     try {
+      setLoading(true);
       const documentosResp = await api.get(
-        "documentos/lista-dia-todo,lista-meio-periodo"
+        "documentos/lista-dia-todo,lista-meio-periodo",
+        { params: { page: pageNumber, limit } }
       );
       const identificadoresResp = await api.get("identificadores");
       const response = await api.get("empresas");
@@ -233,10 +148,44 @@ const ListaPresenca = () => {
       setEmpresas(response.data.data);
       setIdentificadores(identificadoresResp.data.data);
       setDocumentos(documentosResp.data.data);
+      setHasNextPage(documentosResp.data.hasNextPage);
     } catch (error) {
-      console.log(error);
+      toast.error("Erro ao buscar documentos");
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handlePageChange = async (newPage: number) => {
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await api.get(
+        "documentos/lista-dia-todo,lista-meio-periodo",
+        { params: { page: newPage, limit } }
+      );
+      setDocumentos(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar dados");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Inicializa os dados
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchData().then(() => setLoading(false));
+  }, []);
 
   const handleInputChange = (name: string, value: string) => {
     setValue(name as keyof ListaFormData, value);
@@ -247,14 +196,44 @@ const ListaPresenca = () => {
       (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
-
     gerarLista(data, data.tipo_lista);
   };
 
-  useEffect(() => {
-    setLoading(true);
-    fetchData().then(() => setLoading(false));
-  }, []);
+  // Função de ordenação
+  const handleSort = (column: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortColumn === column) {
+      direction = sortDirection === "asc" ? "desc" : "asc";
+    }
+    setSortColumn(column);
+    setSortDirection(direction);
+  };
+
+  // Filtra e ordena os documentos com base na busca e no cabeçalho clicado
+  const filteredDocuments = documentos.filter((doc) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      doc.modelType.toLowerCase().includes(query) ||
+      doc.createdAt.toLowerCase().includes(query)
+    );
+  });
+
+  const sortedDocuments = filteredDocuments.slice().sort((a, b) => {
+    if (!sortColumn) return 0;
+    if (sortColumn === "nome") {
+      const aName = a.modelType || "";
+      const bName = b.modelType || "";
+      return sortDirection === "asc"
+        ? aName.localeCompare(bName)
+        : bName.localeCompare(aName);
+    }
+    if (sortColumn === "data") {
+      const aDate = new Date(a.createdAt).getTime();
+      const bDate = new Date(b.createdAt).getTime();
+      return sortDirection === "asc" ? aDate - bDate : bDate - aDate;
+    }
+    return 0;
+  });
 
   return (
     <Card className="shadow-md">
@@ -268,7 +247,6 @@ const ListaPresenca = () => {
             onOpenChange={(open) => {
               if (!open) {
                 reset();
-                // setParticipantes([]);
               }
               setIsModalOpen(open);
             }}
@@ -283,7 +261,6 @@ const ListaPresenca = () => {
                 <DialogTitle>Lista de Presença</DialogTitle>
                 <DialogDescription></DialogDescription>
               </DialogHeader>
-
               <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-2 flex flex-col gap-5"
@@ -292,7 +269,7 @@ const ListaPresenca = () => {
                   <SelectMap
                     input_name="documento_identificador"
                     itens={identificadores}
-                    label="Para gerar os certificados, selecione um dos identificadores de participantes abaixo:"
+                    label="Selecione um dos identificadores de participantes abaixo:"
                     placeholder="Selecione um documento"
                     onChange={(e) =>
                       handleInputChange("documento_identificador", e)
@@ -325,19 +302,17 @@ const ListaPresenca = () => {
                       </div>
                     )}
                   />
-
                   <Controller
                     name="cidade"
                     control={control}
                     render={({ field }) => (
                       <div>
-                        <label className="text-sm font-medium">Cidade</label>
+                        <Label className="text-sm font-medium">Cidade</Label>
                         <Input placeholder="Cidade" {...field} />
                       </div>
                     )}
                   />
                 </div>
-
                 <div className="flex justify-end space-x-4">
                   <Button
                     type="button"
@@ -345,12 +320,11 @@ const ListaPresenca = () => {
                     onClick={() => {
                       setIsModalOpen(false);
                       reset();
-                      // setParticipantes([]);
                     }}
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" className="w-28 ">
+                  <Button type="submit" className="w-28">
                     Gerar
                   </Button>
                 </div>
@@ -358,28 +332,57 @@ const ListaPresenca = () => {
             </DialogContent>
           </Dialog>
         </div>
+        {/* Barra de pesquisa */}
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="Buscar lista de presença..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
+              <TableHead
+                onClick={() => handleSort("nome")}
+                className="cursor-pointer"
+              >
+                Nome{" "}
+                {sortColumn === "nome"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </TableHead>
               <TableHead>Tipo de lista</TableHead>
-              <TableHead>Data de emissão</TableHead>
+              <TableHead
+                onClick={() => handleSort("data")}
+                className="cursor-pointer"
+              >
+                Data de emissão{" "}
+                {sortColumn === "data"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={4} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
                     <div className="loader"></div>
                     <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
                   </div>
                 </TableCell>
               </TableRow>
-            ) : documentos.length === 0 ? (
+            ) : sortedDocuments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={4} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
                     <CircleX className="h-6 w-6 text-red-400" />
                     <p className="text-sm text-red-400">
@@ -389,14 +392,9 @@ const ListaPresenca = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              documentos.map((documento) => (
+              sortedDocuments.map((documento) => (
                 <TableRow key={documento.id}>
-                  <TableCell
-                    className="font-medium max-w-[20rem]
-                overflow-hidden whitespace-nowrap overflow-ellipsis
-                py-2
-                "
-                  >
+                  <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
                     Lista de Presença
                   </TableCell>
                   <TableCell className="py-2">
@@ -417,7 +415,7 @@ const ListaPresenca = () => {
                       className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       onClick={() => handleDownload(documento.id)}
                     >
-                      <BookUp2 />
+                      <BookUp2 className="h-4 w-4" />
                       Baixar
                     </Button>
                   </TableCell>
@@ -426,6 +424,30 @@ const ListaPresenca = () => {
             )}
           </TableBody>
         </Table>
+        {/* Controles de paginação */}
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => handlePageChange(1)}
+          >
+            Voltar Tudo
+          </Button>
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => handlePageChange(page - 1)}
+          >
+            Voltar uma página
+          </Button>
+          <Button
+            variant="outline"
+            disabled={!hasNextPage}
+            onClick={() => handlePageChange(page + 1)}
+          >
+            Próxima página
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

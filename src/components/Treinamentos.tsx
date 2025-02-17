@@ -59,16 +59,17 @@ const Treinamentos = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchTreinamentos = async () => {
+  const fetchTreinamentos = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
       const response = await api.get("treinamentos", {
         params: {
-          page,
+          page: pageNumber,
           limit,
         },
       });
       setTreinamentos(response.data.data);
+      setHasNextPage(response.data.hasNextPage);
     } catch (error) {
       toast.error("Erro ao buscar treinamentos");
     } finally {
@@ -98,6 +99,10 @@ const Treinamentos = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchTreinamentos(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {

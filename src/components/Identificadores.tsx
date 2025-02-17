@@ -97,27 +97,64 @@ export const Identificadores = () => {
 
   const conteudo = watch("conteudoAplicado");
 
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 1;
+
   /**
    * Busca dados iniciais do servidor
    */
-  const fetchData = async () => {
+  const fetchData = async (pageNumber: number = 1) => {
     try {
-      const [identificadores, eventosResp, pessoasResp, instrutoresResp] =
-        await Promise.all([
-          api.get("identificadores"),
-          api.get("eventos"),
-          api.get("pessoas?limit=20"), // TODO Paginação
-          api.get("instrutores"),
-        ]);
+      setLoading(true);
+      const response = await api.get("identificadores", {
+        params: { page: pageNumber, limit },
+      });
+      const [eventosResp, pessoasResp, instrutoresResp] = await Promise.all([
+        api.get("eventos"),
+        api.get("pessoas"),
+        api.get("instrutores"),
+      ]);
 
-      setIdentificadoresGerados(identificadores.data.data);
+      setHasNextPage(response.data.hasNextPage);
+      setIdentificadoresGerados(response.data.data);
       setEventos(eventosResp.data.data);
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);
     } catch (error) {
-      console.error(error);
+      toast.error("Erro ao buscar dados iniciais");
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get("identificadores", {
+        params: { page: newPage, limit },
+      });
+      setIdentificadoresGerados(response.data.data);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar eventos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Busca pessoas sempre que a página muda
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
 
   /**
    * Ajusta exibição de assinaturas com base no tipo selecionado
@@ -916,6 +953,9 @@ export const Identificadores = () => {
             loading={loading}
             entityLabel="Identificador"
             searchable
+            hasNextPage={hasNextPage}
+            page={page}
+            onPageChange={handlePageChange}
           />
         )}
       </CardContent>

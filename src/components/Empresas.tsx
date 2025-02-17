@@ -47,16 +47,17 @@ const Empresas = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchEmpresas = async () => {
+  const fetchEmpresas = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
       const response = await api.get("empresas", {
         params: {
-          page,
+          page: pageNumber,
           limit,
         },
       });
       setEmpresas(response.data.data);
+      setHasNextPage(response.data.hasNextPage);
     } catch (error) {
       toast.error("Erro ao buscar empresas");
     } finally {
@@ -86,6 +87,10 @@ const Empresas = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEmpresas(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {

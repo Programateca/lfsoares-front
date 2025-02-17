@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "./ui/button";
-
 import { api } from "@/lib/axios";
-
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { BookUp2, CircleX, ImageDownIcon, Loader2, Plus } from "lucide-react";
@@ -21,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { SelectMap } from "./SelectMap";
@@ -42,6 +39,17 @@ const defaultValues = {
   image2: "",
 };
 
+interface Certificado {
+  code: number;
+  expires: boolean;
+  expiryDate: string;
+  documentData: string;
+  modelType: string;
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 type NewCertificado = typeof defaultValues;
 
 const Certificados = () => {
@@ -54,19 +62,28 @@ const Certificados = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  const [certificados, setCertificados] = useState<any[]>([]);
+  const [certificados, setCertificados] = useState<Certificado[]>([]);
 
   const [newCertificado, setNewCertificado] =
     useState<NewCertificado>(defaultValues);
 
   const localEmissao = useRef<HTMLInputElement>(null);
 
-  const fetchData = async () => {
+  // Estados para busca e ordenação
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
+  const fetchData = async (pageNumber: number = 1) => {
     try {
+      setLoading(true);
       const response = await api.get("identificadores");
       setIdentificadores(response.data.data);
       const eventosResp = await api.get("eventos");
@@ -77,23 +94,50 @@ const Certificados = () => {
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);
       setEventos(eventosResp.data.data);
-      const [certificados2aResp, certificados3aResp, certificados4aResp] =
-        await Promise.all([
-          api.get("documentos/certificado-1a"),
-          api.get("documentos/certificado-2a"),
-          api.get("documentos/certificado-3a"),
-          api.get("documentos/certificado-4a"),
-        ]);
-      setCertificados([
-        ...certificados2aResp.data.data,
-        ...certificados3aResp.data.data,
-        ...certificados4aResp.data.data,
-      ]);
+      const certificadosResp = await api.get(
+        "documentos/certificado-1a,certificado-2a,certificado-3a,certificado-4a",
+        {
+          params: { page: pageNumber, limit },
+        }
+      );
+
+      setCertificados(certificadosResp.data.data || []);
+      setHasNextPage(certificadosResp.data.hasNextPage);
     } catch (error) {
-      console.log(error);
       toast.error("Erro ao buscar dados");
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handlePageChange = async (newPage: number) => {
+    // Se for avançar e não houver próxima página, interrompe a navegação
+    if (newPage > page && !hasNextPage) {
+      toast.error("Não há registros para esta página.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await api.get(
+        "documentos/certificado-1a,certificado-2a,certificado-3a,certificado-4a",
+        {
+          params: { page: newPage, limit },
+        }
+      );
+      setCertificados(response.data.data || []);
+      setPage(newPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      toast.error("Erro ao buscar dados");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {
@@ -105,19 +149,12 @@ const Certificados = () => {
     inicializarFetch();
   }, [isModalOpen]);
 
-  /**
-   * Função para capturar os valores dos inputs
-   * **/
   const handleInputChange = (name: string, value: string) => {
     setNewCertificado((prev) => ({ ...prev, [name]: value }));
   };
 
-  /**
-   *  Função para gerar os certificados
-   * **/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Log 1: Verificar o identificador selecionado
     const identificadorSelecionado = newCertificado.documento_identificador;
     const identificadorValido = documentosIdentificador.find(
       (doc) => doc.id === identificadorSelecionado
@@ -131,8 +168,6 @@ const Certificados = () => {
       const dataIdentificador = JSON.parse(
         identificadorValido.identificadorData
       );
-      // Log 4: Verificar os dados após o parse
-
       const participantesIdentificador = Object.keys(dataIdentificador)
         .filter((key) => key.startsWith("p_id") && dataIdentificador[key])
         .map((key) => ({ id: dataIdentificador[key].trim() }))
@@ -165,7 +200,6 @@ const Certificados = () => {
         participantes: participantesIdentificador,
         assinantes: assinantesIdentificador,
         assinantes_nomes: assinantesIdentificadorNomes,
-        // Frente
         nome_participante: "",
         portaria_treinamento: dataIdentificador.coursePortaria,
         nome_treinamento: "",
@@ -176,7 +210,6 @@ const Certificados = () => {
         codigo_certificado: Object.keys(dataIdentificador)
           .filter((key) => key.startsWith("p_codigo"))
           .map((key) => dataIdentificador[key]),
-        // Verso
         nome_instrutor: "",
         matricula_instrutor: "",
         formacao_instrutor: "",
@@ -204,20 +237,9 @@ const Certificados = () => {
         throw new AppError("Selecione um participante", 404);
       if (!selectedEmpresa) throw new AppError("Empresa não encontrado", 404);
       if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
-      // if (!selectedInstrutor) throw new AppError("Instrutor não encontrado", 404);
 
       const datasRealizada = selectedEvento.courseDate;
-
-      // let dataRealizada = "";
-      // if (dataRealizada2.length < 2) {
-      //   dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} de ${dataRealizada1[0]}`;
-      // } else {
-      //   dataRealizada = `${dataRealizada1[2]} do ${dataRealizada1[1]} ao dia ${dataRealizada2[2]} do ${dataRealizada2[1]} de ${dataRealizada2[0]}`;
-      // }
-      // const timeRealizada1 = selectedEvento.courseTime.split("ÀS")[0]; // [HH,MM]
-      // const timeRealizada2 = selectedEvento.courseTime.split("ÀS")[1]; // [HH,MM]
-      const dataEmissao = new Date().toISOString().split("T")[0].split("-"); // [YYYY,MM,DD]
-
+      const dataEmissao = new Date().toISOString().split("T")[0].split("-");
       const dataRealizada = formatDataRealizada(
         datasRealizada,
         selectedEvento.courseTime,
@@ -225,15 +247,13 @@ const Certificados = () => {
       );
 
       const schema = {
-        // Frente
         nome_treinamento: selectedEvento?.treinamento?.name || "",
         cnpj: selectedEmpresa?.cnpj || "",
         datas_realizadas: dataRealizada || "",
-        e_dia: dataEmissao[2] || "", // Dia de Emissão
-        e_mes: dataEmissao[1] || "", // Mes de Emissão
+        e_dia: dataEmissao[2] || "",
+        e_mes: dataEmissao[1] || "",
         carga_hora: selectedEvento?.treinamento?.courseHours || "",
         local_emissao: newCertificado.local_emissao || "",
-        // Verso
         titulo_treinamento: selectedEvento?.treinamento?.name || "",
         portaria_treinamento: selectedEvento?.treinamento?.coursePortaria || "",
         modalidade: selectedEvento?.treinamento?.courseModality || "",
@@ -247,12 +267,10 @@ const Certificados = () => {
           : selectedEvento?.courseLocation || "",
         contratante: selectedEmpresa?.name || "",
         contratante_cnpj: selectedEmpresa?.cnpj || "",
-
         assinatura_1: newCertificado?.assinantes[0]?.id || "",
         assinatura_2: newCertificado?.assinantes[1]?.id || "",
         assinatura_3: newCertificado?.assinantes[2]?.id || "",
         assinatura_4: newCertificado?.assinantes[3]?.id || "",
-
         nome1:
           instrutores.find(
             (item) => item.name === newCertificado.assinantes_nomes[0]?.id
@@ -269,7 +287,6 @@ const Certificados = () => {
           instrutores.find(
             (item) => item.name === newCertificado.assinantes_nomes[3]?.id
           )?.name || "",
-
         qualificacao_profissional1:
           instrutores.find(
             (item) => item.name === newCertificado.assinantes_nomes[0]?.id
@@ -286,7 +303,6 @@ const Certificados = () => {
           instrutores.find(
             (item) => item.name === newCertificado.assinantes_nomes[3]?.id
           )?.qualificacaoProfissional || "",
-
         registro_qualificacao1:
           instrutores.find(
             (item) => item.name === newCertificado.assinantes_nomes[0]?.id
@@ -354,44 +370,66 @@ const Certificados = () => {
     }
   };
 
-  /**
-   * Função para baixar os certificados
-   * **/
   const handleDownload = async (
-    certificados: DocumentData,
+    certificado: DocumentData,
     modelType: string
   ) => {
-    const data = JSON.parse(certificados.documentData) as Record<
+    const data = JSON.parse(certificado.documentData) as Record<
       string,
       string
     >[];
-
     gerarCertificado(data, imageMap, modelType.split("-")[1]);
   };
 
   const handleDownload2 = async (
     e: React.FormEvent,
-    certificados: DocumentData
+    certificado: DocumentData
   ) => {
     e.preventDefault();
-
-    const data = JSON.parse(certificados.documentData) as Record<
+    const data = JSON.parse(certificado.documentData) as Record<
       string,
       string
     >[];
-    gerarCertificado(data, imageMap, certificados.modelType.split("-")[1]);
+    gerarCertificado(data, imageMap, certificado.modelType.split("-")[1]);
     setIsModalOpen2(false);
     resetForm();
   };
 
-  /**
-   * Função para resetar os valores do formulário
-   * **/
   const resetForm = () => {
-    setNewCertificado({
-      ...defaultValues,
-    });
+    setNewCertificado({ ...defaultValues });
   };
+
+  // Funções de ordenação e filtragem da tabela
+  const handleSort = (column: string) => {
+    let direction: "asc" | "desc" = "asc";
+    if (sortColumn === column) {
+      direction = sortDirection === "asc" ? "desc" : "asc";
+    }
+    setSortColumn(column);
+    setSortDirection(direction);
+  };
+
+  const filteredCertificates = certificados.filter((cert) => {
+    const name = cert?.modelType || "";
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const sortedCertificates = filteredCertificates.slice().sort((a, b) => {
+    if (!sortColumn) return 0;
+    if (sortColumn === "nome") {
+      const aName = a.modelType || "";
+      const bName = b.modelType || "";
+      return sortDirection === "asc"
+        ? aName.localeCompare(bName)
+        : bName.localeCompare(aName);
+    }
+    if (sortColumn === "data") {
+      const aDate = new Date(a.createdAt).getTime();
+      const bDate = new Date(b.createdAt).getTime();
+      return sortDirection === "asc" ? aDate - bDate : bDate - aDate;
+    }
+    return 0;
+  });
 
   return (
     <Card className="shadow-md">
@@ -460,40 +498,72 @@ const Certificados = () => {
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Barra de pesquisa */}
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="Buscar certificado..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Tabela com cabeçalhos clicáveis para ordenação */}
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Data de emissão</TableHead>
+              <TableHead
+                onClick={() => handleSort("nome")}
+                className="cursor-pointer"
+              >
+                Nome{" "}
+                {sortColumn === "nome"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </TableHead>
+              <TableHead
+                onClick={() => handleSort("data")}
+                className="cursor-pointer"
+              >
+                Data de emissão{" "}
+                {sortColumn === "data"
+                  ? sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                  : ""}
+              </TableHead>
               <TableHead className="text-end">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={3} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
                     <div className="loader"></div>
                     <Loader2 className="text-lg mr-2 animate-spin text-gray-500" />
                   </div>
                 </TableCell>
               </TableRow>
-            ) : certificados.length === 0 ? (
+            ) : sortedCertificates.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
+                <TableCell colSpan={3} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
                     <CircleX className="h-6 w-6 text-red-400" />
                     <p className="text-sm text-red-400">
-                      Os ultimos certificados gerados aparecerão aqui.
+                      Nenhum certificado encontrado.
                     </p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
-              certificados.map((certificado, index) => (
+              sortedCertificates.map((certificado, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
-                    {certificado?.modelType // Verifica se modelType existe
+                    {certificado?.modelType
                       ? `CT${
                           certificado.modelType.split("-")[1] || ""
                         } - Certificados de ${
@@ -517,14 +587,14 @@ const Certificados = () => {
                         )
                       : "Data não disponível"}
                   </TableCell>
-                  <TableCell className="text-end py-2">
+                  <TableCell className="text-end space-x-2 whitespace-nowrap py-2">
                     <Dialog open={isModalOpen2} onOpenChange={setIsModalOpen2}>
                       <DialogTrigger asChild>
                         <Button
-                          className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                          className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                           variant={"outline"}
                         >
-                          <ImageDownIcon className="" />
+                          <ImageDownIcon className="mr-1" />
                           Alterar Capas
                         </Button>
                       </DialogTrigger>
@@ -534,7 +604,15 @@ const Certificados = () => {
                             Geração de Certificado com nova capa
                           </DialogTitle>
                         </DialogHeader>
-                        <form onSubmit={(e) => handleDownload2(e, certificado)}>
+                        <form
+                          onSubmit={(e) =>
+                            handleDownload2(e, {
+                              ...certificado,
+                              treinamento: "",
+                              year: "",
+                            })
+                          }
+                        >
                           <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
                             <div className="col-span-3 flex justify-between gap-4">
                               <div className="space-y-2 col-span-3">
@@ -615,12 +693,15 @@ const Certificados = () => {
                     </Dialog>
                     <Button
                       variant={"outline"}
-                      className="mr-2 p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
+                      className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                       onClick={() =>
-                        handleDownload(certificado, certificado.modelType)
+                        handleDownload(
+                          { ...certificado, treinamento: "", year: "" },
+                          certificado.modelType
+                        )
                       }
                     >
-                      <BookUp2 className="" />
+                      <BookUp2 className="h-4 w-4 mr-1" />
                       Baixar certificados
                     </Button>
                   </TableCell>
@@ -629,6 +710,32 @@ const Certificados = () => {
             )}
           </TableBody>
         </Table>
+        {/* Controles de paginação */}
+        {typeof page === "number" && (
+          <div className="flex justify-center items-center space-x-2 mt-4">
+            <Button
+              variant="outline"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              Voltar Tudo
+            </Button>
+            <Button
+              variant="outline"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              Voltar uma página
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!hasNextPage}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              Próxima página
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

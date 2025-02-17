@@ -50,16 +50,17 @@ const Integrantes = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchInstrutores = async () => {
+  const fetchInstrutores = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
       const response = await api.get("instrutores", {
         params: {
-          page,
+          page: pageNumber,
           limit,
         },
       });
       setInstrutores(response.data.data);
+      setHasNextPage(response.data.hasNextPage);
     } catch (error) {
       toast.error("Erro ao buscar instrutores");
     } finally {
@@ -89,6 +90,10 @@ const Integrantes = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchInstrutores(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {

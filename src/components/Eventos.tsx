@@ -62,16 +62,15 @@ const Eventos = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchEventos = async () => {
+  const fetchEventos = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
       const response = await api.get("eventos", {
-        params: {
-          page,
-          limit,
-        },
+        params: { page: pageNumber, limit },
       });
+
       setEventos(response.data.data);
+      setHasNextPage(response.data.hasNextPage);
     } catch (error) {
       toast.error("Erro ao buscar eventos");
     } finally {
@@ -101,6 +100,10 @@ const Eventos = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEventos(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {
