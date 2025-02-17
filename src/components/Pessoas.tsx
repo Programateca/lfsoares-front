@@ -62,12 +62,35 @@ const Pessoas = () => {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
 
-  const fetchPessoas = async () => {
+  // Estados para paginação
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const limit = 20;
+
+  // Função para buscar pessoas com paginação
+  const fetchPessoas = async (pageNumber: number = 1) => {
     try {
-      const response = await api.get("pessoas");
+      setLoading(true);
+      const response = await api.get("pessoas", {
+        params: { page: pageNumber, limit },
+      });
       setPessoas(response.data.data);
-    } catch (error) {}
+      // Supondo que a API retorne um campo "hasNextPage"
+      console.log(response.data.hasNextPage);
+      setHasNextPage(response.data.hasNextPage);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+  // Busca pessoas sempre que a página muda
+  useEffect(() => {
+    fetchPessoas(page);
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {
@@ -319,17 +342,17 @@ const Pessoas = () => {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setIsModalOpen(false),
-                        setNewPessoa({
+                      setIsModalOpen(false);
+                      setNewPessoa({
+                        id: "",
+                        name: "",
+                        cpf: "",
+                        matricula: "",
+                        empresa: {
                           id: "",
                           name: "",
-                          cpf: "",
-                          matricula: "",
-                          empresa: {
-                            id: "",
-                            name: "",
-                          },
-                        });
+                        },
+                      });
                     }}
                   >
                     Cancelar
@@ -357,6 +380,9 @@ const Pessoas = () => {
           loading={loading}
           entityLabel="Pessoa"
           searchable
+          hasNextPage={hasNextPage}
+          page={page}
+          onPageChange={handlePageChange}
         />
       </CardContent>
     </Card>

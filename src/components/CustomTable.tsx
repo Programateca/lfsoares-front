@@ -48,6 +48,10 @@ interface CustomTableProps<T extends { id: string | number }> {
   entityLabel?: string;
   deleteMessage?: string;
   restoreMessage?: string;
+  // Novas propriedades para paginação
+  hasNextPage?: boolean;
+  page?: number;
+  onPageChange?: (page: number) => void;
 }
 
 const getValue = (obj: any, key: string): any => {
@@ -67,6 +71,10 @@ const CustomTable = <T extends { id: string | number }>({
   entityLabel = "Registro",
   deleteMessage = "Essa ação poderá ser revertida posteriormente.",
   restoreMessage = "Deseja realmente reativar este registro?",
+  // Propriedades de paginação
+  hasNextPage = false,
+  page = 1,
+  onPageChange,
 }: CustomTableProps<T>) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -296,6 +304,33 @@ const CustomTable = <T extends { id: string | number }>({
           )}
         </TableBody>
       </Table>
+
+      {/* Controles de paginação */}
+      {onPageChange && typeof page === "number" && (
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => onPageChange(1)}
+          >
+            Voltar Tudo
+          </Button>
+          <Button
+            variant="outline"
+            disabled={page === 1}
+            onClick={() => onPageChange(page - 1)}
+          >
+            Voltar uma página
+          </Button>
+          <Button
+            variant="outline"
+            disabled={!hasNextPage}
+            onClick={() => onPageChange(page + 1)}
+          >
+            Próxima página
+          </Button>
+        </div>
+      )}
     </>
   );
 };
