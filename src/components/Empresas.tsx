@@ -41,19 +41,21 @@ const Empresas = () => {
     endereco: "",
   });
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchEmpresas = async (pageNumber: number = 1) => {
+  const fetchEmpresas = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
       const response = await api.get("empresas", {
         params: {
           page: pageNumber,
           limit,
+          search,
         },
       });
       setEmpresas(response.data.data);
@@ -88,8 +90,26 @@ const Empresas = () => {
     }
   };
 
+  // Efeito para busca com debounce
   useEffect(() => {
-    fetchEmpresas(page);
+    const handler = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        // Quando o usuário digitar pelo menos 3 letras, reseta a página e busca
+        setPage(1);
+        fetchEmpresas(1, searchQuery);
+      } else {
+        // Se o termo tiver menos de 3 letras, busca sem filtro ou limpa os resultados, conforme sua lógica
+        fetchEmpresas(page);
+      }
+    }, 300); // tempo de debounce: 300ms
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchEmpresas(page, searchQuery.length >= 3 ? searchQuery : "");
   }, [page]);
 
   useEffect(() => {
@@ -292,6 +312,8 @@ const Empresas = () => {
           loading={loading}
           entityLabel="Empresa"
           searchable
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
           hasNextPage={hasNextPage}
           page={page}
           onPageChange={handlePageChange}

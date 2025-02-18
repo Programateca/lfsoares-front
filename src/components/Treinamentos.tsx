@@ -53,19 +53,21 @@ const Treinamentos = () => {
     conteudoAplicado: "",
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchTreinamentos = async (pageNumber: number = 1) => {
+  const fetchTreinamentos = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
       const response = await api.get("treinamentos", {
         params: {
           page: pageNumber,
           limit,
+          search,
         },
       });
       setTreinamentos(response.data.data);
@@ -100,8 +102,26 @@ const Treinamentos = () => {
     }
   };
 
+  // Efeito para busca com debounce
   useEffect(() => {
-    fetchTreinamentos(page);
+    const handler = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        // Quando o usuário digitar pelo menos 3 letras, reseta a página e busca
+        setPage(1);
+        fetchTreinamentos(1, searchQuery);
+      } else {
+        // Se o termo tiver menos de 3 letras, busca sem filtro ou limpa os resultados, conforme sua lógica
+        fetchTreinamentos(page);
+      }
+    }, 300); // tempo de debounce: 300ms
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchTreinamentos(page, searchQuery.length >= 3 ? searchQuery : "");
   }, [page]);
 
   useEffect(() => {
@@ -385,6 +405,8 @@ const Treinamentos = () => {
           loading={loading}
           entityLabel="Treinamento"
           searchable
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
           hasNextPage={hasNextPage}
           page={page}
           onPageChange={handlePageChange}

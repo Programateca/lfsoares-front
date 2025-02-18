@@ -44,25 +44,26 @@ const Integrantes = () => {
     registroProfissional: "",
   });
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchInstrutores = async (pageNumber: number = 1) => {
+  const fetchInstrutores = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
       const response = await api.get("instrutores", {
         params: {
           page: pageNumber,
           limit,
+          search: search || undefined,
         },
       });
       setInstrutores(response.data.data);
       setHasNextPage(response.data.hasNextPage);
     } catch (error) {
-      toast.error("Erro ao buscar instrutores");
     } finally {
       setLoading(false);
     }
@@ -91,8 +92,26 @@ const Integrantes = () => {
     }
   };
 
+  // Efeito para busca com debounce
   useEffect(() => {
-    fetchInstrutores(page);
+    const handler = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        // Quando o usuário digitar pelo menos 3 letras, reseta a página e busca
+        setPage(1);
+        fetchInstrutores(1, searchQuery);
+      } else {
+        // Se o termo tiver menos de 3 letras, busca sem filtro ou limpa os resultados, conforme sua lógica
+        fetchInstrutores(page);
+      }
+    }, 300); // tempo de debounce: 300ms
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchInstrutores(page, searchQuery.length >= 3 ? searchQuery : "");
   }, [page]);
 
   useEffect(() => {
@@ -309,6 +328,8 @@ const Integrantes = () => {
           loading={loading}
           entityLabel="Instrutor"
           searchable
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
           hasNextPage={hasNextPage}
           page={page}
           onPageChange={handlePageChange}

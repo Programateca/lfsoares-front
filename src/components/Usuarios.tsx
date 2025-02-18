@@ -47,21 +47,29 @@ const Usuarios = () => {
     confirmPassword: "",
   });
   const [users, setUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
+      console.log({
+        page: pageNumber,
+        limit,
+        search,
+      });
       const response = await api.get("users", {
         params: {
-          page,
+          page: pageNumber,
           limit,
+          search,
         },
       });
+      console.log("response", response);
       setUsers(response.data.data);
       setHasNextPage(response.data.hasNextPage);
     } catch (error) {
@@ -93,6 +101,28 @@ const Usuarios = () => {
       setLoading(false);
     }
   };
+
+  // Efeito para busca com debounce
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        // Quando o usuário digitar pelo menos 3 letras, reseta a página e busca
+        setPage(1);
+        fetchUsers(1, searchQuery);
+      } else {
+        // Se o termo tiver menos de 3 letras, busca sem filtro ou limpa os resultados, conforme sua lógica
+        fetchUsers(page);
+      }
+    }, 300); // tempo de debounce: 300ms
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchUsers(page, searchQuery.length >= 3 ? searchQuery : "");
+  }, [page]);
 
   useEffect(() => {
     const inicializarFetch = async () => {
@@ -314,6 +344,8 @@ const Usuarios = () => {
           loading={loading}
           entityLabel="Usuário"
           searchable
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
           hasNextPage={hasNextPage}
           page={page}
           onPageChange={handlePageChange}

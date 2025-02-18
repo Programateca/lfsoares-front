@@ -44,6 +44,8 @@ interface CustomTableProps<T extends { id: string | number }> {
   onDownload?: (id: string | number, row: T) => void; // ✅ Nova prop para download
   loading?: boolean;
   searchable?: boolean;
+  searchQuery?: string; // valor da pesquisa vindo do pai
+  onSearch?: (query: string) => void; // callback para quando o usuário digitar algo
   statusKey?: string;
   entityLabel?: string;
   deleteMessage?: string;
@@ -67,6 +69,8 @@ const CustomTable = <T extends { id: string | number }>({
   onDownload, // ✅ Nova prop para download
   loading = false,
   searchable = false,
+  searchQuery = "",
+  onSearch,
   statusKey = "status.id",
   entityLabel = "Registro",
   deleteMessage = "Essa ação poderá ser revertida posteriormente.",
@@ -76,7 +80,6 @@ const CustomTable = <T extends { id: string | number }>({
   page = 1,
   onPageChange,
 }: CustomTableProps<T>) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedItem, setSelectedItem] = useState<{
@@ -93,33 +96,21 @@ const CustomTable = <T extends { id: string | number }>({
     setSortDirection(direction);
   };
 
-  const filteredData = data
-    .filter((item) =>
-      columns.some((col) => {
-        const value = getValue(item, col.key);
-        return (
-          typeof value === "string" &&
-          value.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      })
-    )
-    .sort((a, b) => {
-      if (!sortColumn) return 0;
-      const valueA = getValue(a, sortColumn);
-      const valueB = getValue(b, sortColumn);
+  const sortedData = [...data].sort((a, b) => {
+    if (!sortColumn) return 0;
+    const valueA = getValue(a, sortColumn);
+    const valueB = getValue(b, sortColumn);
 
-      if (typeof valueA === "string" && typeof valueB === "string") {
-        return sortDirection === "asc"
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA);
-      }
-
-      if (typeof valueA === "number" && typeof valueB === "number") {
-        return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
-      }
-
-      return 0;
-    });
+    if (typeof valueA === "string" && typeof valueB === "string") {
+      return sortDirection === "asc"
+        ? valueA.localeCompare(valueB)
+        : valueB.localeCompare(valueA);
+    }
+    if (typeof valueA === "number" && typeof valueB === "number") {
+      return sortDirection === "asc" ? valueA - valueB : valueB - valueA;
+    }
+    return 0;
+  });
 
   return (
     <>
@@ -129,7 +120,7 @@ const CustomTable = <T extends { id: string | number }>({
             type="text"
             placeholder={`Buscar ${entityLabel.toLowerCase()}...`}
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => onSearch && onSearch(e.target.value)}
           />
         </div>
       )}
@@ -161,7 +152,7 @@ const CustomTable = <T extends { id: string | number }>({
                 <Loader2 className="animate-spin text-gray-500" />
               </TableCell>
             </TableRow>
-          ) : filteredData.length === 0 ? (
+          ) : sortedData.length === 0 ? (
             <TableRow>
               <TableCell colSpan={columns.length + 1} className="text-center">
                 <CircleX className="h-6 w-6 text-red-400" />
@@ -171,7 +162,7 @@ const CustomTable = <T extends { id: string | number }>({
               </TableCell>
             </TableRow>
           ) : (
-            filteredData.map((item) => (
+            sortedData.map((item) => (
               <TableRow
                 key={item.id}
                 className={
