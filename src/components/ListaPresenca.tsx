@@ -142,8 +142,10 @@ const ListaPresenca = () => {
         "documentos/lista-dia-todo,lista-meio-periodo",
         { params: { page: pageNumber, limit } }
       );
-      const identificadoresResp = await api.get("identificadores");
-      const response = await api.get("empresas");
+      const identificadoresResp = await api.get("identificadores", {
+        params: { limit: 100000 },
+      });
+      const response = await api.get("empresas", { params: { limit: 100000 } });
 
       setEmpresas(response.data.data);
       setIdentificadores(identificadoresResp.data.data);

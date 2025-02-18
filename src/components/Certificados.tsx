@@ -84,12 +84,22 @@ const Certificados = () => {
   const fetchData = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
-      const response = await api.get("identificadores");
+      const response = await api.get("identificadores", {
+        params: { limit: 100000 },
+      });
       setIdentificadores(response.data.data);
-      const eventosResp = await api.get("eventos");
-      const pessoasResp = await api.get("pessoas");
-      const instrutoresResp = await api.get("instrutores");
-      const empresasResp = await api.get("empresas");
+      const eventosResp = await api.get("eventos", {
+        params: { limit: 100000 },
+      });
+      const pessoasResp = await api.get("pessoas", {
+        params: { limit: 100000 },
+      });
+      const instrutoresResp = await api.get("instrutores", {
+        params: { limit: 100000 },
+      });
+      const empresasResp = await api.get("empresas", {
+        params: { limit: 100000 },
+      });
       setEmpresas(empresasResp.data.data);
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);

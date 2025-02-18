@@ -109,12 +109,16 @@ const Eventos = () => {
     const inicializarFetch = async () => {
       setLoading(true);
       await fetchEventos();
-      const empresaResp = await api.get("empresas");
+      const empresaResp = await api.get("empresas", {
+        params: { limit: 100000 },
+      });
       const empresasAtivas = empresaResp.data.data.filter(
         (e: Empresa) => e.status.id === 1
       );
       setEmpresas(empresasAtivas);
-      const treinamentoResp = await api.get("treinamentos");
+      const treinamentoResp = await api.get("treinamentos", {
+        params: { limit: 100000 },
+      });
       const treinamentosAtivos = treinamentoResp.data.data.filter(
         (t: Treinamento) => t.status.id === 1
       );

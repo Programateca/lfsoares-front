@@ -112,9 +112,9 @@ export const Identificadores = () => {
         params: { page: pageNumber, limit },
       });
       const [eventosResp, pessoasResp, instrutoresResp] = await Promise.all([
-        api.get("eventos"),
-        api.get("pessoas"),
-        api.get("instrutores"),
+        api.get("eventos", { params: { limit: 100000 } }),
+        api.get("pessoas", { params: { limit: 100000 } }),
+        api.get("instrutores", { params: { limit: 100000 } }),
       ]);
 
       setHasNextPage(response.data.hasNextPage);
