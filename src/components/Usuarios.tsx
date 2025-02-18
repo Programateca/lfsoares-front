@@ -57,11 +57,7 @@ const Usuarios = () => {
   const fetchUsers = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
-      console.log({
-        page: pageNumber,
-        limit,
-        search,
-      });
+
       const response = await api.get("users", {
         params: {
           page: pageNumber,
@@ -69,7 +65,6 @@ const Usuarios = () => {
           search,
         },
       });
-      console.log("response", response);
       setUsers(response.data.data);
       setHasNextPage(response.data.hasNextPage);
     } catch (error) {

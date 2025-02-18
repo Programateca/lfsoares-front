@@ -69,7 +69,6 @@ const Eventos = () => {
       const response = await api.get("eventos", {
         params: { page: pageNumber, limit, search },
       });
-      console.log(response.data);
       setEventos(response.data.data);
       setHasNextPage(response.data.hasNextPage);
     } catch (error) {
