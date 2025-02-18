@@ -100,7 +100,7 @@ export const Identificadores = () => {
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const limit = 1;
+  const limit = 20;
 
   /**
    * Busca dados iniciais do servidor
