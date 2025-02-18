@@ -364,7 +364,6 @@ const Certificados = () => {
         documentData: JSON.stringify(dados),
         year: String(identificadorValido.certificateYear),
       };
-      console.log(schema);
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {

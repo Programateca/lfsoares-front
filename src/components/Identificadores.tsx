@@ -245,7 +245,6 @@ export const Identificadores = () => {
       toast.error("Selecione os participantes");
       return;
     }
-    console.log(data);
     const selectedEvento = eventos.find((evento) => evento.id === data.evento);
     if (!selectedEvento) {
       toast.error("Evento selecionado não foi encontrado!");
@@ -320,16 +319,13 @@ export const Identificadores = () => {
       const [inicio, fim] = horas_aulas.split(" ÀS ");
       const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
 
-      console.log(horas_aulas);
       // Se o final das aulas for igual ao início do intervalo,
       // significa que não há aula à tarde.
       if (fim === intervaloInicio) {
-        console.log("Não há aula à tarde");
         manha_horario = `${inicio} ÀS ${fim}`;
         tarde_horario = ""; // ou alguma outra lógica se necessário
         setHasAfternoon(false);
       } else {
-        console.log("Há aula à tarde");
         manha_horario = `${inicio} ÀS ${intervaloInicio}`;
         tarde_horario = `${intervaloFim} ÀS ${fim}`;
         setHasAfternoon(true);
