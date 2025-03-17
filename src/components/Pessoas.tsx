@@ -352,7 +352,7 @@ const Pessoas = () => {
                         },
                       }));
                     }}
-                    value={newPessoa.empresa.id}
+                    value={newPessoa.empresa.id || "0"}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione uma empresa" />
