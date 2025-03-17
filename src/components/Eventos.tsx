@@ -395,6 +395,7 @@ const Eventos = () => {
                 setSelectedDates([]);
               }
             }}
+            key={isModalOpen ? "open" : "closed"}
           >
             <DialogTrigger asChild>
               <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
