@@ -249,19 +249,39 @@ const Certificados = () => {
       if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
 
       const datasRealizada = selectedEvento.courseDate;
-      const dataEmissao = new Date().toISOString().split("T")[0].split("-");
       const dataRealizada = formatDataRealizada(
         datasRealizada,
         selectedEvento.courseTime,
         selectedEvento.treinamento.courseHours
       );
+      const lastItem = datasRealizada[datasRealizada.length - 1];
+      const lastItemDia = lastItem.split("-")[2];
+      const lastItemMes = lastItem.split("-")[1];
+      const lastItemAno = lastItem.split("-")[0];
+      const meses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ];
+
+      const mesString = meses[parseInt(lastItemMes, 10) - 1];
 
       const schema = {
         nome_treinamento: selectedEvento?.treinamento?.name || "",
         cnpj: selectedEmpresa?.cnpj || "",
         datas_realizadas: dataRealizada || "",
-        e_dia: dataEmissao[2] || "",
-        e_mes: dataEmissao[1] || "",
+        e_dia: lastItemDia || "",
+        e_mes: mesString.toUpperCase() || "",
+        e_ano: lastItemAno || "",
         carga_hora: selectedEvento?.treinamento?.courseHours || "",
         local_emissao: newCertificado.local_emissao || "",
         titulo_treinamento: selectedEvento?.treinamento?.name || "",
