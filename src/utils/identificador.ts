@@ -264,8 +264,6 @@ function substituirOcorrencias(
   periodo: "manha" | "tarde" | "manhaTarde",
   courseTime: string
 ): string {
-  console.log("Substituindo ocorrências...");
-  console.log("periodo:", periodo);
   console.log("courseTime:", courseTime);
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
