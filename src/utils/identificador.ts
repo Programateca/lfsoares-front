@@ -282,9 +282,25 @@ function substituirOcorrencias(
       periodo === "manha" || periodo === "manhaTarde" ? "[manha_horario]" : "",
     "\\[tarde_h\\]": () =>
       periodo === "tarde" || periodo === "manhaTarde" ? "[tarde_horario]" : "",
+
+    "\\[p_manha\\]": () =>
+      periodo === "manha" || periodo === "manhaTarde"
+        ? `[p_manha${++contador.p_manha}]`
+        : "",
+    "\\[p_tarde\\]": () =>
+      periodo === "tarde" || periodo === "manhaTarde"
+        ? `[p_tarde${++contador.p_tarde}]`
+        : "",
   };
 
-  const contador = { pi: 0, p_nome: 0, p_matricula: 0, p_codigo: 0 };
+  const contador = {
+    pi: 0,
+    p_nome: 0,
+    p_matricula: 0,
+    p_codigo: 0,
+    p_manha: 0,
+    p_tarde: 0,
+  };
 
   return Object.entries(patterns).reduce(
     (result, [pattern, replacer]) =>

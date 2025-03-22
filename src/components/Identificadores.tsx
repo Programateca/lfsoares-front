@@ -266,6 +266,8 @@ export const Identificadores = () => {
 
         acc[`p_nome${rowIndex}`] = participante?.name || "";
         acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
+        acc[`p_manha${rowIndex}`] = "PRESENTE/APTO";
+        acc[`p_tarde${rowIndex}`] = "PRESENTE/APTO";
         acc[`p_codigo${rowIndex}`] = participante
           ? `LFSTS ${String(certificadoCode + index).padStart(
               4,
@@ -290,6 +292,8 @@ export const Identificadores = () => {
       participantesMap[`p_matricula${index}`] = "";
       participantesMap[`p_codigo${index}`] = "";
       participantesMap[`p_id${index}`] = "";
+      participantesMap[`p_manha${index}`] = "";
+      participantesMap[`p_tarde${index}`] = "";
     }
 
     /**
