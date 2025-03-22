@@ -265,7 +265,9 @@ export const Identificadores = () => {
         const rowIndex = index + 1;
 
         acc[`p_nome${rowIndex}`] = participante?.name || "";
-        acc[`p_matricula${rowIndex}`] = participante?.matricula || "";
+        acc[`p_matricula${rowIndex}`] = participante?.matricula
+          ? participante?.matricula
+          : participante?.cpf || "";
         acc[`p_manha${rowIndex}`] = "PRESENTE/APTO";
         acc[`p_tarde${rowIndex}`] = "PRESENTE/APTO";
         acc[`p_codigo${rowIndex}`] = participante
