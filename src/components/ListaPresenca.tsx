@@ -123,7 +123,6 @@ const ListaPresenca = () => {
         }),
       };
 
-      setIsModalOpen(false);
       const result = await api.post("documentos", newLista).catch((error) => {
         console.error(error);
         toast.error("Erro ao gerar lista de presença");
@@ -132,6 +131,8 @@ const ListaPresenca = () => {
       if (result && result.status === 201) {
         toast.success("Lista de presença gerada com sucesso");
       }
+      fetchData();
+      setIsModalOpen(false);
     } else {
       toast.error("Identificador inválido");
     }
@@ -148,7 +149,7 @@ const ListaPresenca = () => {
         params: { limit: 100000 },
       });
       const response = await api.get("empresas", { params: { limit: 100000 } });
-
+      console.log(documentosResp.data);
       setEmpresas(response.data.data);
       setIdentificadores(identificadoresResp.data.data);
       setDocumentos(documentosResp.data.data);
@@ -185,11 +186,6 @@ const ListaPresenca = () => {
   useEffect(() => {
     fetchData(page);
   }, [page]);
-
-  useEffect(() => {
-    setLoading(true);
-    fetchData().then(() => setLoading(false));
-  }, []);
 
   const handleInputChange = (name: string, value: string) => {
     setValue(name as keyof ListaFormData, value);
