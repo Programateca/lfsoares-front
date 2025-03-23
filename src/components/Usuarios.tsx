@@ -54,6 +54,11 @@ const Usuarios = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
+  const [showInativos, setShowInativos] = useState(false);
+  const filteredData = showInativos
+    ? users.filter((p) => p.status.id === 2)
+    : users.filter((p) => p.status.id === 1);
+
   const fetchUsers = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
@@ -312,6 +317,12 @@ const Usuarios = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
         <CustomTable
           columns={[
@@ -319,7 +330,7 @@ const Usuarios = () => {
             { key: "email", label: "Email" },
             { key: "status.name", label: "Status" },
           ]}
-          data={users}
+          data={filteredData}
           onEdit={(id) => {
             setUserInEditMode(id);
             setIsModalOpen(true);

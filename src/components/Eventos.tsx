@@ -63,6 +63,11 @@ const Eventos = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
+  const [showInativos, setShowInativos] = useState(false);
+  const filteredData = showInativos
+    ? eventos.filter((p) => p.status.id === 2)
+    : eventos.filter((p) => p.status.id === 1);
+
   const fetchEventos = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
@@ -345,7 +350,7 @@ const Eventos = () => {
 
   const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
-      await api.patch(`Eventos/${id}`, {
+      await api.patch(`eventos/${id}`, {
         status: {
           id: status,
         },
@@ -617,6 +622,12 @@ const Eventos = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
         <CustomTable
           columns={[
@@ -633,7 +644,7 @@ const Eventos = () => {
               render: (value) => new Date(value).toLocaleDateString("pt-BR"),
             },
           ]}
-          data={eventos}
+          data={filteredData}
           onEdit={handleEdit}
           onDelete={handleUpdateStatus}
           onRestore={handleUpdateStatus}

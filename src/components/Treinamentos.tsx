@@ -60,6 +60,11 @@ const Treinamentos = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
+  const [showInativos, setShowInativos] = useState(false);
+  const filteredData = showInativos
+    ? treinamentos.filter((p) => p.status.id === 2)
+    : treinamentos.filter((p) => p.status.id === 1);
+
   const fetchTreinamentos = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
@@ -435,6 +440,12 @@ const Treinamentos = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
         <CustomTable
           columns={[
@@ -443,7 +454,7 @@ const Treinamentos = () => {
             { key: "courseModality", label: "Modalidade" },
             { key: "status.name", label: "Status" },
           ]}
-          data={treinamentos}
+          data={filteredData}
           onEdit={handleEdit}
           onDelete={handleUpdateStatus}
           onRestore={handleUpdateStatus}
