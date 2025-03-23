@@ -81,7 +81,7 @@ export async function gerarLista(
 
   // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
-    const regex = new RegExp(key, "g");
+    // const regex = new RegExp(key, "g");
     const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
     xmlText = xmlText.replace(wholeWordRegex, String(value));
   });
