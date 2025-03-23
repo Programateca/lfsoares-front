@@ -29,40 +29,44 @@ function getDias(
   return instrutor.find((item) => item.periodo === periodo)?.dias || "";
 }
 
-function processInstrutor(
+async function processInstrutor(
   instrutor: Instrutor,
   instrutorName: string,
-  xmlPage: string,
   diasManha: string,
   diasTarde: string,
   diasManhaTarde: string,
   courseTime: string
 ) {
   let result = "";
-  instrutor
-    .filter((item) => item.periodo !== "nenhum")
-    .forEach((item) => {
-      const repetition = xmlPage.repeat(item.paginas);
-      const dias =
-        item.periodo === "manha"
-          ? diasManha
-          : item.periodo === "tarde"
-          ? diasTarde
-          : diasManhaTarde;
-      if (item.periodo !== "nenhum") {
-        result += substituirOcorrencias(
-          repetition,
-          instrutorName,
-          dias,
-          item.periodo as "manha" | "tarde" | "manhaTarde",
-          courseTime
-        );
-      }
+  const filteredInstrutor = instrutor.filter(
+    (item) => item.periodo !== "nenhum"
+  );
+
+  for (const item of filteredInstrutor) {
+    const tabelaXml = await lerTabelaXml({
+      tipo: item.periodo as "manha" | "tarde" | "manhaTarde",
     });
+    const repetition = tabelaXml.repeat(item.paginas);
+    const dias =
+      item.periodo === "manha"
+        ? diasManha
+        : item.periodo === "tarde"
+        ? diasTarde
+        : diasManhaTarde;
+    if (item.periodo !== "nenhum") {
+      result += substituirOcorrencias(
+        repetition,
+        instrutorName,
+        dias,
+        item.periodo as "manha" | "tarde" | "manhaTarde",
+        courseTime
+      );
+    }
+  }
   return result;
 }
 
-function formatarPaginas(pages: Pages, xmlPage: string, courseTime: string) {
+async function formatarPaginas(pages: Pages, courseTime: string) {
   const diasManhaA = getDias(pages.instrutorA, "manha");
   const diasTardeA = getDias(pages.instrutorA, "tarde");
   const diasManhaTardeA = getDias(pages.instrutorA, "manhaTarde");
@@ -71,19 +75,17 @@ function formatarPaginas(pages: Pages, xmlPage: string, courseTime: string) {
   const diasManhaTardeB = getDias(pages.instrutorB, "manhaTarde");
 
   let newXmlPages = "";
-  newXmlPages += processInstrutor(
+  newXmlPages += await processInstrutor(
     pages.instrutorA,
     "instrutor_a",
-    xmlPage,
     diasManhaA,
     diasTardeA,
     diasManhaTardeA,
     courseTime
   );
-  newXmlPages += processInstrutor(
+  newXmlPages += await processInstrutor(
     pages.instrutorB,
     "instrutor_b",
-    xmlPage,
     diasManhaB,
     diasTardeB,
     diasManhaTardeB,
@@ -105,11 +107,8 @@ export async function gerarIdentificador(
     const responseMainXml = await fetch(
       `/templates/identificacao-participante/document-template.xml`
     );
-    const responseNewXml = await fetch(
-      `/templates/identificacao-participante/tabela.xml`
-    );
+
     const mainXmlContent = await responseMainXml.text();
-    const xmlNewContent = await responseNewXml.text();
 
     const tagNameIndex = mainXmlContent.indexOf(TAG_NAME);
     if (tagNameIndex === -1) {
@@ -118,7 +117,7 @@ export async function gerarIdentificador(
     }
 
     const updatedXml = mainXmlContent.split(TAG_NAME).join(
-      formatarPaginas(
+      await formatarPaginas(
         {
           instrutorA: formattedPages.instrutorA.filter(
             (item) => item.periodo !== "nenhum"
@@ -127,7 +126,6 @@ export async function gerarIdentificador(
             (item) => item.periodo !== "nenhum"
           ),
         },
-        xmlNewContent,
         courseTime
       )
     );
@@ -344,4 +342,27 @@ export function formatDays(dias: Dias): EventSchedule {
         }))
       : null,
   };
+}
+
+type TabelaXML = {
+  tipo: "manha" | "tarde" | "manhaTarde";
+};
+
+async function lerTabelaXml({ tipo }: TabelaXML) {
+  if (tipo === "manhaTarde") {
+    const response = await fetch(
+      "/templates/identificacao-participante/tabela-double.xml"
+    );
+    return await response.text();
+  } else if (tipo === "manha") {
+    const response = await fetch(
+      "/templates/identificacao-participante/tabela-single-manha.xml"
+    );
+    return await response.text();
+  } else {
+    const response = await fetch(
+      "/templates/identificacao-participante/tabela-single-tarde.xml"
+    );
+    return await response.text();
+  }
 }
