@@ -48,6 +48,11 @@ const Empresas = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
+  const [showInativos, setShowInativos] = useState(false);
+  const filteredData = showInativos
+    ? empresas.filter((p) => p.status.id === 2)
+    : empresas.filter((p) => p.status.id === 1);
+
   const fetchEmpresas = async (pageNumber: number = 1, search = "") => {
     try {
       setLoading(true);
@@ -298,6 +303,12 @@ const Empresas = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
         <CustomTable
           columns={[
@@ -305,7 +316,7 @@ const Empresas = () => {
             { key: "cnpj", label: "CNPJ" },
             { key: "status.name", label: "Status" },
           ]}
-          data={empresas}
+          data={filteredData}
           onEdit={handleEdit}
           onDelete={handleUpdateStatus}
           onRestore={handleUpdateStatus}
