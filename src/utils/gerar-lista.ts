@@ -6,6 +6,35 @@ export async function gerarLista(
   data: Record<string, string | number>,
   tipo: string
 ) {
+  if (data.tipo_lista === "lista-dia-todo") {
+    // Parse time strings
+    const horario = String(data.horario)
+      .split("ÀS")
+      .map((t) => t.trim());
+    const intervalo = String(data.intervalo)
+      .split("ÀS")
+      .map((t) => t.trim());
+
+    if (horario.length !== 2 || intervalo.length !== 2) {
+      throw new Error("Formato de horário ou intervalo inválido");
+    }
+
+    // Extract hours for validation
+    const startHour = parseInt(horario[0].split(":")[0], 10);
+    const endHour = parseInt(horario[1].split(":")[0], 10);
+
+    // Check if the day spans before and after noon
+    if (startHour >= 12 || endHour < 12) {
+      throw new Error(
+        "Para lista de dia todo, é necessário que o horário comece antes do meio-dia e termine depois do meio-dia"
+      );
+    }
+
+    // Add new properties to data
+    data.M_H_ORARIO = `${horario[0]} ÀS ${intervalo[0]}`;
+    data.T_H_ORARIO = `${intervalo[1]} ÀS ${horario[1]}`;
+  }
+
   const maxPages = 12;
   const participantsPerPage = 5;
   const requiredPages = Math.ceil(
@@ -43,8 +72,9 @@ export async function gerarLista(
   headerFiles.forEach((headerFile) => {
     let headerText = zip.files[headerFile].asText();
     Object.entries(data).forEach(([key, value]) => {
-      const regex = new RegExp(key, "g");
-      headerText = headerText.replace(regex, String(value));
+      // const regex = new RegExp(key, "g");
+      const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
+      headerText = headerText.replace(wholeWordRegex, String(value));
     });
     zip.file(headerFile, headerText);
   });
@@ -52,8 +82,8 @@ export async function gerarLista(
   // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
     const regex = new RegExp(key, "g");
-
-    xmlText = xmlText.replace(regex, String(value));
+    const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
+    xmlText = xmlText.replace(wholeWordRegex, String(value));
   });
 
   // Update the document XML in the zip

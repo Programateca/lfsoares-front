@@ -75,6 +75,8 @@ const ListaPresenca = () => {
       ).cnpj;
 
       const schema: Record<string, string> = {
+        PERIODO: dataIdentificador.datas,
+        HORARIO: dataIdentificador.mudar_horarios,
         nome_treinamento: dataIdentificador.treinamento,
         tipo: dataIdentificador.tipo,
         carga_horaria: `${dataIdentificador.carga_horaria} HORAS/AULA`,
