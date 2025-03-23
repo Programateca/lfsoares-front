@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/axios";
 import { Label } from "./ui/label";
 import toast from "react-hot-toast";
@@ -54,7 +54,7 @@ const Treinamentos = () => {
   });
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -153,17 +153,61 @@ const Treinamentos = () => {
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const linhas = e.target.value.split("\n");
-    const linhasNumeradas = linhas.map((linha, index) => {
-      // Remove qualquer numeração existente
-      const linhaSemNumero = linha.replace(/^\d+\.\s*/, "");
-      return `${index + 1}. ${linhaSemNumero}`;
-    });
+    const { selectionStart, value } = e.target;
 
+    // Divide o texto atual em linhas
+    const linhas = value.split("\n");
+
+    // Determina em qual linha o cursor se encontra
+    let linhaAtualIndex = 0;
+    let acumulado = 0;
+    for (let i = 0; i < linhas.length; i++) {
+      // +1 para considerar o caractere de quebra de linha
+      if (selectionStart <= acumulado + linhas[i].length) {
+        linhaAtualIndex = i;
+        break;
+      }
+      acumulado += linhas[i].length + 1;
+    }
+
+    // Para cada linha, remove a numeração antiga e aplica a nova
+    const linhasSemNumeracao = linhas.map((linha: string) =>
+      linha.replace(/^\d+\.\s*/, "")
+    );
+
+    const linhasNumeradas = linhasSemNumeracao.map(
+      (linha: string, index: number) => {
+        if (linha.trim() === "") return "";
+        return `${index + 1}. ${linha}`;
+      }
+    );
+
+    const novoTexto = linhasNumeradas.join("\n");
+
+    // Calcula a nova posição do cursor na linha atual
+    const linhaOriginal = linhas[linhaAtualIndex];
+    const prefixoAntigoMatch = linhaOriginal.match(/^(\d+\.\s*)/);
+    const prefixoAntigoLength = prefixoAntigoMatch
+      ? prefixoAntigoMatch[0].length
+      : 0;
+    const novoPrefixo = `${linhaAtualIndex + 1}. `;
+    const novoPrefixoLength = novoPrefixo.length;
+    const diff = novoPrefixoLength - prefixoAntigoLength;
+    const novaPosicao = selectionStart + diff;
+
+    // Atualiza o estado com o novo texto
     setNewTreinamento((prev) => ({
       ...prev,
-      conteudoAplicado: linhasNumeradas.join("\n"),
+      conteudoAplicado: novoTexto,
     }));
+
+    // Restaura a posição do cursor após a atualização do estado
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.selectionStart = novaPosicao;
+        textareaRef.current.selectionEnd = novaPosicao;
+      }
+    }, 0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -366,6 +410,7 @@ const Treinamentos = () => {
                   <div className="space-y-2">
                     <Label>Conteúdo Aplicado</Label>
                     <Textarea
+                      ref={textareaRef}
                       name="conteudoAplicado"
                       value={newTreinamento.conteudoAplicado}
                       onChange={handleTextareaChange}
