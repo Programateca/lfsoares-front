@@ -16,7 +16,7 @@ export async function gerarLista(
       .map((t) => t.trim());
 
     if (horario.length !== 2 || intervalo.length !== 2) {
-      throw new Error("Formato de horário ou intervalo inválido");
+      console.warn("Formato de horário ou intervalo inválido");
     }
 
     // Extract hours for validation
