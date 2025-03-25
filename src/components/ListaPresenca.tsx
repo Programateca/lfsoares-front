@@ -34,6 +34,7 @@ import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import toast from "react-hot-toast";
+import { ListaData } from "@/@types/ListaData";
 
 export interface ListaFormData {
   documento_identificador: string;
@@ -69,14 +70,15 @@ const ListaPresenca = () => {
     if (identificadorValido) {
       const dataIdentificador = JSON.parse(
         identificadorValido.identificadorData
-      );
+      ) as ListaData;
       const empresaCNPJ = empresas.find(
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
 
-      const schema: Record<string, string> = {
-        PERIODO: dataIdentificador.datas,
-        HORARIO: dataIdentificador.mudar_horarios,
+      console.log(dataIdentificador.instrutorDates);
+      // return;
+      const schema: Record<string, any> = {
+        datasObject: dataIdentificador.instrutorDates,
         nome_treinamento: dataIdentificador.treinamento,
         tipo: dataIdentificador.tipo,
         carga_horaria: `${dataIdentificador.carga_horaria} HORAS/AULA`,
@@ -93,7 +95,9 @@ const ListaPresenca = () => {
 
       const pessoas: { id: string; name: string }[] = [];
       for (let i = 1; i <= 60; i++) {
+        // @ts-ignore
         const pessoaId = dataIdentificador[`p_id${i}`];
+        // @ts-ignore
         const pessoaNome = dataIdentificador[`p_nome${i}`];
         if (pessoaId && pessoaNome) {
           pessoas.push({ id: pessoaId, name: pessoaNome });

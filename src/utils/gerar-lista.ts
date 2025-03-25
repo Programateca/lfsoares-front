@@ -2,10 +2,19 @@ import PizZip from "pizzip";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
 
-export async function gerarLista(
-  data: Record<string, string | number>,
-  tipo: string
-) {
+interface InstructorSchedule {
+  dia: string;
+  periodo: string;
+}
+
+interface DatasStructure {
+  instrutorA: InstructorSchedule[] | null;
+  instrutorB: InstructorSchedule[] | null;
+}
+
+export async function gerarLista(data: Record<string, any>, tipo: string) {
+  const datas = data.datas as DatasStructure;
+
   if (data.tipo_lista === "lista-dia-todo") {
     // Parse time strings
     const horario = String(data.horario)
@@ -33,8 +42,63 @@ export async function gerarLista(
     // Add new properties to data
     data.M_H_ORARIO = `${horario[0]} ÀS ${intervalo[0]}`;
     data.T_H_ORARIO = `${intervalo[1]} ÀS ${horario[1]}`;
-  }
 
+    await generateAndSaveDocument(data, tipo, "output.docx");
+  } else {
+    // Check if we need to generate both morning and afternoon lists
+    const hasManhaTarde = checkPeriodsInData(datas, "manhaTarde");
+
+    if (hasManhaTarde) {
+      // Generate morning list
+      const morningData = {
+        ...data,
+        PERIODO: "MANHÃ",
+        HORARIO: "08:00 ÀS 12:00",
+      };
+      await generateAndSaveDocument(morningData, tipo, "lista_manha.docx");
+
+      // Generate afternoon list
+      const afternoonData = {
+        ...data,
+        PERIODO: "TARDE",
+        HORARIO: "13:30 ÀS 17:30",
+      };
+      await generateAndSaveDocument(afternoonData, tipo, "lista_tarde.docx");
+    } else {
+      // Check which period to use
+      const hasManha = checkPeriodsInData(datas, "manha");
+      const hasTarde = checkPeriodsInData(datas, "tarde");
+
+      if (hasManha || (!hasManha && !hasTarde)) {
+        // Default to morning if no specific period
+        data.PERIODO = "MANHÃ";
+        data.HORARIO = "08:00 ÀS 12:00";
+      } else if (hasTarde) {
+        data.PERIODO = "TARDE";
+        data.HORARIO = "13:30 ÀS 17:30";
+      }
+
+      await generateAndSaveDocument(data, tipo, "output.docx");
+    }
+  }
+}
+
+function checkPeriodsInData(datas: DatasStructure, periodo: string): boolean {
+  if (!datas) return false;
+
+  const instrutorAHasPeriod =
+    datas.instrutorA?.some((item) => item.periodo === periodo) || false;
+  const instrutorBHasPeriod =
+    datas.instrutorB?.some((item) => item.periodo === periodo) || false;
+
+  return instrutorAHasPeriod || instrutorBHasPeriod;
+}
+
+async function generateAndSaveDocument(
+  data: Record<string, any>,
+  tipo: string,
+  outputFilename: string
+) {
   const maxPages = 12;
   const participantsPerPage = 5;
   const requiredPages = Math.ceil(
@@ -62,7 +126,7 @@ export async function gerarLista(
   // Replace variables in the document and headers
   let xmlText = zip.files["word/document.xml"].asText();
 
-  // Get all header files (header1.xml, header2.xml, etc.)
+  // Get all header files
   const headerFiles = Object.keys(zip.files).filter(
     (fileName) =>
       fileName.startsWith("word/header") && fileName.endsWith(".xml")
@@ -72,18 +136,20 @@ export async function gerarLista(
   headerFiles.forEach((headerFile) => {
     let headerText = zip.files[headerFile].asText();
     Object.entries(data).forEach(([key, value]) => {
-      // const regex = new RegExp(key, "g");
-      const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
-      headerText = headerText.replace(wholeWordRegex, String(value));
+      if (typeof value === "string" || typeof value === "number") {
+        const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
+        headerText = headerText.replace(wholeWordRegex, String(value));
+      }
     });
     zip.file(headerFile, headerText);
   });
 
   // Replace variables in main document
   Object.entries(data).forEach(([key, value]) => {
-    // const regex = new RegExp(key, "g");
-    const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
-    xmlText = xmlText.replace(wholeWordRegex, String(value));
+    if (typeof value === "string" || typeof value === "number") {
+      const wholeWordRegex = new RegExp(`\\b${key}\\b`, "g");
+      xmlText = xmlText.replace(wholeWordRegex, String(value));
+    }
   });
 
   // Update the document XML in the zip
@@ -94,7 +160,7 @@ export async function gerarLista(
     mimeType:
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   });
-  saveAs(out, "output.docx");
+  saveAs(out, outputFilename);
 }
 
 interface RemovalOptions {
