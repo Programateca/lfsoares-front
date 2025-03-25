@@ -119,7 +119,7 @@ async function generateAndSaveDocument(
     },
     countRemovedPages,
     13 * 3,
-    9 * 7,
+    11 * 7, // Talvez problema aqui com a remoção de paginas na lista de MEIO PERIODO
     1
   );
 
