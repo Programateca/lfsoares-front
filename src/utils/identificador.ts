@@ -22,76 +22,137 @@ type Pages = {
   instrutorB: Instrutor;
 };
 
-function getDias(
-  instrutor: { paginas: number; dias: string; periodo: string }[],
-  periodo: string
-) {
-  return instrutor.find((item) => item.periodo === periodo)?.dias || "";
-}
+// function getDias(
+//   instrutor: { paginas: number; dias: string; periodo: string }[],
+//   periodo: string
+// ) {
+//   return instrutor.find((item) => item.periodo === periodo)?.dias || "";
+// }
 
-async function processInstrutor(
-  instrutor: Instrutor,
-  instrutorName: string,
-  diasManha: string,
-  diasTarde: string,
-  diasManhaTarde: string,
-  courseTime: string
-) {
-  let result = "";
-  const filteredInstrutor = instrutor.filter(
-    (item) => item.periodo !== "nenhum"
-  );
+async function formatarPaginas(pages: Pages, courseTime: string) {
+  // Extract all unique days across both instructors and all periods
+  const allDays = new Set<string>();
+  const dayToInstructorInfo = new Map<
+    string,
+    {
+      instrutorA?: { periodo: Period; paginas: number };
+      instrutorB?: { periodo: Period; paginas: number };
+    }
+  >();
 
-  for (const item of filteredInstrutor) {
-    const tabelaXml = await lerTabelaXml({
-      tipo: item.periodo as "manha" | "tarde" | "manhaTarde",
-    });
-    const repetition = tabelaXml.repeat(item.paginas);
-    const dias =
-      item.periodo === "manha"
-        ? diasManha
-        : item.periodo === "tarde"
-        ? diasTarde
-        : diasManhaTarde;
-    if (item.periodo !== "nenhum") {
-      result += substituirOcorrencias(
+  // Collect days from instructor A
+  pages.instrutorA.forEach((item) => {
+    if (item.periodo !== "nenhum" && item.dias) {
+      // Parse formatted dates back to individual days
+      const days = parseDatasFormatadas(item.dias);
+      days.forEach((day) => {
+        allDays.add(day);
+        const info = dayToInstructorInfo.get(day) || {};
+        info.instrutorA = { periodo: item.periodo, paginas: item.paginas };
+        dayToInstructorInfo.set(day, info);
+      });
+    }
+  });
+
+  // Collect days from instructor B
+  pages.instrutorB.forEach((item) => {
+    if (item.periodo !== "nenhum" && item.dias) {
+      const days = parseDatasFormatadas(item.dias);
+      days.forEach((day) => {
+        allDays.add(day);
+        const info = dayToInstructorInfo.get(day) || {};
+        info.instrutorB = { periodo: item.periodo, paginas: item.paginas };
+        dayToInstructorInfo.set(day, info);
+      });
+    }
+  });
+
+  // Sort days chronologically
+  const sortedDays = Array.from(allDays).sort((a, b) => {
+    const dateA = new Date(a.split("/").reverse().join("-"));
+    const dateB = new Date(b.split("/").reverse().join("-"));
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  let newXmlPages = "";
+
+  // Process pages day by day
+  for (const day of sortedDays) {
+    const dayInfo = dayToInstructorInfo.get(day);
+    if (!dayInfo) continue;
+
+    // Process instructor A for this day if applicable
+    if (dayInfo.instrutorA && dayInfo.instrutorA.periodo !== "nenhum") {
+      const tabelaXml = await lerTabelaXml({
+        tipo: dayInfo.instrutorA.periodo as "manha" | "tarde" | "manhaTarde",
+      });
+      const repetition = tabelaXml.repeat(dayInfo.instrutorA.paginas);
+      newXmlPages += substituirOcorrencias(
         repetition,
-        instrutorName,
-        dias,
-        item.periodo as "manha" | "tarde" | "manhaTarde",
+        "instrutor_a",
+        day,
+        dayInfo.instrutorA.periodo as "manha" | "tarde" | "manhaTarde",
+        courseTime
+      );
+    }
+
+    // Process instructor B for this day if applicable
+    if (dayInfo.instrutorB && dayInfo.instrutorB.periodo !== "nenhum") {
+      const tabelaXml = await lerTabelaXml({
+        tipo: dayInfo.instrutorB.periodo as "manha" | "tarde" | "manhaTarde",
+      });
+      const repetition = tabelaXml.repeat(dayInfo.instrutorB.paginas);
+      newXmlPages += substituirOcorrencias(
+        repetition,
+        "instrutor_b",
+        day,
+        dayInfo.instrutorB.periodo as "manha" | "tarde" | "manhaTarde",
         courseTime
       );
     }
   }
-  return result;
+
+  return newXmlPages;
 }
 
-async function formatarPaginas(pages: Pages, courseTime: string) {
-  const diasManhaA = getDias(pages.instrutorA, "manha");
-  const diasTardeA = getDias(pages.instrutorA, "tarde");
-  const diasManhaTardeA = getDias(pages.instrutorA, "manhaTarde");
-  const diasManhaB = getDias(pages.instrutorB, "manha");
-  const diasTardeB = getDias(pages.instrutorB, "tarde");
-  const diasManhaTardeB = getDias(pages.instrutorB, "manhaTarde");
+// Helper function to parse formatted dates back to individual days
+function parseDatasFormatadas(formattedString: string): string[] {
+  const days: string[] = [];
 
-  let newXmlPages = "";
-  newXmlPages += await processInstrutor(
-    pages.instrutorA,
-    "instrutor_a",
-    diasManhaA,
-    diasTardeA,
-    diasManhaTardeA,
-    courseTime
-  );
-  newXmlPages += await processInstrutor(
-    pages.instrutorB,
-    "instrutor_b",
-    diasManhaB,
-    diasTardeB,
-    diasManhaTardeB,
-    courseTime
-  );
-  return newXmlPages;
+  // Split by semicolons to get different month/year groups
+  const monthGroups = formattedString.split(";").map((s) => s.trim());
+
+  for (const group of monthGroups) {
+    if (!group) continue;
+
+    // Format could be: "1, 2, 3 E 4/05/23" or "5/05/23"
+    const match = group.match(/^(.*?)\/(\d{2})\/(\d{2,4})$/);
+    if (match) {
+      const [, dayPart, month, year] = match;
+
+      // Process the day part which could be "1, 2, 3 E 4" or just "5"
+      let dayNumbers: string[];
+      if (dayPart.includes(" E ")) {
+        const parts = dayPart.split(" E ");
+        dayNumbers = [...parts[0].split(", "), parts[1]];
+      } else if (dayPart.includes(",")) {
+        dayNumbers = dayPart.split(", ");
+      } else {
+        dayNumbers = [dayPart];
+      }
+
+      // Create full dates
+      dayNumbers.forEach((day) => {
+        days.push(
+          `${day.padStart(2, "0")}/${month}/${
+            year.length === 2 ? `20${year}` : year
+          }`
+        );
+      });
+    }
+  }
+
+  return days;
 }
 
 export async function gerarIdentificador(
@@ -262,7 +323,7 @@ function substituirOcorrencias(
   periodo: "manha" | "tarde" | "manhaTarde",
   courseTime: string
 ): string {
-  console.log("courseTime:", courseTime);
+  if (import.meta.env.DEV) console.log("courseTime:", courseTime);
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
     "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
