@@ -29,15 +29,15 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
     }
 
     // Extract hours for validation
-    const startHour = parseInt(horario[0].split(":")[0], 10);
-    const endHour = parseInt(horario[1].split(":")[0], 10);
+    // const startHour = parseInt(horario[0].split(":")[0], 10);
+    // const endHour = parseInt(horario[1].split(":")[0], 10);
 
     // Check if the day spans before and after noon
-    if (startHour >= 12 || endHour < 12) {
-      throw new Error(
-        "Para lista de dia todo, é necessário que o horário comece antes do meio-dia e termine depois do meio-dia"
-      );
-    }
+    // if (startHour >= 12 || endHour < 12) {
+    //   throw new Error(
+    //     "Para lista de dia todo, é necessário que o horário comece antes do meio-dia e termine depois do meio-dia"
+    //   );
+    // }
 
     // Add new properties to data
     data.M_H_ORARIO = `${horario[0]} ÀS ${intervalo[0]}`;
