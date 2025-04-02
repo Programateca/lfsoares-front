@@ -140,9 +140,10 @@ const Integrantes = () => {
     if (instrutorInEditMode) {
       try {
         await api.patch(`instrutores/${instrutorInEditMode}`, {
-          name: newInstrutor.name,
-          qualificacaoProfissional: newInstrutor.qualificacaoProfissional,
-          registroProfissional: newInstrutor.registroProfissional,
+          name: newInstrutor.name.trim(), // Remove espaços em branco do início e fim
+          qualificacaoProfissional:
+            newInstrutor.qualificacaoProfissional.trim(),
+          registroProfissional: newInstrutor.registroProfissional.trim(),
         });
 
         fetchInstrutores();
@@ -161,9 +162,9 @@ const Integrantes = () => {
 
     try {
       await api.post("instrutores", {
-        name: newInstrutor.name,
-        qualificacaoProfissional: newInstrutor.qualificacaoProfissional,
-        registroProfissional: newInstrutor.registroProfissional,
+        name: newInstrutor.name.trim(),
+        qualificacaoProfissional: newInstrutor.qualificacaoProfissional.trim(),
+        registroProfissional: newInstrutor.registroProfissional.trim(),
       });
       fetchInstrutores();
       setIsModalOpen(false);

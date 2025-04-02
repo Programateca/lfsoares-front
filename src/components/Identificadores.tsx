@@ -103,6 +103,8 @@ export const Identificadores = () => {
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
 
+  const [showInativos, setShowInativos] = useState(false);
+
   /**
    * Busca dados iniciais do servidor
    */
@@ -120,7 +122,7 @@ export const Identificadores = () => {
 
       setHasNextPage(response.data.hasNextPage);
       setIdentificadoresGerados(response.data.data);
-      setEventos(eventosResp.data.data);
+      setEventos(eventosResp.data.data.filter((e: any) => e.status.id === 1));
       setParticipantes(pessoasResp.data.data);
       setInstrutores(instrutoresResp.data.data);
     } catch (error) {
@@ -192,17 +194,28 @@ export const Identificadores = () => {
       // Se um instrutor seleciona "manhaTarde", o outro fica sem valor
       setValue(`${instructor}.${day}.periodo`, "manhaTarde");
       setValue(`${otherInstructor}.${day}.periodo`, "nenhum");
-    } else {
-      // Para "manha" ou "tarde"
-      setValue(`${instructor}.${day}.periodo`, value);
-      // Determina o valor complementar
-      const complementaryValue = value === "manha" ? "tarde" : "manha";
-      // Lê o valor atual do outro instrutor para esse dia
-      const currentOtherValue = getValues(`${otherInstructor}.${day}.periodo`);
-      // Se o valor atual não for o complementar, atualiza
-      if (currentOtherValue !== complementaryValue) {
-        setValue(`${otherInstructor}.${day}.periodo`, complementaryValue);
-      }
+      return;
+    }
+
+    // Para "manha", "tarde" ou "nenhum"
+    setValue(`${instructor}.${day}.periodo`, value);
+
+    const complementaryValue = value === "manha" ? "tarde" : "manha";
+    const currentOtherValue = getValues(`${otherInstructor}.${day}.periodo`);
+
+    // ✅ Novo tratamento para permitir "nenhum" sem interferir
+    if (value === "nenhum") {
+      // Se um instrutor é definido como "nenhum", o outro mantém seu valor atual
+      return;
+    }
+
+    if (currentOtherValue === "nenhum") {
+      // Se o outro instrutor está como "nenhum", não altera nada
+      return;
+    }
+
+    if (currentOtherValue !== complementaryValue) {
+      setValue(`${otherInstructor}.${day}.periodo`, complementaryValue);
     }
   };
 
@@ -608,6 +621,31 @@ export const Identificadores = () => {
     return `${eventDates} - ${eventLength} dias`;
   };
 
+  const handleUpdateStatus = async (id: string | number, status: number) => {
+    try {
+      await api.patch(`documentos/${id}`, {
+        status: {
+          id: status,
+        },
+      });
+      if (status === 1)
+        toast("Identificador ativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Identificador desativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
+      fetchData();
+    } catch (error) {}
+  };
+
+  const filteredData = showInativos
+    ? identificadoresGerados.filter((p) => p.status?.id === 2)
+    : identificadoresGerados.filter((p) => p.status?.id === 1);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -639,6 +677,12 @@ export const Identificadores = () => {
                 Gerar novo Identificador
               </>
             )}
+          </Button>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
           </Button>
         </div>
 
@@ -962,7 +1006,7 @@ export const Identificadores = () => {
               { key: "code", label: "Código" },
               { key: "createdAt", label: "Data de Criação" },
             ]}
-            data={identificadoresGerados.map((item, index) => ({
+            data={filteredData.map((item, index) => ({
               ...item,
               id: item.id ?? `temp-${index}`, // Garante que id nunca será undefined
               createdAt: new Date(item.createdAt).toLocaleString("pt-BR", {
@@ -1005,6 +1049,8 @@ export const Identificadores = () => {
             hasNextPage={hasNextPage}
             page={page}
             onPageChange={handlePageChange}
+            onDelete={handleUpdateStatus}
+            onRestore={handleUpdateStatus}
           />
         )}
       </CardContent>
