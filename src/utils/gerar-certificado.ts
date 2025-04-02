@@ -26,7 +26,11 @@ export async function gerarCertificado(
   type: string
 ): Promise<void> {
   const fileArrayBufferFrente = await loadFile(`/templates/frente.pptx`);
-  const fileArrayBufferVerso = await loadFile(`/templates/verso-${type}.pptx`);
+  let templateVerso = `/templates/verso-${type}.pptx`;
+  if (data[0]?.conteudo_aplicado && data[0].conteudo_aplicado.length > 700) {
+    templateVerso = `/templates/verso-${type}-2colunas.pptx`;
+  }
+  const fileArrayBufferVerso = await loadFile(templateVerso);
 
   // // Frente
   const zip = new PizZip(fileArrayBufferFrente);
