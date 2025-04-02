@@ -5,7 +5,14 @@ import { api } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
-import { BookUp2, CircleX, Loader2, Plus } from "lucide-react";
+import {
+  BookUp2,
+  CircleX,
+  Loader2,
+  Plus,
+  RotateCcw,
+  Trash2Icon,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -34,6 +41,17 @@ import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import toast from "react-hot-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 export interface ListaFormData {
   documento_identificador: string;
@@ -60,6 +78,12 @@ const ListaPresenca = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [selectedItem, setSelectedItem] = useState<{
+    id: string | number;
+    status: number;
+  } | null>(null);
+
+  const [showInativos, setShowInativos] = useState(false);
 
   const onSubmit = async (data: ListaFormData) => {
     const identificadorSelecionado = data.documento_identificador;
@@ -235,6 +259,31 @@ const ListaPresenca = () => {
     return 0;
   });
 
+  const handleUpdateStatus = async (id: string | number, status: number) => {
+    try {
+      await api.patch(`documentos/${id}`, {
+        status: {
+          id: status,
+        },
+      });
+      if (status === 1)
+        toast("Lista de presença ativada!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Lista de presença desativada!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
+      fetchData();
+    } catch (error) {}
+  };
+
+  const filteredData = showInativos
+    ? sortedDocuments.filter((p) => p.status?.id === 2)
+    : sortedDocuments.filter((p) => p.status?.id === 1);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -331,6 +380,12 @@ const ListaPresenca = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
         {/* Barra de pesquisa */}
         <div className="mb-4">
@@ -380,7 +435,7 @@ const ListaPresenca = () => {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : sortedDocuments.length === 0 ? (
+            ) : filteredData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -392,7 +447,7 @@ const ListaPresenca = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              sortedDocuments.map((documento) => (
+              filteredData.map((documento) => (
                 <TableRow key={documento.id}>
                   <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
                     Lista de Presença
@@ -418,6 +473,59 @@ const ListaPresenca = () => {
                       <BookUp2 className="h-4 w-4" />
                       Baixar
                     </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                          onClick={() =>
+                            setSelectedItem({
+                              id: documento.id,
+                              status: documento.status.id === 1 ? 2 : 1,
+                            })
+                          }
+                        >
+                          {documento.status.id === 1 ? (
+                            <Trash2Icon className="h-4 w-4" />
+                          ) : (
+                            <RotateCcw className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {documento.status.id === 1
+                              ? "Inativar lista de presença?"
+                              : "Reativar lista de presença?"}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {documento.status.id === 1
+                              ? "Tem certeza que deseja inativar esta lista de presença?"
+                              : "Tem certeza que deseja reativar esta lista de presença?"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="w-20">
+                            Não
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="w-20"
+                            onClick={() => {
+                              if (selectedItem) {
+                                handleUpdateStatus(
+                                  selectedItem.id,
+                                  selectedItem.status
+                                );
+                                setSelectedItem(null);
+                              }
+                            }}
+                          >
+                            Sim
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))

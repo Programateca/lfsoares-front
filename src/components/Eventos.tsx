@@ -292,12 +292,16 @@ const Eventos = () => {
       (t) => t.id === newEvento.treinamento.id
     );
     const requiredHours = Number(treinamento?.courseHours || "0");
-
+    console.log(totalAvailableHours);
     if (totalAvailableHours < requiredHours) {
       toast.error(
-        `O período informado (totalizando ${totalAvailableHours.toFixed(
-          2
-        )}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
+        `O período informado (totalizando ${totalAvailableHours}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
+      );
+      return; // Interrompe o envio do formulário
+    }
+    if (totalAvailableHours > requiredHours) {
+      toast.error(
+        `O horário informado (totalizando ${totalAvailableHours}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
       );
       return; // Interrompe o envio do formulário
     }
@@ -314,7 +318,7 @@ const Eventos = () => {
     }
 
     try {
-      await api.post("Eventos", payload);
+      await api.post("eventos", payload);
 
       fetchEventos();
       setIsModalOpen(false);

@@ -3,7 +3,15 @@ import { Button } from "./ui/button";
 import { api } from "@/lib/axios";
 import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { BookUp2, CircleX, ImageDownIcon, Loader2, Plus } from "lucide-react";
+import {
+  BookUp2,
+  CircleX,
+  ImageDownIcon,
+  Loader2,
+  Plus,
+  RotateCcw,
+  Trash2Icon,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +40,18 @@ import { Input } from "./ui/input";
 import { DocumentData } from "@/@types/DocumentData";
 import toast from "react-hot-toast";
 import { formatDataRealizada } from "@/utils/formatDataRealizada";
+import { Status } from "@/@types/Status";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 const defaultValues = {
   documento_identificador: "",
@@ -48,6 +68,7 @@ interface Certificado {
   id: string;
   createdAt: string;
   updatedAt: string;
+  status: Status;
 }
 
 type NewCertificado = typeof defaultValues;
@@ -65,6 +86,10 @@ const Certificados = () => {
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [certificados, setCertificados] = useState<Certificado[]>([]);
+  const [selectedItem, setSelectedItem] = useState<{
+    id: string | number;
+    status: number;
+  } | null>(null);
 
   const [newCertificado, setNewCertificado] =
     useState<NewCertificado>(defaultValues);
@@ -80,6 +105,8 @@ const Certificados = () => {
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const limit = 20;
+
+  const [showInativos, setShowInativos] = useState(false);
 
   const fetchData = async (pageNumber: number = 1) => {
     try {
@@ -460,6 +487,31 @@ const Certificados = () => {
     return 0;
   });
 
+  const handleUpdateStatus = async (id: string | number, status: number) => {
+    try {
+      await api.patch(`documentos/${id}`, {
+        status: {
+          id: status,
+        },
+      });
+      if (status === 1)
+        toast("Certificado reativado!", {
+          icon: "🚀",
+          duration: 2000,
+        });
+      else
+        toast("Certificado inativado!", {
+          icon: "🗑️",
+          duration: 2000,
+        });
+      fetchData();
+    } catch (error) {}
+  };
+
+  const filteredData = showInativos
+    ? sortedCertificates.filter((p) => p.status.id === 2)
+    : sortedCertificates.filter((p) => p.status.id === 1);
+
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -526,6 +578,12 @@ const Certificados = () => {
               </form>
             </DialogContent>
           </Dialog>
+          <Button
+            onClick={() => setShowInativos((prev) => !prev)}
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+          >
+            {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
+          </Button>
         </div>
 
         {/* Barra de pesquisa */}
@@ -577,7 +635,7 @@ const Certificados = () => {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : sortedCertificates.length === 0 ? (
+            ) : filteredData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={3} className="text-center">
                   <div className="flex items-center justify-center space-x-2">
@@ -589,7 +647,7 @@ const Certificados = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              sortedCertificates.map((certificado, index) => (
+              filteredData.map((certificado, index) => (
                 <TableRow key={index}>
                   <TableCell className="font-medium max-w-[20rem] overflow-hidden whitespace-nowrap overflow-ellipsis py-2">
                     {certificado?.modelType
@@ -733,6 +791,59 @@ const Certificados = () => {
                       <BookUp2 className="h-4 w-4 mr-1" />
                       Baixar certificados
                     </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="p-2 h-fit hover:bg-red-100 hover:border-red-200"
+                          onClick={() =>
+                            setSelectedItem({
+                              id: certificado.id,
+                              status: certificado.status.id === 1 ? 2 : 1,
+                            })
+                          }
+                        >
+                          {certificado.status.id === 1 ? (
+                            <Trash2Icon className="h-4 w-4" />
+                          ) : (
+                            <RotateCcw className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            {certificado.status.id === 1
+                              ? "Inativar certificado?"
+                              : "Reativar certificado?"}
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {certificado.status.id === 1
+                              ? "Tem certeza que deseja inativar este certificado?"
+                              : "Tem certeza que deseja reativar este certificado?"}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel className="w-20">
+                            Não
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="w-20"
+                            onClick={() => {
+                              if (selectedItem) {
+                                handleUpdateStatus(
+                                  selectedItem.id,
+                                  selectedItem.status
+                                );
+                                setSelectedItem(null);
+                              }
+                            }}
+                          >
+                            Sim
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))
