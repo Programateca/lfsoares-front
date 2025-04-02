@@ -165,8 +165,14 @@ export async function gerarIdentificador(
   const TAG_NAME = "<!--aux-page-->";
 
   try {
+    // Select the appropriate template based on content length
+    const templateFileName =
+      docData.conteudo_aplicado.length <= 800
+        ? "document-template.xml"
+        : "document-3colunas.xml";
+
     const responseMainXml = await fetch(
-      `/templates/identificacao-participante/document-template.xml`
+      `/templates/identificacao-participante/${templateFileName}`
     );
 
     const mainXmlContent = await responseMainXml.text();
