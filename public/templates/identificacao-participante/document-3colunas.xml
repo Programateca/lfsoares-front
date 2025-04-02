@@ -541,7 +541,6 @@
         </w:p>
 
         <!--aux-page-->
-
         <w:p w14:paraId="11EBF4A3" w14:textId="1D98BE99" w:rsidR="00502444" w:rsidRPr="00502444"
             w:rsidRDefault="00502444" w:rsidP="00502444">
             <w:pPr>
@@ -777,7 +776,7 @@
                                 <w:sz w:val="22" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
-                            <w:t>RESPONSÁVEL TÉCNIC</w:t>
+                            <w:t>[titulo</w:t>
                         </w:r>
                         <w:r w:rsidR="00FD3E69">
                             <w:rPr>
@@ -787,7 +786,7 @@
                                 <w:sz w:val="22" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
-                            <w:t>A</w:t>
+                            <w:t>2</w:t>
                         </w:r>
                     </w:p>
                     <w:p w14:paraId="08C87E7B" w14:textId="16E89447" w:rsidR="00536B3F"
@@ -808,7 +807,7 @@
                                 <w:sz w:val="22" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
-                            <w:t>DA CAPACITAÇÃO</w:t>
+                            <w:t>]</w:t>
                         </w:r>
                     </w:p>
                 </w:tc>
@@ -900,8 +899,8 @@
                             <w:t>________________________________</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="395EBB30" w14:textId="78835505" w:rsidR="00653409"
-                        w:rsidRDefault="006B4F0B" w:rsidP="00B04CC7">
+                    <w:p w14:paraId="395EBB30" w14:textId="094D34D9" w:rsidR="00653409"
+                        w:rsidRDefault="00653409" w:rsidP="00B04CC7">
                         <w:pPr>
                             <w:jc w:val="center" />
                             <w:rPr>
@@ -915,7 +914,7 @@
                                 <w:lang w:eastAsia="pt-BR" />
                             </w:rPr>
                         </w:pPr>
-                        <w:r>
+                        <w:r w:rsidRPr="00653409">
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                                     w:hAnsi="Arial" w:cs="Arial" />
@@ -926,52 +925,11 @@
                                 <w:szCs w:val="40" />
                                 <w:lang w:eastAsia="pt-BR" />
                             </w:rPr>
-                            <w:t>[</w:t>
-                        </w:r>
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:b />
-                                <w:bCs />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>editar-</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellStart" />
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:b />
-                                <w:bCs />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>document</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellEnd" />
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:b />
-                                <w:bCs />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>]</w:t>
+                            <w:t>[nome2]</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="0576DFE0" w14:textId="51E52DF3" w:rsidR="006B4F0B"
-                        w:rsidRDefault="006B4F0B" w:rsidP="006B4F0B">
+                    <w:p w14:paraId="2D4D517D" w14:textId="77777777" w:rsidR="00653409"
+                        w:rsidRPr="00653409" w:rsidRDefault="00653409" w:rsidP="00B04CC7">
                         <w:pPr>
                             <w:jc w:val="center" />
                             <w:rPr>
@@ -983,7 +941,7 @@
                                 <w:lang w:eastAsia="pt-BR" />
                             </w:rPr>
                         </w:pPr>
-                        <w:r>
+                        <w:r w:rsidRPr="00653409">
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                                     w:hAnsi="Arial" w:cs="Arial" />
@@ -992,46 +950,11 @@
                                 <w:szCs w:val="40" />
                                 <w:lang w:eastAsia="pt-BR" />
                             </w:rPr>
-                            <w:t>[</w:t>
-                        </w:r>
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>editar-</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellStart" />
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>document</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellEnd" />
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                                    w:hAnsi="Arial" w:cs="Arial" />
-                                <w:color w:val="000000" />
-                                <w:sz w:val="20" />
-                                <w:szCs w:val="40" />
-                                <w:lang w:eastAsia="pt-BR" />
-                            </w:rPr>
-                            <w:t>]</w:t>
+                            <w:t>[qualificacao_profissional2]</w:t>
                         </w:r>
                     </w:p>
-                    <w:p w14:paraId="2DADE283" w14:textId="3953F0E7" w:rsidR="00536B3F"
-                        w:rsidRPr="00F52628" w:rsidRDefault="006B4F0B" w:rsidP="006B4F0B">
+                    <w:p w14:paraId="2DADE283" w14:textId="1945C528" w:rsidR="00536B3F"
+                        w:rsidRPr="00F52628" w:rsidRDefault="00653409" w:rsidP="00B04CC7">
                         <w:pPr>
                             <w:jc w:val="center" />
                             <w:rPr>
@@ -1039,35 +962,16 @@
                                 <w:sz w:val="20" />
                             </w:rPr>
                         </w:pPr>
-                        <w:r>
+                        <w:r w:rsidRPr="00653409">
                             <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                                <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                                    w:hAnsi="Arial" w:cs="Arial" />
+                                <w:color w:val="000000" />
                                 <w:sz w:val="20" />
+                                <w:szCs w:val="40" />
+                                <w:lang w:eastAsia="pt-BR" />
                             </w:rPr>
-                            <w:t>[</w:t>
-                        </w:r>
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="20" />
-                            </w:rPr>
-                            <w:t>editar-</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellStart" />
-                        <w:r w:rsidR="00052B1B" w:rsidRPr="00052B1B">
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="20" />
-                            </w:rPr>
-                            <w:t>document</w:t>
-                        </w:r>
-                        <w:proofErr w:type="spellEnd" />
-                        <w:r>
-                            <w:rPr>
-                                <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="20" />
-                            </w:rPr>
-                            <w:t>]</w:t>
+                            <w:t>[registro_profissional2]</w:t>
                         </w:r>
                     </w:p>
                 </w:tc>
