@@ -28,7 +28,7 @@ export async function gerarCertificado(
   const fileArrayBufferFrente = await loadFile(`/templates/frente.pptx`);
   let templateVerso = `/templates/verso-${type}.pptx`;
   if (data[0]?.conteudo && data[0].conteudo.length > 700) {
-    templateVerso = `/templates/verso-${type}-2colunas.pptx`;
+    templateVerso = `/templates/verso-${type}-2coluna.pptx`;
   }
   const fileArrayBufferVerso = await loadFile(templateVerso);
 
