@@ -175,8 +175,46 @@ export const Identificadores = () => {
     instructor: "instrutorA" | "instrutorB",
     value: Period
   ) => {
+    // Converte a string day em objeto para extrair os valores
+    const dayObj = JSON.parse(day);
+    const {
+      courseStart,
+      courseEnd,
+      courseIntervalStart, // ex: "12:00"
+      courseIntervalEnd, // ex: "13:00"
+    } = dayObj;
+
+    // Determina se o dia é de meio período
+    // Exemplo: se courseIntervalStart for igual a courseEnd, o dia é somente de manhã
+    //          se courseIntervalEnd for igual a courseStart, o dia é somente à tarde
+    const isHalfDayMorning = courseIntervalStart === courseEnd;
+    const isHalfDayAfternoon = courseIntervalEnd === courseStart;
+    const isHalfDay = isHalfDayMorning || isHalfDayAfternoon;
+    const allowed = isHalfDayMorning
+      ? "manha"
+      : isHalfDayAfternoon
+      ? "tarde"
+      : null;
+
+    // Identifica o outro instrutor
+    const otherInstructor =
+      instructor === "instrutorA" ? "instrutorB" : "instrutorA";
+
+    if (isHalfDay) {
+      // Em dias de meio período, somente o valor permitido é aceito
+      if (value !== allowed) {
+        setValue(`${instructor}.${day}.periodo`, allowed || "nenhum");
+        setValue(`${otherInstructor}.${day}.periodo`, "nenhum");
+        return;
+      } else {
+        setValue(`${instructor}.${day}.periodo`, allowed);
+        setValue(`${otherInstructor}.${day}.periodo`, "nenhum");
+        return;
+      }
+    }
+
+    // Se o evento não tem aula à tarde (ou seja, apenas manhã), força "manha" para ambos
     if (!hasAfternoon) {
-      // Se não há aula à tarde, ambos devem ser "manha"
       setValue(`${instructor}.${day}.periodo`, "manha");
       setValue(
         instructor === "instrutorA"
@@ -187,99 +225,35 @@ export const Identificadores = () => {
       return;
     }
 
-    const otherInstructor =
-      instructor === "instrutorA" ? "instrutorB" : "instrutorA";
-
+    // Se for selecionado "manhaTarde" para um instrutor, o outro fica "nenhum"
     if (value === "manhaTarde") {
-      // Se um instrutor seleciona "manhaTarde", o outro fica sem valor
       setValue(`${instructor}.${day}.periodo`, "manhaTarde");
       setValue(`${otherInstructor}.${day}.periodo`, "nenhum");
       return;
     }
 
-    // Para "manha", "tarde" ou "nenhum"
+    // Para valores "manha", "tarde" ou "nenhum" em dias com período completo:
     setValue(`${instructor}.${day}.periodo`, value);
-
     const complementaryValue = value === "manha" ? "tarde" : "manha";
     const currentOtherValue = getValues(`${otherInstructor}.${day}.periodo`);
 
-    // ✅ Novo tratamento para permitir "nenhum" sem interferir
-    if (value === "nenhum") {
-      // Se um instrutor é definido como "nenhum", o outro mantém seu valor atual
+    // Se o valor selecionado for "nenhum" ou se o outro já estiver "nenhum", não altera
+    if (value === "nenhum" || currentOtherValue === "nenhum") {
       return;
     }
 
-    if (currentOtherValue === "nenhum") {
-      // Se o outro instrutor está como "nenhum", não altera nada
-      return;
-    }
-
+    // Caso o valor do outro instrutor não seja o complementar, atualiza automaticamente
     if (currentOtherValue !== complementaryValue) {
       setValue(`${otherInstructor}.${day}.periodo`, complementaryValue);
     }
   };
 
-  /**
-   * Mantém numeração automática das linhas de texto.
-   */
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { selectionStart, value } = e.target;
+    const novoTexto = e.target.value;
 
-    // Divide o texto atual em linhas
-    const linhas = value.split("\n");
-
-    // Determina em qual linha o cursor se encontra
-    let linhaAtualIndex = 0;
-    let acumulado = 0;
-    for (let i = 0; i < linhas.length; i++) {
-      // +1 para considerar o caractere de quebra de linha
-      if (selectionStart <= acumulado + linhas[i].length) {
-        linhaAtualIndex = i;
-        break;
-      }
-      acumulado += linhas[i].length + 1;
-    }
-
-    // Para cada linha, remove a numeração antiga e aplica a nova
-    const linhasSemNumeracao = linhas.map((linha: string) =>
-      linha.replace(/^\d+\.\s*/, "")
-    );
-
-    const linhasNumeradas = linhasSemNumeracao.map(
-      (linha: string, index: number) => {
-        if (linha.trim() === "") return "";
-        return `${index + 1}. ${linha}`;
-      }
-    );
-
-    const novoTexto = linhasNumeradas.join("\n");
-
-    // Calcula a nova posição do cursor na linha atual
-    const linhaOriginal = linhas[linhaAtualIndex];
-    const prefixoAntigoMatch = linhaOriginal.match(/^(\d+\.\s*)/);
-    const prefixoAntigoLength = prefixoAntigoMatch
-      ? prefixoAntigoMatch[0].length
-      : 0;
-    const novoPrefixo = `${linhaAtualIndex + 1}. `;
-    const novoPrefixoLength = novoPrefixo.length;
-    const diff = novoPrefixoLength - prefixoAntigoLength;
-    const novaPosicao = selectionStart + diff;
-
-    // Atualiza o estado com o novo texto
     setValue("conteudoAplicado", novoTexto);
-
-    // Restaura a posição do cursor após a atualização do estado
-    setTimeout(() => {
-      if (textareaRef.current) {
-        textareaRef.current.selectionStart = novaPosicao;
-        textareaRef.current.selectionEnd = novaPosicao;
-      }
-    }, 0);
   };
 
-  /**
-   * Quando selecionamos o evento, atualizamos a lista de dias
-   */
   const handleEventoSelect = (eventoId: string) => {
     const evento = eventos.find((ev) => ev.id === eventoId);
     if (!evento) return;
@@ -295,9 +269,6 @@ export const Identificadores = () => {
     }
   };
 
-  /**
-   * Lógica de submit do formulário
-   */
   const onSubmit = async (data: FormData) => {
     if (!data.participantes?.length) {
       // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
@@ -361,18 +332,17 @@ export const Identificadores = () => {
      * Obtemos as datas envolvidas de todos os dias instrutorA e instrutorB
      * e formatamos para exibição
      */
-    let todasAsDatas;
-    if (signatureCount === 2) {
-      todasAsDatas = new Set(days.flatMap((day) => [day]));
-    } else {
-      todasAsDatas = new Set([
-        ...Object.keys(data.instrutorA),
-        ...Object.keys(data.instrutorB),
-      ]);
-    }
+    const datasArray = selectedEvento.courseDate.map((dateStr) => {
+      try {
+        const parsed = JSON.parse(dateStr);
+        return parsed.day;
+      } catch (error) {
+        // Se não conseguir fazer o parse, assume que a string já é a data
+        return dateStr.trim();
+      }
+    });
 
-    const datasFormatadas = formatarDatas(Array.from(todasAsDatas));
-
+    const datasFormatadas = formatarDatas(datasArray);
     /**
      * Formata as datas para manha e tarde
      */
@@ -467,7 +437,7 @@ export const Identificadores = () => {
       endereco: selectedEvento.courseLocation,
       empresa: selectedEvento.empresa.name,
       empresa_id: selectedEvento.empresa.id,
-      datas: datasFormatadas,
+      datas: datasFormatadas.split(";")[0],
       tipo_certificado: data.certificadoTipo,
 
       // Assinaturas
@@ -598,29 +568,6 @@ export const Identificadores = () => {
     inicializarFetch();
   }, [formsOpen]);
 
-  const getEventDisplay = (evento: Evento) => {
-    // Obter o id do evento
-    // Usar a primeira data do array de datas, se existir
-    const firstDate = evento.courseDate?.[0]
-      ? format(parseISO(evento.courseDate[0]), "dd/MM/yyyy")
-      : "";
-    const lastDate = evento.courseDate?.[evento.courseDate.length - 1]
-      ? format(
-          parseISO(evento.courseDate[evento.courseDate.length - 1]),
-          "dd/MM/yyyy"
-        )
-      : "";
-    const eventDates =
-      evento.courseDate?.length > 1
-        ? `Evento dos dias ${firstDate} até ${lastDate}`
-        : `Evento do dia ${firstDate}`;
-
-    // Obter o comprimento do evento
-    const eventLength = evento.courseDate?.length || 0;
-
-    return `${eventDates} - ${eventLength} dias`;
-  };
-
   const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
       await api.patch(`documentos/${id}`, {
@@ -712,7 +659,7 @@ export const Identificadores = () => {
                           <SelectLabel>Eventos</SelectLabel>
                           {eventos.map((evento: Evento) => (
                             <SelectItem key={evento.id} value={evento.id}>
-                              {getEventDisplay(evento)}
+                              {evento.titulo}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -893,14 +840,22 @@ export const Identificadores = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
                   {days.map((day, index) => (
                     <div key={index} className="border p-4 w-full rounded">
-                      <Label>Dia: {format(parseISO(day), "dd/MM/yyyy")}</Label>
-
+                      <div className="flex flex-col gap-2">
+                        <Label>
+                          Dia:{" "}
+                          {format(parseISO(JSON.parse(day).day), "dd/MM/yyyy")}
+                        </Label>
+                        <Label>
+                          Periodo: {JSON.parse(day).courseStart} ÀS{" "}
+                          {JSON.parse(day).courseEnd}{" "}
+                        </Label>
+                      </div>
                       {/* Instrutor A */}
                       <div className="flex gap-4 items-center mt-2">
                         <div className="w-full">
                           <Label>{instrutoresSelecionados.instrutorA}</Label>
                           <Controller
-                            name={`instrutorA.${day}.periodo`}
+                            name={`instrutorA.${JSON.parse(day).day}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select
@@ -937,7 +892,7 @@ export const Identificadores = () => {
                         <div className="w-full">
                           <Label>{instrutoresSelecionados.instrutorB}</Label>
                           <Controller
-                            name={`instrutorB.${day}.periodo`}
+                            name={`instrutorB.${JSON.parse(day).day}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select

@@ -13,6 +13,7 @@ export interface Evento {
   courseTime: string;
   courseInterval: string;
   id: string;
+  titulo: string;
   createdAt: string;
   updatedAt: string;
 }
