@@ -2,7 +2,7 @@
     <w:tblPr>
         <w:tblpPr w:leftFromText="141" w:rightFromText="141" w:vertAnchor="page"
             w:horzAnchor="margin" w:tblpXSpec="center" w:tblpY="2195" />
-        <w:tblW w:w="16019" w:type="dxa" />
+        <w:tblW w:w="15725" w:type="dxa" />
         <w:tblCellMar>
             <w:left w:w="70" w:type="dxa" />
             <w:right w:w="70" w:type="dxa" />
@@ -11,20 +11,20 @@
             w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
     </w:tblPr>
     <w:tblGrid>
-        <w:gridCol w:w="567" />
-        <w:gridCol w:w="4621" />
-        <w:gridCol w:w="2455" />
-        <w:gridCol w:w="4766" />
-        <w:gridCol w:w="3610" />
+        <w:gridCol w:w="557" />
+        <w:gridCol w:w="4536" />
+        <w:gridCol w:w="2410" />
+        <w:gridCol w:w="4678" />
+        <w:gridCol w:w="3544" />
     </w:tblGrid>
     <w:tr w:rsidR="00FE69D9" w:rsidRPr="0080658E" w14:paraId="77428A73"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+        w14:textId="77777777" w:rsidTr="005B6420">
         <w:trPr>
-            <w:trHeight w:val="638" />
+            <w:trHeight w:val="680" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:vMerge w:val="restart" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -51,13 +51,14 @@
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
+                    <w:lastRenderedPageBreak />
                     <w:t>.</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:vMerge w:val="restart" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -98,7 +99,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:vMerge w:val="restart" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -214,7 +215,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -255,7 +256,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:vMerge w:val="restart" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -299,13 +300,13 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="00FE69D9" w:rsidRPr="0080658E" w14:paraId="4205E47A"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+        w14:textId="77777777" w:rsidTr="005B6420">
         <w:trPr>
-            <w:trHeight w:val="638" />
+            <w:trHeight w:val="680" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -330,7 +331,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -355,7 +356,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -380,7 +381,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -416,37 +417,13 @@
                         <w:color w:val="000000" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>data_frequencia</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[data_frequencia]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -473,13 +450,13 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="00FE69D9" w:rsidRPr="0080658E" w14:paraId="3E9ED399"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+        w14:textId="77777777" w:rsidTr="005B6420">
         <w:trPr>
-            <w:trHeight w:val="638" />
+            <w:trHeight w:val="680" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -503,7 +480,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -527,7 +504,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -551,7 +528,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -582,7 +559,6 @@
                     </w:rPr>
                     <w:t>[</w:t>
                 </w:r>
-                <w:proofErr w:type="spellStart" />
                 <w:r w:rsidR="00A0300D">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -591,7 +567,6 @@
                     </w:rPr>
                     <w:t>mudar_modulo</w:t>
                 </w:r>
-                <w:proofErr w:type="spellEnd" />
                 <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -604,7 +579,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -630,14 +605,14 @@
         </w:tc>
     </w:tr>
     <w:tr w:rsidR="000E5AD2" w:rsidRPr="0080658E" w14:paraId="4A757390"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+        w14:textId="77777777" w:rsidTr="00A0734D">
         <w:trPr>
             <w:cantSplit />
-            <w:trHeight w:val="638" />
+            <w:trHeight w:val="680" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -662,7 +637,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -687,7 +662,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -714,7 +689,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -747,31 +722,7 @@
                         <w:color w:val="000000" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>manha</w:t>
-                </w:r>
-                <w:proofErr w:type="gramEnd" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[tarde]</w:t>
                 </w:r>
             </w:p>
             <w:p w14:paraId="45798BC3" w14:textId="436069CA" w:rsidR="000E5AD2"
@@ -796,50 +747,13 @@
                         <w:color w:val="000000" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:proofErr w:type="gramStart" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>manha</w:t>
-                </w:r>
-                <w:proofErr w:type="gramEnd" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>_h</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[tarde_h]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:vMerge />
                 <w:tcBorders>
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -865,14 +779,14 @@
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="2F3821E0"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="000E5AD2" w:rsidRPr="0080658E" w14:paraId="2F3821E0"
+        w14:textId="77777777" w:rsidTr="0019076B">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -882,8 +796,8 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="16DF462A" w14:textId="6A136EF1" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="16DF462A" w14:textId="6A136EF1" w:rsidR="000E5AD2"
+                w:rsidRPr="00841D0D" w:rsidRDefault="000E5AD2" w:rsidP="00D4610E">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -892,20 +806,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -914,7 +828,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -924,47 +838,29 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0E936D7C" w14:textId="6722E338" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="0E936D7C" w14:textId="6722E338" w:rsidR="000E5AD2"
+                w:rsidRPr="00D84010" w:rsidRDefault="002A41D8" w:rsidP="00D4610E">
                 <w:pPr>
                     <w:ind w:right="-70" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -974,339 +870,36 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="48DBF8AD" w14:textId="74B395E4" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="48DBF8AD" w14:textId="74B395E4" w:rsidR="000E5AD2"
+                w:rsidRPr="00821DB1" w:rsidRDefault="00821DB1" w:rsidP="00D4610E">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:u w:val="single" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
-                <w:tcBorders>
-                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:left w:val="nil" />
-                    <w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                    <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
-                <w:noWrap />
-                <w:vAlign w:val="center" />
-            </w:tcPr>
-            <w:p w14:paraId="47DAF4D8" w14:textId="543A7740" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
-                <w:pPr>
-                    <w:jc w:val="center" />
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                </w:pPr>
-                <w:r w:rsidRPr="0003437C">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>[p_tarde]</w:t>
-                </w:r>
-            </w:p>
-        </w:tc>
-        <w:tc>
-            <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
-                <w:tcBorders>
-                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
-                <w:vAlign w:val="center" />
-            </w:tcPr>
-            <w:p w14:paraId="5BF05D4C" w14:textId="330B4C6B" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
-                <w:pPr>
-                    <w:jc w:val="center" />
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
-                </w:r>
-            </w:p>
-        </w:tc>
-    </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="5745B97E"
-        w14:textId="77777777" w:rsidTr="0097506A">
-        <w:trPr>
-            <w:trHeight w:val="318" />
-        </w:trPr>
-        <w:tc>
-            <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
-                <w:tcBorders>
-                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
-                <w:vAlign w:val="center" />
-            </w:tcPr>
-            <w:p w14:paraId="6D4E8174" w14:textId="6AA07475" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
-                <w:pPr>
-                    <w:jc w:val="center" />
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>[pi]</w:t>
-                </w:r>
-            </w:p>
-        </w:tc>
-        <w:tc>
-            <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
-                <w:tcBorders>
-                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
-                </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
-            </w:tcPr>
-            <w:p w14:paraId="77C92FE8" w14:textId="01CA1597" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
-                <w:pPr>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
-                </w:r>
-            </w:p>
-        </w:tc>
-        <w:tc>
-            <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
-                <w:tcBorders>
-                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
-                </w:tcBorders>
-                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
-                <w:vAlign w:val="center" />
-            </w:tcPr>
-            <w:p w14:paraId="7C3FBF5A" w14:textId="0514DF87" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
-                <w:pPr>
-                    <w:jc w:val="center" />
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
-                </w:r>
-            </w:p>
-        </w:tc>
-        <w:tc>
-            <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:left w:val="nil" />
@@ -1315,10 +908,9 @@
                 </w:tcBorders>
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="5EB0BE93" w14:textId="5D6520BB" w:rsidR="0003437C"
-                w:rsidRPr="0003437C" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="5EB0BE93" w14:textId="3EFE7A8F" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1327,19 +919,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -1347,7 +939,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1357,65 +949,233 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="auto" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0300F864" w14:textId="5D0FA173" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="5BF05D4C" w14:textId="330B4C6B" w:rsidR="000E5AD2"
+                w:rsidRPr="005B13C7" w:rsidRDefault="000E5AD2" w:rsidP="00D4610E">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="601DC84B"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="5745B97E"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
+                <w:tcBorders>
+                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
+                <w:vAlign w:val="center" />
+            </w:tcPr>
+            <w:p w14:paraId="6D4E8174" w14:textId="6AA07475" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
+                <w:pPr>
+                    <w:jc w:val="center" />
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[pi]</w:t>
+                </w:r>
+            </w:p>
+        </w:tc>
+        <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="4536" w:type="dxa" />
+                <w:tcBorders>
+                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
+                </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
+            </w:tcPr>
+            <w:p w14:paraId="77C92FE8" w14:textId="01CA1597" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
+                <w:pPr>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                    </w:rPr>
+                </w:pPr>
+                <w:r w:rsidRPr="00C25455">
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                    </w:rPr>
+                    <w:t>[p_nome]</w:t>
+                </w:r>
+            </w:p>
+        </w:tc>
+        <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="2410" w:type="dxa" />
+                <w:tcBorders>
+                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
+                <w:vAlign w:val="center" />
+            </w:tcPr>
+            <w:p w14:paraId="7C3FBF5A" w14:textId="0514DF87" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
+                <w:pPr>
+                    <w:jc w:val="center" />
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                </w:pPr>
+                <w:r w:rsidRPr="00C4645C">
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                    </w:rPr>
+                    <w:t>[p_matricula]</w:t>
+                </w:r>
+            </w:p>
+        </w:tc>
+        <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="4678" w:type="dxa" />
+                <w:tcBorders>
+                    <w:top w:val="single" w:sz="4" w:space="0" w:color="auto" />
+                    <w:left w:val="nil" />
+                    <w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto" />
+                    <w:right w:val="single" w:sz="4" w:space="0" w:color="auto" />
+                </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
+                <w:noWrap />
+            </w:tcPr>
+            <w:p w14:paraId="5EB0BE93" w14:textId="3EFE7A8F" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
+                <w:pPr>
+                    <w:jc w:val="center" />
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:b />
+                        <w:bCs />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                </w:pPr>
+                <w:r w:rsidRPr="00C87AD0">
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[p_tarde]</w:t>
+                </w:r>
+            </w:p>
+        </w:tc>
+        <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="3544" w:type="dxa" />
+                <w:tcBorders>
+                    <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:bottom w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                    <w:right w:val="single" w:sz="8" w:space="0" w:color="auto" />
+                </w:tcBorders>
+                <w:shd w:val="clear" w:color="auto" w:fill="auto" />
+                <w:vAlign w:val="center" />
+            </w:tcPr>
+            <w:p w14:paraId="0300F864" w14:textId="5D0FA173" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
+                <w:pPr>
+                    <w:jc w:val="center" />
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[p_codigo]</w:t>
+                </w:r>
+            </w:p>
+        </w:tc>
+    </w:tr>
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="601DC84B"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
+        <w:trPr>
+            <w:trHeight w:val="340" />
+        </w:trPr>
+        <w:tc>
+            <w:tcPr>
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1426,8 +1186,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="308BA51B" w14:textId="1CA02F6B" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="308BA51B" w14:textId="1CA02F6B" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1436,20 +1196,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1458,7 +1218,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1468,46 +1228,28 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="7849D30C" w14:textId="77312AF8" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="7849D30C" w14:textId="77312AF8" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1518,8 +1260,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="4332762F" w14:textId="7363E110" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="4332762F" w14:textId="7363E110" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1527,56 +1269,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:left w:val="nil" />
@@ -1586,10 +1297,9 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="25E38743" w14:textId="7882B595" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="25E38743" w14:textId="2722D0B5" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1598,19 +1308,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -1618,7 +1328,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1629,63 +1339,39 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="73D8D2D9" w14:textId="187D3067" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="73D8D2D9" w14:textId="187D3067" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="168FDEFC"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="168FDEFC"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1696,8 +1382,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="7199C095" w14:textId="352BB297" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="7199C095" w14:textId="352BB297" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1706,20 +1392,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1728,7 +1414,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1738,46 +1424,28 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="327DFE14" w14:textId="227D7B93" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="327DFE14" w14:textId="227D7B93" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1788,8 +1456,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="2689191D" w14:textId="657B5F19" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="2689191D" w14:textId="657B5F19" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1797,56 +1465,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="4" w:space="0" w:color="auto" />
                     <w:left w:val="nil" />
@@ -1856,10 +1493,9 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="344BAE72" w14:textId="297B48D8" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="344BAE72" w14:textId="798C4C87" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1868,19 +1504,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -1888,7 +1524,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1899,8 +1535,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="1998D0D3" w14:textId="0E1EB340" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="1998D0D3" w14:textId="0E1EB340" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1908,57 +1544,33 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="5D5866FB"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="5D5866FB"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -1969,8 +1581,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="286A2318" w14:textId="4CD510D3" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="286A2318" w14:textId="4CD510D3" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -1979,20 +1591,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2001,7 +1613,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2011,50 +1623,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="0AD11661" w14:textId="1C6646C8" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="0AD11661" w14:textId="1C6646C8" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2065,8 +1659,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="125445BB" w14:textId="77F258E7" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="125445BB" w14:textId="77F258E7" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2074,56 +1668,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2133,10 +1696,9 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="3B6C1EEC" w14:textId="65F314F1" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="3B6C1EEC" w14:textId="1EA06A11" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2145,19 +1707,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -2165,7 +1727,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2176,62 +1738,38 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="1D478F7D" w14:textId="142A5ACC" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="1D478F7D" w14:textId="142A5ACC" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="096F11EC"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="096F11EC"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2242,8 +1780,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="23738A58" w14:textId="6989B28A" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="23738A58" w14:textId="6989B28A" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2252,20 +1790,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2274,7 +1812,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2284,50 +1822,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="228F1FAC" w14:textId="5AD290F5" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="228F1FAC" w14:textId="5AD290F5" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2338,8 +1858,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="67BECAD2" w14:textId="3B8D6138" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="67BECAD2" w14:textId="3B8D6138" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2347,56 +1867,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2406,10 +1895,9 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="42046CAB" w14:textId="44083274" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="42046CAB" w14:textId="53D321DD" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2418,19 +1906,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -2438,7 +1926,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2449,62 +1937,38 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="16850DCC" w14:textId="6399861F" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="16850DCC" w14:textId="6399861F" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="1D5E4C9E"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="1D5E4C9E"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2515,8 +1979,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="050F30CD" w14:textId="6E068AC8" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="050F30CD" w14:textId="6E068AC8" w:rsidR="007E1049"
+                w:rsidRPr="00841D0D" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2525,20 +1989,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2547,7 +2011,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2557,50 +2021,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="32CFE671" w14:textId="0C70A1CA" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="32CFE671" w14:textId="0C70A1CA" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2611,8 +2057,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="6CC838D7" w14:textId="00773125" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="6CC838D7" w14:textId="00773125" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2620,56 +2066,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2679,10 +2094,9 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="5923E8D4" w14:textId="04BA033C" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="5923E8D4" w14:textId="2BB6F3A2" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2691,19 +2105,19 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -2711,7 +2125,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2722,62 +2136,38 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="33173BCF" w14:textId="450A2873" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="33173BCF" w14:textId="450A2873" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="0A18844B"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="0A18844B"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2788,8 +2178,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="45AE09C3" w14:textId="358BB7C9" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="45AE09C3" w14:textId="358BB7C9" w:rsidR="007E1049"
+                w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2798,20 +2188,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2820,7 +2210,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2830,50 +2220,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="40B958CE" w14:textId="65442653" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="40B958CE" w14:textId="65442653" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2884,8 +2256,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="21909DF2" w14:textId="5E09D11F" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="21909DF2" w14:textId="5E09D11F" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -2893,56 +2265,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2952,28 +2293,27 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="3FFBF2AD" w14:textId="25498FA7" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="3FFBF2AD" w14:textId="58BB546A" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:color w:val="00AF50" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -2981,7 +2321,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -2992,62 +2332,38 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="042E950B" w14:textId="1F634C10" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="042E950B" w14:textId="1F634C10" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="3130CA8F"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="3130CA8F"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3058,8 +2374,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="45D4329B" w14:textId="3FCDFDEF" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="45D4329B" w14:textId="3FCDFDEF" w:rsidR="007E1049"
+                w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -3068,20 +2384,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -3090,7 +2406,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3100,50 +2416,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="78A6439D" w14:textId="6354BF96" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="78A6439D" w14:textId="6354BF96" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3154,8 +2452,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="1D7CE00A" w14:textId="0569399A" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="1D7CE00A" w14:textId="0569399A" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -3163,56 +2461,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3222,28 +2489,27 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0411E105" w14:textId="6FA25C80" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="0411E105" w14:textId="792F7D95" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:color w:val="00AF50" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -3251,7 +2517,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3262,62 +2528,38 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="3CF2298D" w14:textId="0484F248" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="3CF2298D" w14:textId="0484F248" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="0003437C" w:rsidRPr="0080658E" w14:paraId="1446F12C"
-        w14:textId="77777777" w:rsidTr="0097506A">
+    <w:tr w:rsidR="007E1049" w:rsidRPr="0080658E" w14:paraId="1446F12C"
+        w14:textId="77777777" w:rsidTr="00FD0F66">
         <w:trPr>
-            <w:trHeight w:val="318" />
+            <w:trHeight w:val="340" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="567" w:type="dxa" />
+                <w:tcW w:w="557" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3328,8 +2570,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="70FBE6B9" w14:textId="327F5E9E" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="70FBE6B9" w14:textId="327F5E9E" w:rsidR="007E1049"
+                w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -3338,20 +2580,20 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -3360,7 +2602,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4621" w:type="dxa" />
+                <w:tcW w:w="4536" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3370,50 +2612,32 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
             </w:tcPr>
-            <w:p w14:paraId="0ACF29D1" w14:textId="486C5898" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="0ACF29D1" w14:textId="486C5898" w:rsidR="007E1049"
+                w:rsidRPr="00D84010" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C25455">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_nome</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_nome]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="2455" w:type="dxa" />
+                <w:tcW w:w="2410" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3424,8 +2648,8 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="4883EBE6" w14:textId="049700BB" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="4883EBE6" w14:textId="049700BB" w:rsidR="007E1049"
+                w:rsidRPr="00C4645C" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
@@ -3433,56 +2657,25 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r w:rsidRPr="00C4645C">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>p_</w:t>
-                </w:r>
-                <w:proofErr w:type="gramStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>matricula</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:proofErr w:type="gramEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_matricula]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="4766" w:type="dxa" />
+                <w:tcW w:w="4678" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3492,28 +2685,27 @@
                 <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"
                     w:themeFill="background1" />
                 <w:noWrap />
-                <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="2CCEE88F" w14:textId="542A3F7F" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="2CCEE88F" w14:textId="7CE35F13" w:rsidR="007E1049"
+                w:rsidRPr="007046C8" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:b />
                         <w:color w:val="00AF50" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="0003437C">
+                <w:r w:rsidRPr="00C87AD0">
                     <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:b />
-                        <w:bCs />
-                        <w:color w:val="70AD47" w:themeColor="accent6" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
+                            w:hAnsi="Arial" w:cs="Arial" />
+                        <w:color w:val="000000" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
+                        <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_tarde]</w:t>
                 </w:r>
@@ -3521,7 +2713,7 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="3610" w:type="dxa" />
+                <w:tcW w:w="3544" w:type="dxa" />
                 <w:tcBorders>
                     <w:top w:val="single" w:sz="8" w:space="0" w:color="auto" />
                     <w:left w:val="single" w:sz="8" w:space="0" w:color="auto" />
@@ -3532,80 +2724,67 @@
                     w:themeFill="background1" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="18BC8BAB" w14:textId="01B1E300" w:rsidR="0003437C"
-                w:rsidRPr="00E7629A" w:rsidRDefault="0003437C" w:rsidP="0003437C">
+            <w:p w14:paraId="18BC8BAB" w14:textId="01B1E300" w:rsidR="007E1049"
+                w:rsidRPr="005B13C7" w:rsidRDefault="007E1049" w:rsidP="007E1049">
                 <w:pPr>
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                     </w:rPr>
                 </w:pPr>
-                <w:r w:rsidRPr="00E7629A">
+                <w:r>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
+                        <w:sz w:val="22" />
+                        <w:szCs w:val="22" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>p_codigo</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00E7629A">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
-                            w:hAnsi="Arial" w:cs="Arial" />
-                        <w:color w:val="000000" />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[p_codigo]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
     </w:tr>
 </w:tbl>
+<w:p w14:paraId="6BEB6B4A" w14:textId="3F1A6BA7" w:rsidR="002564AC" w:rsidRPr="007D0690"
+    w:rsidRDefault="002564AC">
+    <w:pPr>
+        <w:rPr>
+            <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+            <w:b />
+            <w:bCs />
+            <w:sz w:val="20" />
+            <w:szCs w:val="20" />
+        </w:rPr>
+    </w:pPr>
+</w:p>
 <w:tbl>
     <w:tblPr>
         <w:tblStyle w:val="Tabelacomgrade" />
-        <w:tblpPr w:leftFromText="141" w:rightFromText="141" w:vertAnchor="text"
-            w:horzAnchor="margin" w:tblpXSpec="center" w:tblpY="-51" />
-        <w:tblW w:w="16038" w:type="dxa" />
+        <w:tblW w:w="15756" w:type="dxa" />
+        <w:tblInd w:w="-885" w:type="dxa" />
         <w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1"
             w:lastColumn="0" w:noHBand="0" w:noVBand="1" />
     </w:tblPr>
     <w:tblGrid>
-        <w:gridCol w:w="10130" />
-        <w:gridCol w:w="5908" />
+        <w:gridCol w:w="9952" />
+        <w:gridCol w:w="5804" />
     </w:tblGrid>
-    <w:tr w:rsidR="00E7629A" w:rsidRPr="00DA7E32" w14:paraId="53ED5AA3"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+    <w:tr w:rsidR="002564AC" w:rsidRPr="00DA7E32" w14:paraId="2642880F"
+        w14:textId="77777777" w:rsidTr="005B6420">
         <w:trPr>
-            <w:trHeight w:val="467" />
+            <w:trHeight w:val="371" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="10130" w:type="dxa" />
+                <w:tcW w:w="9952" w:type="dxa" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="39B061F5" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="009B696E" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="417FDA23" w14:textId="106DBF90" w:rsidR="002564AC"
+                w:rsidRPr="009B696E" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3623,44 +2802,24 @@
                     </w:rPr>
                     <w:t xml:space="preserve">TREINAMENTO: </w:t>
                 </w:r>
-                <w:r>
+                <w:r w:rsidR="000066B4">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:sz w:val="20" />
                         <w:szCs w:val="20" />
                     </w:rPr>
-                    <w:t>[</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:bCs />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>treinamento_lista</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r>
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:bCs />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t>[treinamento_lista]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="5908" w:type="dxa" />
+                <w:tcW w:w="5804" w:type="dxa" />
                 <w:vMerge w:val="restart" />
             </w:tcPr>
-            <w:p w14:paraId="3EAAC54D" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="00A00262" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="60E04C0D" w14:textId="7F72ECEC" w:rsidR="002564AC"
+                w:rsidRPr="00A00262" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3671,8 +2830,8 @@
                     </w:rPr>
                 </w:pPr>
             </w:p>
-            <w:p w14:paraId="385FF7E2" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="17D278AD" w14:textId="2EC08085" w:rsidR="002564AC"
+                w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3702,7 +2861,7 @@
                     </w:rPr>
                     <w:t>A:</w:t>
                 </w:r>
-                <w:r w:rsidRPr="00754FB3">
+                <w:r w:rsidR="00754FB3" w:rsidRPr="00754FB3">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
@@ -3710,33 +2869,11 @@
                         <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t xml:space="preserve"> [</w:t>
-                </w:r>
-                <w:proofErr w:type="spellStart" />
-                <w:r w:rsidRPr="00754FB3">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:bCs />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>responsavel_tecnico</w:t>
-                </w:r>
-                <w:proofErr w:type="spellEnd" />
-                <w:r w:rsidRPr="00754FB3">
-                    <w:rPr>
-                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:bCs />
-                        <w:sz w:val="20" />
-                        <w:szCs w:val="20" />
-                        <w:lang w:eastAsia="pt-BR" />
-                    </w:rPr>
-                    <w:t>]</w:t>
+                    <w:t xml:space="preserve"> [responsavel_tecnico]</w:t>
                 </w:r>
             </w:p>
-            <w:p w14:paraId="54B57BEE" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="002C455A" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="006C322F" w14:textId="2C345FB3" w:rsidR="002564AC"
+                w:rsidRPr="002C455A" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3746,8 +2883,8 @@
                     </w:rPr>
                 </w:pPr>
             </w:p>
-            <w:p w14:paraId="516049B4" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="002C455A" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="51CDE46E" w14:textId="00742A8C" w:rsidR="002564AC"
+                w:rsidRPr="002C455A" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3757,8 +2894,8 @@
                     </w:rPr>
                 </w:pPr>
             </w:p>
-            <w:p w14:paraId="75F85BF9" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="002C455A" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="62C12202" w14:textId="41F65623" w:rsidR="002564AC"
+                w:rsidRPr="002C455A" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3770,18 +2907,18 @@
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="00E7629A" w:rsidRPr="00DA7E32" w14:paraId="53DE2451"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+    <w:tr w:rsidR="00585049" w:rsidRPr="00DA7E32" w14:paraId="27CDBCFA"
+        w14:textId="77777777" w:rsidTr="00A61873">
         <w:trPr>
-            <w:trHeight w:val="479" />
+            <w:trHeight w:val="381" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="10130" w:type="dxa" />
+                <w:tcW w:w="9952" w:type="dxa" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="53BB10BB" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="009A7B3F" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="4DA6E8CA" w14:textId="3FDEEFBC" w:rsidR="00585049"
+                w:rsidRPr="009A7B3F" w:rsidRDefault="00585049" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3801,7 +2938,7 @@
                     </w:rPr>
                     <w:t xml:space="preserve">INSTRUTOR: </w:t>
                 </w:r>
-                <w:r>
+                <w:r w:rsidR="00A967DF">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:sz w:val="22" />
@@ -3813,11 +2950,11 @@
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="5908" w:type="dxa" />
+                <w:tcW w:w="5804" w:type="dxa" />
                 <w:vMerge />
             </w:tcPr>
-            <w:p w14:paraId="4A7DB6E4" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="00DA7E32" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="173D5AB6" w14:textId="77777777" w:rsidR="00585049"
+                w:rsidRPr="00DA7E32" w:rsidRDefault="00585049" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3829,18 +2966,18 @@
             </w:p>
         </w:tc>
     </w:tr>
-    <w:tr w:rsidR="00E7629A" w:rsidRPr="00DA7E32" w14:paraId="64196566"
-        w14:textId="77777777" w:rsidTr="00E7629A">
+    <w:tr w:rsidR="002564AC" w:rsidRPr="00DA7E32" w14:paraId="56B1049C"
+        w14:textId="77777777" w:rsidTr="005B6420">
         <w:trPr>
-            <w:trHeight w:val="479" />
+            <w:trHeight w:val="381" />
         </w:trPr>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="10130" w:type="dxa" />
+                <w:tcW w:w="9952" w:type="dxa" />
                 <w:vAlign w:val="center" />
             </w:tcPr>
-            <w:p w14:paraId="0C2408F4" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="000B7D9D" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="1AD799E4" w14:textId="4F8D8C5F" w:rsidR="002564AC"
+                w:rsidRPr="000B7D9D" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3878,17 +3015,27 @@
                         <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
-                    <w:t xml:space="preserve"> [contratante]</w:t>
+                    <w:t xml:space="preserve"> </w:t>
+                </w:r>
+                <w:r w:rsidR="000066B4">
+                    <w:rPr>
+                        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                        <w:bCs />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
+                        <w:lang w:eastAsia="pt-BR" />
+                    </w:rPr>
+                    <w:t>[contratante]</w:t>
                 </w:r>
             </w:p>
         </w:tc>
         <w:tc>
             <w:tcPr>
-                <w:tcW w:w="5908" w:type="dxa" />
+                <w:tcW w:w="5804" w:type="dxa" />
                 <w:vMerge />
             </w:tcPr>
-            <w:p w14:paraId="5D781DBB" w14:textId="77777777" w:rsidR="00E7629A"
-                w:rsidRPr="00DA7E32" w:rsidRDefault="00E7629A" w:rsidP="00E7629A">
+            <w:p w14:paraId="5C3775DA" w14:textId="77777777" w:rsidR="002564AC"
+                w:rsidRPr="00DA7E32" w:rsidRDefault="002564AC" w:rsidP="005B6420">
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
@@ -3901,15 +3048,3 @@
         </w:tc>
     </w:tr>
 </w:tbl>
-<w:p w14:paraId="6BEB6B4A" w14:textId="3F1A6BA7" w:rsidR="002564AC" w:rsidRPr="007D0690"
-    w:rsidRDefault="002564AC">
-    <w:pPr>
-        <w:rPr>
-            <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-            <w:b />
-            <w:bCs />
-            <w:sz w:val="20" />
-            <w:szCs w:val="20" />
-        </w:rPr>
-    </w:pPr>
-</w:p>
