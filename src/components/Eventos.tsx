@@ -27,17 +27,12 @@ import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
-import {
-  format,
-  parseISO,
-  isValid,
-  parse,
-  differenceInMinutes,
-  differenceInCalendarDays,
-} from "date-fns";
+import { format, parseISO, isValid, parse } from "date-fns";
+import differenceInMinutes from "date-fns/differenceInMinutes";
 import { ptBR } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +41,7 @@ const Eventos = () => {
   const [newEvento, setNewEvento] = useState({
     empresa: { id: "" },
     treinamento: { id: "" },
+    titulo: "",
     courseLocation: "",
     courseLocation2: "",
     courseDate: "",
@@ -67,6 +63,57 @@ const Eventos = () => {
   const filteredData = showInativos
     ? eventos.filter((p) => p.status.id === 2)
     : eventos.filter((p) => p.status.id === 1);
+
+  const [turnoFinal, setTurnoFinal] = useState<"manha" | "tarde" | "">("");
+  const [mostrarTurno, setMostrarTurno] = useState(false);
+
+  useEffect(() => {
+    const updateMostrarTurno = () => {
+      if (
+        selectedDates.length >= 2 &&
+        newEvento.courseTime &&
+        newEvento.courseInterval &&
+        newEvento.treinamento.id
+      ) {
+        const treinamento = treinamentos.find(
+          (t) => t.id === newEvento.treinamento.id
+        );
+        if (!treinamento) return;
+
+        const requiredHours = Number(treinamento.courseHours || "0");
+
+        const [startTimeStr, endTimeStr] = newEvento.courseTime
+          .split("ÀS")
+          .map((s) => s.trim());
+        const startTime = parse(startTimeStr, "HH:mm", new Date());
+        const endTime = parse(endTimeStr, "HH:mm", new Date());
+
+        const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
+          .split("ÀS")
+          .map((s) => s.trim());
+        const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
+        const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
+
+        const dailyMinutes = differenceInMinutes(endTime, startTime);
+        const intervalMinutes = differenceInMinutes(intervalEnd, intervalStart);
+        const usableHours = (dailyMinutes - intervalMinutes) / 60;
+
+        const accumulatedHours = (selectedDates.length - 1) * usableHours;
+        const remainingHours = requiredHours - accumulatedHours;
+
+        setMostrarTurno(remainingHours > 0 && remainingHours < usableHours);
+      } else {
+        setMostrarTurno(false);
+      }
+    };
+
+    updateMostrarTurno();
+  }, [
+    selectedDates,
+    newEvento.courseTime,
+    newEvento.courseInterval,
+    newEvento.treinamento.id,
+  ]);
 
   const fetchEventos = async (pageNumber: number = 1, search = "") => {
     try {
@@ -161,6 +208,7 @@ const Eventos = () => {
       courseDate: "",
       courseTime: "",
       courseInterval: "",
+      titulo: "",
     });
   };
 
@@ -174,33 +222,12 @@ const Eventos = () => {
     setNewEvento((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const formatDateForInput = (date: string) => {
-  //   if (!date) return "";
-  //   try {
-  //     return format(parseISO(date), "dd/MM/yyyy", { locale: ptBR });
-  //   } catch {
-  //     return date;
-  //   }
-  // };
-
   const formatTimeForInput = (time: string) => {
     if (!time) return ["", ""]; // Se não houver horário, retorna array vazio
 
     const times = time.split(" ÀS "); // Divide o horário no " ÀS "
     return [times[0] || "", times[1] || ""]; // Retorna os dois valores corretamente
   };
-
-  // const formatDateForStorage = (date: string) => {
-  //   try {
-  //     const parsedDate = parse(date, "dd/MM/yyyy", new Date());
-  //     if (isValid(parsedDate)) {
-  //       return format(parsedDate, "yyyy-MM-dd");
-  //     }
-  //     return date;
-  //   } catch {
-  //     return date;
-  //   }
-  // };
 
   const formatTimeForStorage = (time: string) => {
     try {
@@ -239,72 +266,98 @@ const Eventos = () => {
     });
   };
 
-  // Função para lidar com a mudança no input de data
-  // const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
-
-  //   if (value.length > 2) value = value.replace(/^(\d{2})/, "$1/"); // Adiciona `/` após o dia
-  //   if (value.length > 5) value = value.replace(/^(\d{2})\/(\d{2})/, "$1/$2/"); // Adiciona `/` após o mês
-
-  //   if (value.length > 10) return; // Impede mais de 10 caracteres
-
-  //   setNewEvento((prev) => ({
-  //     ...prev,
-  //     [e.target.name]: value,
-  //   }));
-  // };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formattedDates = selectedDates.map((date) =>
-      format(date, "yyyy-MM-dd")
-    );
-
-    const payload = {
-      ...newEvento,
-      courseDate: formattedDates,
-      completionDate: formattedDates[formattedDates.length - 1],
-      courseTime: formatTimeForStorage(newEvento.courseTime),
-      courseInterval: formatTimeForStorage(newEvento.courseInterval),
-    };
-
-    const startDateStr = formattedDates[0];
-    const endDateStr = formattedDates[formattedDates.length - 1];
-
-    const startDate = parse(startDateStr, "yyyy-MM-dd", new Date());
-    const endDate = parse(endDateStr, "yyyy-MM-dd", new Date());
-
-    const totalDays = differenceInCalendarDays(endDate, startDate) + 1;
 
     const [startTimeStr, endTimeStr] = newEvento.courseTime
       .split("ÀS")
       .map((s) => s.trim());
-    const startTime = parse(startTimeStr, "HH:mm", new Date());
-    const endTime = parse(endTimeStr, "HH:mm", new Date());
+    const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
+      .split("ÀS")
+      .map((s) => s.trim());
 
-    const durationMinutes = differenceInMinutes(endTime, startTime);
-    const availableHoursPerDay = durationMinutes / 60;
+    let finalCourseTime = "";
 
-    const totalAvailableHours = totalDays * availableHoursPerDay;
+    if (mostrarTurno) {
+      const startTime = parse(startTimeStr, "HH:mm", new Date());
+      const endTime = parse(endTimeStr, "HH:mm", new Date());
+      const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
+      const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
 
-    const treinamento = treinamentos.find(
-      (t) => t.id === newEvento.treinamento.id
-    );
-    const requiredHours = Number(treinamento?.courseHours || "0");
-    console.log(totalAvailableHours);
-    if (totalAvailableHours < requiredHours) {
-      toast.error(
-        `O período informado (totalizando ${totalAvailableHours}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
+      const morningAvailable =
+        differenceInMinutes(intervalStart, startTime) / 60;
+      const afternoonAvailable = differenceInMinutes(endTime, intervalEnd) / 60;
+      const usableHoursPerDay = morningAvailable + afternoonAvailable;
+      const totalDays = selectedDates.length;
+
+      const treinamento = treinamentos.find(
+        (t) => t.id === newEvento.treinamento.id
       );
-      return; // Interrompe o envio do formulário
+      const requiredHours = Number(treinamento?.courseHours || "0");
+      const accumulated = (totalDays - 1) * usableHoursPerDay;
+      const finalDayRequiredHours = requiredHours - accumulated;
+
+      if (turnoFinal === "manha") {
+        // Horário final = startTime + finalDayRequiredHours horas
+        const finalEndDate = add(startTime, { hours: finalDayRequiredHours });
+        finalCourseTime = `${format(startTime, "HH:mm")} ÀS ${format(
+          finalEndDate,
+          "HH:mm"
+        )}`;
+      } else if (turnoFinal === "tarde") {
+        // Horário final = intervalEnd + finalDayRequiredHours horas
+        const finalStart = parse(intervalEndStr, "HH:mm", new Date());
+        const finalEndDate = add(finalStart, { hours: finalDayRequiredHours });
+        finalCourseTime = `${format(finalStart, "HH:mm")} ÀS ${format(
+          finalEndDate,
+          "HH:mm"
+        )}`;
+      } else {
+        // Caso o restante exija ambos os períodos
+        const extraAfterMorning = finalDayRequiredHours - morningAvailable;
+        const finalEndDate = add(intervalEnd, { hours: extraAfterMorning });
+        finalCourseTime = `${format(startTime, "HH:mm")} ÀS ${format(
+          finalEndDate,
+          "HH:mm"
+        )}`;
+      }
     }
-    if (totalAvailableHours > requiredHours) {
-      toast.error(
-        `O horário informado (totalizando ${totalAvailableHours}h disponíveis) não comporta a carga horária de ${requiredHours}h.`
-      );
-      return; // Interrompe o envio do formulário
-    }
+
+    // Mapeamento dos dias, aplicando a regra no último dia se mostrarTurno estiver ativo
+    const formattedDates = selectedDates.map((date, index) => {
+      const formattedDate = format(date, "yyyy-MM-dd");
+      let courseStart = startTimeStr;
+      let courseEnd = endTimeStr;
+
+      // Se for o último dia e mostrarTurno estiver ativo, usamos o finalCourseTime calculado
+      if (
+        mostrarTurno &&
+        index === selectedDates.length - 1 &&
+        finalCourseTime
+      ) {
+        const [finalStart, finalEnd] = finalCourseTime
+          .split("ÀS")
+          .map((s) => s.trim());
+        courseStart = finalStart;
+        courseEnd = finalEnd;
+      }
+
+      return JSON.stringify({
+        day: formattedDate,
+        courseStart,
+        courseEnd,
+        courseIntervalStart: intervalStartStr,
+        courseIntervalEnd: intervalEndStr,
+      });
+    });
+
+    const payload = {
+      ...newEvento,
+      courseDate: formattedDates,
+      completionDate: JSON.parse(formattedDates[formattedDates.length - 1]).day,
+      courseTime: formatTimeForStorage(newEvento.courseTime),
+      courseInterval: formatTimeForStorage(newEvento.courseInterval),
+    };
     if (eventoInEditMode) {
       try {
         await api.patch(`eventos/${eventoInEditMode}`, payload);
@@ -347,8 +400,14 @@ const Eventos = () => {
         courseDate: evento.courseDate.join(", "),
         courseTime: `${startTime} ÀS ${endTime}`, // Preenchendo corretamente o estado
         courseInterval: `${intervalStart} ÀS ${intervalEnd}`, // Preenchendo corretamente o estado
+        titulo: evento.titulo,
       });
-      setSelectedDates(evento.courseDate.map((date) => parseISO(date)));
+      setSelectedDates(
+        evento.courseDate.map((date) => {
+          const parsed = JSON.parse(date);
+          return parseISO(parsed.day);
+        })
+      );
     }
   };
 
@@ -364,27 +423,98 @@ const Eventos = () => {
     } catch (error) {}
   };
 
-  const getEventDisplay = (evento: Evento) => {
-    // Obter o id do evento
-    // Usar a primeira data do array de datas, se existir
-    const firstDate = evento.courseDate?.[0]
-      ? format(parseISO(evento.courseDate[0]), "dd/MM/yyyy")
-      : "";
-    const lastDate = evento.courseDate?.[evento.courseDate.length - 1]
-      ? format(
-          parseISO(evento.courseDate[evento.courseDate.length - 1]),
-          "dd/MM/yyyy"
-        )
-      : "";
-    const eventDates =
-      evento.courseDate?.length > 1
-        ? `Evento dos dias ${firstDate} até ${lastDate}`
-        : `Evento do dia ${firstDate}`;
+  const getCargaHorariaAviso = () => {
+    if (
+      selectedDates.length === 0 ||
+      !newEvento.courseTime ||
+      !newEvento.courseInterval ||
+      !newEvento.treinamento.id
+    ) {
+      return null;
+    }
 
-    // Obter o comprimento do evento
-    const eventLength = evento.courseDate?.length || 0;
+    const treinamento = treinamentos.find(
+      (t) => t.id === newEvento.treinamento.id
+    );
+    if (!treinamento) return null;
+    const requiredHours = Number(treinamento.courseHours || "0");
 
-    return `${eventDates} - ${eventLength} dias`;
+    // Parse dos horários
+    const [startTimeStr, endTimeStr] = newEvento.courseTime
+      .split("ÀS")
+      .map((s) => s.trim());
+    const startTime = parse(startTimeStr, "HH:mm", new Date());
+    const endTime = parse(endTimeStr, "HH:mm", new Date());
+
+    const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
+      .split("ÀS")
+      .map((s) => s.trim());
+    const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
+    const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
+
+    // Cálculo dos horários do dia
+    const totalMinutes = differenceInMinutes(endTime, startTime);
+    const intervalMinutes = differenceInMinutes(intervalEnd, intervalStart);
+
+    const usableMinutes = totalMinutes - intervalMinutes;
+    const usableHoursPerDay = usableMinutes / 60;
+    const totalDays = selectedDates.length;
+
+    const totalAvailableHours = totalDays * usableHoursPerDay;
+    if (totalAvailableHours < requiredHours) {
+      return `⚠️ A carga horária total (${totalAvailableHours}h) não atinge as ${requiredHours}h exigidas.`;
+    }
+    // Se só 1 dia, valida direto
+    if (totalDays === 1) {
+      const totalHoras = usableHoursPerDay;
+      if (totalHoras < requiredHours)
+        return `⚠️ O dia selecionado comporta apenas ${totalHoras}h, mas o treinamento exige ${requiredHours}h.`;
+      if (totalHoras > requiredHours)
+        return `⚠️ Horário excede a carga horária exigida de ${requiredHours}h.`;
+      return `✅ Carga horária distribuída corretamente (${totalHoras}h).`;
+    }
+
+    // Para múltiplos dias
+    const accumulated = (totalDays - 1) * usableHoursPerDay;
+    const finalDayRequiredHours = requiredHours - accumulated;
+
+    if (finalDayRequiredHours < 0)
+      return `⚠️ Horário total excede a carga horária exigida de ${requiredHours}h.`;
+    if (finalDayRequiredHours === 0) {
+      if (totalDays > 1) {
+        return `⚠️ Para um treinamento de ${requiredHours}h, apenas 1 data é necessária.`;
+      }
+      return `✅ Carga horária distribuída corretamente (${accumulated}h + 0h).`;
+    }
+
+    // Cálculo dos períodos disponíveis
+    const morningAvailable = differenceInMinutes(intervalStart, startTime) / 60;
+    const afternoonAvailable = differenceInMinutes(endTime, intervalEnd) / 60;
+
+    // Se o restante couber completamente em um único período,
+    // ex: se finalDayRequiredHours <= morningAvailable ou <= afternoonAvailable,
+    // aí o usuário precisa selecionar o turno desejado.
+    if (
+      finalDayRequiredHours <= morningAvailable ||
+      finalDayRequiredHours <= afternoonAvailable
+    ) {
+      if (!turnoFinal) {
+        return `⚠️ Restam ${finalDayRequiredHours}h para completar ${requiredHours}h. Selecione o turno do último dia.`;
+      }
+      if (turnoFinal === "manha" && finalDayRequiredHours > morningAvailable) {
+        return `⚠️ O turno "manha" não comporta as ${finalDayRequiredHours}h restantes.`;
+      }
+      if (
+        turnoFinal === "tarde" &&
+        finalDayRequiredHours > afternoonAvailable
+      ) {
+        return `⚠️ O turno "tarde" não comporta as ${finalDayRequiredHours}h restantes.`;
+      }
+      return `✅ Carga horária distribuída corretamente (${accumulated}h + ${finalDayRequiredHours}h).`;
+    } else {
+      // Caso o restante exija parte de ambos os períodos, não é necessária a seleção.
+      return `✅ Carga horária distribuída corretamente.`;
+    }
   };
 
   return (
@@ -418,6 +548,16 @@ const Eventos = () => {
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="empresa">Nome do Evento</Label>
+                  <Input
+                    id="titulo"
+                    name="titulo"
+                    value={newEvento.titulo}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4 ">
                   <div className="space-y-3">
                     <div className="space-y-2">
@@ -527,7 +667,9 @@ const Eventos = () => {
                               variant="outline"
                               className="w-full flex justify-start"
                             >
-                              Selecionar as datas
+                              {selectedDates.length > 0
+                                ? `Selecionadas ${selectedDates.length} data(s)`
+                                : "Selecionar as datas"}{" "}
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
@@ -606,6 +748,37 @@ const Eventos = () => {
                         />
                       </div>
                     </div>
+                    {getCargaHorariaAviso() && (
+                      <p className="text-sm text-yellow-600 mt-2">
+                        {getCargaHorariaAviso()}
+                      </p>
+                    )}
+                    {mostrarTurno && (
+                      <>
+                        <Label>Turno do último dia</Label>
+                        <ToggleGroup
+                          type="single"
+                          value={turnoFinal}
+                          onValueChange={(value) =>
+                            setTurnoFinal(value as "manha" | "tarde")
+                          }
+                          className="flex gap-2 justify-start "
+                        >
+                          <ToggleGroupItem
+                            value="manha"
+                            onClick={() => setTurnoFinal("manha")}
+                          >
+                            Manhã
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="tarde"
+                            onClick={() => setTurnoFinal("tarde")}
+                          >
+                            Tarde
+                          </ToggleGroupItem>
+                        </ToggleGroup>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-end space-x-2">
@@ -636,9 +809,8 @@ const Eventos = () => {
         <CustomTable
           columns={[
             {
-              key: "evento",
+              key: "titulo",
               label: "Evento",
-              render: (_, rowData) => getEventDisplay(rowData),
             },
             { key: "treinamento.name", label: "Treinamento" },
             { key: "empresa.name", label: "Contratante" },
@@ -667,3 +839,9 @@ const Eventos = () => {
 };
 
 export default Eventos;
+
+function add(date: Date, duration: { hours: number }): Date {
+  const result = new Date(date);
+  result.setHours(result.getHours() + duration.hours);
+  return result;
+}
