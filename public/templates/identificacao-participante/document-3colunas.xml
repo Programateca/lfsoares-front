@@ -468,8 +468,8 @@
                 <w:spacing w:after="20" w:line="278" w:lineRule="auto" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="18" />
-                    <w:szCs w:val="18" />
+                    <w:sz w:val="16" />
+                    <w:szCs w:val="16" />
                 </w:rPr>
                 <w:sectPr w:rsidR="00124299" w:rsidRPr="00E7629A" w:rsidSect="00E7629A">
                     <w:type w:val="continuous" />
@@ -484,8 +484,8 @@
             <w:r w:rsidRPr="00115CBC">
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="18" />
-                    <w:szCs w:val="18" />
+                    <w:sz w:val="16" />
+                    <w:szCs w:val="16" />
                 </w:rPr>
                 <w:t>[</w:t>
             </w:r>
@@ -493,8 +493,8 @@
             <w:r w:rsidRPr="00115CBC">
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="18" />
-                    <w:szCs w:val="18" />
+                    <w:sz w:val="16" />
+                    <w:szCs w:val="16" />
                 </w:rPr>
                 <w:t>conteudo_aplicado</w:t>
             </w:r>
@@ -502,8 +502,8 @@
             <w:r w:rsidRPr="00115CBC">
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="18" />
-                    <w:szCs w:val="18" />
+                    <w:sz w:val="16" />
+                    <w:szCs w:val="16" />
                 </w:rPr>
                 <w:t>]</w:t>
             </w:r>
