@@ -413,7 +413,7 @@ const Certificados = () => {
       };
       const saveResponse = await api.post("documentos", newCertificados);
 
-      if (saveResponse.status === 201) {
+      if (saveResponse?.status === 201) {
         toast.success("Identificador gerado com sucesso!");
         setCertificados((prev) => [...prev, saveResponse.data.data]);
         setIsModalOpen(false);
