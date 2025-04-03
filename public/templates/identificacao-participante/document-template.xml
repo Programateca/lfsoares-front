@@ -417,8 +417,8 @@
                     <w:b />
                     <w:bCs />
                     <w:color w:val="000000" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:sectPr w:rsidR="0043225E" w:rsidSect="001266D1">
                     <w:headerReference w:type="default" r:id="rId11" />

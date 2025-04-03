@@ -167,7 +167,7 @@ export async function gerarIdentificador(
   try {
     // Select the appropriate template based on content length
     const templateFileName =
-      docData.conteudo_aplicado.length <= 800
+      docData.conteudo_aplicado.length <= 1000
         ? "document-template.xml"
         : "document-3colunas.xml";
 
