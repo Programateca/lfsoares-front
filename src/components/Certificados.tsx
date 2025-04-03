@@ -509,8 +509,8 @@ const Certificados = () => {
   };
 
   const filteredData = showInativos
-    ? sortedCertificates.filter((p) => p.status.id === 2)
-    : sortedCertificates.filter((p) => p.status.id === 1);
+    ? sortedCertificates.filter((p) => p.status?.id === 2)
+    : sortedCertificates.filter((p) => p.status?.id === 1);
 
   return (
     <Card className="shadow-md">
@@ -799,11 +799,11 @@ const Certificados = () => {
                           onClick={() =>
                             setSelectedItem({
                               id: certificado.id,
-                              status: certificado.status.id === 1 ? 2 : 1,
+                              status: certificado.status?.id === 1 ? 2 : 1,
                             })
                           }
                         >
-                          {certificado.status.id === 1 ? (
+                          {certificado.status?.id === 1 ? (
                             <Trash2Icon className="h-4 w-4" />
                           ) : (
                             <RotateCcw className="h-4 w-4" />
@@ -813,12 +813,12 @@ const Certificados = () => {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            {certificado.status.id === 1
+                            {certificado.status?.id === 1
                               ? "Inativar certificado?"
                               : "Reativar certificado?"}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            {certificado.status.id === 1
+                            {certificado.status?.id === 1
                               ? "Tem certeza que deseja inativar este certificado?"
                               : "Tem certeza que deseja reativar este certificado?"}
                           </AlertDialogDescription>
@@ -833,7 +833,7 @@ const Certificados = () => {
                               if (selectedItem) {
                                 handleUpdateStatus(
                                   selectedItem.id,
-                                  selectedItem.status
+                                  selectedItem?.status
                                 );
                                 setSelectedItem(null);
                               }
