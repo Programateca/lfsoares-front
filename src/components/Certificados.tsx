@@ -281,7 +281,9 @@ const Certificados = () => {
         selectedEvento.courseTime,
         selectedEvento.treinamento.courseHours
       );
-      const lastItem = datasRealizada[datasRealizada.length - 1];
+      const lastItem = JSON.parse(
+        datasRealizada[datasRealizada.length - 1]
+      ).day;
       const lastItemDia = lastItem.split("-")[2];
       const lastItemMes = lastItem.split("-")[1];
       const lastItemAno = lastItem.split("-")[0];
@@ -301,7 +303,6 @@ const Certificados = () => {
       ];
 
       const mesString = meses[parseInt(lastItemMes, 10) - 1];
-
       const schema = {
         nome_treinamento: selectedEvento?.treinamento?.name || "",
         cnpj: selectedEmpresa?.cnpj || "",
@@ -509,8 +510,8 @@ const Certificados = () => {
   };
 
   const filteredData = showInativos
-    ? sortedCertificates.filter((p) => p.status.id === 2)
-    : sortedCertificates.filter((p) => p.status.id === 1);
+    ? sortedCertificates.filter((p) => p?.status?.id === 2)
+    : sortedCertificates.filter((p) => p?.status?.id === 1);
 
   return (
     <Card className="shadow-md">

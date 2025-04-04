@@ -516,34 +516,40 @@ export const Identificadores = () => {
         instrutorA:
           signatureCount !== 2
             ? days.reduce((acc, day) => {
-                acc[day] = {
+                console.log(JSON.parse(day).day);
+                console.log(data.instrutorA);
+                console.log(data.instrutorB);
+                acc[JSON.parse(day).day] = {
                   periodo:
-                    data.instrutorA?.[day]?.periodo || ("manhaTarde" as Period),
+                    data.instrutorA?.[JSON.parse(day).day]?.periodo ||
+                    ("manhaTarde" as Period),
                 };
                 return acc;
               }, {} as Record<string, { periodo?: Period }>)
             : Object.fromEntries(
-                days.map((day) => [day, { periodo: "manhaTarde" as Period }])
+                days.map((day) => [
+                  JSON.parse(day).day,
+                  { periodo: "manhaTarde" as Period },
+                ])
               ),
         instrutorB:
           signatureCount === 2
             ? null
             : days.reduce((acc, day) => {
-                acc[day] = {
+                acc[JSON.parse(day).day] = {
                   periodo:
-                    data.instrutorB?.[day]?.periodo || ("manhaTarde" as Period),
+                    data.instrutorB?.[JSON.parse(day).day]?.periodo ||
+                    ("manhaTarde" as Period),
                 };
                 return acc;
               }, {} as Record<string, { periodo?: Period }>),
       }),
     };
-
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-
     const saveResponse = await api.post("identificadores", newIdentificador);
 
     if (saveResponse.status === 201) {
