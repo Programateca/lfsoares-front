@@ -576,7 +576,7 @@ export const Identificadores = () => {
 
   const handleUpdateStatus = async (id: string | number, status: number) => {
     try {
-      await api.patch(`documentos/${id}`, {
+      await api.patch(`identificadores/${id}`, {
         status: {
           id: status,
         },
