@@ -22,9 +22,6 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
     .split("ÀS")
     .map((t) => t.trim());
 
-  console.log(horario);
-  console.log(intervalo);
-
   if (data.tipo_lista === "lista-dia-todo") {
     if (horario.length !== 2 || intervalo.length !== 2) {
       console.warn("Formato de horário ou intervalo inválido");
