@@ -13,18 +13,19 @@ interface DatasStructure {
 }
 
 export async function gerarLista(data: Record<string, any>, tipo: string) {
-  // console.log(data);
   const datas = data.datasObject as DatasStructure;
 
-  if (data.tipo_lista === "lista-dia-todo") {
-    // Parse time strings
-    const horario = String(data.horario)
-      .split("ÀS")
-      .map((t) => t.trim());
-    const intervalo = String(data.intervalo)
-      .split("ÀS")
-      .map((t) => t.trim());
+  const horario = String(data.horario)
+    .split("ÀS")
+    .map((t) => t.trim());
+  const intervalo = String(data.intervalo)
+    .split("ÀS")
+    .map((t) => t.trim());
 
+  console.log(horario);
+  console.log(intervalo);
+
+  if (data.tipo_lista === "lista-dia-todo") {
     if (horario.length !== 2 || intervalo.length !== 2) {
       console.warn("Formato de horário ou intervalo inválido");
     }
@@ -53,7 +54,7 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
       const morningData = {
         ...data,
         PERIODO: "MANHÃ",
-        HORARIO: "08:00 ÀS 12:00",
+        HORARIO: `${horario[0]} ÀS ${intervalo[0]}`,
       };
       await generateAndSaveDocument(morningData, tipo, "lista_manha.docx");
 
@@ -61,7 +62,7 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
       const afternoonData = {
         ...data,
         PERIODO: "TARDE",
-        HORARIO: "13:30 ÀS 17:30",
+        HORARIO: `${horario[1]} ÀS ${intervalo[1]}`,
       };
       await generateAndSaveDocument(afternoonData, tipo, "lista_tarde.docx");
     } else {
