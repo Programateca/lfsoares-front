@@ -269,6 +269,36 @@ const Eventos = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!newEvento.empresa.id) {
+      toast.error("Selecione o contratante");
+      return;
+    }
+
+    if (!newEvento.treinamento.id) {
+      toast.error("Selecione um treinamento");
+      return;
+    }
+
+    if (!newEvento.courseLocation) {
+      toast.error("Informe o local de treinamento");
+      return;
+    }
+
+    if (selectedDates.length === 0) {
+      toast.error("Selecione pelo menos uma data");
+      return;
+    }
+
+    if (!newEvento.courseTime) {
+      toast.error("Informe o horário do evento");
+      return;
+    }
+
+    if (!newEvento.courseInterval) {
+      toast.error("Informe o intervalo do evento");
+      return;
+    }
+
     const [startTimeStr, endTimeStr] = newEvento.courseTime
       .split("ÀS")
       .map((s) => s.trim());
@@ -323,13 +353,11 @@ const Eventos = () => {
       }
     }
 
-    // Mapeamento dos dias, aplicando a regra no último dia se mostrarTurno estiver ativo
     const formattedDates = selectedDates.map((date, index) => {
       const formattedDate = format(date, "yyyy-MM-dd");
       let courseStart = startTimeStr;
       let courseEnd = endTimeStr;
 
-      // Se for o último dia e mostrarTurno estiver ativo, usamos o finalCourseTime calculado
       if (
         mostrarTurno &&
         index === selectedDates.length - 1 &&
@@ -443,19 +471,47 @@ const Eventos = () => {
     const [startTimeStr, endTimeStr] = newEvento.courseTime
       .split("ÀS")
       .map((s) => s.trim());
+
+    // Validação dos horários de início e fim
+    if (!startTimeStr) {
+      return `⚠️ Informe o horário de início do evento`;
+    }
+    if (!endTimeStr) {
+      return `⚠️ Informe o horário de término do evento`;
+    }
+
     const startTime = parse(startTimeStr, "HH:mm", new Date());
     const endTime = parse(endTimeStr, "HH:mm", new Date());
+
+    // Verifica se os horários são válidos
+    if (!isValid(startTime)) {
+      return `⚠️ Horário de início inválido`;
+    }
+    if (!isValid(endTime)) {
+      return `⚠️ Horário de término inválido`;
+    }
 
     const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
       .split("ÀS")
       .map((s) => s.trim());
+
+    if (!intervalStartStr || !intervalEndStr) {
+      return `⚠️ Informe o intervalo completo do evento`;
+    }
+
     const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
     const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
+
+    if (!isValid(intervalStart)) {
+      return `⚠️ Horário de início do intervalo inválido`;
+    }
+    if (!isValid(intervalEnd)) {
+      return `⚠️ Horário de término do intervalo inválido`;
+    }
 
     // Cálculo dos horários do dia
     const totalMinutes = differenceInMinutes(endTime, startTime);
     const intervalMinutes = differenceInMinutes(intervalEnd, intervalStart);
-
     const usableMinutes = totalMinutes - intervalMinutes;
     const usableHoursPerDay = usableMinutes / 60;
     const totalDays = selectedDates.length;
@@ -464,6 +520,7 @@ const Eventos = () => {
     if (totalAvailableHours < requiredHours) {
       return `⚠️ A carga horária total (${totalAvailableHours}h) não atinge as ${requiredHours}h exigidas.`;
     }
+
     // Se só 1 dia, valida direto
     if (totalDays === 1) {
       const totalHoras = usableHoursPerDay;
@@ -491,9 +548,6 @@ const Eventos = () => {
     const morningAvailable = differenceInMinutes(intervalStart, startTime) / 60;
     const afternoonAvailable = differenceInMinutes(endTime, intervalEnd) / 60;
 
-    // Se o restante couber completamente em um único período,
-    // ex: se finalDayRequiredHours <= morningAvailable ou <= afternoonAvailable,
-    // aí o usuário precisa selecionar o turno desejado.
     if (
       finalDayRequiredHours <= morningAvailable ||
       finalDayRequiredHours <= afternoonAvailable
@@ -512,11 +566,11 @@ const Eventos = () => {
       }
       return `✅ Carga horária distribuída corretamente (${accumulated}h + ${finalDayRequiredHours}h).`;
     } else {
-      // Caso o restante exija parte de ambos os períodos, não é necessária a seleção.
       return `✅ Carga horária distribuída corretamente.`;
     }
   };
 
+  const cargaHorariaAviso = getCargaHorariaAviso();
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -570,6 +624,7 @@ const Eventos = () => {
                           }));
                         }}
                         value={newEvento.empresa.id}
+                        required
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione uma empresa" />
@@ -600,6 +655,7 @@ const Eventos = () => {
                           }));
                         }}
                         value={newEvento.treinamento.id}
+                        required
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione um treinamento" />
@@ -794,7 +850,16 @@ const Eventos = () => {
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit">Adicionar</Button>
+                  <Button
+                    type="submit"
+                    disabled={
+                      cargaHorariaAviso !== null &&
+                      cargaHorariaAviso !== "" &&
+                      !cargaHorariaAviso.startsWith("✅")
+                    }
+                  >
+                    Adicionar
+                  </Button>
                 </div>
               </form>
             </DialogContent>
