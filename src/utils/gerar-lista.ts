@@ -13,7 +13,8 @@ interface DatasStructure {
 }
 
 export async function gerarLista(data: Record<string, any>, tipo: string) {
-  const datas = data.datas as DatasStructure;
+  // console.log(data);
+  const datas = data.datasObject as DatasStructure;
 
   if (data.tipo_lista === "lista-dia-todo") {
     // Parse time strings
@@ -28,25 +29,24 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
       console.warn("Formato de horário ou intervalo inválido");
     }
 
-    // Extract hours for validation
-    // const startHour = parseInt(horario[0].split(":")[0], 10);
-    // const endHour = parseInt(horario[1].split(":")[0], 10);
-
-    // Check if the day spans before and after noon
-    // if (startHour >= 12 || endHour < 12) {
-    //   throw new Error(
-    //     "Para lista de dia todo, é necessário que o horário comece antes do meio-dia e termine depois do meio-dia"
-    //   );
-    // }
-
     // Add new properties to data
     data.M_H_ORARIO = `${horario[0]} ÀS ${intervalo[0]}`;
     data.T_H_ORARIO = `${intervalo[1]} ÀS ${horario[1]}`;
 
-    await generateAndSaveDocument(data, tipo, "output.docx");
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getDate()).padStart(
+      2,
+      "0"
+    )}-${String(currentDate.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${currentDate.getFullYear()}`;
+    const filename = `lista-dia-todo-${formattedDate}.docx`;
+    await generateAndSaveDocument(data, tipo, filename);
   } else {
     // Check if we need to generate both morning and afternoon lists
     const hasManhaTarde = checkPeriodsInData(datas, "manhaTarde");
+    // console.log("hasManhaTarde", hasManhaTarde);
 
     if (hasManhaTarde) {
       // Generate morning list
@@ -85,7 +85,7 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
 
 function checkPeriodsInData(datas: DatasStructure, periodo: string): boolean {
   if (!datas) return false;
-
+  // console.log(datas);
   const instrutorAHasPeriod =
     datas.instrutorA?.some((item) => item.periodo === periodo) || false;
   const instrutorBHasPeriod =
