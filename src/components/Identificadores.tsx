@@ -434,8 +434,12 @@ export const Identificadores = () => {
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: `${selectedEvento.treinamento.courseHours} HORAS/AULA`,
       intervalo: selectedEvento.courseInterval,
-      endereco: selectedEvento.courseLocation,
-      empresa: selectedEvento.empresa.name,
+      endereco: selectedEvento?.courseLocation2
+        ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
+        : selectedEvento?.courseLocation || "",
+      empresa: `${selectedEvento.empresa.name} - ${
+        selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
+      }`,
       empresa_id: selectedEvento.empresa.id,
       datas: datasFormatadas.split(";")[0],
       tipo_certificado: data.certificadoTipo,
@@ -545,13 +549,14 @@ export const Identificadores = () => {
               }, {} as Record<string, { periodo?: Period }>),
       }),
     };
+
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-    const saveResponse = await api.post("identificadores", newIdentificador);
 
+    const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
       setIdentificadoresGerados((prev) => [

@@ -232,6 +232,9 @@ const Eventos = () => {
   const formatTimeForStorage = (time: string) => {
     try {
       const parsedTime = parse(time, "HH:mm", new Date());
+      if (time === "00:00 ÀS 00:00") {
+        return "";
+      }
       return isValid(parsedTime) ? format(parsedTime, "HH:mm") : time;
     } catch {
       return time;
@@ -269,6 +272,9 @@ const Eventos = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const treinamentoFiltrado = treinamentos.find(
+      (t) => t.id === newEvento.treinamento.id
+    );
     if (!newEvento.empresa.id) {
       toast.error("Selecione o contratante");
       return;
@@ -294,7 +300,7 @@ const Eventos = () => {
       return;
     }
 
-    if (!newEvento.courseInterval) {
+    if (!newEvento.courseInterval && treinamentoFiltrado!.courseHours > "4") {
       toast.error("Informe o intervalo do evento");
       return;
     }
@@ -374,8 +380,8 @@ const Eventos = () => {
         day: formattedDate,
         courseStart,
         courseEnd,
-        courseIntervalStart: intervalStartStr,
-        courseIntervalEnd: intervalEndStr,
+        courseIntervalStart: intervalStartStr || "",
+        courseIntervalEnd: intervalEndStr || "",
       });
     });
 

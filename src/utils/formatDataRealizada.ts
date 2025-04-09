@@ -30,7 +30,9 @@ export function formatDataRealizada(
   let remainingHours = Number(courseHours);
 
   // Helper: converte horário "HH:MM" para minutos
-  function parseTime(str: string): number {
+
+  function parseTime(str: string | undefined): number {
+    if (!str) return 0; // ou trate de outra forma apropriada
     const [h, m] = str.split(":").map(Number);
     return h * 60 + m;
   }
@@ -51,8 +53,8 @@ export function formatDataRealizada(
       day: string;
       courseStart: string;
       courseEnd: string;
-      courseIntervalStart: string;
-      courseIntervalEnd: string;
+      courseIntervalStart?: string;
+      courseIntervalEnd?: string;
     };
     const daysData: DayData[] = dateInputs.map((jsonStr) =>
       JSON.parse(jsonStr)
@@ -71,6 +73,16 @@ export function formatDataRealizada(
       const endMinutes = parseTime(dayData.courseEnd);
       const intervalStartMinutes = parseTime(dayData.courseIntervalStart);
       const intervalEndMinutes = parseTime(dayData.courseIntervalEnd);
+
+      if (!intervalStartMinutes || !intervalEndMinutes) {
+        assignments.push({
+          date: dateObj,
+          assignedHours: remainingHours,
+          computedEndTime: addHoursToTime(dayData.courseStart, remainingHours),
+          courseStart: dayData.courseStart,
+        });
+        continue;
+      }
 
       // Calcula duração da manhã (do início até o início do intervalo)
       const morningDurationMinutes =
@@ -100,7 +112,10 @@ export function formatDataRealizada(
       } else {
         // O tempo excedente após a manhã é calculado a partir do fim do intervalo
         const extraHours = assigned - morningDurationMinutes / 60;
-        computedEndTime = addHoursToTime(dayData.courseIntervalEnd, extraHours);
+        computedEndTime = addHoursToTime(
+          dayData.courseIntervalEnd || "00:00",
+          extraHours
+        );
       }
 
       assignments.push({
@@ -179,7 +194,7 @@ export function formatDataRealizada(
     const monthName = monthNames[a.date.getMonth()];
     const year = a.date.getFullYear();
     const lastGroup = groups[groups.length - 1];
-    console.log(day);
+
     if (
       lastGroup &&
       lastGroup.computedEndTime === a.computedEndTime &&

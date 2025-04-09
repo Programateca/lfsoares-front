@@ -276,11 +276,13 @@ const Certificados = () => {
       if (!selectedEvento) throw new AppError("Evento não encontrado", 404);
 
       const datasRealizada = selectedEvento.courseDate;
+
       const dataRealizada = formatDataRealizada(
         datasRealizada,
         selectedEvento.courseTime,
         selectedEvento.treinamento.courseHours
       );
+
       const lastItem = JSON.parse(
         datasRealizada[datasRealizada.length - 1]
       ).day;

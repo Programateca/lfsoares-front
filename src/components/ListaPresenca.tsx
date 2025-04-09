@@ -53,6 +53,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
+import { Evento } from "@/@types/Evento";
 
 export interface ListaFormData {
   documento_identificador: string;
@@ -83,7 +84,7 @@ const ListaPresenca = () => {
     id: string | number;
     status: number;
   } | null>(null);
-
+  const [eventos, setEventos] = useState<Evento[]>([]);
   const [showInativos, setShowInativos] = useState(false);
 
   const onSubmit = async (data: ListaFormData) => {
@@ -99,19 +100,30 @@ const ListaPresenca = () => {
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
 
-      console.log(dataIdentificador.instrutorDates);
+      const eventoIdentificador = dataIdentificador.evento_id;
+
+      const selectedEvento = eventos.find(
+        (evento) => evento.id === eventoIdentificador
+      );
+
+      const titulo = dataIdentificador.assinante_titulo2.split(":")[0].trim();
       // return;
       const schema: Record<string, any> = {
         datasObject: dataIdentificador.instrutorDates,
         nome_treinamento: dataIdentificador.treinamento,
         tipo: dataIdentificador.tipo,
-        carga_horaria: `${dataIdentificador.carga_horaria} HORAS/AULA`,
+        carga_horaria: `${dataIdentificador.carga_horaria}`,
         datas: dataIdentificador.datas,
         horario: dataIdentificador.mudar_horarios,
         intervalo: dataIdentificador.intervalo,
         modulo: dataIdentificador.mudar_modulo,
-        endereco: dataIdentificador.endereco,
-        instrutor: dataIdentificador.assinante1,
+        endereco: selectedEvento?.courseLocation2
+          ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
+          : selectedEvento?.courseLocation || "",
+        instrutor:
+          titulo.toLocaleLowerCase() === "instrutor"
+            ? `${dataIdentificador.assinante1} | ${dataIdentificador.assinante2}`
+            : dataIdentificador.assinante1,
         cidade: data.cidade,
         nome_empresa: dataIdentificador.empresa,
         cnpj: empresaCNPJ,
@@ -176,11 +188,14 @@ const ListaPresenca = () => {
       const identificadoresResp = await api.get("identificadores", {
         params: { limit: 100000 },
       });
+      const eventosResp = await api.get("eventos", {
+        params: { limit: 100000 },
+      });
       const response = await api.get("empresas", { params: { limit: 100000 } });
-      console.log(documentosResp.data);
       setEmpresas(response.data.data);
       setIdentificadores(identificadoresResp.data.data);
       setDocumentos(documentosResp.data.data);
+      setEventos(eventosResp.data.data);
       setHasNextPage(documentosResp.data.hasNextPage);
     } catch (error) {
       toast.error("Erro ao buscar documentos");
