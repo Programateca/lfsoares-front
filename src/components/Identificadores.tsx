@@ -271,7 +271,6 @@ export const Identificadores = () => {
 
   const onSubmit = async (data: FormData) => {
     if (!data.participantes?.length) {
-      // TODO Em produção, poderíamos usar toast ou outra UI de alerta mais amigável
       toast.error("Selecione os participantes");
       return;
     }
@@ -285,6 +284,33 @@ export const Identificadores = () => {
     const certificadoCode = Number(
       (await api.get(`identificadores/last-certificado-code/${fullYear}`)).data
     );
+
+    const is4hoursOrLessCourse = () => {
+      const courseStart = selectedEvento.courseTime.split(" ÀS ")[0];
+      const courseEnd = selectedEvento.courseTime.split(" ÀS ")[1];
+
+      // Convert times to minutes since midnight
+      const [startHour, startMin] = courseStart.split(":").map(Number);
+      const [endHour, endMin] = courseEnd.split(":").map(Number);
+
+      const startMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
+
+      // Calculate total hours
+      const totalMinutes = endMinutes - startMinutes;
+      const totalHours = totalMinutes / 60;
+
+      return totalHours <= 4;
+    };
+
+    const fix4HoursCourse = () => {
+      const courseStart = selectedEvento.courseTime.split(" ÀS ")[0];
+      // Convert time to 24h format and check if it's morning or afternoon
+      const [startHour] = courseStart.split(":").map(Number);
+      const period = startHour < 12 ? "manha" : "tarde";
+
+      return period;
+    };
 
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
@@ -407,9 +433,21 @@ export const Identificadores = () => {
         (item) => item.id === data.assinatura[1]?.assinante
       )?.registroProfissional,
 
-      manha_horario,
-      tarde_horario,
-      mudar_modulo: selectedEvento?.treinamento.courseMethodology, // TODO Acho que ta certo
+      // Ajusta horários para cursos de 4 horas ou menos
+      manha_horario: is4hoursOrLessCourse()
+        ? fix4HoursCourse() === "manha"
+          ? selectedEvento?.courseTime
+          : ""
+        : manha_horario,
+      tarde_horario: is4hoursOrLessCourse()
+        ? fix4HoursCourse() === "tarde"
+          ? selectedEvento?.courseTime
+          : ""
+        : tarde_horario,
+      is_short_course: is4hoursOrLessCourse(), // Flag para indicar curso curto
+      curso_periodo: is4hoursOrLessCourse() ? fix4HoursCourse() : null, // Período único para cursos curtos
+
+      mudar_modulo: selectedEvento?.treinamento.courseMethodology,
       mudar_horarios: selectedEvento?.courseTime,
       id_data: fullDateNow.replace(/\//g, "."), // Troca / por . para seguir o padrão apresentado pelo modelo deles
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
@@ -428,7 +466,7 @@ export const Identificadores = () => {
       treinamento_lista:
         selectedEvento.treinamento.name.length > 70
           ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
-          : selectedEvento.treinamento.name, // TODO Checar: possivelmente igual a treinamento
+          : selectedEvento.treinamento.name,
       evento_id: selectedEvento.id,
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
@@ -515,39 +553,47 @@ export const Identificadores = () => {
       instrutor_b: instrutoresSelecionados.instrutorB,
       /**
        * Formata data para instrutorA e instrutorB
+       * Para cursos curtos (<= 4h), usamos apenas instrutorA com o período específico
        */
-      instrutorDates: formatDays({
-        instrutorA:
-          signatureCount !== 2
-            ? days.reduce((acc, day) => {
-                console.log(JSON.parse(day).day);
-                console.log(data.instrutorA);
-                console.log(data.instrutorB);
-                acc[JSON.parse(day).day] = {
-                  periodo:
-                    data.instrutorA?.[JSON.parse(day).day]?.periodo ||
-                    ("manhaTarde" as Period),
-                };
-                return acc;
-              }, {} as Record<string, { periodo?: Period }>)
-            : Object.fromEntries(
-                days.map((day) => [
-                  JSON.parse(day).day,
-                  { periodo: "manhaTarde" as Period },
-                ])
-              ),
-        instrutorB:
-          signatureCount === 2
-            ? null
-            : days.reduce((acc, day) => {
-                acc[JSON.parse(day).day] = {
-                  periodo:
-                    data.instrutorB?.[JSON.parse(day).day]?.periodo ||
-                    ("manhaTarde" as Period),
-                };
-                return acc;
-              }, {} as Record<string, { periodo?: Period }>),
-      }),
+      instrutorDates: is4hoursOrLessCourse()
+        ? formatDays({
+            instrutorA: Object.fromEntries(
+              days.map((day) => [
+                JSON.parse(day).day,
+                { periodo: fix4HoursCourse() as Period },
+              ])
+            ),
+            instrutorB: null,
+          })
+        : formatDays({
+            instrutorA:
+              signatureCount !== 2
+                ? days.reduce((acc, day) => {
+                    acc[JSON.parse(day).day] = {
+                      periodo:
+                        data.instrutorA?.[JSON.parse(day).day]?.periodo ||
+                        ("manhaTarde" as Period),
+                    };
+                    return acc;
+                  }, {} as Record<string, { periodo?: Period }>)
+                : Object.fromEntries(
+                    days.map((day) => [
+                      JSON.parse(day).day,
+                      { periodo: "manhaTarde" as Period },
+                    ])
+                  ),
+            instrutorB:
+              signatureCount === 2
+                ? null
+                : days.reduce((acc, day) => {
+                    acc[JSON.parse(day).day] = {
+                      periodo:
+                        data.instrutorB?.[JSON.parse(day).day]?.periodo ||
+                        ("manhaTarde" as Period),
+                    };
+                    return acc;
+                  }, {} as Record<string, { periodo?: Period }>),
+          }),
     };
 
     const newIdentificador: Partial<IdentificadorData> = {
@@ -1001,9 +1047,7 @@ export const Identificadores = () => {
                     id_code: String(row.code).padStart(3, "0"),
                   },
                   identificadorParsed.instrutorDates,
-                  identificadorParsed.numeroParticipantes,
-
-                  "hora do curso - FIXO"
+                  identificadorParsed.numeroParticipantes
                 );
               } catch (error) {
                 console.error("Erro ao processar o identificador:", error);

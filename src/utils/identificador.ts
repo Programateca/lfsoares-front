@@ -29,7 +29,7 @@ type Pages = {
 //   return instrutor.find((item) => item.periodo === periodo)?.dias || "";
 // }
 
-async function formatarPaginas(pages: Pages, courseTime: string) {
+async function formatarPaginas(pages: Pages) {
   // Extract all unique days across both instructors and all periods
   const allDays = new Set<string>();
   const dayToInstructorInfo = new Map<
@@ -91,8 +91,7 @@ async function formatarPaginas(pages: Pages, courseTime: string) {
         repetition,
         "instrutor_a",
         day,
-        dayInfo.instrutorA.periodo as "manha" | "tarde" | "manhaTarde",
-        courseTime
+        dayInfo.instrutorA.periodo as "manha" | "tarde" | "manhaTarde"
       );
     }
 
@@ -106,8 +105,7 @@ async function formatarPaginas(pages: Pages, courseTime: string) {
         repetition,
         "instrutor_b",
         day,
-        dayInfo.instrutorB.periodo as "manha" | "tarde" | "manhaTarde",
-        courseTime
+        dayInfo.instrutorB.periodo as "manha" | "tarde" | "manhaTarde"
       );
     }
   }
@@ -158,8 +156,7 @@ function parseDatasFormatadas(formattedString: string): string[] {
 export async function gerarIdentificador(
   docData: Identificador,
   pages: EventSchedule,
-  numeroParticipantes: number,
-  courseTime: string
+  numeroParticipantes: number
 ) {
   const formattedPages = calcularPaginas(pages, numeroParticipantes);
   const TAG_NAME = "<!--aux-page-->";
@@ -184,17 +181,14 @@ export async function gerarIdentificador(
     }
 
     const updatedXml = mainXmlContent.split(TAG_NAME).join(
-      await formatarPaginas(
-        {
-          instrutorA: formattedPages.instrutorA.filter(
-            (item) => item.periodo !== "nenhum"
-          ),
-          instrutorB: formattedPages.instrutorB.filter(
-            (item) => item.periodo !== "nenhum"
-          ),
-        },
-        courseTime
-      )
+      await formatarPaginas({
+        instrutorA: formattedPages.instrutorA.filter(
+          (item) => item.periodo !== "nenhum"
+        ),
+        instrutorB: formattedPages.instrutorB.filter(
+          (item) => item.periodo !== "nenhum"
+        ),
+      })
     );
 
     const fileArrayBuffer = await loadFile(
@@ -326,10 +320,8 @@ function substituirOcorrencias(
   texto: string,
   instrutor: string,
   data: string,
-  periodo: "manha" | "tarde" | "manhaTarde",
-  courseTime: string
+  periodo: "manha" | "tarde" | "manhaTarde"
 ): string {
-  if (import.meta.env.DEV) console.log("courseTime:", courseTime);
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
     "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
