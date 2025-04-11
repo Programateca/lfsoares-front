@@ -193,7 +193,10 @@ const ListaPresenca = () => {
       });
       const response = await api.get("empresas", { params: { limit: 100000 } });
       setEmpresas(response.data.data);
-      setIdentificadores(identificadoresResp.data.data);
+      setIdentificadores(
+        identificadoresResp.data.data.filter((e: any) => e.status.id === 1) ||
+          []
+      );
       setDocumentos(documentosResp.data.data);
       setEventos(eventosResp.data.data);
       setHasNextPage(documentosResp.data.hasNextPage);
@@ -342,6 +345,7 @@ const ListaPresenca = () => {
                     onChange={(e) =>
                       handleInputChange("documento_identificador", e)
                     }
+                    eventos={eventos}
                   />
                   <Controller
                     name="tipo_lista"

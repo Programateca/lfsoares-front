@@ -18,6 +18,7 @@ interface SelectMapProps {
   input_name: string;
   label: string;
   onChange: (value: string) => void;
+  eventos: Evento[] | any[];
 }
 
 export function SelectMap({
@@ -26,6 +27,7 @@ export function SelectMap({
   input_name,
   label,
   onChange,
+  eventos,
 }: SelectMapProps) {
   return (
     <>
@@ -40,10 +42,13 @@ export function SelectMap({
               const identificadorParsed = item.identificadorData
                 ? JSON.parse(item.identificadorData)
                 : null;
+              const eventoFiltrado = eventos.find(
+                (evento) => evento.id === identificadorParsed.evento_id
+              );
               return (
                 <SelectItem key={item.id} value={item.id}>
                   Identificador {item.code} ={" "}
-                  {identificadorParsed?.treinamento || item.name}
+                  {eventoFiltrado ? ` ${eventoFiltrado.titulo}` : item.nome}
                 </SelectItem>
               );
             })}
