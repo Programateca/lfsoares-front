@@ -421,17 +421,46 @@ export const Identificadores = () => {
       header_data: "14/02/2025",
       revisao: "00",
 
-      titulo2: data?.assinatura[1]?.titulo ? data.assinatura[1].titulo : "",
-      nome2: data?.assinatura[1]?.assinante
-        ? instrutores.find((item) => item.id === data.assinatura[1]?.assinante)
-            ?.name + ":"
-        : "",
-      qualificacao_profissional2: instrutores.find(
-        (item) => item.id === data.assinatura[1]?.assinante
-      )?.qualificacaoProfissional,
-      registro_profissional2: instrutores.find(
-        (item) => item.id === data.assinatura[1]?.assinante
-      )?.registroProfissional,
+      ...(() => {
+        // Find the last filled assinatura
+        if (!data?.assinatura || !Array.isArray(data.assinatura)) {
+          return {
+            titulo2: "",
+            nome2: "",
+            qualificacao_profissional2: "",
+            registro_profissional2: "",
+          };
+        }
+
+        let lastValidIndex = -1;
+        for (let i = data.assinatura.length - 1; i >= 0; i--) {
+          if (data.assinatura[i]?.assinante) {
+            lastValidIndex = i;
+            break;
+          }
+        }
+
+        if (lastValidIndex === -1) {
+          return {
+            titulo2: "",
+            nome2: "",
+            qualificacao_profissional2: "",
+            registro_profissional2: "",
+          };
+        }
+
+        const assinatura = data.assinatura[lastValidIndex];
+        const instrutor = instrutores.find(
+          (item) => item.id === assinatura.assinante
+        );
+
+        return {
+          titulo2: assinatura.titulo || "",
+          nome2: instrutor ? instrutor.name + ":" : "",
+          qualificacao_profissional2: instrutor?.qualificacaoProfissional || "",
+          registro_profissional2: instrutor?.registroProfissional || "",
+        };
+      })(),
 
       // Ajusta horários para cursos de 4 horas ou menos
       manha_horario: is4hoursOrLessCourse()
