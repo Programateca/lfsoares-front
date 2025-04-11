@@ -369,6 +369,7 @@ export const Identificadores = () => {
     });
 
     const datasFormatadas = formatarDatas(datasArray);
+
     /**
      * Formata as datas para manha e tarde
      */
@@ -448,7 +449,10 @@ export const Identificadores = () => {
       curso_periodo: is4hoursOrLessCourse() ? fix4HoursCourse() : null, // Período único para cursos curtos
 
       mudar_modulo: selectedEvento?.treinamento.courseMethodology,
-      mudar_horarios: selectedEvento?.courseTime,
+      mudar_horarios: selectedEvento?.courseTime.replace(
+        /ÀS (\d{1,2})$/,
+        "ÀS $1:00"
+      ),
       id_data: fullDateNow.replace(/\//g, "."), // Troca / por . para seguir o padrão apresentado pelo modelo deles
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
@@ -462,7 +466,9 @@ export const Identificadores = () => {
       treinamento: selectedEvento.treinamento.name,
       treinamento_lista: selectedEvento.treinamento.name,
       evento_id: selectedEvento.id,
-      contratante: selectedEvento.empresa.name,
+      contratante: `${selectedEvento.empresa.name} - ${
+        selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
+      }`,
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: `${selectedEvento.treinamento.courseHours} HORAS/AULA`,
       intervalo: selectedEvento.courseInterval,
@@ -595,7 +601,8 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-
+    console.log(dataGerador);
+    return;
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
@@ -1034,7 +1041,6 @@ export const Identificadores = () => {
                   console.warn("Dados do identificador inválidos:", row);
                   return;
                 }
-
                 gerarIdentificador(
                   {
                     ...identificadorParsed,

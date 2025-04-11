@@ -297,7 +297,7 @@ export function formatarDatas(dates: string[]): string {
     }
 
     // Converter para o formato "dd/MM/yyyy" se necessário (aqui só usamos month e ano)
-    const monthYear = `${month}/${year.slice(2)}`;
+    const monthYear = `${month}/${year}`;
     if (!formatado[monthYear]) {
       formatado[monthYear] = [];
     }
@@ -306,6 +306,8 @@ export function formatarDatas(dates: string[]): string {
 
   const resultado: string[] = [];
   for (const [monthYear, days] of Object.entries(formatado)) {
+    // Ordenar os dias numericamente
+    days.sort((a, b) => parseInt(a) - parseInt(b));
     const lastDay = days.pop();
     if (days.length > 0) {
       resultado.push(`${days.join(", ")} E ${lastDay}/${monthYear}`);
@@ -313,7 +315,7 @@ export function formatarDatas(dates: string[]): string {
       resultado.push(`${lastDay}/${monthYear}`);
     }
   }
-  return resultado.join("; ");
+  return resultado.join(", ");
 }
 
 function substituirOcorrencias(
@@ -330,9 +332,9 @@ function substituirOcorrencias(
     "\\[instrutor\\]": () => `[${instrutor}]`,
     "\\[data_frequencia\\]": () => data,
     "\\[manha\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde" ? "Manhã" : "",
+      periodo === "manha" || periodo === "manhaTarde" ? "MANHÃ" : "",
     "\\[tarde\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde" ? "Tarde" : "",
+      periodo === "tarde" || periodo === "manhaTarde" ? "TARDE" : "",
     "\\[manha_h\\]": () =>
       periodo === "manha" || periodo === "manhaTarde" ? "[manha_horario]" : "",
     "\\[tarde_h\\]": () =>
