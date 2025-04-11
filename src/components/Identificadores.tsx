@@ -459,14 +459,8 @@ export const Identificadores = () => {
       conteudo_aplicado: conteudoAplicado,
       motivo_treinamento: data.motivoTreinamento,
       objetivo_lf: data.objetivoTreinamento,
-      treinamento:
-        selectedEvento.treinamento.name.length > 70
-          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
-          : selectedEvento.treinamento.name,
-      treinamento_lista:
-        selectedEvento.treinamento.name.length > 70
-          ? `${selectedEvento.treinamento.name.substring(0, 67)}...`
-          : selectedEvento.treinamento.name,
+      treinamento: selectedEvento.treinamento.name,
+      treinamento_lista: selectedEvento.treinamento.name,
       evento_id: selectedEvento.id,
       contratante: selectedEvento.empresa.name,
       tipo: selectedEvento.treinamento.courseType,
