@@ -635,7 +635,7 @@ const Eventos = () => {
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione uma empresa" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-72 w-full max-w-[40rem]">
                           <SelectGroup>
                             <SelectLabel>Empresa:</SelectLabel>
                             {empresas.map((empresa) => {
@@ -663,10 +663,13 @@ const Eventos = () => {
                         value={newEvento.treinamento.id}
                         required
                       >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione um treinamento" />
+                        <SelectTrigger className="w-full justify-start items-start flex ">
+                          <SelectValue
+                            placeholder="Selecione um treinamento"
+                            className="self-start"
+                          />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-72 max-w-[40rem]">
                           <SelectGroup>
                             <SelectLabel>Treinamento:</SelectLabel>
                             {treinamentos.map((treinamento) => {
@@ -674,6 +677,7 @@ const Eventos = () => {
                                 <SelectItem
                                   key={treinamento.id}
                                   value={treinamento.id}
+                                  className="self-start"
                                 >
                                   {treinamento.name}
                                 </SelectItem>
