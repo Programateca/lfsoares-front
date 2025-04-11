@@ -114,7 +114,9 @@ const Certificados = () => {
       const response = await api.get("identificadores", {
         params: { limit: 100000 },
       });
-      setIdentificadores(response.data.data);
+      setIdentificadores(
+        response.data.data.filter((e: any) => e.status.id === 1)
+      );
       const eventosResp = await api.get("eventos", {
         params: { limit: 100000 },
       });
@@ -549,6 +551,7 @@ const Certificados = () => {
                       onChange={(e) =>
                         handleInputChange("documento_identificador", e)
                       }
+                      eventos={eventos}
                     />
                   </div>
                   <div className="col-span-3 space-y-2">
