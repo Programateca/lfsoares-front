@@ -369,7 +369,6 @@ export const Identificadores = () => {
     });
 
     const datasFormatadas = formatarDatas(datasArray);
-
     /**
      * Formata as datas para manha e tarde
      */
@@ -601,8 +600,7 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-    console.log(dataGerador);
-    return;
+
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");

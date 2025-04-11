@@ -315,6 +315,7 @@ export function formatarDatas(dates: string[]): string {
       resultado.push(`${lastDay}/${monthYear}`);
     }
   }
+
   return resultado.join(", ");
 }
 
