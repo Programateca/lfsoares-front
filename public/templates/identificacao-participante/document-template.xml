@@ -716,18 +716,17 @@
                 </w:trPr>
                 <w:tc>
                     <w:tcPr>
-                        <w:tcW w:w="8076" w:type="dxa" />
+                        <w:tcW w:w="7654" w:type="dxa" />
+                        <w:vAlign w:val="center" />
                     </w:tcPr>
-                    <w:p w14:paraId="56946B63" w14:textId="34D7CCB2" w:rsidR="00536B3F"
-                        w:rsidRDefault="00536B3F" w:rsidP="00ED0769">
+                    <w:p w14:paraId="0738F847" w14:textId="43DA8BAB" w:rsidR="00536B3F"
+                        w:rsidRDefault="004644BD" w:rsidP="00ED0769">
                         <w:pPr>
                             <w:jc w:val="center" />
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:b />
-                                <w:bCs />
                                 <w:sz w:val="22" />
-                                <w:szCs w:val="20" />
+                                <w:szCs w:val="22" />
                             </w:rPr>
                         </w:pPr>
                         <w:r w:rsidRPr="00ED0769">
