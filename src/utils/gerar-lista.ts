@@ -44,7 +44,9 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
   } else {
     // Check if we need to generate both morning and afternoon lists
     const hasManhaTarde = checkPeriodsInData(datas, "manhaTarde");
-    // console.log("hasManhaTarde", hasManhaTarde);
+
+    console.log("datas", datas);
+    console.log("data", data);
 
     if (hasManhaTarde) {
       // Generate morning list
@@ -67,7 +69,7 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
       const hasManha = checkPeriodsInData(datas, "manha");
       const hasTarde = checkPeriodsInData(datas, "tarde");
 
-      if (hasManha || (!hasManha && !hasTarde)) {
+      if (hasManha) {
         // Default to morning if no specific period
         data.PERIODO = "MANHÃ";
         data.HORARIO = "08:00 ÀS 12:00";
@@ -82,7 +84,7 @@ export async function gerarLista(data: Record<string, any>, tipo: string) {
 }
 
 function checkPeriodsInData(datas: DatasStructure, periodo: string): boolean {
-  if (!datas) return false;
+  if (!datas) throw new Error("Datas object is null or undefined");
   // console.log(datas);
   const instrutorAHasPeriod =
     datas.instrutorA?.some((item) => item.periodo === periodo) || false;

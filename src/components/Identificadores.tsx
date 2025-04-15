@@ -415,6 +415,17 @@ export const Identificadores = () => {
       );
     }
 
+    const getAssinante = (index: number) => {
+      const instrutor = instrutores.find(
+        (item) => item.id === data.assinatura[index]
+      );
+
+      if (!instrutor) {
+        return " ";
+      }
+      return `${instrutor.name} - ${instrutor.qualificacaoProfissional} - ${instrutor.registroProfissional}`;
+    };
+
     const dataGerador = {
       // Header
       header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
@@ -494,7 +505,7 @@ export const Identificadores = () => {
       treinamento: selectedEvento.treinamento.name,
       treinamento_lista: selectedEvento.treinamento.name,
       evento_id: selectedEvento.id,
-      contratante: `${selectedEvento.empresa.name} - ${
+      contratante: `${selectedEvento.empresa.name} - CNPJ:${
         selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
       }`,
       tipo: selectedEvento.treinamento.courseType,
@@ -524,58 +535,10 @@ export const Identificadores = () => {
         ? data.assinatura[3].titulo + ":"
         : "",
 
-      assinante1: instrutores.find(
-        (item) => item.id === data.assinatura[0]?.assinante
-      )
-        ? `${
-            instrutores.find(
-              (item) => item.id === data.assinatura[0]?.assinante
-            )?.name
-          } - ${
-            instrutores.find(
-              (item) => item.id === data.assinatura[0]?.assinante
-            )?.registroProfissional
-          }`
-        : "",
-      assinante2: instrutores.find(
-        (item) => item.id === data.assinatura[1]?.assinante
-      )
-        ? `${
-            instrutores.find(
-              (item) => item.id === data.assinatura[1]?.assinante
-            )?.name
-          } - ${
-            instrutores.find(
-              (item) => item.id === data.assinatura[1]?.assinante
-            )?.registroProfissional
-          }`
-        : "",
-      assinante3: instrutores.find(
-        (item) => item.id === data.assinatura[2]?.assinante
-      )
-        ? `${
-            instrutores.find(
-              (item) => item.id === data.assinatura[2]?.assinante
-            )?.name
-          } - ${
-            instrutores.find(
-              (item) => item.id === data.assinatura[2]?.assinante
-            )?.registroProfissional
-          }`
-        : "",
-      assinante4: instrutores.find(
-        (item) => item.id === data.assinatura[3]?.assinante
-      )
-        ? `${
-            instrutores.find(
-              (item) => item.id === data.assinatura[3]?.assinante
-            )?.name
-          } - ${
-            instrutores.find(
-              (item) => item.id === data.assinatura[3]?.assinante
-            )?.registroProfissional
-          }`
-        : "",
+      assinante1: getAssinante(0),
+      assinante2: getAssinante(1),
+      assinante3: getAssinante(2),
+      assinante4: getAssinante(3),
 
       instrutor_a: instrutoresSelecionados.instrutorA,
       instrutor_b: instrutoresSelecionados.instrutorB,
