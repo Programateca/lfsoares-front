@@ -417,9 +417,10 @@ export const Identificadores = () => {
 
     const getAssinante = (index: number) => {
       const instrutor = instrutores.find(
-        (item) => item.id === data.assinatura[index]
+        (item) =>
+          data.assinatura[index]?.assinante &&
+          item.id === data.assinatura[index].assinante
       );
-
       if (!instrutor) {
         return " ";
       }

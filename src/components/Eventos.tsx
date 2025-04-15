@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
@@ -10,48 +9,23 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
-import { Label } from "./ui/label";
 import { Empresa } from "@/@types/Empresa";
 import { Treinamento } from "@/@types/Treinamento";
 import { Evento } from "@/@types/Evento";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
-import { format, parseISO, isValid, parse } from "date-fns";
-import differenceInMinutes from "date-fns/differenceInMinutes";
-import { ptBR } from "date-fns/locale";
-import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import EventoForm from "./EventoForm";
 
 const Eventos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [eventoInEditMode, seteventoInEditMode] = useState<string | number>("");
-  const [newEvento, setNewEvento] = useState({
-    empresa: { id: "" },
-    treinamento: { id: "" },
-    titulo: "",
-    courseLocation: "",
-    courseLocation2: "",
-    courseDate: "",
-    courseTime: "",
-    courseInterval: "",
-  });
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Estados para paginação
@@ -63,57 +37,6 @@ const Eventos = () => {
   const filteredData = showInativos
     ? eventos.filter((p) => p.status.id === 2)
     : eventos.filter((p) => p.status.id === 1);
-
-  const [turnoFinal, setTurnoFinal] = useState<"manha" | "tarde" | "">("");
-  const [mostrarTurno, setMostrarTurno] = useState(false);
-
-  useEffect(() => {
-    const updateMostrarTurno = () => {
-      if (
-        selectedDates.length >= 2 &&
-        newEvento.courseTime &&
-        newEvento.courseInterval &&
-        newEvento.treinamento.id
-      ) {
-        const treinamento = treinamentos.find(
-          (t) => t.id === newEvento.treinamento.id
-        );
-        if (!treinamento) return;
-
-        const requiredHours = Number(treinamento.courseHours || "0");
-
-        const [startTimeStr, endTimeStr] = newEvento.courseTime
-          .split("ÀS")
-          .map((s) => s.trim());
-        const startTime = parse(startTimeStr, "HH:mm", new Date());
-        const endTime = parse(endTimeStr, "HH:mm", new Date());
-
-        const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
-          .split("ÀS")
-          .map((s) => s.trim());
-        const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
-        const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
-
-        const dailyMinutes = differenceInMinutes(endTime, startTime);
-        const intervalMinutes = differenceInMinutes(intervalEnd, intervalStart);
-        const usableHours = (dailyMinutes - intervalMinutes) / 60;
-
-        const accumulatedHours = (selectedDates.length - 1) * usableHours;
-        const remainingHours = requiredHours - accumulatedHours;
-
-        setMostrarTurno(remainingHours > 0 && remainingHours < usableHours);
-      } else {
-        setMostrarTurno(false);
-      }
-    };
-
-    updateMostrarTurno();
-  }, [
-    selectedDates,
-    newEvento.courseTime,
-    newEvento.courseInterval,
-    newEvento.treinamento.id,
-  ]);
 
   const fetchEventos = async (pageNumber: number = 1, search = "") => {
     try {
@@ -200,249 +123,12 @@ const Eventos = () => {
   }, []);
 
   const resetEventoState = () => {
-    setNewEvento({
-      empresa: { id: "" },
-      treinamento: { id: "" },
-      courseLocation: "",
-      courseLocation2: "",
-      courseDate: "",
-      courseTime: "",
-      courseInterval: "",
-      titulo: "",
-    });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    if (name === "courseDate" || name === "completionDate") {
-      setNewEvento((prev) => ({ ...prev, [name]: value }));
-      return;
-    }
-    setNewEvento((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const formatTimeForInput = (time: string) => {
-    if (!time) return ["", ""]; // Se não houver horário, retorna array vazio
-
-    const times = time.split(" ÀS "); // Divide o horário no " ÀS "
-    return [times[0] || "", times[1] || ""]; // Retorna os dois valores corretamente
-  };
-
-  const formatTimeForStorage = (time: string) => {
-    try {
-      const parsedTime = parse(time, "HH:mm", new Date());
-      if (time === "00:00 ÀS 00:00") {
-        return "";
-      }
-      return isValid(parsedTime) ? format(parsedTime, "HH:mm") : time;
-    } catch {
-      return time;
-    }
-  };
-
-  const handleTimeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isStart: boolean,
-    field: "courseTime" | "courseInterval"
-  ) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
-
-    if (value.length > 2) value = value.replace(/^(\d{2})/, "$1:"); // Adiciona `:` após HH
-    if (value.length > 5) return; // Impede mais de 5 caracteres
-
-    const [hh, mm] = value.split(":");
-
-    if (hh && parseInt(hh) > 23) return; // Bloqueia horas inválidas (> 23)
-    if (mm && parseInt(mm) > 59) return; // Bloqueia minutos inválidos (> 59)
-
-    // Atualizar o horário correto sem afetar o outro valor
-    setNewEvento((prev) => {
-      let [startTime, endTime] = prev[field].split(" ÀS ");
-      startTime = isStart ? value : startTime || "";
-      endTime = isStart ? endTime || "" : value;
-
-      return {
-        ...prev,
-        [field]: `${startTime} ÀS ${endTime}`,
-      };
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const treinamentoFiltrado = treinamentos.find(
-      (t) => t.id === newEvento.treinamento.id
-    );
-    if (!newEvento.empresa.id) {
-      toast.error("Selecione o contratante");
-      return;
-    }
-
-    if (!newEvento.treinamento.id) {
-      toast.error("Selecione um treinamento");
-      return;
-    }
-
-    if (!newEvento.courseLocation) {
-      toast.error("Informe o local de treinamento");
-      return;
-    }
-
-    if (selectedDates.length === 0) {
-      toast.error("Selecione pelo menos uma data");
-      return;
-    }
-
-    if (!newEvento.courseTime) {
-      toast.error("Informe o horário do evento");
-      return;
-    }
-
-    if (!newEvento.courseInterval && treinamentoFiltrado!.courseHours > "4") {
-      toast.error("Informe o intervalo do evento");
-      return;
-    }
-
-    const [startTimeStr, endTimeStr] = newEvento.courseTime
-      .split("ÀS")
-      .map((s) => s.trim());
-    const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
-      .split("ÀS")
-      .map((s) => s.trim());
-
-    let finalCourseTime = "";
-
-    if (mostrarTurno) {
-      const startTime = parse(startTimeStr, "HH:mm", new Date());
-      const endTime = parse(endTimeStr, "HH:mm", new Date());
-      const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
-      const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
-
-      const morningAvailable =
-        differenceInMinutes(intervalStart, startTime) / 60;
-      const afternoonAvailable = differenceInMinutes(endTime, intervalEnd) / 60;
-      const usableHoursPerDay = morningAvailable + afternoonAvailable;
-      const totalDays = selectedDates.length;
-
-      const treinamento = treinamentos.find(
-        (t) => t.id === newEvento.treinamento.id
-      );
-      const requiredHours = Number(treinamento?.courseHours || "0");
-      const accumulated = (totalDays - 1) * usableHoursPerDay;
-      const finalDayRequiredHours = requiredHours - accumulated;
-
-      if (turnoFinal === "manha") {
-        // Horário final = startTime + finalDayRequiredHours horas
-        const finalEndDate = add(startTime, { hours: finalDayRequiredHours });
-        finalCourseTime = `${format(startTime, "HH:mm")} ÀS ${format(
-          finalEndDate,
-          "HH:mm"
-        )}`;
-      } else if (turnoFinal === "tarde") {
-        // Horário final = intervalEnd + finalDayRequiredHours horas
-        const finalStart = parse(intervalEndStr, "HH:mm", new Date());
-        const finalEndDate = add(finalStart, { hours: finalDayRequiredHours });
-        finalCourseTime = `${format(finalStart, "HH:mm")} ÀS ${format(
-          finalEndDate,
-          "HH:mm"
-        )}`;
-      } else {
-        // Caso o restante exija ambos os períodos
-        const extraAfterMorning = finalDayRequiredHours - morningAvailable;
-        const finalEndDate = add(intervalEnd, { hours: extraAfterMorning });
-        finalCourseTime = `${format(startTime, "HH:mm")} ÀS ${format(
-          finalEndDate,
-          "HH:mm"
-        )}`;
-      }
-    }
-
-    const formattedDates = selectedDates.map((date, index) => {
-      const formattedDate = format(date, "yyyy-MM-dd");
-      let courseStart = startTimeStr;
-      let courseEnd = endTimeStr;
-
-      if (
-        mostrarTurno &&
-        index === selectedDates.length - 1 &&
-        finalCourseTime
-      ) {
-        const [finalStart, finalEnd] = finalCourseTime
-          .split("ÀS")
-          .map((s) => s.trim());
-        courseStart = finalStart;
-        courseEnd = finalEnd;
-      }
-
-      return JSON.stringify({
-        day: formattedDate,
-        courseStart,
-        courseEnd,
-        courseIntervalStart: intervalStartStr || "",
-        courseIntervalEnd: intervalEndStr || "",
-      });
-    });
-
-    const payload = {
-      ...newEvento,
-      courseDate: formattedDates,
-      completionDate: JSON.parse(formattedDates[formattedDates.length - 1]).day,
-      courseTime: formatTimeForStorage(newEvento.courseTime),
-      courseInterval: formatTimeForStorage(newEvento.courseInterval),
-    };
-    if (eventoInEditMode) {
-      try {
-        await api.patch(`eventos/${eventoInEditMode}`, payload);
-
-        fetchEventos();
-        setIsModalOpen(false);
-        toast.success("Evento atualizado com sucesso");
-        resetEventoState();
-      } catch (error) {}
-      return;
-    }
-
-    try {
-      await api.post("eventos", payload);
-
-      fetchEventos();
-      setIsModalOpen(false);
-      toast.success("Evento criado com sucesso");
-      resetEventoState();
-    } catch (error) {}
+    seteventoInEditMode("");
   };
 
   const handleEdit = (id: string | number) => {
     seteventoInEditMode(id);
     setIsModalOpen(true);
-
-    const evento = eventos.find((evento) => evento.id === id);
-
-    if (evento) {
-      const [startTime, endTime] = formatTimeForInput(evento.courseTime);
-      const [intervalStart, intervalEnd] = formatTimeForInput(
-        evento.courseInterval
-      );
-
-      setNewEvento({
-        empresa: { id: evento.empresa.id },
-        treinamento: { id: evento.treinamento.id },
-        courseLocation: evento.courseLocation,
-        courseLocation2: evento.courseLocation2,
-        courseDate: evento.courseDate.join(", "),
-        courseTime: `${startTime} ÀS ${endTime}`, // Preenchendo corretamente o estado
-        courseInterval: `${intervalStart} ÀS ${intervalEnd}`, // Preenchendo corretamente o estado
-        titulo: evento.titulo,
-      });
-      setSelectedDates(
-        evento.courseDate.map((date) => {
-          const parsed = JSON.parse(date);
-          return parseISO(parsed.day);
-        })
-      );
-    }
   };
 
   const handleUpdateStatus = async (id: string | number, status: number) => {
@@ -457,126 +143,6 @@ const Eventos = () => {
     } catch (error) {}
   };
 
-  const getCargaHorariaAviso = () => {
-    if (
-      selectedDates.length === 0 ||
-      !newEvento.courseTime ||
-      !newEvento.courseInterval ||
-      !newEvento.treinamento.id
-    ) {
-      return null;
-    }
-
-    const treinamento = treinamentos.find(
-      (t) => t.id === newEvento.treinamento.id
-    );
-    if (!treinamento) return null;
-    const requiredHours = Number(treinamento.courseHours || "0");
-
-    // Parse dos horários
-    const [startTimeStr, endTimeStr] = newEvento.courseTime
-      .split("ÀS")
-      .map((s) => s.trim());
-
-    // Validação dos horários de início e fim
-    if (!startTimeStr) {
-      return `⚠️ Informe o horário de início do evento`;
-    }
-    if (!endTimeStr) {
-      return `⚠️ Informe o horário de término do evento`;
-    }
-
-    const startTime = parse(startTimeStr, "HH:mm", new Date());
-    const endTime = parse(endTimeStr, "HH:mm", new Date());
-
-    // Verifica se os horários são válidos
-    if (!isValid(startTime)) {
-      return `⚠️ Horário de início inválido`;
-    }
-    if (!isValid(endTime)) {
-      return `⚠️ Horário de término inválido`;
-    }
-
-    const [intervalStartStr, intervalEndStr] = newEvento.courseInterval
-      .split("ÀS")
-      .map((s) => s.trim());
-
-    if (!intervalStartStr || !intervalEndStr) {
-      return `⚠️ Informe o intervalo completo do evento`;
-    }
-
-    const intervalStart = parse(intervalStartStr, "HH:mm", new Date());
-    const intervalEnd = parse(intervalEndStr, "HH:mm", new Date());
-
-    if (!isValid(intervalStart)) {
-      return `⚠️ Horário de início do intervalo inválido`;
-    }
-    if (!isValid(intervalEnd)) {
-      return `⚠️ Horário de término do intervalo inválido`;
-    }
-
-    // Cálculo dos horários do dia
-    const totalMinutes = differenceInMinutes(endTime, startTime);
-    const intervalMinutes = differenceInMinutes(intervalEnd, intervalStart);
-    const usableMinutes = totalMinutes - intervalMinutes;
-    const usableHoursPerDay = usableMinutes / 60;
-    const totalDays = selectedDates.length;
-
-    const totalAvailableHours = totalDays * usableHoursPerDay;
-    if (totalAvailableHours < requiredHours) {
-      return `⚠️ A carga horária total (${totalAvailableHours}h) não atinge as ${requiredHours}h exigidas.`;
-    }
-
-    // Se só 1 dia, valida direto
-    if (totalDays === 1) {
-      const totalHoras = usableHoursPerDay;
-      if (totalHoras < requiredHours)
-        return `⚠️ O dia selecionado comporta apenas ${totalHoras}h, mas o treinamento exige ${requiredHours}h.`;
-      if (totalHoras > requiredHours)
-        return `⚠️ Horário excede a carga horária exigida de ${requiredHours}h.`;
-      return `✅ Carga horária distribuída corretamente (${totalHoras}h).`;
-    }
-
-    // Para múltiplos dias
-    const accumulated = (totalDays - 1) * usableHoursPerDay;
-    const finalDayRequiredHours = requiredHours - accumulated;
-
-    if (finalDayRequiredHours < 0)
-      return `⚠️ Horário total excede a carga horária exigida de ${requiredHours}h.`;
-    if (finalDayRequiredHours === 0) {
-      if (totalDays > 1) {
-        return `⚠️ Para um treinamento de ${requiredHours}h, apenas 1 data é necessária.`;
-      }
-      return `✅ Carga horária distribuída corretamente (${accumulated}h + 0h).`;
-    }
-
-    // Cálculo dos períodos disponíveis
-    const morningAvailable = differenceInMinutes(intervalStart, startTime) / 60;
-    const afternoonAvailable = differenceInMinutes(endTime, intervalEnd) / 60;
-
-    if (
-      finalDayRequiredHours <= morningAvailable ||
-      finalDayRequiredHours <= afternoonAvailable
-    ) {
-      if (!turnoFinal) {
-        return `⚠️ Restam ${finalDayRequiredHours}h para completar ${requiredHours}h. Selecione o turno do último dia.`;
-      }
-      if (turnoFinal === "manha" && finalDayRequiredHours > morningAvailable) {
-        return `⚠️ O turno "manha" não comporta as ${finalDayRequiredHours}h restantes.`;
-      }
-      if (
-        turnoFinal === "tarde" &&
-        finalDayRequiredHours > afternoonAvailable
-      ) {
-        return `⚠️ O turno "tarde" não comporta as ${finalDayRequiredHours}h restantes.`;
-      }
-      return `✅ Carga horária distribuída corretamente (${accumulated}h + ${finalDayRequiredHours}h).`;
-    } else {
-      return `✅ Carga horária distribuída corretamente.`;
-    }
-  };
-
-  const cargaHorariaAviso = getCargaHorariaAviso();
   return (
     <Card className="shadow-md">
       <CardHeader>
@@ -591,7 +157,6 @@ const Eventos = () => {
               if (!open) {
                 resetEventoState();
                 seteventoInEditMode("");
-                setSelectedDates([]);
               }
             }}
             key={isModalOpen ? "open" : "closed"}
@@ -607,7 +172,41 @@ const Eventos = () => {
                   {eventoInEditMode ? "Editar" : "Adicionar"} Evento
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <EventoForm
+                // Se estiver em modo de edição, passe os dados do evento encontrado, senão undefined
+                initialData={
+                  eventoInEditMode
+                    ? eventos.find((evento) => evento.id === eventoInEditMode)
+                    : undefined
+                }
+                empresas={empresas}
+                treinamentos={treinamentos}
+                onSubmit={async (payload) => {
+                  if (eventoInEditMode) {
+                    try {
+                      await api.patch(`eventos/${eventoInEditMode}`, payload);
+                      toast.success("Evento atualizado com sucesso");
+                    } catch (error) {
+                      toast.error("Erro ao atualizar evento");
+                    }
+                  } else {
+                    try {
+                      await api.post("eventos", payload);
+                      toast.success("Evento criado com sucesso");
+                    } catch (error) {
+                      toast.error("Erro ao criar evento");
+                    }
+                  }
+                  fetchEventos();
+                  resetEventoState();
+                  setIsModalOpen(false);
+                }}
+                onCancel={() => {
+                  resetEventoState();
+                  setIsModalOpen(false);
+                }}
+              />
+              {/* <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="empresa">Nome do Evento</Label>
                   <Input
@@ -871,7 +470,7 @@ const Eventos = () => {
                     Adicionar
                   </Button>
                 </div>
-              </form>
+              </form> */}
             </DialogContent>
           </Dialog>
           <Button
@@ -914,9 +513,3 @@ const Eventos = () => {
 };
 
 export default Eventos;
-
-function add(date: Date, duration: { hours: number }): Date {
-  const result = new Date(date);
-  result.setHours(result.getHours() + duration.hours);
-  return result;
-}

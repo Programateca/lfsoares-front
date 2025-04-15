@@ -172,7 +172,10 @@ const CustomTable = <T extends { id: string | number }>({
                 }
               >
                 {columns.map((col) => (
-                  <TableCell key={col.key} className="whitespace-nowrap">
+                  <TableCell
+                    key={col.key}
+                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                  >
                     {col.render
                       ? col.render(getValue(item, col.key), item)
                       : getValue(item, col.key)}
