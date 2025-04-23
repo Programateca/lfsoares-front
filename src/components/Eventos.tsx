@@ -1,14 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
+import { ArrowLeft, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import { Empresa } from "@/@types/Empresa";
@@ -27,7 +19,7 @@ const Eventos = () => {
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [treinamentos, setTreinamentos] = useState<Treinamento[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [formsOpen, setFormsOpen] = useState(false);
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -150,7 +142,7 @@ const Eventos = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          <Dialog
+          {/* <Dialog
             open={isModalOpen}
             onOpenChange={(open) => {
               setIsModalOpen(open);
@@ -206,273 +198,29 @@ const Eventos = () => {
                   setIsModalOpen(false);
                 }}
               />
-              {/* <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="empresa">Nome do Evento</Label>
-                  <Input
-                    id="titulo"
-                    name="titulo"
-                    value={newEvento.titulo}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4 ">
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="empresa">Contratante</Label>
-                      <Select
-                        onValueChange={(value) => {
-                          setNewEvento((prev) => ({
-                            ...prev,
-                            empresa: { id: value },
-                          }));
-                        }}
-                        value={newEvento.empresa.id}
-                        required
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione uma empresa" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-72 w-full max-w-[40rem]">
-                          <SelectGroup>
-                            <SelectLabel>Empresa:</SelectLabel>
-                            {empresas.map((empresa) => {
-                              return (
-                                <SelectItem key={empresa.id} value={empresa.id}>
-                                  {empresa.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="treinamento">Treinamento</Label>
-                      <Select
-                        onValueChange={(value) => {
-                          setNewEvento((prev) => ({
-                            ...prev,
-                            treinamento: {
-                              id: value,
-                            },
-                          }));
-                        }}
-                        value={newEvento.treinamento.id}
-                        required
-                      >
-                        <SelectTrigger className="w-full justify-start items-start flex ">
-                          <SelectValue
-                            placeholder="Selecione um treinamento"
-                            className="self-start"
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-72 max-w-[40rem]">
-                          <SelectGroup>
-                            <SelectLabel>Treinamento:</SelectLabel>
-                            {treinamentos.map((treinamento) => {
-                              return (
-                                <SelectItem
-                                  key={treinamento.id}
-                                  value={treinamento.id}
-                                  className="self-start"
-                                >
-                                  {treinamento.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseLocation">
-                        Local de treinamento 1
-                      </Label>
-                      <Input
-                        id="courseLocation"
-                        name="courseLocation"
-                        value={newEvento.courseLocation}
-                        onChange={handleInputChange}
-                        required={eventoInEditMode ? false : true}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseLocation2">
-                        Local de treinamento 2
-                      </Label>
-                      <Input
-                        className={`${
-                          newEvento.courseLocation2
-                            ? ""
-                            : "border-dashed text-center"
-                        }`}
-                        id="courseLocation2"
-                        name="courseLocation2"
-                        placeholder="Clique para adicionar"
-                        value={newEvento.courseLocation2}
-                        onChange={handleInputChange}
-                        onFocus={(e) => {
-                          e.target.classList.remove(
-                            "border-dashed",
-                            "text-center"
-                          );
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="selectedDates">Datas do Evento</Label>
-                      <div>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="w-full flex justify-start"
-                            >
-                              {selectedDates.length > 0
-                                ? `Selecionadas ${selectedDates.length} data(s)`
-                                : "Selecionar as datas"}{" "}
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DayPicker
-                              mode="multiple"
-                              locale={ptBR}
-                              selected={selectedDates}
-                              className="flex justify-center items-center self-center"
-                              onSelect={(dates) =>
-                                setSelectedDates(dates || [])
-                              }
-                            />
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseTime">Horário</Label>
-                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
-                        <Input
-                          type="text"
-                          name="courseTimeStart"
-                          placeholder="HH:MM"
-                          onChange={(e) =>
-                            handleTimeChange(e, true, "courseTime")
-                          }
-                          value={
-                            formatTimeForInput(newEvento.courseTime)[0] || ""
-                          }
-                          maxLength={5}
-                        />
-                        <span>ÀS</span>
-                        <Input
-                          type="text"
-                          name="courseTimeEnd"
-                          placeholder="HH:MM"
-                          onChange={(e) =>
-                            handleTimeChange(e, false, "courseTime")
-                          }
-                          value={
-                            formatTimeForInput(newEvento.courseTime)[1] || ""
-                          }
-                          maxLength={5}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="courseInterval">Intervalo</Label>
-                      <div className="flex items-center space-x-2 max-sm:flex-wrap max-sm:space-x-0 max-sm:gap-3 max-sm:justify-center">
-                        <Input
-                          type="text"
-                          name="courseIntervalStart"
-                          placeholder="HH:MM"
-                          onChange={(e) =>
-                            handleTimeChange(e, true, "courseInterval")
-                          }
-                          value={
-                            formatTimeForInput(newEvento.courseInterval)[0] ||
-                            ""
-                          }
-                          maxLength={5}
-                        />
-                        <span>ÀS</span>
-                        <Input
-                          type="text"
-                          name="courseIntervalEnd"
-                          placeholder="HH:MM"
-                          onChange={(e) =>
-                            handleTimeChange(e, false, "courseInterval")
-                          }
-                          value={
-                            formatTimeForInput(newEvento.courseInterval)[1] ||
-                            ""
-                          }
-                          maxLength={5}
-                        />
-                      </div>
-                    </div>
-                    {getCargaHorariaAviso() && (
-                      <p className="text-sm text-yellow-600 mt-2">
-                        {getCargaHorariaAviso()}
-                      </p>
-                    )}
-                    {mostrarTurno && (
-                      <>
-                        <Label>Turno do último dia</Label>
-                        <ToggleGroup
-                          type="single"
-                          value={turnoFinal}
-                          onValueChange={(value) =>
-                            setTurnoFinal(value as "manha" | "tarde")
-                          }
-                          className="flex gap-2 justify-start "
-                        >
-                          <ToggleGroupItem
-                            value="manha"
-                            onClick={() => setTurnoFinal("manha")}
-                          >
-                            Manhã
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="tarde"
-                            onClick={() => setTurnoFinal("tarde")}
-                          >
-                            Tarde
-                          </ToggleGroupItem>
-                        </ToggleGroup>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsModalOpen(false);
-                      resetEventoState();
-                      seteventoInEditMode("");
-                      setSelectedDates([]);
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={
-                      cargaHorariaAviso !== null &&
-                      cargaHorariaAviso !== "" &&
-                      !cargaHorariaAviso.startsWith("✅")
-                    }
-                  >
-                    Adicionar
-                  </Button>
-                </div>
-              </form> */}
+          
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
+          <Button
+            className="bg-white border border-black text-black hover:bg-black hover:text-white"
+            onClick={() => {
+              setFormsOpen((prev) => !prev);
+              resetEventoState();
+              seteventoInEditMode("");
+            }}
+          >
+            {formsOpen ? (
+              <>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar para Tabela
+              </>
+            ) : (
+              <>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Evento
+              </>
+            )}
+          </Button>
           <Button
             onClick={() => setShowInativos((prev) => !prev)}
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
@@ -480,33 +228,70 @@ const Eventos = () => {
             {showInativos ? "Ocultar Inativos" : "Mostrar Inativos"}
           </Button>
         </div>
-        <CustomTable
-          columns={[
-            {
-              key: "titulo",
-              label: "Evento",
-            },
-            { key: "treinamento.name", label: "Treinamento" },
-            { key: "empresa.name", label: "Contratante" },
-            {
-              key: "createdAt",
-              label: "Data de Criação",
-              render: (value) => new Date(value).toLocaleDateString("pt-BR"),
-            },
-          ]}
-          data={filteredData}
-          onEdit={handleEdit}
-          onDelete={handleUpdateStatus}
-          onRestore={handleUpdateStatus}
-          loading={loading}
-          entityLabel="Evento"
-          searchable
-          searchQuery={searchQuery}
-          onSearch={setSearchQuery}
-          hasNextPage={hasNextPage}
-          page={page}
-          onPageChange={handlePageChange}
-        />
+        {formsOpen ? (
+          <EventoForm
+            initialData={
+              eventoInEditMode
+                ? eventos.find((evento) => evento.id === eventoInEditMode)
+                : undefined
+            }
+            empresas={empresas}
+            treinamentos={treinamentos}
+            onSubmit={async (payload) => {
+              if (eventoInEditMode) {
+                try {
+                  await api.patch(`eventos/${eventoInEditMode}`, payload);
+                  toast.success("Evento atualizado com sucesso");
+                } catch (error) {
+                  toast.error("Erro ao atualizar evento");
+                }
+              } else {
+                try {
+                  await api.post("eventos", payload);
+                  toast.success("Evento criado com sucesso");
+                } catch (error) {
+                  toast.error("Erro ao criar evento");
+                  console.log(error);
+                }
+              }
+              fetchEventos();
+              resetEventoState();
+              setFormsOpen(false);
+            }}
+            onCancel={() => {
+              resetEventoState();
+              setFormsOpen(false);
+            }}
+          />
+        ) : (
+          <CustomTable
+            columns={[
+              {
+                key: "titulo",
+                label: "Evento",
+              },
+              { key: "treinamento.name", label: "Treinamento" },
+              { key: "empresa.name", label: "Contratante" },
+              {
+                key: "createdAt",
+                label: "Data de Criação",
+                render: (value) => new Date(value).toLocaleDateString("pt-BR"),
+              },
+            ]}
+            data={filteredData}
+            onEdit={handleEdit}
+            onDelete={handleUpdateStatus}
+            onRestore={handleUpdateStatus}
+            loading={loading}
+            entityLabel="Evento"
+            searchable
+            searchQuery={searchQuery}
+            onSearch={setSearchQuery}
+            hasNextPage={hasNextPage}
+            page={page}
+            onPageChange={handlePageChange}
+          />
+        )}
       </CardContent>
     </Card>
   );

@@ -123,7 +123,9 @@ export const Identificadores = () => {
       setHasNextPage(response.data.hasNextPage);
       setIdentificadoresGerados(response.data.data);
       setEventos(eventosResp.data.data.filter((e: any) => e.status.id === 1));
-      setParticipantes(pessoasResp.data.data);
+      setParticipantes(
+        pessoasResp.data.data.filter((e: any) => e.status.id === 1)
+      );
       setInstrutores(instrutoresResp.data.data);
     } catch (error) {
       toast.error("Erro ao buscar dados iniciais");
@@ -183,7 +185,7 @@ export const Identificadores = () => {
       courseIntervalStart, // ex: "12:00"
       courseIntervalEnd, // ex: "13:00"
     } = dayObj;
-
+    console.log(dayObj);
     // Determina se o dia é de meio período
     // Exemplo: se courseIntervalStart for igual a courseEnd, o dia é somente de manhã
     //          se courseIntervalEnd for igual a courseStart, o dia é somente à tarde
@@ -285,24 +287,6 @@ export const Identificadores = () => {
       (await api.get(`identificadores/last-certificado-code/${fullYear}`)).data
     );
 
-    const is4hoursOrLessCourse = () => {
-      const courseStart = selectedEvento.courseTime.split(" ÀS ")[0];
-      const courseEnd = selectedEvento.courseTime.split(" ÀS ")[1];
-
-      // Convert times to minutes since midnight
-      const [startHour, startMin] = courseStart.split(":").map(Number);
-      const [endHour, endMin] = courseEnd.split(":").map(Number);
-
-      const startMinutes = startHour * 60 + startMin;
-      const endMinutes = endHour * 60 + endMin;
-
-      // Calculate total hours
-      const totalMinutes = endMinutes - startMinutes;
-      const totalHours = totalMinutes / 60;
-
-      return totalHours <= 4;
-    };
-
     const fix4HoursCourse = () => {
       const courseStart = selectedEvento.courseTime.split(" ÀS ")[0];
       // Convert time to 24h format and check if it's morning or afternoon
@@ -361,14 +345,14 @@ export const Identificadores = () => {
     const datasArray = selectedEvento.courseDate.map((dateStr) => {
       try {
         const parsed = JSON.parse(dateStr);
-        return parsed.day;
+        return parsed.date;
       } catch (error) {
         // Se não conseguir fazer o parse, assume que a string já é a data
         return dateStr.trim();
       }
     });
-
     const datasFormatadas = formatarDatas(datasArray);
+    console.log(datasFormatadas);
     /**
      * Formata as datas para manha e tarde
      */
@@ -475,18 +459,20 @@ export const Identificadores = () => {
       })(),
 
       // Ajusta horários para cursos de 4 horas ou menos
-      manha_horario: is4hoursOrLessCourse()
+      manha_horario: selectedEvento?.treinamento?.courseHours
         ? fix4HoursCourse() === "manha"
           ? selectedEvento?.courseTime
           : ""
         : manha_horario,
-      tarde_horario: is4hoursOrLessCourse()
+      tarde_horario: selectedEvento?.treinamento?.courseHours
         ? fix4HoursCourse() === "tarde"
           ? selectedEvento?.courseTime
           : ""
         : tarde_horario,
-      is_short_course: is4hoursOrLessCourse(), // Flag para indicar curso curto
-      curso_periodo: is4hoursOrLessCourse() ? fix4HoursCourse() : null, // Período único para cursos curtos
+      is_short_course: selectedEvento?.treinamento?.courseHours, // Flag para indicar curso curto
+      curso_periodo: selectedEvento?.treinamento?.courseHours
+        ? fix4HoursCourse()
+        : null, // Período único para cursos curtos
 
       mudar_modulo: selectedEvento?.treinamento.courseMethodology,
       mudar_horarios: selectedEvento?.courseTime.replace(
@@ -547,11 +533,11 @@ export const Identificadores = () => {
        * Formata data para instrutorA e instrutorB
        * Para cursos curtos (<= 4h), usamos apenas instrutorA com o período específico
        */
-      instrutorDates: is4hoursOrLessCourse()
+      instrutorDates: selectedEvento?.treinamento?.courseHours
         ? formatDays({
             instrutorA: Object.fromEntries(
-              days.map((day) => [
-                JSON.parse(day).day,
+              datasArray.map((day) => [
+                day,
                 { periodo: fix4HoursCourse() as Period },
               ])
             ),
@@ -560,17 +546,17 @@ export const Identificadores = () => {
         : formatDays({
             instrutorA:
               signatureCount !== 2
-                ? days.reduce((acc, day) => {
-                    acc[JSON.parse(day).day] = {
+                ? datasArray.reduce((acc, day) => {
+                    acc[day] = {
                       periodo:
-                        data.instrutorA?.[JSON.parse(day).day]?.periodo ||
+                        data.instrutorA?.[JSON.parse(day).data]?.periodo ||
                         ("manhaTarde" as Period),
                     };
                     return acc;
                   }, {} as Record<string, { periodo?: Period }>)
                 : Object.fromEntries(
                     days.map((day) => [
-                      JSON.parse(day).day,
+                      JSON.parse(day).data,
                       { periodo: "manhaTarde" as Period },
                     ])
                   ),
@@ -578,22 +564,22 @@ export const Identificadores = () => {
               signatureCount === 2
                 ? null
                 : days.reduce((acc, day) => {
-                    acc[JSON.parse(day).day] = {
+                    acc[JSON.parse(day).data] = {
                       periodo:
-                        data.instrutorB?.[JSON.parse(day).day]?.periodo ||
+                        data.instrutorB?.[JSON.parse(day).data]?.periodo ||
                         ("manhaTarde" as Period),
                     };
                     return acc;
                   }, {} as Record<string, { periodo?: Period }>),
           }),
     };
-
+    console.log(dataGerador);
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-
+    return;
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
@@ -892,11 +878,11 @@ export const Identificadores = () => {
                       <div className="flex flex-col gap-2">
                         <Label>
                           Dia:{" "}
-                          {format(parseISO(JSON.parse(day).day), "dd/MM/yyyy")}
+                          {format(parseISO(JSON.parse(day).date), "dd/MM/yyyy")}
                         </Label>
                         <Label>
-                          Periodo: {JSON.parse(day).courseStart} ÀS{" "}
-                          {JSON.parse(day).courseEnd}{" "}
+                          Periodo: {JSON.parse(day).start} ÀS{" "}
+                          {JSON.parse(day).end}{" "}
                         </Label>
                       </div>
                       {/* Instrutor A */}
@@ -904,7 +890,7 @@ export const Identificadores = () => {
                         <div className="w-full">
                           <Label>{instrutoresSelecionados.instrutorA}</Label>
                           <Controller
-                            name={`instrutorA.${JSON.parse(day).day}.periodo`}
+                            name={`instrutorA.${JSON.parse(day).date}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select
@@ -941,7 +927,7 @@ export const Identificadores = () => {
                         <div className="w-full">
                           <Label>{instrutoresSelecionados.instrutorB}</Label>
                           <Controller
-                            name={`instrutorB.${JSON.parse(day).day}.periodo`}
+                            name={`instrutorB.${JSON.parse(day).date}.periodo`}
                             control={control}
                             render={({ field }) => (
                               <Select
