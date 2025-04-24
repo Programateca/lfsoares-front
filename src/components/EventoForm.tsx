@@ -75,6 +75,14 @@ const EventoForm: React.FC<EventoFormProps> = ({
   const [isValidSchedule, setIsValidSchedule] = useState(false);
   const [statusType, setStatusType] = useState("default");
 
+  useEffect(() => {
+    if (newEvento.courseDate.length > 0) {
+      const parsedArray = newEvento.courseDate.map((item) => JSON.parse(item));
+
+      handleScheduleChange(parsedArray);
+    }
+  }, [newEvento.treinamento.id]);
+
   // Funções auxiliares para formatação de horário
   const formatTimeForInput = (time: string): [string, string] => {
     if (!time) return ["", ""];
