@@ -22,20 +22,14 @@ import { Pessoa } from "@/@types/Pessoa";
 import { Instrutor } from "@/@types/Instrutor";
 
 import { MultiSelect } from "@/components/multi-select";
-import {
-  formatarDatas,
-  formatDays,
-  gerarIdentificador,
-  Period,
-} from "@/utils/identificador";
+import { gerarIdentificador, Period } from "@/utils/identificador";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
-// import { ModelType } from "@/@types/ModeType";
-// import { getLastDocumentCode } from "@/utils/get-last-document-code";
+import { formatarDatas } from "@/utils/formatar-datas";
 
 /**
  * Definição de tipos auxiliares
@@ -55,6 +49,16 @@ type FormData = {
   objetivoTreinamento?: string;
   instrutorA: Record<string, { periodo?: Period }>;
   instrutorB: Record<string, { periodo?: Period }>;
+};
+
+export type CourseDate = {
+  date: string;
+  start: string;
+  end: string;
+  intervalStart: string;
+  intervalEnd: string;
+  instrutorA?: boolean;
+  instrutorB?: boolean;
 };
 
 export const Identificadores = () => {
@@ -87,7 +91,7 @@ export const Identificadores = () => {
     instrutorA: "Selecione o Instrutor",
     instrutorB: "Selecione o Instrutor",
   });
-  const [hasAfternoon, setHasAfternoon] = useState<boolean>(false);
+  // const [hasAfternoon, setHasAfternoon] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { user } = useAuth();
@@ -245,14 +249,6 @@ export const Identificadores = () => {
     if (!evento) return;
 
     setDays(evento.courseDate);
-
-    if (evento.courseTime && evento.courseInterval) {
-      const [, fim] = evento.courseTime.split(" ÀS ");
-      const [intervaloInicio] = evento.courseInterval.split(" ÀS ");
-      // Se o horário de término não coincide com o início do intervalo,
-      // significa que há aula à tarde.
-      setHasAfternoon(fim !== intervaloInicio);
-    }
   };
 
   const onSubmit = async (data: FormData) => {
@@ -336,30 +332,6 @@ export const Identificadores = () => {
       }
     });
     const datasFormatadas = formatarDatas(datasArray);
-    console.log(datasFormatadas);
-    /**
-     * Formata as datas para manha e tarde
-     */
-    const horas_aulas = selectedEvento?.courseTime;
-    const intervalo = selectedEvento?.courseInterval;
-    let manha_horario = "";
-    let tarde_horario = "";
-    if (horas_aulas && intervalo) {
-      const [inicio, fim] = horas_aulas.split(" ÀS ");
-      const [intervaloInicio, intervaloFim] = intervalo.split(" ÀS ");
-
-      // Se o final das aulas for igual ao início do intervalo,
-      // significa que não há aula à tarde.
-      if (fim === intervaloInicio) {
-        manha_horario = `${inicio} ÀS ${fim}`;
-        tarde_horario = ""; // ou alguma outra lógica se necessário
-        setHasAfternoon(false);
-      } else {
-        manha_horario = `${inicio} ÀS ${intervaloInicio}`;
-        tarde_horario = `${intervaloFim} ÀS ${fim}`;
-        setHasAfternoon(true);
-      }
-    }
 
     const fullDateNow = new Date().toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -395,12 +367,31 @@ export const Identificadores = () => {
       return `${instrutor.name} - ${instrutor.qualificacaoProfissional} - ${instrutor.registroProfissional}`;
     };
 
+    const courseDateItens = selectedEvento?.courseDate.map((itemStr) =>
+      JSON.parse(itemStr)
+    ) as CourseDate[];
+
+    const horariosSet = new Set<string>();
+    const intervalosSet = new Set<string>();
+
+    courseDateItens.forEach((item) => {
+      horariosSet.add(`${item.start} ÀS ${item.end}`);
+      if (item.intervalStart !== "N/A" && item.intervalEnd !== "N/A") {
+        intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
+      }
+    });
+
+    const horarios = Array.from(horariosSet).join(" E ");
+    const intervalos = intervalosSet.size
+      ? Array.from(intervalosSet).join(" E ")
+      : "N/A";
+
     const dataGerador = {
       // Header
       header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
       header_data: "14/02/2025",
       revisao: "00",
-
+      // Fim Header
       ...(() => {
         // Find the last filled assinatura
         if (!data?.assinatura || !Array.isArray(data.assinatura)) {
@@ -442,27 +433,9 @@ export const Identificadores = () => {
         };
       })(),
 
-      // Ajusta horários para cursos de 4 horas ou menos
-      manha_horario: selectedEvento?.treinamento?.courseHours
-        ? fix4HoursCourse() === "manha"
-          ? selectedEvento?.courseTime
-          : ""
-        : manha_horario,
-      tarde_horario: selectedEvento?.treinamento?.courseHours
-        ? fix4HoursCourse() === "tarde"
-          ? selectedEvento?.courseTime
-          : ""
-        : tarde_horario,
       is_short_course: selectedEvento?.treinamento?.courseHours, // Flag para indicar curso curto
-      curso_periodo: selectedEvento?.treinamento?.courseHours
-        ? fix4HoursCourse()
-        : null, // Período único para cursos curtos
-
       mudar_modulo: selectedEvento?.treinamento.courseMethodology,
-      mudar_horarios: selectedEvento?.courseTime.replace(
-        /ÀS (\d{1,2})$/,
-        "ÀS $1:00"
-      ),
+      mudar_horarios: horarios,
       id_data: fullDateNow.replace(/\//g, "."), // Troca / por . para seguir o padrão apresentado pelo modelo deles
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 
@@ -481,7 +454,7 @@ export const Identificadores = () => {
       }`,
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: `${selectedEvento.treinamento.courseHours} HORAS/AULA`,
-      intervalo: selectedEvento.courseInterval,
+      intervalo: intervalos,
       endereco: selectedEvento?.courseLocation2
         ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
         : selectedEvento?.courseLocation || "",
@@ -517,53 +490,43 @@ export const Identificadores = () => {
        * Formata data para instrutorA e instrutorB
        * Para cursos curtos (<= 4h), usamos apenas instrutorA com o período específico
        */
-      instrutorDates: selectedEvento?.treinamento?.courseHours
-        ? formatDays({
-            instrutorA: Object.fromEntries(
-              datasArray.map((day) => [
-                day,
-                { periodo: fix4HoursCourse() as Period },
-              ])
-            ),
-            instrutorB: null,
-          })
-        : formatDays({
-            instrutorA:
-              signatureCount !== 2
-                ? datasArray.reduce((acc, day) => {
-                    acc[day] = {
-                      periodo:
-                        data.instrutorA?.[JSON.parse(day).data]?.periodo ||
-                        ("manhaTarde" as Period),
-                    };
-                    return acc;
-                  }, {} as Record<string, { periodo?: Period }>)
-                : Object.fromEntries(
-                    days.map((day) => [
-                      JSON.parse(day).data,
-                      { periodo: "manhaTarde" as Period },
-                    ])
-                  ),
-            instrutorB:
-              signatureCount === 2
-                ? null
-                : days.reduce((acc, day) => {
-                    acc[JSON.parse(day).data] = {
-                      periodo:
-                        data.instrutorB?.[JSON.parse(day).data]?.periodo ||
-                        ("manhaTarde" as Period),
-                    };
-                    return acc;
-                  }, {} as Record<string, { periodo?: Period }>),
-          }),
+      instrutorDates: selectedEvento?.courseDate.map((itemStr) => {
+        const item = JSON.parse(itemStr) as CourseDate; // Parse the string
+        const dateKey = item.date; // Get the date string 'YYYY-MM-DD'
+        const instrutorAPeriodo = data.instrutorA?.[dateKey]?.periodo;
+        const instrutorBPeriodo = data.instrutorB?.[dateKey]?.periodo;
+
+        const resultItem: CourseDate & {
+          instrutor?: string;
+        } = { ...item }; // Create a new object with potential instructor properties
+
+        if (instrutorAPeriodo && instrutorAPeriodo !== "nenhum") {
+          resultItem.instrutor = instrutoresSelecionados.instrutorA;
+          resultItem.instrutorA = true;
+        }
+        if (instrutorBPeriodo && instrutorBPeriodo !== "nenhum") {
+          resultItem.instrutor = instrutoresSelecionados.instrutorB;
+          resultItem.instrutorB = true;
+        }
+
+        return resultItem;
+      }) as (CourseDate & { instrutor?: string })[],
     };
-    console.log(dataGerador);
+
+    console.log(
+      "selectedEvento?.treinamento?.courseHours",
+      selectedEvento?.treinamento?.courseHours
+    );
+    console.log("selectedEvento?.courseTime", selectedEvento?.courseTime);
+    console.log("fix4HoursCourse()", fix4HoursCourse());
+    console.log("selectedEvento", selectedEvento);
+
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
-    return;
+
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
