@@ -483,13 +483,8 @@ export const Identificadores = () => {
       assinante2: getAssinante(1),
       assinante3: getAssinante(2),
       assinante4: getAssinante(3),
-
       instrutor_a: instrutoresSelecionados.instrutorA,
       instrutor_b: instrutoresSelecionados.instrutorB,
-      /**
-       * Formata data para instrutorA e instrutorB
-       * Para cursos curtos (<= 4h), usamos apenas instrutorA com o período específico
-       */
       instrutorDates: selectedEvento?.courseDate.map((itemStr) => {
         const item = JSON.parse(itemStr) as CourseDate; // Parse the string
         const dateKey = item.date; // Get the date string 'YYYY-MM-DD'
@@ -512,14 +507,6 @@ export const Identificadores = () => {
         return resultItem;
       }) as (CourseDate & { instrutor?: string })[],
     };
-
-    console.log(
-      "selectedEvento?.treinamento?.courseHours",
-      selectedEvento?.treinamento?.courseHours
-    );
-    console.log("selectedEvento?.courseTime", selectedEvento?.courseTime);
-    console.log("fix4HoursCourse()", fix4HoursCourse());
-    console.log("selectedEvento", selectedEvento);
 
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
