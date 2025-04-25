@@ -19,11 +19,23 @@ interface CalendarProps {
       intervalEnd: string;
     }>
   ) => void;
+  initialSchedule?: string[];
 }
 
-export function Calendar({ onScheduleChange }: CalendarProps) {
+export function Calendar({ onScheduleChange, initialSchedule }: CalendarProps) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [timesByDate, setTimesByDate] = useState({});
+  const [timesByDate, setTimesByDate] = useState<
+    Record<
+      string,
+      {
+        start: string;
+        end: string;
+        breakStart: string;
+        breakEnd: string;
+        hasInterval: boolean;
+      }
+    >
+  >({});
   const [uniformTimes, setUniformTimes] = useState({ start: "", end: "" });
   const [uniformBreak, setUniformBreak] = useState({
     breakStart: "",
@@ -38,11 +50,48 @@ export function Calendar({ onScheduleChange }: CalendarProps) {
     hasInterval: true,
   });
 
+  useEffect(() => {
+    if (!initialSchedule) return;
+
+    const parsed = initialSchedule.map((str) => JSON.parse(str));
+
+    // Preenche datas selecionadas
+    const dates = parsed.map((item) => {
+      const [year, month, day] = item.date.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    });
+    setSelectedDates(dates);
+
+    // Preenche horários por data
+    const times: Record<
+      string,
+      {
+        start: string;
+        end: string;
+        breakStart: string;
+        breakEnd: string;
+        hasInterval: boolean;
+      }
+    > = {};
+    parsed.forEach((item) => {
+      const key = item.date;
+      times[key] = {
+        start: item.start,
+        end: item.end,
+        breakStart: item.intervalStart,
+        breakEnd: item.intervalEnd,
+        hasInterval: item.intervalStart !== "N/A" && item.intervalEnd !== "N/A",
+      };
+    });
+
+    setTimesByDate(times);
+  }, [initialSchedule]);
+
   const handleSelect = (dates: Date[] | undefined) => {
     const list = dates || [];
     setSelectedDates(list);
     setTimesByDate((prev) => {
-      const updated = {};
+      const updated: Record<string, ReturnType<typeof initDateTimes>> = {};
       list.forEach((date) => {
         const key = format(date, "yyyy-MM-dd");
         updated[key] = prev[key] || initDateTimes();
@@ -59,15 +108,24 @@ export function Calendar({ onScheduleChange }: CalendarProps) {
   };
 
   const handleIntervalToggle = (dateKey, hasInterval) => {
-    setTimesByDate((prev) => ({
-      ...prev,
-      [dateKey]: {
-        ...prev[dateKey],
-        hasInterval,
-        breakStart: hasInterval ? prev[dateKey].breakStart : "",
-        breakEnd: hasInterval ? prev[dateKey].breakEnd : "",
-      },
-    }));
+    setTimesByDate((prev) => {
+      const current = prev[dateKey];
+      return {
+        ...prev,
+        [dateKey]: {
+          ...current,
+          hasInterval,
+          breakStart:
+            hasInterval && (current.breakStart === "N/A" || !current.breakStart)
+              ? ""
+              : current.breakStart,
+          breakEnd:
+            hasInterval && (current.breakEnd === "N/A" || !current.breakEnd)
+              ? ""
+              : current.breakEnd,
+        },
+      };
+    });
   };
 
   const applyUniformTimes = () => {
@@ -105,6 +163,9 @@ export function Calendar({ onScheduleChange }: CalendarProps) {
     selectedDates.map((date) => {
       const key = format(date, "yyyy-MM-dd");
       const t = timesByDate[key];
+
+      if (!t) return null;
+
       return {
         date: key,
         start: t.start || "N/A",
@@ -115,7 +176,7 @@ export function Calendar({ onScheduleChange }: CalendarProps) {
     });
 
   useEffect(() => {
-    onScheduleChange(getScheduleArray());
+    onScheduleChange(getScheduleArray().filter((item) => item !== null));
   }, [timesByDate, selectedDates]);
 
   return (
@@ -197,6 +258,7 @@ export function Calendar({ onScheduleChange }: CalendarProps) {
           {selectedDates.map((date) => {
             const key = format(date, "yyyy-MM-dd");
             const t = timesByDate[key];
+            if (!t) return null;
             return (
               <div key={key} className="mb-2 p-2 border rounded">
                 <p className="font-medium text-sm mb-1">

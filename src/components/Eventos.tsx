@@ -12,7 +12,6 @@ import "react-day-picker/dist/style.css";
 import EventoForm from "./EventoForm";
 
 const Eventos = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [eventoInEditMode, seteventoInEditMode] = useState<string | number>("");
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -120,7 +119,7 @@ const Eventos = () => {
 
   const handleEdit = (id: string | number) => {
     seteventoInEditMode(id);
-    setIsModalOpen(true);
+    setFormsOpen(true);
   };
 
   const handleUpdateStatus = async (id: string | number, status: number) => {
@@ -142,65 +141,6 @@ const Eventos = () => {
       </CardHeader>
       <CardContent>
         <div className="flex justify-between mb-4">
-          {/* <Dialog
-            open={isModalOpen}
-            onOpenChange={(open) => {
-              setIsModalOpen(open);
-              if (!open) {
-                resetEventoState();
-                seteventoInEditMode("");
-              }
-            }}
-            key={isModalOpen ? "open" : "closed"}
-          >
-            <DialogTrigger asChild>
-              <Button className="bg-white border border-black text-black hover:bg-black hover:text-white">
-                <Plus className="mr-2 h-4 w-4" /> Adicionar Eventos
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] lg:max-w-[650px]">
-              <DialogHeader>
-                <DialogTitle>
-                  {eventoInEditMode ? "Editar" : "Adicionar"} Evento
-                </DialogTitle>
-              </DialogHeader>
-              <EventoForm
-                // Se estiver em modo de edição, passe os dados do evento encontrado, senão undefined
-                initialData={
-                  eventoInEditMode
-                    ? eventos.find((evento) => evento.id === eventoInEditMode)
-                    : undefined
-                }
-                empresas={empresas}
-                treinamentos={treinamentos}
-                onSubmit={async (payload) => {
-                  if (eventoInEditMode) {
-                    try {
-                      await api.patch(`eventos/${eventoInEditMode}`, payload);
-                      toast.success("Evento atualizado com sucesso");
-                    } catch (error) {
-                      toast.error("Erro ao atualizar evento");
-                    }
-                  } else {
-                    try {
-                      await api.post("eventos", payload);
-                      toast.success("Evento criado com sucesso");
-                    } catch (error) {
-                      toast.error("Erro ao criar evento");
-                    }
-                  }
-                  fetchEventos();
-                  resetEventoState();
-                  setIsModalOpen(false);
-                }}
-                onCancel={() => {
-                  resetEventoState();
-                  setIsModalOpen(false);
-                }}
-              />
-          
-            </DialogContent>
-          </Dialog> */}
           <Button
             className="bg-white border border-black text-black hover:bg-black hover:text-white"
             onClick={() => {

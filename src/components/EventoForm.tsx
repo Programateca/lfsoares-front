@@ -155,25 +155,27 @@ const EventoForm: React.FC<EventoFormProps> = ({
     }));
 
     // Calcular total de minutos agendados
-    const totalMinutes = scheduleArray.reduce((sum, day) => {
-      if (day.start === "N/A" || day.end === "N/A") return sum;
+    const totalMinutes = scheduleArray
+      .filter((item) => item !== null && item !== undefined)
+      .reduce((sum, day) => {
+        if (day.start === "N/A" || day.end === "N/A") return sum;
 
-      const [sh, sm] = day.start.split(":").map(Number);
-      const [eh, em] = day.end.split(":").map(Number);
+        const [sh, sm] = day.start.split(":").map(Number);
+        const [eh, em] = day.end.split(":").map(Number);
 
-      // Calcular minutos do dia (excluindo intervalo se houver)
-      let dayMinutes = eh * 60 + em - (sh * 60 + sm);
+        // Calcular minutos do dia (excluindo intervalo se houver)
+        let dayMinutes = eh * 60 + em - (sh * 60 + sm);
 
-      // Subtrair tempo de intervalo se existir
-      if (day.intervalStart !== "N/A" && day.intervalEnd !== "N/A") {
-        const [ih, im] = day.intervalStart.split(":").map(Number);
-        const [jh, jm] = day.intervalEnd.split(":").map(Number);
-        const intervalMinutes = jh * 60 + jm - (ih * 60 + im);
-        dayMinutes -= Math.max(0, intervalMinutes);
-      }
+        // Subtrair tempo de intervalo se existir
+        if (day.intervalStart !== "N/A" && day.intervalEnd !== "N/A") {
+          const [ih, im] = day.intervalStart.split(":").map(Number);
+          const [jh, jm] = day.intervalEnd.split(":").map(Number);
+          const intervalMinutes = jh * 60 + jm - (ih * 60 + im);
+          dayMinutes -= Math.max(0, intervalMinutes);
+        }
 
-      return sum + Math.max(0, dayMinutes);
-    }, 0);
+        return sum + Math.max(0, dayMinutes);
+      }, 0);
 
     const totalHours = Math.floor(totalMinutes / 60);
     const totalMins = totalMinutes % 60;
@@ -317,7 +319,10 @@ const EventoForm: React.FC<EventoFormProps> = ({
           </div>
         </div>
       </div>
-      <Calendar onScheduleChange={handleScheduleChange} />
+      <Calendar
+        onScheduleChange={handleScheduleChange}
+        initialSchedule={initialData?.courseDate}
+      />
       {cargaHorariaAviso && (
         <p className={getAlertVariant()}>{cargaHorariaAviso}</p>
       )}
