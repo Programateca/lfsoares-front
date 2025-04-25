@@ -267,15 +267,6 @@ export const Identificadores = () => {
       (await api.get(`identificadores/last-certificado-code/${fullYear}`)).data
     );
 
-    const fix4HoursCourse = () => {
-      const courseStart = selectedEvento.courseTime.split(" ÀS ")[0];
-      // Convert time to 24h format and check if it's morning or afternoon
-      const [startHour] = courseStart.split(":").map(Number);
-      const period = startHour < 12 ? "manha" : "tarde";
-
-      return period;
-    };
-
     /**
      * Mapeando os participantes e preenchendo até o próximo múltiplo de 10
      */
