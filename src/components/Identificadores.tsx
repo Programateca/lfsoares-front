@@ -488,36 +488,130 @@ export const Identificadores = () => {
       assinante4: getAssinante(3),
       instrutor_a: instrutoresSelecionados.instrutorA,
       instrutor_b: instrutoresSelecionados.instrutorB,
-      instrutorDates: selectedEvento?.courseDate.map((itemStr) => {
-        const item = JSON.parse(itemStr) as CourseDate; // Parse the string
-        const dateKey = item.date; // Get the date string 'YYYY-MM-DD'
+      instrutorDates: selectedEvento?.courseDate.flatMap((itemStr) => {
+        const item = JSON.parse(itemStr) as CourseDate;
+        const dateKey = item.date;
         const instrutorAPeriodo = data.instrutorA?.[dateKey]?.periodo;
         const instrutorBPeriodo = data.instrutorB?.[dateKey]?.periodo;
+        const hasBreak =
+          item.intervalStart !== "N/A" && item.intervalEnd !== "N/A";
 
+        const defaultInstrutor = instrutores.find(
+          (instrutor) => instrutor.id === data.assinatura[0]?.assinante
+        );
+
+        // Case 1: Split day if break exists and different instructors for morning/afternoon
+        if (hasBreak) {
+          if (instrutorAPeriodo === "manha" && instrutorBPeriodo === "tarde") {
+            return [
+              {
+                ...item,
+                start: item.start,
+                end: item.intervalStart,
+                instrutor: instrutoresSelecionados.instrutorA,
+                instrutorA: true,
+                instrutorB: false,
+              },
+              {
+                ...item,
+                start: item.intervalEnd,
+                end: item.end,
+                instrutor: instrutoresSelecionados.instrutorB,
+                instrutorA: false,
+                instrutorB: true,
+              },
+            ];
+          }
+          if (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "manha") {
+            return [
+              {
+                ...item,
+                start: item.start,
+                end: item.intervalStart,
+                instrutor: instrutoresSelecionados.instrutorB,
+                instrutorA: false,
+                instrutorB: true,
+              },
+              {
+                ...item,
+                start: item.intervalEnd,
+                end: item.end,
+                instrutor: instrutoresSelecionados.instrutorA,
+                instrutorA: true,
+                instrutorB: false,
+              },
+            ];
+          }
+        }
+
+        // Case 2: Full day or same instructor for split periods
         const resultItem: CourseDate & {
           instrutor?: string;
-        } = { ...item }; // Create a new object with potential instructor properties
+          instrutorA?: boolean;
+          instrutorB?: boolean;
+        } = { ...item };
 
-        if (instrutorAPeriodo && instrutorAPeriodo !== "nenhum") {
+        if (instrutorAPeriodo === "manhaTarde") {
           resultItem.instrutor = instrutoresSelecionados.instrutorA;
           resultItem.instrutorA = true;
-        }
-        if (instrutorBPeriodo && instrutorBPeriodo !== "nenhum") {
+          resultItem.instrutorB = false;
+        } else if (instrutorBPeriodo === "manhaTarde") {
           resultItem.instrutor = instrutoresSelecionados.instrutorB;
+          resultItem.instrutorA = false;
           resultItem.instrutorB = true;
-        }
-        if (!instrutorAPeriodo && !instrutorBPeriodo) {
-          const findInstrutor = instrutores.find(
-            (item) => item.id === data.assinatura[0].assinante
-          );
-          if (!findInstrutor) {
-            throw new Error("Instrutor não encontrado");
+        } else if (
+          instrutorAPeriodo === "manha" ||
+          instrutorAPeriodo === "tarde"
+        ) {
+          resultItem.instrutor = instrutoresSelecionados.instrutorA;
+          resultItem.instrutorA = true;
+          resultItem.instrutorB = false; // Ensure B is false if A is assigned
+        } else if (
+          instrutorBPeriodo === "manha" ||
+          instrutorBPeriodo === "tarde"
+        ) {
+          resultItem.instrutor = instrutoresSelecionados.instrutorB;
+          resultItem.instrutorA = false; // Ensure A is false if B is assigned
+          resultItem.instrutorB = true;
+        } else {
+          // Default case (both 'nenhum' or only one selected without split logic applying)
+          if (defaultInstrutor) {
+            resultItem.instrutor = defaultInstrutor.name;
+            resultItem.instrutorA = true; // Default to A if no specific assignment
+            resultItem.instrutorB = false;
+          } else {
+            // Handle case where default instructor isn't found, maybe throw error or assign placeholder
+            console.error("Default instructor not found!");
+            resultItem.instrutor = "Instrutor Padrão Não Encontrado";
+            resultItem.instrutorA = true;
+            resultItem.instrutorB = false;
           }
-          resultItem.instrutor = findInstrutor.name;
-          resultItem.instrutorA = true; // Remove instrutor property if both are 'nenhum'
         }
-        return resultItem;
-      }) as (CourseDate & { instrutor?: string })[],
+
+        // If both instructors are assigned to the same full day (e.g., one manhaTarde, other selected but not manhaTarde)
+        // This logic might need refinement based on exact desired behavior for overlapping assignments
+        if (
+          instrutorAPeriodo &&
+          instrutorAPeriodo !== "nenhum" &&
+          instrutorBPeriodo &&
+          instrutorBPeriodo !== "nenhum" &&
+          instrutorAPeriodo !== "manhaTarde" &&
+          instrutorBPeriodo !== "manhaTarde" &&
+          !hasBreak
+        ) {
+          // If not split and both have some period, prioritize A? Or show both? Current logic prioritizes based on order above.
+          // For now, let's assume the above logic handles the priority (A first, then B).
+          // If specific dual assignment is needed for a single entry, add logic here.
+          // Example: resultItem.instrutor = `${instrutoresSelecionados.instrutorA} / ${instrutoresSelecionados.instrutorB}`;
+          //          resultItem.instrutorA = true; resultItem.instrutorB = true;
+        }
+
+        return [resultItem]; // Return as array for flatMap
+      }) as (CourseDate & {
+        instrutor?: string;
+        instrutorA?: boolean;
+        instrutorB?: boolean;
+      })[],
     };
 
     const newIdentificador: Partial<IdentificadorData> = {
@@ -526,7 +620,8 @@ export const Identificadores = () => {
       year: String(fullYear),
     };
 
-    // FOR DEBUG
+    // // FOR DEBUG
+
     // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
     // gerarIdentificador(
     //   {
