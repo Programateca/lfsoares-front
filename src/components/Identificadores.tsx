@@ -503,7 +503,16 @@ export const Identificadores = () => {
           resultItem.instrutor = instrutoresSelecionados.instrutorB;
           resultItem.instrutorB = true;
         }
-
+        if (!instrutorAPeriodo && !instrutorBPeriodo) {
+          const findInstrutor = instrutores.find(
+            (item) => item.id === data.assinatura[0].assinante
+          );
+          if (!findInstrutor) {
+            throw new Error("Instrutor não encontrado");
+          }
+          resultItem.instrutor = findInstrutor.name;
+          resultItem.instrutorA = true; // Remove instrutor property if both are 'nenhum'
+        }
         return resultItem;
       }) as (CourseDate & { instrutor?: string })[],
     };
@@ -513,6 +522,18 @@ export const Identificadores = () => {
       identificadorData: JSON.stringify(dataGerador),
       year: String(fullYear),
     };
+
+    // FOR DEBUG
+    // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    // gerarIdentificador(
+    //   {
+    //     ...(dataGerador as any),
+    //     id_code: "teste",
+    //   },
+    //   dataGerador.instrutorDates,
+    //   dataGerador.numeroParticipantes
+    // );
+    // return;
 
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {

@@ -213,7 +213,7 @@ function sortData(
         });
       }
     } else if (periodo !== "nenhum" && !originalInstrutor) {
-      console.warn("Skipping item due to missing instructor name:", item);
+      throw new Error("Skipping item due to missing instructor name:");
     }
   });
 
@@ -324,6 +324,8 @@ async function lerTabelaXml({ tipo }: TabelaXML) {
 }
 
 async function formatarPaginas(pages: SortedScheduleEntry[]) {
+  console.log("pages", pages);
+  // return;
   let newXmlPages = "";
 
   for (const day of pages) {
