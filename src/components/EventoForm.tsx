@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { format, parse, isValid } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -81,47 +80,6 @@ const EventoForm: React.FC<EventoFormProps> = ({
       handleScheduleChange(parsedArray);
     }
   }, [newEvento.treinamento.id]);
-
-  // Funções auxiliares para formatação de horário
-  const formatTimeForInput = (time: string): [string, string] => {
-    if (!time) return ["", ""];
-    const times = time.split(" ÀS ");
-    return [times[0] || "", times[1] || ""];
-  };
-
-  const formatTimeForStorage = (time: string): string => {
-    try {
-      const parsedTime = parse(time, "HH:mm", new Date());
-      if (time === "00:00 ÀS 00:00") return "";
-      return isValid(parsedTime) ? format(parsedTime, "HH:mm") : time;
-    } catch {
-      return time;
-    }
-  };
-
-  const handleTimeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    isStart: boolean,
-    field: "courseTime" | "courseInterval"
-  ) => {
-    let value = e.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
-    if (value.length > 2) value = value.replace(/^(\d{2})/, "$1:");
-    if (value.length > 5) return; // Limita a 5 caracteres
-
-    const [hh, mm] = value.split(":");
-    if (hh && parseInt(hh) > 23) return;
-    if (mm && parseInt(mm) > 59) return;
-
-    setNewEvento((prev) => {
-      let [startTime, endTime] = prev[field].split(" ÀS ");
-      startTime = isStart ? value : startTime || "";
-      endTime = isStart ? endTime || "" : value;
-      return {
-        ...prev,
-        [field]: `${startTime} ÀS ${endTime}`,
-      };
-    });
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

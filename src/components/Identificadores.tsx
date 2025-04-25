@@ -385,6 +385,7 @@ export const Identificadores = () => {
     });
 
     const horarios = Array.from(horariosSet).join(" E ");
+    console.log("horarios", horarios);
     const intervalos = intervalosSet.size
       ? Array.from(intervalosSet).join(" E ")
       : "N/A";
@@ -623,15 +624,15 @@ export const Identificadores = () => {
     // // FOR DEBUG
 
     // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    // gerarIdentificador(
-    //   {
-    //     ...(dataGerador as any),
-    //     id_code: "teste",
-    //   },
-    //   dataGerador.instrutorDates,
-    //   dataGerador.numeroParticipantes
-    // );
-    // return;
+    gerarIdentificador(
+      {
+        ...(dataGerador as any),
+        id_code: "teste",
+      },
+      dataGerador.instrutorDates,
+      dataGerador.numeroParticipantes
+    );
+    return;
 
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
