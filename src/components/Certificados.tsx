@@ -202,7 +202,6 @@ const Certificados = () => {
     if (!identificadorValido) {
       throw new AppError("Identificador não encontrado", 404);
     }
-
     try {
       const dataIdentificador = JSON.parse(
         identificadorValido.identificadorData
@@ -211,7 +210,7 @@ const Certificados = () => {
         .filter((key) => key.startsWith("p_id") && dataIdentificador[key])
         .map((key) => ({ id: dataIdentificador[key].trim() }))
         .filter((p) => p.id);
-
+      console.log(participantesIdentificador);
       const assinantesIdentificador = Object.keys(dataIdentificador)
         .filter(
           (key) => key.startsWith("assinante_titulo") && dataIdentificador[key]
@@ -279,15 +278,10 @@ const Certificados = () => {
 
       const datasRealizada = selectedEvento.courseDate;
 
-      const dataRealizada = formatDataRealizada(
-        datasRealizada,
-        selectedEvento.courseTime,
-        selectedEvento.treinamento.courseHours
-      );
-
+      const dataRealizada = formatDataRealizada(datasRealizada);
       const lastItem = JSON.parse(
         datasRealizada[datasRealizada.length - 1]
-      ).day;
+      ).date;
       const lastItemDia = lastItem.split("-")[2];
       const lastItemMes = lastItem.split("-")[1];
       const lastItemAno = lastItem.split("-")[0];
@@ -305,8 +299,8 @@ const Certificados = () => {
         "Novembro",
         "Dezembro",
       ];
-
       const mesString = meses[parseInt(lastItemMes, 10) - 1];
+
       const schema = {
         nome_treinamento: selectedEvento?.treinamento?.name || "",
         cnpj: selectedEmpresa?.cnpj || "",
@@ -416,6 +410,7 @@ const Certificados = () => {
         documentData: JSON.stringify(dados),
         year: String(identificadorValido.certificateYear),
       };
+
       const saveResponse = await api.post("documentos", newCertificados);
 
       if (saveResponse.status === 201) {

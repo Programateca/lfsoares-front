@@ -71,7 +71,19 @@ export const Identificadores = () => {
     getValues,
     formState: { isSubmitting },
     reset,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    defaultValues: {
+      evento: "",
+      certificadoTipo: "",
+      conteudoAplicado: "",
+      participantes: [],
+      assinatura: [],
+      motivoTreinamento: "",
+      objetivoTreinamento: "",
+      instrutorA: {},
+      instrutorB: {},
+    },
+  });
 
   const [days, setDays] = useState<string[]>([]);
 
@@ -169,7 +181,7 @@ export const Identificadores = () => {
     if (!eventoSelecionado || days.length === 0) return;
 
     const newDefaults: FormData = {
-      evento: eventoSelecionado,
+      evento: eventoSelecionado || "",
       certificadoTipo: getValues("certificadoTipo") || "",
       conteudoAplicado: getValues("conteudoAplicado") || "",
       participantes: getValues("participantes") || [],
