@@ -378,14 +378,15 @@ export const Identificadores = () => {
     const intervalosSet = new Set<string>();
 
     courseDateItens.forEach((item) => {
-      horariosSet.add(`${item.start} ÀS ${item.end}`);
-      if (item.intervalStart !== "N/A" && item.intervalEnd !== "N/A") {
-        intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
+      if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
+        intervalosSet.add(`${item.start} ÀS ${item.intervalStart}`);
+        intervalosSet.add(`${item.intervalEnd} ÀS ${item.end}`);
+      } else {
+        horariosSet.add(`${item.start} ÀS ${item.end}`);
       }
     });
 
     const horarios = Array.from(horariosSet).join(" E ");
-    console.log("horarios", horarios);
     const intervalos = intervalosSet.size
       ? Array.from(intervalosSet).join(" E ")
       : "N/A";
@@ -624,15 +625,15 @@ export const Identificadores = () => {
     // // FOR DEBUG
 
     // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    gerarIdentificador(
-      {
-        ...(dataGerador as any),
-        id_code: "teste",
-      },
-      dataGerador.instrutorDates,
-      dataGerador.numeroParticipantes
-    );
-    return;
+    // gerarIdentificador(
+    //   {
+    //     ...(dataGerador as any),
+    //     id_code: "teste",
+    //   },
+    //   dataGerador.instrutorDates,
+    //   dataGerador.numeroParticipantes
+    // );
+    // return;
 
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
