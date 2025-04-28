@@ -395,19 +395,6 @@
                 <w:t>CONTEÚDO APLICADO:</w:t>
             </w:r>
         </w:p>
-        <w:p w14:paraId="0A5EFD32" w14:textId="77777777" w:rsidR="008E5BD0" w:rsidRPr="008E5BD0"
-            w:rsidRDefault="008E5BD0" w:rsidP="003F4E65">
-            <w:pPr>
-                <w:ind w:left="-567" w:hanging="284" />
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:noProof />
-                    <w:sz w:val="14" />
-                    <w:szCs w:val="14" />
-                    <w:lang w:eastAsia="pt-BR" />
-                </w:rPr>
-            </w:pPr>
-        </w:p>
         <w:p w14:paraId="07546404" w14:textId="77777777" w:rsidR="0043225E"
             w:rsidRDefault="0043225E" w:rsidP="0043225E">
             <w:pPr>
@@ -417,8 +404,8 @@
                     <w:b />
                     <w:bCs />
                     <w:color w:val="000000" />
-                    <w:sz w:val="20" />
-                    <w:szCs w:val="20" />
+                    <w:sz w:val="22" />
+                    <w:szCs w:val="22" />
                 </w:rPr>
                 <w:sectPr w:rsidR="0043225E" w:rsidSect="001266D1">
                     <w:headerReference w:type="default" r:id="rId11" />
@@ -433,61 +420,17 @@
                 </w:sectPr>
             </w:pPr>
         </w:p>
-        <w:p w14:paraId="6E0299BC" w14:textId="7035412F" w:rsidR="00816B90" w:rsidRPr="00816B90"
-            w:rsidRDefault="00124299" w:rsidP="00816B90">
+        <w:p w14:paraId="597A6911" w14:textId="03CA53A3" w:rsidR="00841D0D" w:rsidRPr="00482606"
+            w:rsidRDefault="00482606" w:rsidP="00482606">
             <w:pPr>
                 <w:spacing w:after="160" w:line="278" w:lineRule="auto" />
+                <w:ind w:left="360" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
-            </w:pPr>
-            <w:r w:rsidRPr="00816B90">
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-                <w:t>[</w:t>
-            </w:r>
-            <w:proofErr w:type="spellStart" />
-            <w:r w:rsidRPr="00816B90">
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-                <w:t>conteudo_aplicado</w:t>
-            </w:r>
-            <w:proofErr w:type="spellEnd" />
-            <w:r w:rsidRPr="00816B90">
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-                <w:t>]</w:t>
-            </w:r>
-        </w:p>
-        <w:p w14:paraId="454C4586" w14:textId="77777777" w:rsidR="00124299"
-            w:rsidRDefault="00124299" w:rsidP="00124299">
-            <w:pPr>
-                <w:spacing w:after="160" w:line="278" w:lineRule="auto" />
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-            </w:pPr>
-        </w:p>
-        <w:p w14:paraId="0B8C2B03" w14:textId="77777777" w:rsidR="00124299"
-            w:rsidRDefault="00124299" w:rsidP="00124299">
-            <w:pPr>
-                <w:spacing w:after="160" w:line="278" w:lineRule="auto" />
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-            </w:pPr>
-        </w:p>
-        <w:p w14:paraId="597A6911" w14:textId="03DF0D9F" w:rsidR="00124299" w:rsidRPr="00124299"
-            w:rsidRDefault="00124299" w:rsidP="00124299">
-            <w:pPr>
-                <w:spacing w:after="160" w:line="278" w:lineRule="auto" />
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                </w:rPr>
-                <w:sectPr w:rsidR="00124299" w:rsidRPr="00124299" w:rsidSect="001266D1">
+                <w:sectPr w:rsidR="00841D0D" w:rsidRPr="00482606" w:rsidSect="001266D1">
                     <w:type w:val="continuous" />
                     <w:pgSz w:w="16838" w:h="11906" w:orient="landscape" />
                     <w:pgMar w:top="1701" w:right="1417" w:bottom="1418" w:left="1417"
@@ -497,10 +440,36 @@
                     <w:docGrid w:linePitch="360" />
                 </w:sectPr>
             </w:pPr>
+            <w:r w:rsidRPr="00482606">
+                <w:rPr>
+                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
+                </w:rPr>
+                <w:t>[</w:t>
+            </w:r>
+            <w:proofErr w:type="spellStart" />
+            <w:r>
+                <w:rPr>
+                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
+                </w:rPr>
+                <w:t>conteudo_aplicado</w:t>
+            </w:r>
+            <w:proofErr w:type="spellEnd" />
+            <w:r w:rsidRPr="00482606">
+                <w:rPr>
+                    <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
+                </w:rPr>
+                <w:t>]</w:t>
+            </w:r>
         </w:p>
         <!-- Fim da pagina conteudo aplicado -->
 
-        <!--aux-page-->
+        <!-- TABLE -->
 
         <!-- Inicio pagina final  -->
         <w:p w14:paraId="11EBF4A3" w14:textId="1D98BE99" w:rsidR="00502444" w:rsidRPr="00502444"

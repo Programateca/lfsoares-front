@@ -439,8 +439,8 @@ export const Identificadores = () => {
       })(),
 
       is_short_course: selectedEvento?.treinamento?.courseHours, // Flag para indicar curso curto
-      mudar_modulo: selectedEvento?.treinamento.courseMethodology,
-      mudar_horarios: horarios,
+      modulo: selectedEvento?.treinamento.courseMethodology,
+      horarios: horarios,
       id_data: fullDateNow.replace(/\//g, "."), // Troca / por . para seguir o padrão apresentado pelo modelo deles
       responsavel_tecnico: "", // Deixa vazio pq não precisava desse campo e se tirar fica undefined XD
 

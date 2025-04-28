@@ -6,6 +6,7 @@ import { saveAs } from "file-saver";
 
 import type { Identificador } from "@/@types/Identificador";
 import { CourseDate } from "@/components/Identificadores";
+import { TABLE_DOUBLE_PERIOD } from "./constant-xml-data";
 
 export type Period = "manha" | "tarde" | "manhaTarde" | "nenhum";
 
@@ -18,38 +19,42 @@ export async function gerarIdentificador(
   pages: PagesData[],
   numeroParticipantes: number
 ) {
-  const formattedPages = sortData(pages, numeroParticipantes);
-  const TAG_NAME = "<!--aux-page-->";
-
   try {
+    const formattedPages = sortData(pages, numeroParticipantes);
+    const MAIN_XML_TAG = "<!-- TABLE -->";
+
+    const DOCX_TEMPLATE_BUFFER = await loadFile(
+      "/templates/identificacao-do-participante.docx"
+    );
     // Select the appropriate template based on content length
     const templateFileName =
       docData.conteudo_aplicado.length <= 1000
         ? "document-template.xml"
         : "document-3colunas.xml";
 
-    const responseMainXml = await fetch(
+    const MAIN_XML = await fetch(
       `/templates/identificacao-participante/${templateFileName}`
     );
 
-    const mainXmlContent = await responseMainXml.text();
-
-    const tagNameIndex = mainXmlContent.indexOf(TAG_NAME);
-    if (tagNameIndex === -1) {
-      console.error(`Tag <${TAG_NAME}> não encontrada.`);
-      return;
-    }
-
-    const updatedXml = mainXmlContent
-      .split(TAG_NAME)
-      .join(await formatarPaginas(formattedPages));
-
-    const fileArrayBuffer = await loadFile(
-      "/templates/identificacao-do-participante.docx"
+    const HEADER3_XML = await fetch(
+      `/templates/identificacao-participante/header3.xml`
     );
 
-    const zip = new PizZip(fileArrayBuffer);
-    zip.file("word/document.xml", updatedXml);
+    const MAIN_XML_CONTENT = await MAIN_XML.text();
+    const HEADER3_XML_CONTENT = await HEADER3_XML.text();
+
+    const tagNameIndex = MAIN_XML_CONTENT.indexOf(MAIN_XML_TAG);
+    if (tagNameIndex === -1) {
+      throw new Error(`Tag <${MAIN_XML_TAG}> não encontrada.`);
+    }
+
+    const UPDATED_DOCUMENT_XML_FILE = MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(
+      await formatarPaginas(formattedPages)
+    );
+
+    const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
+    zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
+    zip.file("word/header3.xml", HEADER3_XML_CONTENT);
 
     const doc = new Docxtemplater(zip, {
       delimiters: { start: "[", end: "]" },
@@ -303,10 +308,11 @@ type TabelaXML = {
 
 async function lerTabelaXml({ tipo }: TabelaXML) {
   if (tipo === "manhaTarde") {
-    const response = await fetch(
-      "/templates/identificacao-participante/tabela-double.xml"
-    );
-    return await response.text();
+    // const response = await fetch(
+    //   "/templates/identificacao-participante/tabela-double.xml"
+    // );
+    // return await response.text();
+    return TABLE_DOUBLE_PERIOD;
   } else if (tipo === "manha") {
     const response = await fetch(
       "/templates/identificacao-participante/tabela-single-manha.xml"
