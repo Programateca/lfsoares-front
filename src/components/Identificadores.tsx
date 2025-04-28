@@ -872,7 +872,9 @@ export const Identificadores = () => {
                                       key={instrutor.id}
                                       value={instrutor.id}
                                     >
-                                      {instrutor.name}
+                                      {instrutor.name} -{" "}
+                                      {instrutor.qualificacaoProfissional} -{" "}
+                                      {instrutor.registroProfissional}
                                     </SelectItem>
                                   ))}
                                 </SelectGroup>
