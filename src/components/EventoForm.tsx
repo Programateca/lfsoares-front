@@ -245,7 +245,7 @@ const EventoForm: React.FC<EventoFormProps> = ({
                     <SelectLabel>Treinamento:</SelectLabel>
                     {treinamentos.map((treinamento) => (
                       <SelectItem key={treinamento.id} value={treinamento.id}>
-                        {treinamento.name}
+                        {treinamento.name} | {treinamento.courseType}
                       </SelectItem>
                     ))}
                   </SelectGroup>
