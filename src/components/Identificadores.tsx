@@ -399,6 +399,7 @@ export const Identificadores = () => {
       header_data: "14/02/2025",
       revisao: "00",
       // Fim Header
+
       ...(() => {
         // Find the last filled assinatura
         if (!data?.assinatura || !Array.isArray(data.assinatura)) {
@@ -465,6 +466,9 @@ export const Identificadores = () => {
       endereco: selectedEvento?.courseLocation2
         ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
         : selectedEvento?.courseLocation || "",
+      endereco2: selectedEvento?.courseLocation2
+        ? selectedEvento?.courseLocation2
+        : "",
       empresa: `${selectedEvento.empresa.name} - ${
         selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
       }`,
