@@ -24,7 +24,7 @@ export async function gerarIdentificador(
     const MAIN_XML_TAG = "<!-- TABLE -->";
 
     const DOCX_TEMPLATE_BUFFER = await loadFile(
-      "/templates/identificacao-do-participante.docx"
+      "/templates/identificacao-do-participante-nova.docx"
     );
     // Select the appropriate template based on content length
     const templateFileName =

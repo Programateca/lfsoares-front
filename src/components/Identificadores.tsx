@@ -377,6 +377,7 @@ export const Identificadores = () => {
     const horariosSet = new Set<string>();
     const intervalosSet = new Set<string>();
 
+    console.log("courseDateItens", courseDateItens);
     courseDateItens.forEach((item) => {
       if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
         intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
@@ -386,6 +387,9 @@ export const Identificadores = () => {
         horariosSet.add(`${item.start} ÀS ${item.end}`);
       }
     });
+
+    console.log("horariosSet", horariosSet);
+    console.log("intervalosSet", intervalosSet);
 
     const horarios = Array.from(horariosSet).join(" E ");
     const intervalos = intervalosSet.size
