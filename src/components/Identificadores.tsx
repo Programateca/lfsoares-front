@@ -30,6 +30,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
+import { Item } from "@radix-ui/react-select";
 
 /**
  * Definição de tipos auxiliares
@@ -379,8 +380,9 @@ export const Identificadores = () => {
 
     courseDateItens.forEach((item) => {
       if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
-        intervalosSet.add(`${item.start} ÀS ${item.intervalStart}`);
-        intervalosSet.add(`${item.intervalEnd} ÀS ${item.end}`);
+        intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
+        horariosSet.add(`${item.start} ÀS ${item.intervalStart}`);
+        horariosSet.add(`${item.intervalEnd} ÀS ${item.end}`);
       } else {
         horariosSet.add(`${item.start} ÀS ${item.end}`);
       }
