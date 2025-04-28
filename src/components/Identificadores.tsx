@@ -388,9 +388,6 @@ export const Identificadores = () => {
       }
     });
 
-    console.log("horariosSet", horariosSet);
-    console.log("intervalosSet", intervalosSet);
-
     const horarios = Array.from(horariosSet).join(" E ");
     const intervalos = intervalosSet.size
       ? Array.from(intervalosSet).join(" E ")
