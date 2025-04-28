@@ -43,10 +43,10 @@ export async function gerarIdentificador(
     const MAIN_XML_CONTENT = await MAIN_XML.text();
     const HEADER3_XML_CONTENT = await HEADER3_XML.text();
 
-    const tagNameIndex = MAIN_XML_CONTENT.indexOf(MAIN_XML_TAG);
-    if (tagNameIndex === -1) {
-      throw new Error(`Tag <${MAIN_XML_TAG}> não encontrada.`);
-    }
+    // const tagNameIndex = MAIN_XML_CONTENT.indexOf(MAIN_XML_TAG);
+    // if (tagNameIndex === -1) {
+    //   throw new Error(`Tag <${MAIN_XML_TAG}> não encontrada.`);
+    // }
 
     const UPDATED_DOCUMENT_XML_FILE = MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(
       await formatarPaginas(formattedPages)
