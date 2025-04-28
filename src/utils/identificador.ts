@@ -13,46 +13,6 @@ type PagesData = CourseDate & {
   instrutor?: string;
 };
 
-// Helper function to parse formatted dates back to individual days
-// function parseDatasFormatadas(formattedString: string): string[] {
-//   const days: string[] = [];
-
-//   // Split by semicolons to get different month/year groups
-//   const monthGroups = formattedString.split(";").map((s) => s.trim());
-
-//   for (const group of monthGroups) {
-//     if (!group) continue;
-
-//     // Format could be: "1, 2, 3 E 4/05/23" or "5/05/23"
-//     const match = group.match(/^(.*?)\/(\d{2})\/(\d{2,4})$/);
-//     if (match) {
-//       const [, dayPart, month, year] = match;
-
-//       // Process the day part which could be "1, 2, 3 E 4" or just "5"
-//       let dayNumbers: string[];
-//       if (dayPart.includes(" E ")) {
-//         const parts = dayPart.split(" E ");
-//         dayNumbers = [...parts[0].split(", "), parts[1]];
-//       } else if (dayPart.includes(",")) {
-//         dayNumbers = dayPart.split(", ");
-//       } else {
-//         dayNumbers = [dayPart];
-//       }
-
-//       // Create full dates
-//       dayNumbers.forEach((day) => {
-//         days.push(
-//           `${day.padStart(2, "0")}/${month}/${
-//             year.length === 2 ? `20${year}` : year
-//           }`
-//         );
-//       });
-//     }
-//   }
-
-//   return days;
-// }
-
 export async function gerarIdentificador(
   docData: Identificador,
   pages: PagesData[],
