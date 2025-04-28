@@ -30,7 +30,6 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
-import { Item } from "@radix-ui/react-select";
 
 /**
  * Definição de tipos auxiliares
