@@ -330,6 +330,7 @@ export const Identificadores = () => {
           : participante?.cpf || "";
         acc[`p_manha${rowIndex}`] = "PRESENTE/APTO";
         acc[`p_tarde${rowIndex}`] = "PRESENTE/APTO";
+        acc[`p_noite${rowIndex}`] = "PRESENTE/APTO";
         acc[`p_codigo${rowIndex}`] = participante
           ? `LFSTS ${String(certificadoCode + index).padStart(
               4,
@@ -356,6 +357,7 @@ export const Identificadores = () => {
       participantesMap[`p_id${index}`] = "";
       participantesMap[`p_manha${index}`] = "";
       participantesMap[`p_tarde${index}`] = "";
+      participantesMap[`p_noite${index}`] = "";
     }
 
     /**
@@ -414,7 +416,6 @@ export const Identificadores = () => {
     const horariosSet = new Set<string>();
     const intervalosSet = new Set<string>();
 
-    console.log("courseDateItens", courseDateItens);
     courseDateItens.forEach((item) => {
       if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
         intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
@@ -538,7 +539,7 @@ export const Identificadores = () => {
         const dateKey = item.date;
         const instrutorAPeriodo = data.instrutorA?.[dateKey]?.periodo;
         const instrutorBPeriodo = data.instrutorB?.[dateKey]?.periodo;
-        if (!instrutorAPeriodo && !instrutorBPeriodo) {
+        if (!instrutorAPeriodo && !instrutorBPeriodo && signatureCount > 2) {
           throw new Error("Nenhum periodo selecionado para o dia");
         }
 
@@ -696,17 +697,16 @@ export const Identificadores = () => {
     };
 
     // // FOR DEBUG
-
-    console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    gerarIdentificador(
-      {
-        ...(dataGerador as any),
-        id_code: "teste",
-      },
-      dataGerador.instrutorDates,
-      dataGerador.numeroParticipantes
-    );
-    return;
+    // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    // gerarIdentificador(
+    //   {
+    //     ...(dataGerador as any),
+    //     id_code: "teste",
+    //   },
+    //   dataGerador.instrutorDates,
+    //   dataGerador.numeroParticipantes
+    // );
+    // return;
 
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {

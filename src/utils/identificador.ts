@@ -6,8 +6,13 @@ import { saveAs } from "file-saver";
 
 import type { Identificador } from "@/@types/Identificador";
 import { CourseDate } from "@/components/Identificadores";
-import { TABLE_DOUBLE_PERIOD } from "./constant-xml-data";
+import {
+  TABLE_DOUBLE_PERIOD,
+  TABLE_DOUBLE_TARDE_NOITE,
+  TABLE_DOUBLE_MANHA_NOITE,
+} from "./constant-xml-data";
 
+// Updated Period type to include noite and combined periods
 export type Period =
   | "nenhum"
   | "manha"
@@ -50,11 +55,6 @@ export async function gerarIdentificador(
     const MAIN_XML_CONTENT = await MAIN_XML.text();
     const HEADER3_XML_CONTENT = await HEADER3_XML.text();
 
-    // const tagNameIndex = MAIN_XML_CONTENT.indexOf(MAIN_XML_TAG);
-    // if (tagNameIndex === -1) {
-    //   throw new Error(`Tag <${MAIN_XML_TAG}> não encontrada.`);
-    // }
-
     const UPDATED_DOCUMENT_XML_FILE = MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(
       await formatarPaginas(formattedPages)
     );
@@ -85,7 +85,7 @@ export async function gerarIdentificador(
 // Define the structure for the processed schedule entries
 type SortedScheduleEntry = {
   dia: string; // Date in "YYYY-MM-DD" format
-  periodo: Exclude<Period, "nenhum">; // Period of the day ('manha', 'tarde', 'manhaTarde')
+  periodo: Exclude<Period, "nenhum">; // Period of the day
   paginas: number; // Number of pages needed for this entry
   instrutorA: boolean; // Flag indicating if instructor A is teaching
   instrutorB: boolean; // Flag indicating if instructor B is teaching
@@ -93,16 +93,13 @@ type SortedScheduleEntry = {
   intervalo?: string; // Formatted time range for the interval, if applicable (e.g., "12:00 ÀS 13:00")
 };
 
-// Calculates the period ('manha', 'tarde', 'manhaTarde') based on start and end times
+// Calculates the period based on start and end times
 function calculatePeriod(start: string, end: string): Period {
-  // Helper to parse time string "HH:MM" into a numerical value (hours)
   const parseTime = (timeStr: string): number => {
-    // Basic validation for time format
     if (!timeStr || !timeStr.includes(":")) return NaN;
     const parts = timeStr.split(":");
     const hours = parseInt(parts[0], 10);
     const minutes = parseInt(parts[1], 10);
-    // Ensure hours and minutes are valid numbers
     if (
       isNaN(hours) ||
       isNaN(minutes) ||
@@ -112,38 +109,45 @@ function calculatePeriod(start: string, end: string): Period {
       minutes > 59
     )
       return NaN;
-    return hours + minutes / 60.0; // Return time as hours (e.g., 12:30 -> 12.5)
+    return hours + minutes / 60.0;
   };
 
   const startTime = parseTime(start);
   const endTime = parseTime(end);
 
-  // Check if time parsing was successful
   if (isNaN(startTime) || isNaN(endTime)) {
     console.warn(
       `Invalid or missing time format encountered: start=${start}, end=${end}`
     );
-    return "nenhum"; // Return 'nenhum' if times are invalid
+    return "nenhum";
   }
 
-  // Determine if the period starts before midday (12:00)
-  const startsBeforeMidday = startTime < 12.0;
-  // Determine if the period ends after midday (12:00)
-  // Note: 12:00 exactly is considered the start of the afternoon for ending purposes.
-  const endsAfterMidday = endTime > 12.0;
+  const midday = 12.0;
+  const evening = 18.0;
 
-  if (startsBeforeMidday && endsAfterMidday) {
-    return "manhaTarde"; // Period crosses midday
-  } else if (startsBeforeMidday) {
-    // Starts before 12:00 and ends at or before 12:00
-    return "manha";
-  } else if (startTime >= 12.0) {
-    // Starts at or after 12:00 (and implicitly ends after 12:00)
-    return "tarde";
+  const startsBeforeMidday = startTime < midday;
+  const startsBeforeEvening = startTime < evening;
+  const startsAfterEvening = startTime >= evening;
+
+  const endsBeforeMidday = endTime <= midday;
+  const endsBeforeEvening = endTime <= evening;
+  const endsAfterEvening = endTime > evening;
+
+  if (startsBeforeMidday && endsAfterEvening) {
+    return "manhaNoite"; // Starts before 12:00, ends after 18:00
+  } else if (startsBeforeEvening && !startsBeforeMidday && endsAfterEvening) {
+    return "tardeNoite"; // Starts between 12:00 and 18:00, ends after 18:00
+  } else if (startsBeforeMidday && endsBeforeEvening && !endsBeforeMidday) {
+    return "manhaTarde"; // Starts before 12:00, ends between 12:00 and 18:00
+  } else if (startsBeforeMidday && endsBeforeMidday) {
+    return "manha"; // Starts and ends before 12:00
+  } else if (startsBeforeEvening && !startsBeforeMidday && endsBeforeEvening) {
+    return "tarde"; // Starts and ends between 12:00 and 18:00
+  } else if (startsAfterEvening) {
+    return "noite"; // Starts at or after 18:00
   } else {
-    // This case should theoretically not be reached with valid times and the logic above
-    console.warn(`Unexpected time condition: start=${start}, end=${end}`);
-    return "nenhum";
+    console.warn(`Unhandled time condition: start=${start}, end=${end}`);
+    return "nenhum"; // Fallback for unhandled cases
   }
 }
 
@@ -152,116 +156,102 @@ function sortData(
   pages: PagesData[], // Input array of course dates/times/instructors
   numParticipantes: number // Total number of participants
 ): SortedScheduleEntry[] {
-  // Calculate the number of pages needed based on participants (10 per page)
   const numeroPaginas = Math.ceil(numParticipantes / 10);
-
-  // Use a Map to group entries by date and calculated period
-  // Key format: "YYYY-MM-DD-periodo" (e.g., "2023-10-27-manha")
   const groupedEntriesMap = new Map<string, SortedScheduleEntry>();
 
-  // Iterate through the raw page data provided
   pages.forEach((item) => {
-    // Validate essential fields for processing
     if (!item.date || !item.start || !item.end) {
       console.warn(
         "Skipping item due to missing date, start, or end time:",
         item
       );
-      return; // Skip items with incomplete data
+      return;
     }
 
-    // Calculate the overall period ('manha', 'tarde', 'manhaTarde')
     const periodo = calculatePeriod(item.start, item.end);
-
-    // Skip if the period calculation resulted in 'nenhum' (invalid times)
     if (periodo === "nenhum") {
       return;
     }
 
-    // Create a unique key for grouping based on date and period
     const key = `${item.date}-${periodo}`;
-
-    // Construct the main time range string
     const horario = `${item.start} ÀS ${item.end}`;
-    // Construct the interval time range string, if interval times are valid
     let intervalo: string | undefined = undefined;
-    // Check if interval times are provided and not placeholder values like "N/A"
     if (
       item.intervalStart &&
       item.intervalStart !== "N/A" &&
       item.intervalEnd &&
       item.intervalEnd !== "N/A"
     ) {
-      // Basic validation for interval times could be added here if needed
       intervalo = `${item.intervalStart} ÀS ${item.intervalEnd}`;
     }
 
-    // Check if an entry for this date and period already exists
     const existingEntry = groupedEntriesMap.get(key);
 
     if (!existingEntry) {
-      // If it's the first time seeing this date/period combination, create a new entry
       groupedEntriesMap.set(key, {
         dia: item.date,
         periodo: periodo,
         paginas: numeroPaginas,
-        // Initialize instructor flags based on this item
-        instrutorA: item.instrutorA ?? false, // Use nullish coalescing for safety
+        instrutorA: item.instrutorA ?? false,
         instrutorB: item.instrutorB ?? false,
-        horario: horario, // Use horario/intervalo from this item
+        horario: horario,
         intervalo: intervalo,
       });
     } else {
-      // If an entry already exists, update the instructor flags using OR logic
-      // This ensures if either instructor A or B is present in any item for this group, the flag is true.
       existingEntry.instrutorA =
         existingEntry.instrutorA || (item.instrutorA ?? false);
       existingEntry.instrutorB =
         existingEntry.instrutorB || (item.instrutorB ?? false);
-      // Note: The horario and intervalo from the *first* item encountered for this key are kept.
-      // If merging or selecting specific horario/intervalo is needed, add logic here.
     }
   });
 
-  // Convert the map values (the grouped schedule entries) into an array
   const groupedEntries = Array.from(groupedEntriesMap.values());
 
-  // Define the desired sort order for the periods
+  // Updated period order
   const periodOrder: Record<Exclude<Period, "nenhum">, number> = {
     manha: 1,
     tarde: 2,
-    manhaTarde: 3,
-    noite: 4,
-    manhaNoite: 5,
-    tardeNoite: 6,
+    noite: 3, // Added noite
+    manhaTarde: 4, // Adjusted order
+    tardeNoite: 5, // Added tardeNoite
+    manhaNoite: 6, // Added manhaNoite
   };
 
-  // Sort the grouped entries based on date and then period
   groupedEntries.sort((a, b) => {
-    // 1. Compare by date (chronologically)
     if (a.dia < b.dia) return -1;
     if (a.dia > b.dia) return 1;
-
-    // 2. If dates are the same, compare by period order
     if (periodOrder[a.periodo] < periodOrder[b.periodo]) return -1;
     if (periodOrder[a.periodo] > periodOrder[b.periodo]) return 1;
-
-    // If date and period are the same, consider them equal for sorting
     return 0;
   });
 
-  // Return the sorted array of processed schedule entries
   return groupedEntries;
 }
 
+// Type for split times across different periods
+type SplitTimes = {
+  manha?: string;
+  tarde?: string;
+  noite?: string;
+};
+
+// Updated function to handle new periods and split times
 function substituirOcorrencias(
   texto: string,
   instrutor: string,
   data: string,
-  hora: string,
-  periodo: "manha" | "tarde" | "manhaTarde",
-  fixManhaTardeHora?: { horario_manha: string; horario_tarde: string }
+  periodo: Exclude<Period, "nenhum">,
+  splitTimes: SplitTimes
 ): string {
+  // Check which periods are included
+  const includesManha = periodo.includes("manha");
+  const includesTarde =
+    periodo.includes("tarde") || periodo.includes("manhaTarde");
+  const includesNoite =
+    periodo.includes("noite") ||
+    periodo.includes("manhaNoite") ||
+    periodo.includes("tardeNoite");
+
   const patterns = {
     "\\[pi\\]": () => `${++contador.pi}`,
     "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
@@ -269,31 +259,21 @@ function substituirOcorrencias(
     "\\[p_codigo\\]": () => `[p_codigo${++contador.p_codigo}]`,
     "\\[instrutor\\]": () => `[${instrutor}]`,
     "\\[data_frequencia\\]": () => data,
-    "\\[manha\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde" ? "MANHÃ" : "",
-    "\\[tarde\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde" ? "TARDE" : "",
-    "\\[manha_h\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde"
-        ? fixManhaTardeHora
-          ? fixManhaTardeHora.horario_manha
-          : hora
-        : "",
-    "\\[tarde_h\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde"
-        ? fixManhaTardeHora
-          ? fixManhaTardeHora.horario_tarde
-          : hora
-        : "",
-
+    // Period labels
+    "\\[manha\\]": () => (includesManha ? "MANHÃ" : ""),
+    "\\[tarde\\]": () => (includesTarde ? "TARDE" : ""),
+    "\\[noite\\]": () => (includesNoite ? "NOITE" : ""), // Added noite label
+    // Period hours
+    "\\[manha_h\\]": () => (includesManha ? splitTimes.manha || "" : ""),
+    "\\[tarde_h\\]": () => (includesTarde ? splitTimes.tarde || "" : ""),
+    "\\[noite_h\\]": () => (includesNoite ? splitTimes.noite || "" : ""), // Added noite hours
+    // Participant period placeholders
     "\\[p_manha\\]": () =>
-      periodo === "manha" || periodo === "manhaTarde"
-        ? `[p_manha${++contador.p_manha}]`
-        : "",
+      includesManha ? `[p_manha${++contador.p_manha}]` : "",
     "\\[p_tarde\\]": () =>
-      periodo === "tarde" || periodo === "manhaTarde"
-        ? `[p_tarde${++contador.p_tarde}]`
-        : "",
+      includesTarde ? `[p_tarde${++contador.p_tarde}]` : "",
+    "\\[p_noite\\]": () =>
+      includesNoite ? `[p_noite${++contador.p_noite}]` : "", // Added noite participant placeholder
   };
 
   const contador = {
@@ -303,6 +283,7 @@ function substituirOcorrencias(
     p_codigo: 0,
     p_manha: 0,
     p_tarde: 0,
+    p_noite: 0, // Added p_noite counter
   };
 
   return Object.entries(patterns).reduce(
@@ -313,76 +294,107 @@ function substituirOcorrencias(
 }
 
 type TabelaXML = {
-  tipo: "manha" | "tarde" | "manhaTarde";
+  tipo: Exclude<Period, "nenhum">;
 };
 
+// Updated function to fetch templates for new periods
 async function lerTabelaXml({ tipo }: TabelaXML) {
   if (tipo === "manhaTarde") {
-    // const response = await fetch(
-    //   "/templates/identificacao-participante/tabela-double.xml"
-    // );
-    // return await response.text();
     return TABLE_DOUBLE_PERIOD;
+  } else if (tipo === "tardeNoite") {
+    return TABLE_DOUBLE_TARDE_NOITE;
+  } else if (tipo === "manhaNoite") {
+    return TABLE_DOUBLE_MANHA_NOITE;
   } else if (tipo === "manha") {
     const response = await fetch(
       "/templates/identificacao-participante/tabela-single-manha.xml"
     );
     return await response.text();
-  } else {
+  } else if (tipo === "tarde") {
     const response = await fetch(
       "/templates/identificacao-participante/tabela-single-tarde.xml"
     );
     return await response.text();
+  } else if (tipo === "noite") {
+    // Fetch template for 'noite' period
+    const response = await fetch(
+      "/templates/identificacao-participante/tabela-single-noite.xml" // Assuming this template exists
+    );
+    return await response.text();
+  } else {
+    // Fallback or error handling for unexpected period types
+    console.error("Tipo de tabela XML não reconhecido:", tipo);
+    // Return a default or throw an error
+    return ""; // Or throw new Error(`Tipo de tabela XML não suportado: ${tipo}`);
   }
 }
 
+// Updated function to calculate split times and format pages
 async function formatarPaginas(pages: SortedScheduleEntry[]) {
   let newXmlPages = "";
 
   for (const day of pages) {
     const formattedDate = day.dia.split("-").reverse().join("/");
+    const [startTime, endTime] = day.horario.split(" ÀS ");
+    const intervalStart = day.intervalo?.split(" ÀS ")[0];
+    const intervalEnd = day.intervalo?.split(" ÀS ")[1];
 
-    let fixManhaTardeHora = undefined;
-
-    if (day.periodo === "manhaTarde") {
-      fixManhaTardeHora = {
-        horario_manha: `${day.horario.split(" ÀS ")[0]} ÀS ${
-          day.intervalo?.split(" ÀS ")[0]
-        }`,
-        horario_tarde: `${day.intervalo?.split(" ÀS ")[1]} ÀS ${
-          day.horario.split(" ÀS ")[1]
-        }`,
-      };
+    // Calculate split times based on period
+    const splitTimes: SplitTimes = {};
+    switch (day.periodo) {
+      case "manha":
+        splitTimes.manha = day.horario;
+        break;
+      case "tarde":
+        splitTimes.tarde = day.horario;
+        break;
+      case "noite":
+        splitTimes.noite = day.horario;
+        break;
+      case "manhaTarde":
+        // Use interval if available, otherwise split at 12:00
+        splitTimes.manha = `${startTime} ÀS ${intervalStart || "12:00"}`;
+        splitTimes.tarde = `${intervalEnd || "12:00"} ÀS ${endTime}`;
+        break;
+      case "tardeNoite":
+        // Split at 18:00
+        splitTimes.tarde = `${startTime} ÀS 18:00`;
+        splitTimes.noite = `18:00 ÀS ${endTime}`;
+        break;
+      case "manhaNoite":
+        // Split at 12:00 and 18:00, potentially using interval for manha/tarde split
+        splitTimes.manha = `${startTime} ÀS ${intervalStart || "12:00"}`;
+        // Tarde might be skipped if interval covers 12-18h, or split
+        // Simple approach: assume tarde exists between interval/12h and 18h
+        splitTimes.tarde = `${intervalEnd || "12:00"} ÀS 18:00`;
+        splitTimes.noite = `18:00 ÀS ${endTime}`;
+        // Refinement needed here if interval spans across 18:00 or is complex
+        break;
     }
-    // Process instructor A for this day if applicable
+
+    // Process instructor A
     if (day.instrutorA) {
-      const tabelaXml = await lerTabelaXml({
-        tipo: day.periodo as "manha" | "tarde" | "manhaTarde",
-      });
+      const tabelaXml = await lerTabelaXml({ tipo: day.periodo });
       const repetition = tabelaXml.repeat(day.paginas);
       newXmlPages += substituirOcorrencias(
         repetition,
         "instrutor_a",
         formattedDate,
-        day.horario,
-        day.periodo as "manha" | "tarde" | "manhaTarde",
-        fixManhaTardeHora
+        day.periodo,
+        splitTimes
       );
     }
 
-    // Process instructor B for this day if applicable
+    // Process instructor B
     if (day.instrutorB) {
-      const tabelaXml = await lerTabelaXml({
-        tipo: day.periodo as "manha" | "tarde" | "manhaTarde",
-      });
+      const tabelaXml = await lerTabelaXml({ tipo: day.periodo });
       const repetition = tabelaXml.repeat(day.paginas);
       newXmlPages += substituirOcorrencias(
         repetition,
         "instrutor_b",
         formattedDate,
-        day.horario,
-        day.periodo as "manha" | "tarde" | "manhaTarde",
-        fixManhaTardeHora
+        day.periodo,
+        splitTimes
       );
     }
   }
