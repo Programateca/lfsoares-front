@@ -538,6 +538,10 @@ export const Identificadores = () => {
         const dateKey = item.date;
         const instrutorAPeriodo = data.instrutorA?.[dateKey]?.periodo;
         const instrutorBPeriodo = data.instrutorB?.[dateKey]?.periodo;
+        if (!instrutorAPeriodo && !instrutorBPeriodo) {
+          throw new Error("Nenhum periodo selecionado para o dia");
+        }
+
         const hasBreak =
           item.intervalStart !== "N/A" && item.intervalEnd !== "N/A";
 
@@ -547,7 +551,12 @@ export const Identificadores = () => {
 
         // Case 1: Split day if break exists and different instructors for morning/afternoon
         if (hasBreak) {
-          if (instrutorAPeriodo === "manha" && instrutorBPeriodo === "tarde") {
+          // Case 1a: Split day with break - A morning, B afternoon
+          if (
+            (instrutorAPeriodo === "manha" && instrutorBPeriodo === "tarde") ||
+            (instrutorAPeriodo === "manha" && instrutorBPeriodo === "noite") ||
+            (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "noite")
+          ) {
             return [
               {
                 ...item,
@@ -567,7 +576,11 @@ export const Identificadores = () => {
               },
             ];
           }
-          if (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "manha") {
+          // Case 1b: Split day with break - B morning, A afternoon
+          if (
+            (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "manha") ||
+            (instrutorAPeriodo === "noite" && instrutorBPeriodo === "tarde")
+          ) {
             return [
               {
                 ...item,
@@ -587,45 +600,60 @@ export const Identificadores = () => {
               },
             ];
           }
+          // Note: Night period is not typically split by a midday break in this logic.
+          // If other break types exist (e.g., evening break), more complex logic is needed.
         }
 
-        // Case 2: Full day or same instructor for split periods
+        // Case 2: Full day, combined periods, single periods, or default
         const resultItem: CourseDate & {
           instrutor?: string;
           instrutorA?: boolean;
           instrutorB?: boolean;
         } = { ...item };
 
-        if (instrutorAPeriodo === "manhaTarde") {
+        // Check combined periods first (A takes precedence if both have combined)
+        if (
+          instrutorAPeriodo === "manhaTarde" ||
+          instrutorAPeriodo === "manhaNoite" ||
+          instrutorAPeriodo === "tardeNoite"
+        ) {
           resultItem.instrutor = instrutoresSelecionados.instrutorA;
           resultItem.instrutorA = true;
           resultItem.instrutorB = false;
-        } else if (instrutorBPeriodo === "manhaTarde") {
+        } else if (
+          instrutorBPeriodo === "manhaTarde" ||
+          instrutorBPeriodo === "manhaNoite" ||
+          instrutorBPeriodo === "tardeNoite"
+        ) {
           resultItem.instrutor = instrutoresSelecionados.instrutorB;
           resultItem.instrutorA = false;
           resultItem.instrutorB = true;
-        } else if (
+        }
+        // Check single periods if no combined period was assigned (A takes precedence)
+        else if (
           instrutorAPeriodo === "manha" ||
-          instrutorAPeriodo === "tarde"
+          instrutorAPeriodo === "tarde" ||
+          instrutorAPeriodo === "noite"
         ) {
           resultItem.instrutor = instrutoresSelecionados.instrutorA;
           resultItem.instrutorA = true;
           resultItem.instrutorB = false; // Ensure B is false if A is assigned
         } else if (
           instrutorBPeriodo === "manha" ||
-          instrutorBPeriodo === "tarde"
+          instrutorBPeriodo === "tarde" ||
+          instrutorBPeriodo === "noite"
         ) {
           resultItem.instrutor = instrutoresSelecionados.instrutorB;
           resultItem.instrutorA = false; // Ensure A is false if B is assigned
           resultItem.instrutorB = true;
         } else {
-          // Default case (both 'nenhum' or only one selected without split logic applying)
+          // Default case (both 'nenhum' or no specific assignment)
           if (defaultInstrutor) {
             resultItem.instrutor = defaultInstrutor.name;
             resultItem.instrutorA = true; // Default to A if no specific assignment
             resultItem.instrutorB = false;
           } else {
-            // Handle case where default instructor isn't found, maybe throw error or assign placeholder
+            // Handle case where default instructor isn't found
             console.error("Default instructor not found!");
             resultItem.instrutor = "Instrutor Padrão Não Encontrado";
             resultItem.instrutorA = true;
@@ -659,6 +687,8 @@ export const Identificadores = () => {
       })[],
     };
 
+    console.log("selectedEvento?.courseDate", selectedEvento?.courseDate);
+
     const newIdentificador: Partial<IdentificadorData> = {
       treinamento: selectedEvento.treinamento.name,
       identificadorData: JSON.stringify(dataGerador),
@@ -667,16 +697,16 @@ export const Identificadores = () => {
 
     // // FOR DEBUG
 
-    // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    // gerarIdentificador(
-    //   {
-    //     ...(dataGerador as any),
-    //     id_code: "teste",
-    //   },
-    //   dataGerador.instrutorDates,
-    //   dataGerador.numeroParticipantes
-    // );
-    // return;
+    console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    gerarIdentificador(
+      {
+        ...(dataGerador as any),
+        id_code: "teste",
+      },
+      dataGerador.instrutorDates,
+      dataGerador.numeroParticipantes
+    );
+    return;
 
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
