@@ -106,7 +106,7 @@ async function generateAndSaveDocument(
   );
   const countRemovedPages = maxPages - requiredPages;
 
-  const fileArrayBuffer = await loadFile(`/templates/${tipo}.docx`);
+  const fileArrayBuffer = await loadFile(`/templates/lista/${tipo}.docx`);
   const zip = new PizZip(fileArrayBuffer);
 
   await removeElementsFromDocx(
@@ -180,7 +180,7 @@ async function removeElementsFromDocx(
   removalTcLimit: number
 ) {
   // Lê o arquivo DOCX e descompacta-o
-  // const fileArrayBuffer = await loadFile("/templates/lista-meio-periodo.docx");
+  // const fileArrayBuffer = await loadFile("/templates/lista/lista-meio-periodo.docx");
   // const zip = new PizZip(fileArrayBuffer);
 
   // Carrega e parseia o document.xml

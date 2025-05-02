@@ -36,7 +36,7 @@ export async function gerarIdentificador(
     const MAIN_XML_TAG = "<!-- TABLE -->";
 
     const DOCX_TEMPLATE_BUFFER = await loadFile(
-      "/templates/identificacao-do-participante-nova.docx"
+      "/templates/identificador/identificacao-do-participante-nova.docx"
     );
     // Select the appropriate template based on content length
     const templateFileName =
@@ -45,12 +45,10 @@ export async function gerarIdentificador(
         : "document-3colunas.xml";
 
     const MAIN_XML = await fetch(
-      `/templates/identificacao-participante/${templateFileName}`
+      `/templates/identificador/${templateFileName}`
     );
 
-    const HEADER3_XML = await fetch(
-      `/templates/identificacao-participante/header3.xml`
-    );
+    const HEADER3_XML = await fetch(`/templates/identificador/header3.xml`);
 
     const MAIN_XML_CONTENT = await MAIN_XML.text();
     const HEADER3_XML_CONTENT = await HEADER3_XML.text();
@@ -307,18 +305,18 @@ async function lerTabelaXml({ tipo }: TabelaXML) {
     return TABLE_DOUBLE_MANHA_NOITE;
   } else if (tipo === "manha") {
     const response = await fetch(
-      "/templates/identificacao-participante/tabela-single-manha.xml"
+      "/templates/identificador/tabela-single-manha.xml"
     );
     return await response.text();
   } else if (tipo === "tarde") {
     const response = await fetch(
-      "/templates/identificacao-participante/tabela-single-tarde.xml"
+      "/templates/identificador/tabela-single-tarde.xml"
     );
     return await response.text();
   } else if (tipo === "noite") {
     // Fetch template for 'noite' period
     const response = await fetch(
-      "/templates/identificacao-participante/tabela-single-noite.xml" // Assuming this template exists
+      "/templates/identificador/tabela-single-noite.xml" // Assuming this template exists
     );
     return await response.text();
   } else {

@@ -163,6 +163,11 @@ const ListaPresenca = () => {
         }),
       };
 
+      // FOR DEBUG
+
+      const listaData = JSON.parse(newLista.documentData);
+      gerarLista(listaData, listaData.tipo_lista);
+
       const result = await api.post("documentos", newLista).catch((error) => {
         console.error(error);
         toast.error("Erro ao gerar lista de presença");
