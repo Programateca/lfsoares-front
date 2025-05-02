@@ -217,39 +217,76 @@ export const Identificadores = () => {
   ) => {
     const { date, start, end } = JSON.parse(dayStr);
     const other = instructor === "instrutorA" ? "instrutorB" : "instrutorA";
-    const canMorning = start < "12:00";
-    const canAfternoon = end > "12:00";
+    const canMorning = start < "12:00" && end > "05:00";
+    const canAfternoon = end > "12:00" && start < "18:00";
+    const canNight = end > "18:00" && start < "23:00";
 
     // Só manhã
-    if (canMorning && !canAfternoon) {
+    if (canMorning && !canAfternoon && !canNight) {
       setValue(`${instructor}.${date}.periodo`, "manha");
       setValue(`${other}.${date}.periodo`, "nenhum");
       return;
     }
     // Só tarde
-    if (!canMorning && canAfternoon) {
+    if (!canMorning && canAfternoon && !canNight) {
       setValue(`${instructor}.${date}.periodo`, "tarde");
       setValue(`${other}.${date}.periodo`, "nenhum");
       return;
     }
+
+    // Só noite
+    if (!canMorning && !canAfternoon && canNight) {
+      setValue(`${instructor}.${date}.periodo`, "noite");
+      setValue(`${other}.${date}.periodo`, "nenhum");
+      return;
+    }
+
     // Dia completo
-    if (value === "manhaTarde") {
+    if (value === "manhaTarde" && canMorning && canAfternoon) {
       setValue(`${instructor}.${date}.periodo`, "manhaTarde");
       setValue(`${other}.${date}.periodo`, "nenhum");
       return;
     }
+
+    if (value === "manhaNoite" && canMorning && canNight) {
+      setValue(`${instructor}.${date}.periodo`, "manhaNoite");
+      setValue(`${other}.${date}.periodo`, "nenhum");
+      return;
+    }
+
+    if (value === "tardeNoite" && canAfternoon && canNight) {
+      setValue(`${instructor}.${date}.periodo`, "tardeNoite");
+      setValue(`${other}.${date}.periodo`, "nenhum");
+      return;
+    }
+
     setValue(`${instructor}.${date}.periodo`, value);
     if (value === "nenhum") return;
 
     const otherValue = getValues(`${other}.${date}.periodo`);
     if (otherValue === "nenhum") return;
 
-    const complementary = value === "manha" ? "tarde" : "manha";
-    if (otherValue !== complementary) {
+    const complementary = getComplementaryPeriod(value);
+    if (otherValue !== complementary && complementary !== null) {
       setValue(`${other}.${date}.periodo`, complementary);
     }
   };
-
+  function getComplementaryPeriod(value: Period): Period | null {
+    switch (value) {
+      case "manha":
+        return "tarde";
+      case "tarde":
+        return "manha";
+      case "noite":
+        return null;
+      case "manhaTarde":
+      case "manhaNoite":
+      case "tardeNoite":
+        return "nenhum"; // combinado: outro instrutor não atua
+      default:
+        return null;
+    }
+  }
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const novoTexto = e.target.value;
 
@@ -940,8 +977,9 @@ export const Identificadores = () => {
                     const parsedDay = JSON.parse(day);
                     const { start, end } = parsedDay;
 
-                    const supportsMorning = start < "12:00";
-                    const supportsAfternoon = end > "12:00";
+                    const supportsMorning = start < "12:00" && end > "06:00";
+                    const supportsAfternoon = start < "18:00" && end > "12:00";
+                    const supportsNight = start < "23:59" && end > "18:00";
 
                     return (
                       <div key={index} className="border p-4 w-full rounded">
@@ -990,16 +1028,30 @@ export const Identificadores = () => {
                                           Manhã
                                         </SelectItem>
                                       )}
-
                                       {supportsAfternoon && (
                                         <SelectItem value="tarde">
                                           Tarde
+                                        </SelectItem>
+                                      )}
+                                      {supportsNight && (
+                                        <SelectItem value="noite">
+                                          Noite
                                         </SelectItem>
                                       )}
 
                                       {supportsMorning && supportsAfternoon && (
                                         <SelectItem value="manhaTarde">
                                           Manhã e Tarde
+                                        </SelectItem>
+                                      )}
+                                      {supportsMorning && supportsNight && (
+                                        <SelectItem value="manhaNoite">
+                                          Manhã e Noite
+                                        </SelectItem>
+                                      )}
+                                      {supportsAfternoon && supportsNight && (
+                                        <SelectItem value="tardeNoite">
+                                          Tarde e Noite
                                         </SelectItem>
                                       )}
                                     </SelectGroup>
@@ -1046,16 +1098,30 @@ export const Identificadores = () => {
                                           Manhã
                                         </SelectItem>
                                       )}
-
                                       {supportsAfternoon && (
                                         <SelectItem value="tarde">
                                           Tarde
+                                        </SelectItem>
+                                      )}
+                                      {supportsNight && (
+                                        <SelectItem value="noite">
+                                          Noite
                                         </SelectItem>
                                       )}
 
                                       {supportsMorning && supportsAfternoon && (
                                         <SelectItem value="manhaTarde">
                                           Manhã e Tarde
+                                        </SelectItem>
+                                      )}
+                                      {supportsMorning && supportsNight && (
+                                        <SelectItem value="manhaNoite">
+                                          Manhã e Noite
+                                        </SelectItem>
+                                      )}
+                                      {supportsAfternoon && supportsNight && (
+                                        <SelectItem value="tardeNoite">
+                                          Tarde e Noite
                                         </SelectItem>
                                       )}
                                     </SelectGroup>

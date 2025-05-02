@@ -8,7 +8,14 @@ import type { Identificador } from "@/@types/Identificador";
 import { CourseDate } from "@/components/Identificadores";
 import { TABLE_DOUBLE_PERIOD } from "./constant-xml-data";
 
-export type Period = "manha" | "tarde" | "manhaTarde" | "nenhum";
+export type Period =
+  | "nenhum"
+  | "manha"
+  | "tarde"
+  | "noite"
+  | "manhaTarde"
+  | "manhaNoite"
+  | "tardeNoite";
 
 type PagesData = CourseDate & {
   instrutor?: string;
@@ -223,7 +230,10 @@ function sortData(
   const periodOrder: Record<Exclude<Period, "nenhum">, number> = {
     manha: 1,
     tarde: 2,
-    manhaTarde: 3, // 'manhaTarde' comes after 'tarde'
+    manhaTarde: 3,
+    noite: 4,
+    manhaNoite: 5,
+    tardeNoite: 6,
   };
 
   // Sort the grouped entries based on date and then period
