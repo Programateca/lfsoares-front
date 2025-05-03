@@ -211,8 +211,8 @@ function sortData(
     tarde: 2,
     noite: 3, // Added noite
     manhaTarde: 4, // Adjusted order
-    tardeNoite: 5, // Added tardeNoite
-    manhaNoite: 6, // Added manhaNoite
+    manhaNoite: 5, // Added manhaNoite
+    tardeNoite: 6, // Added tardeNoite
   };
 
   groupedEntries.sort((a, b) => {
