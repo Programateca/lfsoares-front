@@ -6,8 +6,8 @@ export interface ListaData {
   nome2: string;
   manha_horario: string;
   tarde_horario: string;
-  mudar_modulo: string;
-  mudar_horarios: string;
+  modulo: string;
+  horarios: string;
   id_data: string;
   responsavel_tecnico: string;
   p_nome1: string;

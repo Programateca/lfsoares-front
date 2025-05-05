@@ -114,9 +114,9 @@ const ListaPresenca = () => {
         tipo: dataIdentificador.tipo,
         carga_horaria: `${dataIdentificador.carga_horaria}`,
         datas: dataIdentificador.datas,
-        horario: dataIdentificador.mudar_horarios,
+        horario: dataIdentificador.horarios,
         intervalo: dataIdentificador.intervalo,
-        modulo: dataIdentificador.mudar_modulo,
+        modulo: dataIdentificador.modulo,
         endereco: selectedEvento?.courseLocation2
           ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
           : selectedEvento?.courseLocation || "",
@@ -164,9 +164,11 @@ const ListaPresenca = () => {
       };
 
       // FOR DEBUG
-
-      const listaData = JSON.parse(newLista.documentData);
-      gerarLista(listaData, listaData.tipo_lista);
+      // const listaData = JSON.parse(newLista.documentData);
+      // console.log("LISTA DATA", listaData);
+      // gerarLista({ listaData });
+      // return;
+      // ----
 
       const result = await api.post("documentos", newLista).catch((error) => {
         console.error(error);
@@ -247,7 +249,7 @@ const ListaPresenca = () => {
       (documento: { id: string }) => documento.id === documentoId
     );
     const data = JSON.parse(documentoFiltrado.documentData);
-    gerarLista(data, data.tipo_lista);
+    gerarLista({ listaData: data });
   };
 
   // Função de ordenação
