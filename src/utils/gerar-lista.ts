@@ -58,9 +58,7 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
       throw new Error("TAG_NAME não encontrada no XML principal");
     }
 
-    console.log("listaData.datasObject", listaData.datasObject);
     const formattedDates = formatDates(listaData.datasObject);
-    console.log("formattedDates", formattedDates);
 
     // INSTRUTOR A
     if (formattedDates.instrutorA.length) {
