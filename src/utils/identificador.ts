@@ -31,8 +31,10 @@ export async function gerarIdentificador(
   pages: PagesData[],
   numeroParticipantes: number
 ) {
+  console.log("instrutorDates", docData.instrutorDates);
   try {
     const formattedPages = sortData(pages, numeroParticipantes);
+    console.log("formattedPages", formattedPages);
     const MAIN_XML_TAG = "<!-- TABLE -->";
 
     const DOCX_TEMPLATE_BUFFER = await loadFile(
@@ -241,6 +243,7 @@ function substituirOcorrencias(
   periodo: Exclude<Period, "nenhum">,
   splitTimes: SplitTimes
 ): string {
+  console.log("splitTimes", splitTimes);
   // Check which periods are included
   const includesManha = periodo.includes("manha");
   const includesTarde =
@@ -351,22 +354,17 @@ async function formatarPaginas(pages: SortedScheduleEntry[]) {
         break;
       case "manhaTarde":
         // Use interval if available, otherwise split at 12:00
-        splitTimes.manha = `${startTime} ÀS ${intervalStart || "12:00"}`;
-        splitTimes.tarde = `${intervalEnd || "12:00"} ÀS ${endTime}`;
+        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.tarde = `${intervalEnd} ÀS ${endTime}`;
         break;
       case "tardeNoite":
         // Split at 18:00
-        splitTimes.tarde = `${startTime} ÀS 18:00`;
-        splitTimes.noite = `18:00 ÀS ${endTime}`;
+        splitTimes.tarde = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
         break;
       case "manhaNoite":
-        // Split at 12:00 and 18:00, potentially using interval for manha/tarde split
-        splitTimes.manha = `${startTime} ÀS ${intervalStart || "12:00"}`;
-        // Tarde might be skipped if interval covers 12-18h, or split
-        // Simple approach: assume tarde exists between interval/12h and 18h
-        splitTimes.tarde = `${intervalEnd || "12:00"} ÀS 18:00`;
-        splitTimes.noite = `18:00 ÀS ${endTime}`;
-        // Refinement needed here if interval spans across 18:00 or is complex
+        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
         break;
     }
 
