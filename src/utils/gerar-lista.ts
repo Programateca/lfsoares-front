@@ -65,7 +65,10 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
     // INSTRUTOR A
     if (formattedDates.instrutorA.length) {
       const documentA = DOCUMENT_XML.split(TAG_NAME).join(
-        makeTables(formattedDates.instrutorA, TOTAL_PARTICIPANTS)
+        removerUltimaOcorrencia(
+          makeTables(formattedDates.instrutorA, TOTAL_PARTICIPANTS),
+          BREAK_PAGE_XML
+        )
       );
 
       await saveAndRenderFile({
@@ -79,7 +82,10 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
     // INSTRUTOR B
     if (formattedDates.instrutorB.length) {
       const documentB = DOCUMENT_XML.split(TAG_NAME).join(
-        makeTables(formattedDates.instrutorB, TOTAL_PARTICIPANTS)
+        removerUltimaOcorrencia(
+          makeTables(formattedDates.instrutorB, TOTAL_PARTICIPANTS),
+          BREAK_PAGE_XML
+        )
       );
       await saveAndRenderFile({
         listaData,
@@ -99,23 +105,11 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
 function makeTables(data: FormattedDateResult[], participantsCount: number) {
   const pagesNumber = Math.ceil(participantsCount / 5);
   return data
-    .map((item, index) => {
+    .map((item) => {
       if (item.intervalStart) {
-        if (data.length === index + 1) {
-          return substituirOcorrencias(TABLE_DIA_TODO.repeat(pagesNumber), item)
-            .split(BREAK_PAGE_XML)
-            .join("");
-        }
         return substituirOcorrencias(TABLE_DIA_TODO.repeat(pagesNumber), item);
       }
-      if (data.length === index + 1) {
-        return substituirOcorrencias(
-          TABLE_MEIO_PERIODO.repeat(pagesNumber),
-          item
-        )
-          .split(BREAK_PAGE_XML)
-          .join("");
-      }
+
       return substituirOcorrencias(
         TABLE_MEIO_PERIODO.repeat(pagesNumber),
         item
@@ -439,4 +433,22 @@ async function saveAndRenderFile({
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   });
   saveAs(out, outputFileName);
+}
+
+function removerUltimaOcorrencia(texto: string, padrao: string): string {
+  const ultimoIndice = texto.lastIndexOf(padrao);
+
+  if (ultimoIndice === -1) {
+    // O padrão não foi encontrado, retorna o texto original
+    return texto;
+  }
+
+  // Extrai a parte da string antes da última ocorrência
+  const parteAnterior = texto.slice(0, ultimoIndice);
+
+  // Extrai a parte da string depois da última ocorrência
+  const partePosterior = texto.slice(ultimoIndice + padrao.length);
+
+  // Combina as partes para formar a nova string sem a última ocorrência
+  return parteAnterior + partePosterior;
 }
