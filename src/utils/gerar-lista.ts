@@ -58,8 +58,9 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
       throw new Error("TAG_NAME não encontrada no XML principal");
     }
 
+    console.log("listaData.datasObject", listaData.datasObject);
     const formattedDates = formatDates(listaData.datasObject);
-    // console.log(formattedDates);
+    console.log("formattedDates", formattedDates);
 
     // INSTRUTOR A
     if (formattedDates.instrutorA.length) {
@@ -212,7 +213,7 @@ function substituirOcorrencias(
 function determinePeriodo(
   start: string,
   end: string
-): "manha" | "tarde" | "dia-todo" | "indefinido" {
+): "manha" | "tarde" | "dia-todo" | "noite" | "indefinido" {
   // Basic validation
   if (!start || !end || !start.includes(":") || !end.includes(":")) {
     return "indefinido";
@@ -228,21 +229,23 @@ function determinePeriodo(
   // Define time boundaries (adjust if needed)
   const morningEndHour = 12;
   const afternoonStartHour = 13; // Assuming interval is 12-13
+  const nightStartHour = 18; // Assuming night starts at 18:00
+  const nightEndHour = 6; // Assuming night ends at 24:00
 
   const startsInMorning = startHour < morningEndHour;
-  const endsInAfternoon = endHour >= afternoonStartHour; // Use >= to include times ending exactly at the start of the afternoon or later
-  const startsInAfternoon = startHour >= afternoonStartHour;
+  const startsInAfternoon =
+    startHour >= afternoonStartHour && startHour < nightStartHour; // Covers afternoon hours
+  const endsInNight = endHour >= nightStartHour || endHour < nightEndHour; // Covers night hours
 
   // Check for full day spanning morning and afternoon
-  if (startsInMorning && endsInAfternoon) {
-    // Example: 08:00 - 17:00
-    return "dia-todo";
-  } else if (startsInMorning && endHour <= morningEndHour) {
+  if (startsInMorning && endHour <= morningEndHour) {
     // Example: 08:00 - 12:00
     return "manha";
   } else if (startsInAfternoon) {
     // Example: 13:00 - 17:00
     return "tarde";
+  } else if (endsInNight) {
+    return "noite";
   } else {
     // Covers edge cases or times strictly within the typical lunch break, etc.
     // Or could indicate an error in data.
@@ -266,7 +269,7 @@ function formatDates(dates: DatasObject[]) {
     return acc;
   }, {} as Record<string, DatasObject[]>);
 
-  const results = [];
+  const results: FormattedDateResult[] = [];
 
   // 2. Process each date group
   for (const date in groupedByDate) {
@@ -275,15 +278,15 @@ function formatDates(dates: DatasObject[]) {
     if (dailyEntries.length === 1) {
       // Case 1: Single entry for the day
       const entry = dailyEntries[0];
-      const periodo = determinePeriodo(entry.start, entry.end);
 
-      // Keep interval only if it's a standard full day (e.g., 8-17)
-      // Adjust this condition based on the precise definition of a "full day"
-      const isStandardFullDay =
-        entry.start === "08:00" && entry.end === "17:00";
-
-      if (isStandardFullDay && periodo === "dia-todo") {
-        // Full day, single instructor, keep interval
+      // If intervalStart and intervalEnd are provided in the input,
+      // it's a split session for a single instructor. Keep the interval
+      // and classify as "dia-todo".
+      if (
+        entry.intervalStart &&
+        entry.intervalEnd &&
+        entry.intervalStart !== "N/A"
+      ) {
         results.push({
           date: entry.date,
           start: entry.start,
@@ -293,10 +296,12 @@ function formatDates(dates: DatasObject[]) {
           instrutor: entry.instrutor,
           instrutorA: entry.instrutorA,
           instrutorB: entry.instrutorB,
-          periodo: "dia-todo",
+          periodo: "dia-todo", // Mark as "dia-todo" for entries with an interval
         });
       } else {
-        // Partial day or non-standard full day, remove interval
+        // No interval provided in the input, or one is missing.
+        // Treat as a continuous block and determine periodo normally.
+        const periodo = determinePeriodo(entry.start, entry.end);
         results.push({
           date: entry.date,
           start: entry.start,
@@ -305,7 +310,7 @@ function formatDates(dates: DatasObject[]) {
           instrutor: entry.instrutor,
           instrutorA: entry.instrutorA,
           instrutorB: entry.instrutorB,
-          periodo: periodo, // Use determined periodo ('manha', 'tarde', 'indefinido')
+          periodo: periodo,
         });
       }
     } else if (dailyEntries.length === 2) {
@@ -319,7 +324,7 @@ function formatDates(dates: DatasObject[]) {
           date: entry1.date,
           start: entry1.start, // Start of the first period
           end: entry2.end, // End of the second period
-          intervalStart: entry1.intervalStart, // Keep interval (assuming consistent)
+          intervalStart: entry1.intervalStart, // Keep interval (assuming consistent or from first part)
           intervalEnd: entry1.intervalEnd,
           instrutor: entry1.instrutor,
           instrutorA: entry1.instrutorA,
@@ -328,7 +333,7 @@ function formatDates(dates: DatasObject[]) {
         });
       } else {
         // Different instructors: Create two separate entries, remove interval
-        // Entry 1 (Morning)
+        // Entry 1
         results.push({
           date: entry1.date,
           start: entry1.start,
@@ -337,9 +342,9 @@ function formatDates(dates: DatasObject[]) {
           instrutor: entry1.instrutor,
           instrutorA: entry1.instrutorA,
           instrutorB: entry1.instrutorB,
-          periodo: determinePeriodo(entry1.start, entry1.end), // Should be 'manha'
+          periodo: determinePeriodo(entry1.start, entry1.end),
         });
-        // Entry 2 (Afternoon)
+        // Entry 2
         results.push({
           date: entry2.date,
           start: entry2.start,
@@ -348,7 +353,7 @@ function formatDates(dates: DatasObject[]) {
           instrutor: entry2.instrutor,
           instrutorA: entry2.instrutorA,
           instrutorB: entry2.instrutorB,
-          periodo: determinePeriodo(entry2.start, entry2.end), // Should be 'tarde'
+          periodo: determinePeriodo(entry2.start, entry2.end),
         });
       }
     }
@@ -386,22 +391,20 @@ function formatDates(dates: DatasObject[]) {
     instrutorB: FormattedDateResult[];
   };
 
-  const separaPorInstrutor = results.reduce<SeparatedResults[]>(
-    (acc, item) => {
-      const { instrutorA, instrutorB } = item;
-      if (instrutorA) {
-        // Ensure item matches the expected type if necessary, though TS should handle the union
-        acc[0].instrutorA.push(item as FormattedDateResult);
-      }
-      if (instrutorB) {
-        acc[0].instrutorB.push(item as FormattedDateResult);
-      }
-      return acc;
-    },
-    [{ instrutorA: [], instrutorB: [] }] // Initial value matches the accumulator type
-  );
+  // Initialize accumulator with the correct structure
+  const initialAcc: SeparatedResults = { instrutorA: [], instrutorB: [] };
 
-  return separaPorInstrutor[0];
+  const separaPorInstrutor = results.reduce<SeparatedResults>((acc, item) => {
+    if (item.instrutorA) {
+      acc.instrutorA.push(item);
+    }
+    if (item.instrutorB) {
+      acc.instrutorB.push(item);
+    }
+    return acc;
+  }, initialAcc);
+
+  return separaPorInstrutor;
 }
 
 async function saveAndRenderFile({
