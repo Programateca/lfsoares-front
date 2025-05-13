@@ -419,8 +419,7 @@ export const Identificadores = () => {
     courseDateItens.forEach((item) => {
       if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
         intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
-        horariosSet.add(`${item.start} ÀS ${item.intervalStart}`);
-        horariosSet.add(`${item.intervalEnd} ÀS ${item.end}`);
+        horariosSet.add(`${item.start} ÀS ${item.end}`);
       } else {
         horariosSet.add(`${item.start} ÀS ${item.end}`);
       }
