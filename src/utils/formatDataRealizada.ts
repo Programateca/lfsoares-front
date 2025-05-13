@@ -85,8 +85,13 @@ export function formatDataRealizada(datasRealizada: string[]): string {
   function fmtGroup(g: Group): string {
     const daysText =
       g.days.length > 1
-        ? g.days.slice(0, -1).join(", ") + " e " + g.days[g.days.length - 1]
-        : `${g.days[0]}`;
+        ? g.days
+            .slice(0, -1)
+            .map((day) => day.toString().padStart(2, "0"))
+            .join(", ") +
+          " e " +
+          g.days[g.days.length - 1].toString().padStart(2, "0")
+        : g.days[0].toString().padStart(2, "0");
     const prefix = g.days.length > 1 ? "nos dias" : "no dia";
     return `${prefix} ${daysText} de ${g.month} de ${g.year}, das ${g.start} às ${g.end}`;
   }
