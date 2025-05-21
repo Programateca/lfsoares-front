@@ -49,6 +49,11 @@ type FormData = {
   objetivoTreinamento?: string;
   instrutorA: Record<string, { periodo?: Period }>;
   instrutorB: Record<string, { periodo?: Period }>;
+  address: Record<
+    string,
+    Partial<Record<"morning" | "afternoon" | "night", string>>
+  >;
+  instrutoresPersonalizado: Record<string, { A?: string; B?: string }>;
 };
 
 export type CourseDate = {
@@ -82,6 +87,8 @@ export const Identificadores = () => {
       objetivoTreinamento: "",
       instrutorA: {},
       instrutorB: {},
+      address: {},
+      instrutoresPersonalizado: {},
     },
   });
 
@@ -112,6 +119,7 @@ export const Identificadores = () => {
 
   const conteudo = watch("conteudoAplicado");
   const eventoSelecionado = watch("evento");
+  const selectedEvento = eventos.find((ev) => ev.id === eventoSelecionado);
 
   // Estados para paginação
   const [page, setPage] = useState(1);
@@ -179,6 +187,7 @@ export const Identificadores = () => {
   useEffect(() => {
     // quando o evento ou a lista de days mudar, zera os instrutores
     if (!eventoSelecionado || days.length === 0) return;
+    const dateKeys = days.map((d) => JSON.parse(d).date);
 
     const newDefaults: FormData = {
       evento: eventoSelecionado || "",
@@ -189,10 +198,19 @@ export const Identificadores = () => {
       motivoTreinamento: getValues("motivoTreinamento") || "",
       objetivoTreinamento: getValues("objetivoTreinamento") || "",
       instrutorA: Object.fromEntries(
-        days.map((d) => [JSON.parse(d).date, { periodo: undefined }])
+        dateKeys.map((date) => [date, { periodo: undefined }])
       ),
       instrutorB: Object.fromEntries(
-        days.map((d) => [JSON.parse(d).date, { periodo: undefined }])
+        dateKeys.map((date) => [date, { periodo: undefined }])
+      ),
+      address: Object.fromEntries(
+        dateKeys.map((date) => [
+          date,
+          { morning: "", afternoon: "", night: "" }, // ou apenas os períodos que interessam
+        ])
+      ),
+      instrutoresPersonalizado: Object.fromEntries(
+        dateKeys.map((date) => [date, { A: "", B: "" }])
       ),
     };
 
@@ -429,7 +447,7 @@ export const Identificadores = () => {
     const intervalos = intervalosSet.size
       ? Array.from(intervalosSet).join(" E ")
       : "N/A";
-
+    console.log(data);
     const dataGerador = {
       // Header
       header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
@@ -706,7 +724,8 @@ export const Identificadores = () => {
     //   dataGerador.numeroParticipantes
     // );
     // return;
-
+    console.log(dataGerador);
+    return;
     const saveResponse = await api.post("identificadores", newIdentificador);
     if (saveResponse.status === 201) {
       toast.success("Identificador gerado com sucesso!");
@@ -998,175 +1017,198 @@ export const Identificadores = () => {
             )}
 
             {/* Seleção de instrutores por dia */}
-            {showIdentificationConfig && (
+            {formsOpen && showIdentificationConfig && (
               <div className="mt-4 flex flex-col">
-                <p className="my-1 w-full">Configurar Lista de Instrutores:</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
-                  {days.map((day, index) => {
-                    const parsedDay = JSON.parse(day);
-                    const { start, end } = parsedDay;
-
-                    const supportsMorning = start < "12:00" && end > "06:00";
-                    const supportsAfternoon = start < "18:00" && end > "12:00";
-                    const supportsNight = start < "23:59" && end > "18:00";
-
+                <p>Configurar Lista de Instrutores:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {days.map((day, idx) => {
+                    const parsed = JSON.parse(day);
+                    const { date, start, end } = parsed;
+                    const supports = {
+                      morning: start < "12:00" && end > "06:00",
+                      afternoon: start < "18:00" && end > "12:00",
+                      night: start < "23:59" && end > "18:00",
+                    };
                     return (
-                      <div key={index} className="border p-4 w-full rounded">
+                      <div key={idx} className="border p-4 rounded">
                         <div className="flex flex-col gap-2">
                           <Label>
-                            Dia:{" "}
-                            {format(parseISO(parsedDay.date), "dd/MM/yyyy")}
+                            Dia: {format(parseISO(parsed.date), "dd/MM/yyyy")}
                           </Label>
                           <Label>
-                            Periodo: {start} ÀS {end}
+                            Período: {start} ÀS {end}
                           </Label>
                         </div>
-                        {/* Instrutor A */}
-                        <div className="flex gap-4 items-center mt-2">
-                          <div className="w-full">
-                            <Label>{instrutoresSelecionados.instrutorA}</Label>
-                            <Controller
-                              name={`instrutorA.${
-                                JSON.parse(day).date
-                              }.periodo`}
-                              control={control}
-                              render={({ field }) => (
-                                <Select
-                                  onValueChange={(value: Period) => {
-                                    field.onChange(value);
-                                    handlePeriodChange(
-                                      day,
-                                      "instrutorA",
-                                      value
-                                    );
-                                  }}
-                                  value={field.value}
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Período" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectLabel>Períodos</SelectLabel>
-                                      <SelectItem value="nenhum">
-                                        Nenhum
-                                      </SelectItem>
-
-                                      {supportsMorning && (
-                                        <SelectItem value="manha">
-                                          Manhã
-                                        </SelectItem>
+                        {selectedEvento && (
+                          <div className="my-2 border-y py-4">
+                            {Object.entries(supports).map(
+                              ([period, ok]) =>
+                                ok && (
+                                  <div key={period} className="mb-2">
+                                    <Label>
+                                      Endereço{" "}
+                                      {period.charAt(0).toUpperCase() +
+                                        period.slice(1)}
+                                    </Label>
+                                    <Controller
+                                      name={`address.${parsed.date}.${period}`}
+                                      control={control}
+                                      render={({ field }) => (
+                                        <Select
+                                          onValueChange={field.onChange}
+                                          value={field.value}
+                                        >
+                                          <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Selecione o endereço" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectGroup>
+                                              <SelectLabel>
+                                                Endereços
+                                              </SelectLabel>
+                                              <SelectItem
+                                                value={
+                                                  selectedEvento.courseLocation
+                                                }
+                                              >
+                                                {selectedEvento.courseLocation}
+                                              </SelectItem>
+                                              {selectedEvento.courseLocation2 && (
+                                                <SelectItem
+                                                  value={
+                                                    selectedEvento.courseLocation2
+                                                  }
+                                                >
+                                                  {
+                                                    selectedEvento.courseLocation2
+                                                  }
+                                                </SelectItem>
+                                              )}
+                                            </SelectGroup>
+                                          </SelectContent>
+                                        </Select>
                                       )}
-                                      {supportsAfternoon && (
-                                        <SelectItem value="tarde">
-                                          Tarde
-                                        </SelectItem>
-                                      )}
-                                      {supportsNight && (
-                                        <SelectItem value="noite">
-                                          Noite
-                                        </SelectItem>
-                                      )}
-
-                                      {supportsMorning && supportsAfternoon && (
-                                        <SelectItem value="manhaTarde">
-                                          Manhã e Tarde
-                                        </SelectItem>
-                                      )}
-                                      {supportsMorning && supportsNight && (
-                                        <SelectItem value="manhaNoite">
-                                          Manhã e Noite
-                                        </SelectItem>
-                                      )}
-                                      {supportsAfternoon && supportsNight && (
-                                        <SelectItem value="tardeNoite">
-                                          Tarde e Noite
-                                        </SelectItem>
-                                      )}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
+                                    />
+                                  </div>
+                                )
+                            )}
                           </div>
-                        </div>
+                        )}
 
-                        {/* Instrutor B */}
-                        <div className="flex gap-4 items-center mt-2">
-                          <div className="w-full">
-                            <Label>{instrutoresSelecionados.instrutorB}</Label>
-                            <Controller
-                              name={`instrutorB.${
-                                JSON.parse(day).date
-                              }.periodo`}
-                              control={control}
-                              render={({ field }) => (
-                                <Select
-                                  onValueChange={(value: Period) => {
-                                    field.onChange(value);
-                                    handlePeriodChange(
-                                      day,
-                                      "instrutorB",
-                                      value
-                                    );
-                                  }}
-                                  value={field.value}
-                                >
-                                  <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Período" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectLabel>Períodos</SelectLabel>
-                                      <SelectItem value="nenhum">
-                                        Nenhum
-                                      </SelectItem>
-
-                                      {supportsMorning && (
-                                        <SelectItem value="manha">
-                                          Manhã
-                                        </SelectItem>
-                                      )}
-                                      {supportsAfternoon && (
-                                        <SelectItem value="tarde">
-                                          Tarde
-                                        </SelectItem>
-                                      )}
-                                      {supportsNight && (
-                                        <SelectItem value="noite">
-                                          Noite
-                                        </SelectItem>
-                                      )}
-
-                                      {supportsMorning && supportsAfternoon && (
-                                        <SelectItem value="manhaTarde">
-                                          Manhã e Tarde
-                                        </SelectItem>
-                                      )}
-                                      {supportsMorning && supportsNight && (
-                                        <SelectItem value="manhaNoite">
-                                          Manhã e Noite
-                                        </SelectItem>
-                                      )}
-                                      {supportsAfternoon && supportsNight && (
-                                        <SelectItem value="tardeNoite">
-                                          Tarde e Noite
-                                        </SelectItem>
-                                      )}
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                          </div>
-                        </div>
+                        {["A", "B"].map((key) => {
+                          const instrKey =
+                            key === "A" ? "instrutorA" : "instrutorB";
+                          return (
+                            <div
+                              key={key}
+                              className="flex gap-4 items-center mt-2"
+                            >
+                              <div className="w-full">
+                                <Label>Instrutor {key}</Label>
+                                <Controller
+                                  name={`instrutoresPersonalizado.${parsed.date}.${key}`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Select
+                                      onValueChange={(v) => {
+                                        field.onChange(v);
+                                        setInstrutoresSelecionados((prev) => ({
+                                          ...prev,
+                                          [instrKey]:
+                                            instrutores.find((i) => i.id === v)
+                                              ?.name || prev[instrKey],
+                                        }));
+                                      }}
+                                      value={field.value}
+                                    >
+                                      <SelectTrigger className="w-full mb-2">
+                                        <SelectValue placeholder="Selecione Instrutor" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Instrutores</SelectLabel>
+                                          {instrutores.map((i) => (
+                                            <SelectItem key={i.id} value={i.id}>
+                                              {i.name}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                />
+                                <Controller
+                                  name={`${instrKey}.${parsed.date}.periodo`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Select
+                                      onValueChange={(v: Period) => {
+                                        field.onChange(v);
+                                        handlePeriodChange(
+                                          day,
+                                          instrKey as any,
+                                          v
+                                        );
+                                      }}
+                                      value={field.value}
+                                    >
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Período" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Períodos</SelectLabel>
+                                          <SelectItem value="nenhum">
+                                            Nenhum
+                                          </SelectItem>
+                                          {supports.morning && (
+                                            <SelectItem value="manha">
+                                              Manhã
+                                            </SelectItem>
+                                          )}
+                                          {supports.afternoon && (
+                                            <SelectItem value="tarde">
+                                              Tarde
+                                            </SelectItem>
+                                          )}
+                                          {supports.night && (
+                                            <SelectItem value="noite">
+                                              Noite
+                                            </SelectItem>
+                                          )}
+                                          {supports.morning &&
+                                            supports.afternoon && (
+                                              <SelectItem value="manhaTarde">
+                                                Manhã e Tarde
+                                              </SelectItem>
+                                            )}
+                                          {supports.morning &&
+                                            supports.night && (
+                                              <SelectItem value="manhaNoite">
+                                                Manhã e Noite
+                                              </SelectItem>
+                                            )}
+                                          {supports.afternoon &&
+                                            supports.night && (
+                                              <SelectItem value="tardeNoite">
+                                                Tarde e Noite
+                                              </SelectItem>
+                                            )}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
                 </div>
               </div>
             )}
-
             {/* Separador */}
             <div className="w-full h-[2px] bg-gray-300 rounded-lg my-5" />
 
