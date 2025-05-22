@@ -30,6 +30,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
+import { processInstrutorDates } from "@/utils/process-instrutor-dates";
 
 /**
  * Definição de tipos auxiliares
@@ -106,10 +107,10 @@ export const Identificadores = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
-  const [instrutoresSelecionados, setInstrutoresSelecionados] = useState({
-    instrutorA: "Selecione o Instrutor",
-    instrutorB: "Selecione o Instrutor",
-  });
+  // const [instrutoresSelecionados, setInstrutoresSelecionados] = useState({
+  //   instrutorA: "Selecione o Instrutor",
+  //   instrutorB: "Selecione o Instrutor",
+  // });
   // const [hasAfternoon, setHasAfternoon] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -184,38 +185,121 @@ export const Identificadores = () => {
     fetchData(page);
   }, [page]);
 
+  const prevEventoIdRef = useRef<string | undefined>();
+
   useEffect(() => {
-    // quando o evento ou a lista de days mudar, zera os instrutores
-    if (!eventoSelecionado || days.length === 0) return;
-    const dateKeys = days.map((d) => JSON.parse(d).date);
+    const currentValues = getValues();
+    const currentEventoId = eventoSelecionado; // This is from watch("evento")
 
-    const newDefaults: FormData = {
-      evento: eventoSelecionado || "",
-      certificadoTipo: getValues("certificadoTipo") || "",
-      conteudoAplicado: getValues("conteudoAplicado") || "",
-      participantes: getValues("participantes") || [],
-      assinatura: getValues("assinatura") || [],
-      motivoTreinamento: getValues("motivoTreinamento") || "",
-      objetivoTreinamento: getValues("objetivoTreinamento") || "",
-      instrutorA: Object.fromEntries(
-        dateKeys.map((date) => [date, { periodo: undefined }])
-      ),
-      instrutorB: Object.fromEntries(
-        dateKeys.map((date) => [date, { periodo: undefined }])
-      ),
-      address: Object.fromEntries(
-        dateKeys.map((date) => [
+    if (!currentEventoId) {
+      // Event is not selected or has been deselected
+      reset({
+        ...currentValues,
+        evento: "",
+        instrutorA: {},
+        instrutorB: {},
+        address: {},
+        instrutoresPersonalizado: {},
+        // Keep other non-event-specific fields from currentValues
+      });
+      prevEventoIdRef.current = undefined;
+      return;
+    }
+
+    const selectedEventData = eventos.find((ev) => ev.id === currentEventoId);
+
+    if (
+      !selectedEventData ||
+      !selectedEventData.courseDate ||
+      selectedEventData.courseDate.length === 0
+    ) {
+      // Event selected, but data is incomplete (e.g., no dates)
+      reset({
+        ...currentValues,
+        evento: currentEventoId, // Keep selected event
+        instrutorA: {}, // Reset date-specific fields
+        instrutorB: {},
+        address: {},
+        instrutoresPersonalizado: {},
+      });
+      prevEventoIdRef.current = currentEventoId;
+      return;
+    }
+
+    const newDateKeys = selectedEventData.courseDate.map((dateStr) => {
+      try {
+        const parsedDate = JSON.parse(dateStr);
+        return parsedDate.date;
+      } catch {
+        return dateStr.trim(); // Fallback if not JSON
+      }
+    });
+
+    if (prevEventoIdRef.current !== currentEventoId) {
+      // Event ID has actually changed, reset date-specific fields for the new event
+      reset({
+        ...currentValues,
+        evento: currentEventoId,
+        instrutorA: Object.fromEntries(
+          newDateKeys.map((date) => [date, { periodo: undefined }])
+        ),
+        instrutorB: Object.fromEntries(
+          newDateKeys.map((date) => [date, { periodo: undefined }])
+        ),
+        address: Object.fromEntries(
+          newDateKeys.map((date) => [
+            date,
+            { morning: "", afternoon: "", night: "" },
+          ])
+        ),
+        instrutoresPersonalizado: Object.fromEntries(
+          newDateKeys.map((date) => [date, { A: "", B: "" }])
+        ),
+      });
+    } else {
+      // Event ID is the same, but `eventos` list might have changed.
+      // Preserve existing instrutorA and instrutorB selections.
+      // Re-key address and instrutoresPersonalizado to ensure they align with current newDateKeys,
+      // using existing values from currentValues if available for those dates.
+      const newAddress = Object.fromEntries(
+        newDateKeys.map((date) => [
           date,
-          { morning: "", afternoon: "", night: "" }, // ou apenas os períodos que interessam
+          currentValues.address?.[date] || {
+            morning: "",
+            afternoon: "",
+            night: "",
+          },
         ])
-      ),
-      instrutoresPersonalizado: Object.fromEntries(
-        dateKeys.map((date) => [date, { A: "", B: "" }])
-      ),
-    };
+      );
+      const newInstrutoresPersonalizado = Object.fromEntries(
+        newDateKeys.map((date) => [
+          date,
+          currentValues.instrutoresPersonalizado?.[date] || { A: "", B: "" },
+        ])
+      );
 
-    reset(newDefaults);
-  }, [eventoSelecionado, days, reset]);
+      // Only update if necessary to avoid excessive re-renders / form state changes
+      if (
+        JSON.stringify(currentValues.address) !== JSON.stringify(newAddress)
+      ) {
+        setValue("address", newAddress);
+      }
+      if (
+        JSON.stringify(currentValues.instrutoresPersonalizado) !==
+        JSON.stringify(newInstrutoresPersonalizado)
+      ) {
+        setValue("instrutoresPersonalizado", newInstrutoresPersonalizado);
+      }
+      // If only `eventos` reference changed but `currentEventoId` and its dates are the same,
+      // and `instrutorA`/`instrutorB` are already populated from user interaction,
+      // this path aims to leave them untouched.
+      // If `currentValues.evento` isn't `currentEventoId` (e.g. after a full reset), update it.
+      if (currentValues.evento !== currentEventoId) {
+        setValue("evento", currentEventoId);
+      }
+    }
+    prevEventoIdRef.current = currentEventoId;
+  }, [eventoSelecionado, eventos, reset, getValues, setValue]); // Added setValue to dependencies
 
   /**
    * Ajusta exibição de assinaturas com base no tipo selecionado
@@ -233,7 +317,10 @@ export const Identificadores = () => {
     instructor: "instrutorA" | "instrutorB",
     value: Period
   ) => {
-    const { date, start, end } = JSON.parse(dayStr);
+    const parsed = JSON.parse(dayStr); // Keep parsed here
+    const { start, end } = parsed; // Destructure only start and end
+    const dateKey = parsed.date; // Use parsed.date directly for clarity
+
     const other = instructor === "instrutorA" ? "instrutorB" : "instrutorA";
     const canMorning = start < "12:00" && end > "05:00";
     const canAfternoon = end > "12:00" && start < "18:00";
@@ -241,52 +328,52 @@ export const Identificadores = () => {
 
     // Só manhã
     if (canMorning && !canAfternoon && !canNight) {
-      setValue(`${instructor}.${date}.periodo`, "manha");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "manha");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
     // Só tarde
     if (!canMorning && canAfternoon && !canNight) {
-      setValue(`${instructor}.${date}.periodo`, "tarde");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "tarde");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
 
     // Só noite
     if (!canMorning && !canAfternoon && canNight) {
-      setValue(`${instructor}.${date}.periodo`, "noite");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "noite");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
 
     // Dia completo
     if (value === "manhaTarde" && canMorning && canAfternoon) {
-      setValue(`${instructor}.${date}.periodo`, "manhaTarde");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "manhaTarde");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
 
     if (value === "manhaNoite" && canMorning && canNight) {
-      setValue(`${instructor}.${date}.periodo`, "manhaNoite");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "manhaNoite");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
 
     if (value === "tardeNoite" && canAfternoon && canNight) {
-      setValue(`${instructor}.${date}.periodo`, "tardeNoite");
-      setValue(`${other}.${date}.periodo`, "nenhum");
+      setValue(`${instructor}.${dateKey}.periodo`, "tardeNoite");
+      setValue(`${other}.${dateKey}.periodo`, "nenhum");
       return;
     }
 
-    setValue(`${instructor}.${date}.periodo`, value);
+    setValue(`${instructor}.${dateKey}.periodo`, value);
     if (value === "nenhum") return;
 
-    const otherValue = getValues(`${other}.${date}.periodo`);
+    const otherValue = getValues(`${other}.${dateKey}.periodo`);
     if (otherValue === "nenhum") return;
 
     const complementary = getComplementaryPeriod(value);
     if (otherValue !== complementary && complementary !== null) {
-      setValue(`${other}.${date}.periodo`, complementary);
+      setValue(`${other}.${dateKey}.periodo`, complementary);
     }
   };
   function getComplementaryPeriod(value: Period): Period | null {
@@ -328,6 +415,20 @@ export const Identificadores = () => {
       toast.error("Evento selecionado não foi encontrado!");
       return;
     }
+
+    // FOR DEBUGGING: Log critical data at submission
+    console.log(
+      "onSubmit - data.instrutorA:",
+      JSON.stringify(data.instrutorA, null, 2)
+    );
+    console.log(
+      "onSubmit - data.instrutorB:",
+      JSON.stringify(data.instrutorB, null, 2)
+    );
+    console.log(
+      "onSubmit - data.assinatura:",
+      JSON.stringify(data.assinatura, null, 2)
+    );
 
     const fullYear = new Date().getFullYear().toString();
     const certificadoCode = Number(
@@ -447,7 +548,81 @@ export const Identificadores = () => {
     const intervalos = intervalosSet.size
       ? Array.from(intervalosSet).join(" E ")
       : "N/A";
-    console.log(data);
+
+    // Construct instructorPeriodPreferences
+    const instructorPeriodPreferences: Record<
+      string,
+      Record<string, Period | undefined>
+    > = {};
+    const eventDates = selectedEvento.courseDate.map((dateStr) => {
+      try {
+        const parsedDate = JSON.parse(dateStr);
+        return parsedDate.date; // Assuming 'date' is the property with 'YYYY-MM-DD'
+      } catch {
+        return dateStr.trim(); // Fallback if not JSON or structure is different
+      }
+    });
+
+    for (const date of eventDates) {
+      instructorPeriodPreferences[date] = {}; // Initialize for the date
+
+      if (data.assinatura && data.assinatura.length > 0) {
+        const firstInstructorId = data.assinatura[0]?.assinante;
+        if (firstInstructorId) {
+          instructorPeriodPreferences[date][firstInstructorId] =
+            data.instrutorA?.[date]?.periodo || undefined;
+        }
+
+        if (data.assinatura.length > 1) {
+          const secondInstructorId = data.assinatura[1]?.assinante;
+          if (secondInstructorId) {
+            instructorPeriodPreferences[date][secondInstructorId] =
+              data.instrutorB?.[date]?.periodo || undefined;
+          }
+        }
+
+        // For any other instructors in data.assinatura (beyond the first two)
+        // Ensure they have an entry in instructorPeriodPreferences for this date,
+        // even if it's undefined, so processInstrutorDates knows they are part of the consideration.
+        for (let i = 2; i < data.assinatura.length; i++) {
+          const otherInstructorId = data.assinatura[i]?.assinante;
+          if (otherInstructorId) {
+            if (!(otherInstructorId in instructorPeriodPreferences[date])) {
+              instructorPeriodPreferences[date][otherInstructorId] = undefined;
+            }
+          }
+        }
+      }
+    }
+    // FOR DEBUGGING: Log constructed instructorPeriodPreferences
+    console.log(
+      "onSubmit - constructed instructorPeriodPreferences:",
+      JSON.stringify(instructorPeriodPreferences, null, 2)
+    );
+
+    // Create the data object for processInstrutorDates, conforming to UpdatedFormData
+    // (omitting instrutorA, instrutorB from the top level, adding instructorPeriodPreferences)
+    const { instrutorA, instrutorB, ...restOfData } = data; // instrutoresPersonalizado is already in restOfData
+    const updatedFormDataForProcess = {
+      ...restOfData,
+      assinatura: data.assinatura || [], // Ensure assinatura is present
+      instructorPeriodPreferences,
+      // Ensure instrutoresPersonalizado is explicitly passed if it's not already in restOfData
+      // or if its structure needs to be guaranteed.
+      // Based on current FormData, it should be in restOfData.
+      // If it were optional or handled differently, you might need:
+      // instrutoresPersonalizado: data.instrutoresPersonalizado || {},
+    };
+    // FOR DEBUGGING: Log instructorPeriodPreferences being passed to processInstrutorDates
+    console.log(
+      "onSubmit - updatedFormDataForProcess.instructorPeriodPreferences:",
+      JSON.stringify(
+        updatedFormDataForProcess.instructorPeriodPreferences,
+        null,
+        2
+      )
+    );
+
     const dataGerador = {
       // Header
       header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
@@ -549,194 +724,38 @@ export const Identificadores = () => {
       assinante2: getAssinante(1),
       assinante3: getAssinante(2),
       assinante4: getAssinante(3),
-      instrutor_a: instrutoresSelecionados.instrutorA,
-      instrutor_b: instrutoresSelecionados.instrutorB,
-      instrutorDates: selectedEvento?.courseDate.flatMap((itemStr) => {
-        const item = JSON.parse(itemStr) as CourseDate;
-        const dateKey = item.date;
-        const instrutorAPeriodo = data.instrutorA?.[dateKey]?.periodo;
-        const instrutorBPeriodo = data.instrutorB?.[dateKey]?.periodo;
-        if (!instrutorAPeriodo && !instrutorBPeriodo && signatureCount > 2) {
-          throw new Error("Nenhum periodo selecionado para o dia");
-        }
-
-        const hasBreak =
-          item.intervalStart !== "N/A" && item.intervalEnd !== "N/A";
-
-        const defaultInstrutor = instrutores.find(
-          (instrutor) => instrutor.id === data.assinatura[0]?.assinante
-        );
-
-        // Case 1: Split day if break exists and different instructors for morning/afternoon
-        if (hasBreak) {
-          // Case 1a: Split day with break - A morning, B afternoon
-          if (
-            (instrutorAPeriodo === "manha" && instrutorBPeriodo === "tarde") ||
-            (instrutorAPeriodo === "manha" && instrutorBPeriodo === "noite") ||
-            (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "noite")
-          ) {
-            return [
-              {
-                ...item,
-                start: item.start,
-                end: item.intervalStart,
-                instrutor: instrutoresSelecionados.instrutorA,
-                instrutorA: true,
-                instrutorB: false,
-              },
-              {
-                ...item,
-                start: item.intervalEnd,
-                end: item.end,
-                instrutor: instrutoresSelecionados.instrutorB,
-                instrutorA: false,
-                instrutorB: true,
-              },
-            ];
-          }
-          // Case 1b: Split day with break - B morning, A afternoon
-          if (
-            (instrutorAPeriodo === "tarde" && instrutorBPeriodo === "manha") ||
-            (instrutorAPeriodo === "noite" && instrutorBPeriodo === "tarde")
-          ) {
-            return [
-              {
-                ...item,
-                start: item.start,
-                end: item.intervalStart,
-                instrutor: instrutoresSelecionados.instrutorB,
-                instrutorA: false,
-                instrutorB: true,
-              },
-              {
-                ...item,
-                start: item.intervalEnd,
-                end: item.end,
-                instrutor: instrutoresSelecionados.instrutorA,
-                instrutorA: true,
-                instrutorB: false,
-              },
-            ];
-          }
-          // Note: Night period is not typically split by a midday break in this logic.
-          // If other break types exist (e.g., evening break), more complex logic is needed.
-        }
-
-        // Case 2: Full day, combined periods, single periods, or default
-        const resultItem: CourseDate & {
-          instrutor?: string;
-          instrutorA?: boolean;
-          instrutorB?: boolean;
-        } = { ...item };
-
-        // Check combined periods first (A takes precedence if both have combined)
-        if (
-          instrutorAPeriodo === "manhaTarde" ||
-          instrutorAPeriodo === "manhaNoite" ||
-          instrutorAPeriodo === "tardeNoite"
-        ) {
-          resultItem.instrutor = instrutoresSelecionados.instrutorA;
-          resultItem.instrutorA = true;
-          resultItem.instrutorB = false;
-        } else if (
-          instrutorBPeriodo === "manhaTarde" ||
-          instrutorBPeriodo === "manhaNoite" ||
-          instrutorBPeriodo === "tardeNoite"
-        ) {
-          resultItem.instrutor = instrutoresSelecionados.instrutorB;
-          resultItem.instrutorA = false;
-          resultItem.instrutorB = true;
-        }
-        // Check single periods if no combined period was assigned (A takes precedence)
-        else if (
-          instrutorAPeriodo === "manha" ||
-          instrutorAPeriodo === "tarde" ||
-          instrutorAPeriodo === "noite"
-        ) {
-          resultItem.instrutor = instrutoresSelecionados.instrutorA;
-          resultItem.instrutorA = true;
-          resultItem.instrutorB = false; // Ensure B is false if A is assigned
-        } else if (
-          instrutorBPeriodo === "manha" ||
-          instrutorBPeriodo === "tarde" ||
-          instrutorBPeriodo === "noite"
-        ) {
-          resultItem.instrutor = instrutoresSelecionados.instrutorB;
-          resultItem.instrutorA = false; // Ensure A is false if B is assigned
-          resultItem.instrutorB = true;
-        } else {
-          // Default case (both 'nenhum' or no specific assignment)
-          if (defaultInstrutor) {
-            resultItem.instrutor = defaultInstrutor.name;
-            resultItem.instrutorA = true; // Default to A if no specific assignment
-            resultItem.instrutorB = false;
-          } else {
-            // Handle case where default instructor isn't found
-            console.error("Default instructor not found!");
-            resultItem.instrutor = "Instrutor Padrão Não Encontrado";
-            resultItem.instrutorA = true;
-            resultItem.instrutorB = false;
-          }
-        }
-
-        // If both instructors are assigned to the same full day (e.g., one manhaTarde, other selected but not manhaTarde)
-        // This logic might need refinement based on exact desired behavior for overlapping assignments
-        if (
-          instrutorAPeriodo &&
-          instrutorAPeriodo !== "nenhum" &&
-          instrutorBPeriodo &&
-          instrutorBPeriodo !== "nenhum" &&
-          instrutorAPeriodo !== "manhaTarde" &&
-          instrutorBPeriodo !== "manhaTarde" &&
-          !hasBreak
-        ) {
-          // If not split and both have some period, prioritize A? Or show both? Current logic prioritizes based on order above.
-          // For now, let's assume the above logic handles the priority (A first, then B).
-          // If specific dual assignment is needed for a single entry, add logic here.
-          // Example: resultItem.instrutor = `${instrutoresSelecionados.instrutorA} / ${instrutoresSelecionados.instrutorB}`;
-          //          resultItem.instrutorA = true; resultItem.instrutorB = true;
-        }
-
-        return [resultItem]; // Return as array for flatMap
-      }) as (CourseDate & {
-        instrutor?: string;
-        instrutorA?: boolean;
-        instrutorB?: boolean;
-      })[],
-    };
-
-    console.log("selectedEvento?.courseDate", selectedEvento?.courseDate);
-
-    const newIdentificador: Partial<IdentificadorData> = {
-      treinamento: selectedEvento.treinamento.name,
-      identificadorData: JSON.stringify(dataGerador),
-      year: String(fullYear),
+      // instrutor_a: instrutoresSelecionados.instrutorA, // Removed
+      // instrutor_b: instrutoresSelecionados.instrutorB, // Removed
+      instrutorDates: processInstrutorDates({
+        data: updatedFormDataForProcess, // Pass the updated data object
+        courseDate: selectedEvento.courseDate,
+        instrutores: instrutores, // This is the full list of Instrutor objects
+      }),
     };
 
     // // FOR DEBUG
-    // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    // gerarIdentificador(
-    //   {
-    //     ...(dataGerador as any),
-    //     id_code: "teste",
-    //   },
-    //   dataGerador.instrutorDates,
-    //   dataGerador.numeroParticipantes
-    // );
-    // return;
-    console.log(dataGerador);
+    console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    gerarIdentificador(
+      {
+        ...(dataGerador as any),
+        id_code: "teste",
+      },
+      dataGerador.instrutorDates,
+      dataGerador.numeroParticipantes
+    );
     return;
-    const saveResponse = await api.post("identificadores", newIdentificador);
-    if (saveResponse.status === 201) {
-      toast.success("Identificador gerado com sucesso!");
-      setIdentificadoresGerados((prev) => [
-        ...prev,
-        saveResponse.data as IdentificadorData,
-      ]);
-      setFormsOpen(false);
-    } else {
-      toast.error("Erro ao gerar identificador!");
-    }
+
+    // const saveResponse = await api.post("identificadores", newIdentificador);
+    // if (saveResponse.status === 201) {
+    //   toast.success("Identificador gerado com sucesso!");
+    //   setIdentificadoresGerados((prev) => [
+    //     ...prev,
+    //     saveResponse.data as IdentificadorData,
+    //   ]);
+    //   setFormsOpen(false);
+    // } else {
+    //   toast.error("Erro ao gerar identificador!");
+    // }
   };
 
   useEffect(() => {
@@ -924,26 +943,28 @@ export const Identificadores = () => {
                           control={control}
                           render={({ field }) => (
                             <Select
-                              onValueChange={(value) => {
-                                field.onChange(value);
-                                if (index === 0) {
-                                  const selectedInstrutor =
-                                    instrutores.find((i) => i.id === value)
-                                      ?.name || "Selecione o Instrutor";
-                                  setInstrutoresSelecionados((prev) => ({
-                                    ...prev,
-                                    instrutorA: selectedInstrutor,
-                                  }));
-                                } else if (index === 1) {
-                                  const selectedInstrutor =
-                                    instrutores.find((i) => i.id === value)
-                                      ?.name || "Selecione o Instrutor";
-                                  setInstrutoresSelecionados((prev) => ({
-                                    ...prev,
-                                    instrutorB: selectedInstrutor,
-                                  }));
-                                }
-                              }}
+                              // onValueChange={(value) => {
+                              //   field.onChange(value);
+                              //   if (index === 0) {
+                              //     const selectedInstrutor =
+                              //       instrutores.find((i) => i.id === value)
+                              //         ?.name || "Selecione o Instrutor";
+                              //     // setInstrutoresSelecionados((prev) => ({
+                              //     //   ...prev,
+                              //     //   instrutorA: selectedInstrutor,
+                              //     // }));
+                              //   } else if (index === 1) {
+                              //     const selectedInstrutor =
+                              //       instrutores.find((i) => i.id === value)
+                              //         ?.name || "Selecione o Instrutor";
+                              //     // setInstrutoresSelecionados((prev) => ({
+                              //     //   ...prev,
+                              //     //   instrutorB: selectedInstrutor,
+                              //     // }));
+                              //   }
+                              // }}
+                              // value={field.value}
+                              onValueChange={field.onChange}
                               value={field.value}
                             >
                               <SelectTrigger>
@@ -1112,12 +1133,12 @@ export const Identificadores = () => {
                                     <Select
                                       onValueChange={(v) => {
                                         field.onChange(v);
-                                        setInstrutoresSelecionados((prev) => ({
-                                          ...prev,
-                                          [instrKey]:
-                                            instrutores.find((i) => i.id === v)
-                                              ?.name || prev[instrKey],
-                                        }));
+                                        // setInstrutoresSelecionados((prev) => ({
+                                        //   ...prev,
+                                        //   [instrKey]:
+                                        //     instrutores.find((i) => i.id === v)
+                                        //       ?.name || prev[instrKey],
+                                        // }));
                                       }}
                                       value={field.value}
                                     >

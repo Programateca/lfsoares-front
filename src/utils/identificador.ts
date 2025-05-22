@@ -26,71 +26,47 @@ type PagesData = CourseDate & {
   instrutor?: string;
 };
 
-export async function gerarIdentificador(
-  docData: Identificador,
-  pages: PagesData[],
-  numeroParticipantes: number
-) {
-  console.log("instrutorDates", docData.instrutorDates);
-  try {
-    const formattedPages = sortData(pages, numeroParticipantes);
-    console.log("formattedPages", formattedPages);
-    const MAIN_XML_TAG = "<!-- TABLE -->";
-
-    const DOCX_TEMPLATE_BUFFER = await loadFile(
-      "/templates/identificador/identificacao-do-participante-nova.docx"
-    );
-    // Select the appropriate template based on content length
-    const templateFileName =
-      docData.conteudo_aplicado.length <= 800
-        ? "document-template.xml"
-        : "document-3colunas.xml";
-
-    const MAIN_XML = await fetch(
-      `/templates/identificador/${templateFileName}`
-    );
-
-    const HEADER3_XML = await fetch(`/templates/identificador/header3.xml`);
-
-    const MAIN_XML_CONTENT = await MAIN_XML.text();
-    const HEADER3_XML_CONTENT = await HEADER3_XML.text();
-
-    const UPDATED_DOCUMENT_XML_FILE = MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(
-      await formatarPaginas(formattedPages)
-    );
-
-    const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
-    zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
-    zip.file("word/header3.xml", HEADER3_XML_CONTENT);
-
-    const doc = new Docxtemplater(zip, {
-      delimiters: { start: "[", end: "]" },
-      paragraphLoop: true,
-      linebreaks: true,
-      parser: expressionParser,
-    });
-
-    doc.render(docData);
-    const out = doc.getZip().generate({
-      type: "blob",
-      mimeType:
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    });
-    saveAs(out, "output.docx");
-  } catch (error) {
-    console.error("Erro ao processar os arquivos XML:", error);
-  }
-}
-
 // Define the structure for the processed schedule entries
 type SortedScheduleEntry = {
   dia: string; // Date in "YYYY-MM-DD" format
   periodo: Exclude<Period, "nenhum">; // Period of the day
   paginas: number; // Number of pages needed for this entry
-  instrutorA: boolean; // Flag indicating if instructor A is teaching
-  instrutorB: boolean; // Flag indicating if instructor B is teaching
+  instrutores: string[]; // Array of instructor identifiers for this slot
   horario: string; // Formatted time range for the entire block (e.g., "08:00 ÀS 17:00")
   intervalo?: string; // Formatted time range for the interval, if applicable (e.g., "12:00 ÀS 13:00")
+};
+
+// Type for split times across different periods
+type SplitTimes = {
+  manha?: string;
+  tarde?: string;
+  noite?: string;
+};
+
+type TabelaXML = {
+  tipo: Exclude<Period, "nenhum">;
+};
+
+const MAIN_XML_TAG = "<!-- TABLE -->";
+
+// Configuration for lerTabelaXml
+const TabelaXmlFilePaths: Partial<
+  Record<
+    Exclude<Period, "nenhum" | "manhaTarde" | "tardeNoite" | "manhaNoite">,
+    string
+  >
+> = {
+  manha: "/templates/identificador/tabela-single-manha.xml",
+  tarde: "/templates/identificador/tabela-single-tarde.xml",
+  noite: "/templates/identificador/tabela-single-noite.xml",
+};
+
+const TabelaXmlConstantData: Partial<
+  Record<Extract<Period, "manhaTarde" | "tardeNoite" | "manhaNoite">, string>
+> = {
+  manhaTarde: TABLE_DOUBLE_PERIOD,
+  tardeNoite: TABLE_DOUBLE_TARDE_NOITE,
+  manhaNoite: TABLE_DOUBLE_MANHA_NOITE,
 };
 
 // Calculates the period based on start and end times
@@ -133,28 +109,24 @@ function calculatePeriod(start: string, end: string): Period {
   const endsBeforeEvening = endTime <= evening;
   const endsAfterEvening = endTime > evening;
 
-  if (startsBeforeMidday && endsAfterEvening) {
-    return "manhaNoite"; // Starts before 12:00, ends after 18:00
-  } else if (startsBeforeEvening && !startsBeforeMidday && endsAfterEvening) {
-    return "tardeNoite"; // Starts between 12:00 and 18:00, ends after 18:00
-  } else if (startsBeforeMidday && endsBeforeEvening && !endsBeforeMidday) {
-    return "manhaTarde"; // Starts before 12:00, ends between 12:00 and 18:00
-  } else if (startsBeforeMidday && endsBeforeMidday) {
-    return "manha"; // Starts and ends before 12:00
-  } else if (startsBeforeEvening && !startsBeforeMidday && endsBeforeEvening) {
-    return "tarde"; // Starts and ends between 12:00 and 18:00
-  } else if (startsAfterEvening) {
-    return "noite"; // Starts at or after 18:00
-  } else {
-    console.warn(`Unhandled time condition: start=${start}, end=${end}`);
-    return "nenhum"; // Fallback for unhandled cases
-  }
+  if (startsBeforeMidday && endsAfterEvening) return "manhaNoite";
+  if (startsBeforeEvening && !startsBeforeMidday && endsAfterEvening)
+    return "tardeNoite";
+  if (startsBeforeMidday && endsBeforeEvening && !endsBeforeMidday)
+    return "manhaTarde";
+  if (startsBeforeMidday && endsBeforeMidday) return "manha";
+  if (startsBeforeEvening && !startsBeforeMidday && endsBeforeEvening)
+    return "tarde";
+  if (startsAfterEvening) return "noite";
+
+  console.warn(`Unhandled time condition: start=${start}, end=${end}`);
+  return "nenhum";
 }
 
 // Processes and sorts the course schedule data
 function sortData(
-  pages: PagesData[], // Input array of course dates/times/instructors
-  numParticipantes: number // Total number of participants
+  pages: PagesData[],
+  numParticipantes: number
 ): SortedScheduleEntry[] {
   const numeroPaginas = Math.ceil(numParticipantes / 10);
   const groupedEntriesMap = new Map<string, SortedScheduleEntry>();
@@ -167,11 +139,14 @@ function sortData(
       );
       return;
     }
-
-    const periodo = calculatePeriod(item.start, item.end);
-    if (periodo === "nenhum") {
+    const instrutorIdentifier = item.instrutor;
+    if (!instrutorIdentifier) {
+      console.warn("Skipping item due to missing instructor identifier:", item);
       return;
     }
+
+    const periodo = calculatePeriod(item.start, item.end);
+    if (periodo === "nenhum") return;
 
     const key = `${item.date}-${periodo}`;
     const horario = `${item.start} ÀS ${item.end}`;
@@ -186,54 +161,40 @@ function sortData(
     }
 
     const existingEntry = groupedEntriesMap.get(key);
-
     if (!existingEntry) {
       groupedEntriesMap.set(key, {
         dia: item.date,
         periodo: periodo,
         paginas: numeroPaginas,
-        instrutorA: item.instrutorA ?? false,
-        instrutorB: item.instrutorB ?? false,
+        instrutores: [instrutorIdentifier],
         horario: horario,
         intervalo: intervalo,
       });
     } else {
-      existingEntry.instrutorA =
-        existingEntry.instrutorA || (item.instrutorA ?? false);
-      existingEntry.instrutorB =
-        existingEntry.instrutorB || (item.instrutorB ?? false);
+      if (!existingEntry.instrutores.includes(instrutorIdentifier)) {
+        existingEntry.instrutores.push(instrutorIdentifier);
+      }
     }
   });
 
   const groupedEntries = Array.from(groupedEntriesMap.values());
-
-  // Updated period order
   const periodOrder: Record<Exclude<Period, "nenhum">, number> = {
     manha: 1,
     tarde: 2,
-    noite: 3, // Added noite
-    manhaTarde: 4, // Adjusted order
-    manhaNoite: 5, // Added manhaNoite
-    tardeNoite: 6, // Added tardeNoite
+    noite: 3,
+    manhaTarde: 4,
+    manhaNoite: 5,
+    tardeNoite: 6,
   };
 
   groupedEntries.sort((a, b) => {
     if (a.dia < b.dia) return -1;
     if (a.dia > b.dia) return 1;
-    if (periodOrder[a.periodo] < periodOrder[b.periodo]) return -1;
-    if (periodOrder[a.periodo] > periodOrder[b.periodo]) return 1;
-    return 0;
+    return periodOrder[a.periodo] - periodOrder[b.periodo];
   });
 
   return groupedEntries;
 }
-
-// Type for split times across different periods
-type SplitTimes = {
-  manha?: string;
-  tarde?: string;
-  noite?: string;
-};
 
 // Updated function to handle new periods and split times
 function substituirOcorrencias(
@@ -243,8 +204,6 @@ function substituirOcorrencias(
   periodo: Exclude<Period, "nenhum">,
   splitTimes: SplitTimes
 ): string {
-  console.log("splitTimes", splitTimes);
-  // Check which periods are included
   const includesManha = periodo.includes("manha");
   const includesTarde =
     periodo.includes("tarde") || periodo.includes("manhaTarde");
@@ -253,30 +212,6 @@ function substituirOcorrencias(
     periodo.includes("manhaNoite") ||
     periodo.includes("tardeNoite");
 
-  const patterns = {
-    "\\[pi\\]": () => `${++contador.pi}`,
-    "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
-    "\\[p_matricula\\]": () => `[p_matricula${++contador.p_matricula}]`,
-    "\\[p_codigo\\]": () => `[p_codigo${++contador.p_codigo}]`,
-    "\\[instrutor\\]": () => `[${instrutor}]`,
-    "\\[data_frequencia\\]": () => data,
-    // Period labels
-    "\\[manha\\]": () => (includesManha ? "MANHÃ" : ""),
-    "\\[tarde\\]": () => (includesTarde ? "TARDE" : ""),
-    "\\[noite\\]": () => (includesNoite ? "NOITE" : ""), // Added noite label
-    // Period hours
-    "\\[manha_h\\]": () => (includesManha ? splitTimes.manha || "" : ""),
-    "\\[tarde_h\\]": () => (includesTarde ? splitTimes.tarde || "" : ""),
-    "\\[noite_h\\]": () => (includesNoite ? splitTimes.noite || "" : ""), // Added noite hours
-    // Participant period placeholders
-    "\\[p_manha\\]": () =>
-      includesManha ? `[p_manha${++contador.p_manha}]` : "",
-    "\\[p_tarde\\]": () =>
-      includesTarde ? `[p_tarde${++contador.p_tarde}]` : "",
-    "\\[p_noite\\]": () =>
-      includesNoite ? `[p_noite${++contador.p_noite}]` : "", // Added noite participant placeholder
-  };
-
   const contador = {
     pi: 0,
     p_nome: 0,
@@ -284,7 +219,28 @@ function substituirOcorrencias(
     p_codigo: 0,
     p_manha: 0,
     p_tarde: 0,
-    p_noite: 0, // Added p_noite counter
+    p_noite: 0,
+  };
+
+  const patterns: Record<string, () => string> = {
+    "\\[pi\\]": () => `${++contador.pi}`,
+    "\\[p_nome\\]": () => `[p_nome${++contador.p_nome}]`,
+    "\\[p_matricula\\]": () => `[p_matricula${++contador.p_matricula}]`,
+    "\\[p_codigo\\]": () => `[p_codigo${++contador.p_codigo}]`,
+    "\\[instrutor\\]": () => instrutor,
+    "\\[data_frequencia\\]": () => data,
+    "\\[manha\\]": () => (includesManha ? "MANHÃ" : ""),
+    "\\[tarde\\]": () => (includesTarde ? "TARDE" : ""),
+    "\\[noite\\]": () => (includesNoite ? "NOITE" : ""),
+    "\\[manha_h\\]": () => (includesManha ? splitTimes.manha || "" : ""),
+    "\\[tarde_h\\]": () => (includesTarde ? splitTimes.tarde || "" : ""),
+    "\\[noite_h\\]": () => (includesNoite ? splitTimes.noite || "" : ""),
+    "\\[p_manha\\]": () =>
+      includesManha ? `[p_manha${++contador.p_manha}]` : "",
+    "\\[p_tarde\\]": () =>
+      includesTarde ? `[p_tarde${++contador.p_tarde}]` : "",
+    "\\[p_noite\\]": () =>
+      includesNoite ? `[p_noite${++contador.p_noite}]` : "",
   };
 
   return Object.entries(patterns).reduce(
@@ -294,106 +250,201 @@ function substituirOcorrencias(
   );
 }
 
-type TabelaXML = {
-  tipo: Exclude<Period, "nenhum">;
-};
-
-// Updated function to fetch templates for new periods
-async function lerTabelaXml({ tipo }: TabelaXML) {
-  if (tipo === "manhaTarde") {
-    return TABLE_DOUBLE_PERIOD;
-  } else if (tipo === "tardeNoite") {
-    return TABLE_DOUBLE_TARDE_NOITE;
-  } else if (tipo === "manhaNoite") {
-    return TABLE_DOUBLE_MANHA_NOITE;
-  } else if (tipo === "manha") {
-    const response = await fetch(
-      "/templates/identificador/tabela-single-manha.xml"
-    );
-    return await response.text();
-  } else if (tipo === "tarde") {
-    const response = await fetch(
-      "/templates/identificador/tabela-single-tarde.xml"
-    );
-    return await response.text();
-  } else if (tipo === "noite") {
-    // Fetch template for 'noite' period
-    const response = await fetch(
-      "/templates/identificador/tabela-single-noite.xml" // Assuming this template exists
-    );
-    return await response.text();
-  } else {
-    // Fallback or error handling for unexpected period types
-    console.error("Tipo de tabela XML não reconhecido:", tipo);
-    // Return a default or throw an error
-    return ""; // Or throw new Error(`Tipo de tabela XML não suportado: ${tipo}`);
+// Fetches XML template content based on the period type
+async function lerTabelaXml({ tipo }: TabelaXML): Promise<string> {
+  if (tipo in TabelaXmlConstantData) {
+    return TabelaXmlConstantData[tipo as keyof typeof TabelaXmlConstantData]!;
   }
+
+  const filePath = TabelaXmlFilePaths[tipo as keyof typeof TabelaXmlFilePaths];
+  if (filePath) {
+    try {
+      const response = await fetch(filePath);
+      if (!response.ok) {
+        console.error(
+          `Erro ao buscar template XML: ${response.status} ${filePath}`
+        );
+        return "";
+      }
+      return await response.text();
+    } catch (error) {
+      console.error(`Erro de rede ao buscar template XML: ${filePath}`, error);
+      return "";
+    }
+  }
+
+  console.error("Tipo de tabela XML não reconhecido ou não mapeado:", tipo);
+  return "";
 }
 
-// Updated function to calculate split times and format pages
-async function formatarPaginas(pages: SortedScheduleEntry[]) {
+/**
+ * Calculates the specific time slots for manha, tarde, or noite periods,
+ * especially when a combined period (like manhaTarde) is involved,
+ * considering a potential interval.
+ */
+function calculateSplitTimes(
+  periodo: Exclude<Period, "nenhum">,
+  horario: string, // Full period horario, e.g., "08:00 ÀS 17:00"
+  intervalo?: string // Interval, e.g., "12:00 ÀS 13:00"
+): SplitTimes {
+  const [startTime, endTime] = horario.split(" ÀS ");
+
+  const getValidTimePart = (part?: string) =>
+    part && part !== "N/A" ? part : undefined;
+  const intervalParts = intervalo?.split(" ÀS ");
+  const intervalStart = getValidTimePart(intervalParts?.[0]);
+  const intervalEnd = getValidTimePart(intervalParts?.[1]);
+
+  const splitTimes: SplitTimes = {};
+
+  switch (periodo) {
+    case "manha":
+      splitTimes.manha = horario;
+      break;
+    case "tarde":
+      splitTimes.tarde = horario;
+      break;
+    case "noite":
+      splitTimes.noite = horario;
+      break;
+    case "manhaTarde":
+      if (intervalStart && intervalEnd) {
+        // Both interval parts defined
+        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.tarde = `${intervalEnd} ÀS ${endTime}`;
+      } else if (intervalStart) {
+        // Only interval start defined
+        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.tarde = `${intervalStart} ÀS ${endTime}`;
+      } else if (intervalEnd) {
+        // Only interval end defined (original specific override)
+        splitTimes.manha = `${startTime} ÀS ${endTime}`;
+        splitTimes.tarde = "";
+      } else {
+        // Neither interval part defined, use default 12:00 split
+        splitTimes.manha = `${startTime} ÀS 12:00`;
+        splitTimes.tarde = `12:00 ÀS ${endTime}`;
+      }
+      break;
+    case "tardeNoite":
+      if (intervalStart && intervalEnd) {
+        // Both interval parts defined
+        splitTimes.tarde = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
+      } else if (intervalStart) {
+        // Only interval start defined
+        splitTimes.tarde = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.noite = `${intervalStart} ÀS ${endTime}`;
+      } else if (intervalEnd) {
+        // Only interval end defined (original specific override)
+        splitTimes.tarde = `${startTime} ÀS ${endTime}`;
+        splitTimes.noite = "";
+      } else {
+        // Neither interval part defined, use default 18:00 split
+        splitTimes.tarde = `${startTime} ÀS 18:00`;
+        splitTimes.noite = `18:00 ÀS ${endTime}`;
+      }
+      break;
+    case "manhaNoite": // Assumes a break between manha and noite, defined by interval or default
+      if (intervalStart && intervalEnd) {
+        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
+      } else {
+        // Default full day split (manha until 12:00, noite from 18:00)
+        splitTimes.manha = `${startTime} ÀS 12:00`;
+        splitTimes.noite = `18:00 ÀS ${endTime}`;
+      }
+      break;
+  }
+  return splitTimes;
+}
+
+// Formats the sorted schedule entries into an XML string for the document
+async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
   let newXmlPages = "";
 
   for (const day of pages) {
     const formattedDate = day.dia.split("-").reverse().join("/");
-    const [startTime, endTime] = day.horario.split(" ÀS ");
-    const intervalStart = day.intervalo?.split(" ÀS ")[0];
-    const intervalEnd = day.intervalo?.split(" ÀS ")[1];
+    const splitTimes = calculateSplitTimes(
+      day.periodo,
+      day.horario,
+      day.intervalo
+    );
 
-    // Calculate split times based on period
-    const splitTimes: SplitTimes = {};
-    switch (day.periodo) {
-      case "manha":
-        splitTimes.manha = day.horario;
-        break;
-      case "tarde":
-        splitTimes.tarde = day.horario;
-        break;
-      case "noite":
-        splitTimes.noite = day.horario;
-        break;
-      case "manhaTarde":
-        // Use interval if available, otherwise split at 12:00
-        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
-        splitTimes.tarde = `${intervalEnd} ÀS ${endTime}`;
-        break;
-      case "tardeNoite":
-        // Split at 18:00
-        splitTimes.tarde = `${startTime} ÀS ${intervalStart}`;
-        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
-        break;
-      case "manhaNoite":
-        splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
-        splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
-        break;
-    }
-
-    // Process instructor A
-    if (day.instrutorA) {
+    for (const instrutorId of day.instrutores) {
       const tabelaXml = await lerTabelaXml({ tipo: day.periodo });
-      const repetition = tabelaXml.repeat(day.paginas);
-      newXmlPages += substituirOcorrencias(
-        repetition,
-        "instrutor_a",
-        formattedDate,
-        day.periodo,
-        splitTimes
-      );
-    }
-
-    // Process instructor B
-    if (day.instrutorB) {
-      const tabelaXml = await lerTabelaXml({ tipo: day.periodo });
-      const repetition = tabelaXml.repeat(day.paginas);
-      newXmlPages += substituirOcorrencias(
-        repetition,
-        "instrutor_b",
-        formattedDate,
-        day.periodo,
-        splitTimes
-      );
+      if (tabelaXml) {
+        // Ensure tabelaXml is not empty
+        const repetition = tabelaXml.repeat(day.paginas);
+        newXmlPages += substituirOcorrencias(
+          repetition,
+          instrutorId,
+          formattedDate,
+          day.periodo,
+          splitTimes
+        );
+      }
     }
   }
-
   return newXmlPages;
+}
+
+export async function gerarIdentificador(
+  docData: Identificador,
+  pages: PagesData[],
+  numeroParticipantes: number
+): Promise<void> {
+  try {
+    const formattedPages = sortData(pages, numeroParticipantes);
+
+    const DOCX_TEMPLATE_BUFFER = await loadFile(
+      "/templates/identificador/identificacao-do-participante-nova.docx"
+    );
+
+    const templateFileName =
+      docData.conteudo_aplicado.length <= 800
+        ? "document-template.xml"
+        : "document-3colunas.xml";
+
+    const [MAIN_XML_RESPONSE, HEADER3_XML_RESPONSE] = await Promise.all([
+      fetch(`/templates/identificador/${templateFileName}`),
+      fetch(`/templates/identificador/header3.xml`),
+    ]);
+
+    if (!MAIN_XML_RESPONSE.ok)
+      throw new Error(`Falha ao buscar ${templateFileName}`);
+    if (!HEADER3_XML_RESPONSE.ok)
+      throw new Error(`Falha ao buscar header3.xml`);
+
+    const [MAIN_XML_CONTENT, HEADER3_XML_CONTENT] = await Promise.all([
+      MAIN_XML_RESPONSE.text(),
+      HEADER3_XML_RESPONSE.text(),
+    ]);
+
+    const pagesXmlContent = await formatarPaginas(formattedPages);
+    const UPDATED_DOCUMENT_XML_FILE =
+      MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(pagesXmlContent);
+
+    const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
+    zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
+    zip.file("word/header3.xml", HEADER3_XML_CONTENT);
+
+    const doc = new Docxtemplater(zip, {
+      delimiters: { start: "[", end: "]" },
+      paragraphLoop: true,
+      linebreaks: true,
+      parser: expressionParser,
+    });
+
+    doc.render(docData);
+    const out = doc.getZip().generate({
+      type: "blob",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+    saveAs(out, "output.docx");
+  } catch (error) {
+    console.error("Erro ao gerar identificador:", error);
+    // Potentially re-throw or handle more gracefully depending on application needs
+  }
 }
