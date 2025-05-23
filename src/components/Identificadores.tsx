@@ -32,10 +32,6 @@ import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
 import { fillParticipants } from "@/utils/preencher-participantes-identificador";
 
-/**
- * Definição de tipos auxiliares
- */
-
 type FormData = {
   evento: string;
   certificadoTipo: string;
@@ -177,17 +173,10 @@ export const Identificadores = () => {
     fetchData(page);
   }, [page]);
 
-  /**
-   * Ajusta exibição de assinaturas com base no tipo selecionado
-   */
   const handleSignatureCount = (value: string) => {
     setShowIdentificationConfig(value !== "2");
     setSignatureCount(Number(value));
   };
-
-  /**
-   * Ajusta os períodos de instrutores conforme a seleção.
-   */
 
   const handleEventoSelect = (eventoId: string) => {
     const evento = eventos.find((ev) => ev.id === eventoId);
@@ -197,8 +186,6 @@ export const Identificadores = () => {
   };
 
   const onSubmit = async (data: FormData) => {
-    console.log("FORM DATA:", data.courseDate);
-
     const transformedCourseData = Object.entries(data.courseDate).map(
       ([date, details]) => {
         const dayInfo = days.find((d) => d.date === date);
