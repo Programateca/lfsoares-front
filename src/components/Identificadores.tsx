@@ -373,35 +373,26 @@ export const Identificadores = () => {
       tipo_certificado: data.certificadoTipo,
 
       // Assinaturas
-      assinante_titulo1: data?.assinatura[0]?.titulo
-        ? data.assinatura[0].titulo + ":"
-        : "",
-      assinante_titulo2: data?.assinatura[1]?.titulo
-        ? data.assinatura[1].titulo + ":"
-        : "",
-      assinante_titulo3: data?.assinatura[2]?.titulo
-        ? data.assinatura[2].titulo + ":"
-        : "",
-      assinante_titulo4: data?.assinatura[3]?.titulo
-        ? data.assinatura[3].titulo + ":"
-        : "",
+      assinante_titulo1: data?.assinatura[0]?.titulo || "",
+      assinante_titulo2: data?.assinatura[1]?.titulo || "",
+      assinante_titulo3: data?.assinatura[2]?.titulo || "",
+      assinante_titulo4: data?.assinatura[3]?.titulo || "",
 
       assinante1: getAssinante(0),
       assinante2: getAssinante(1),
       assinante3: getAssinante(2),
       assinante4: getAssinante(3),
-      courseDate: transformedCourseData,
-      // instrutorDates: {},
+      courseData: transformedCourseData,
     };
 
     // // FOR DEBUG
-    console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    console.log("dataGerador.courseData", dataGerador.instrutorDates);
     gerarIdentificador(
       {
         ...(dataGerador as any),
         id_code: "teste",
       },
-      dataGerador.courseDate,
+      dataGerador.courseData,
       dataGerador.numeroParticipantes
     );
     return;
@@ -918,7 +909,7 @@ export const Identificadores = () => {
                     ...identificadorParsed,
                     id_code: String(row.code).padStart(3, "0"),
                   },
-                  identificadorParsed.instrutorDates,
+                  identificadorParsed.courseData,
                   identificadorParsed.numeroParticipantes
                 );
               } catch (error) {

@@ -12,7 +12,7 @@ import {
   TABLE_DOUBLE_MANHA_NOITE,
 } from "./constant-xml-data";
 
-type CourseDate = {
+type CourseData = {
   date: {
     date: string;
     start: string;
@@ -90,7 +90,7 @@ const TabelaXmlConstantData: Partial<
 
 // Processes and sorts the course schedule data
 function sortData(
-  courseData: CourseDate[], // Changed parameter type
+  courseData: CourseData[], // Changed parameter type
   numParticipantes: number
 ): SortedScheduleEntry[] {
   const numeroPaginas = Math.ceil(numParticipantes / 10);
@@ -374,11 +374,11 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
 
 export async function gerarIdentificador(
   docData: Identificador,
-  courseDate: CourseDate[],
+  courseData: CourseData[],
   numeroParticipantes: number
 ): Promise<void> {
   try {
-    const formattedPages = sortData(courseDate, numeroParticipantes);
+    const formattedPages = sortData(courseData, numeroParticipantes);
 
     const DOCX_TEMPLATE_BUFFER = await loadFile(
       "/templates/identificador/identificacao-do-participante-nova.docx"
