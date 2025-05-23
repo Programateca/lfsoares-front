@@ -22,7 +22,7 @@ import { Pessoa } from "@/@types/Pessoa";
 import { Instrutor } from "@/@types/Instrutor";
 
 import { MultiSelect } from "@/components/multi-select";
-import { gerarIdentificador, Period } from "@/utils/identificador";
+import { gerarIdentificador } from "@/utils/identificador";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
 import { IdentificadorData } from "@/@types/IdentificadorData";
@@ -30,7 +30,6 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
-import { processInstrutorDates } from "@/utils/process-instrutor-dates";
 import { fillParticipants } from "@/utils/preencher-participantes-identificador";
 
 /**
@@ -201,8 +200,6 @@ export const Identificadores = () => {
     setDays(evento.courseDate.map((date) => JSON.parse(date)));
   };
 
-  console.log("DAYS:", days);
-
   const onSubmit = async (data: FormData) => {
     console.log("FORM DATA:", data.courseDate);
 
@@ -219,8 +216,6 @@ export const Identificadores = () => {
       }
     );
 
-    console.log("TRANSFORMED COURSE DATA:", transformedCourseData);
-
     if (!data.participantes?.length) {
       toast.error("Selecione os participantes");
       return;
@@ -236,9 +231,10 @@ export const Identificadores = () => {
       (await api.get(`identificadores/last-certificado-code/${fullYear}`)).data
     );
 
-    const datasArray = selectedEvento.courseDate.map((dateStr) =>
-      JSON.parse(dateStr)
+    const datasArray: string[] = selectedEvento.courseDate.map(
+      (dateStr) => JSON.parse(dateStr).date
     );
+
     const datasFormatadas = formatarDatas(datasArray);
 
     const fullDateNow = new Date().toLocaleDateString("pt-BR", {
@@ -301,7 +297,6 @@ export const Identificadores = () => {
       header_data: "14/02/2025",
       revisao: "00",
       // Fim Header
-
       ...(() => {
         // Find the last filled assinatura
         if (!data?.assinatura || !Array.isArray(data.assinatura)) {
@@ -395,20 +390,21 @@ export const Identificadores = () => {
       assinante2: getAssinante(1),
       assinante3: getAssinante(2),
       assinante4: getAssinante(3),
-      instrutorDates: {},
+      courseDate: transformedCourseData,
+      // instrutorDates: {},
     };
 
     // // FOR DEBUG
-    // console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
-    // gerarIdentificador(
-    //   {
-    //     ...(dataGerador as any),
-    //     id_code: "teste",
-    //   },
-    //   dataGerador.instrutorDates,
-    //   dataGerador.numeroParticipantes
-    // );
-    // return;
+    console.log("dataGerador.instrutorDates", dataGerador.instrutorDates);
+    gerarIdentificador(
+      {
+        ...(dataGerador as any),
+        id_code: "teste",
+      },
+      dataGerador.courseDate,
+      dataGerador.numeroParticipantes
+    );
+    return;
 
     // const saveResponse = await api.post("identificadores", newIdentificador);
     // if (saveResponse.status === 201) {

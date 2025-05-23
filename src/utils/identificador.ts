@@ -5,13 +5,35 @@ import expressionParser from "docxtemplater/expressions";
 import { saveAs } from "file-saver";
 
 import type { Identificador } from "@/@types/Identificador";
-import { CourseDate } from "@/components/Identificadores";
+
 import {
   TABLE_DOUBLE_PERIOD,
   TABLE_DOUBLE_TARDE_NOITE,
   TABLE_DOUBLE_MANHA_NOITE,
 } from "./constant-xml-data";
-import { calcularPeriodoDia } from "./calcular-periodo-dia";
+
+type CourseDate = {
+  date: {
+    date: string;
+    start: string;
+    end: string;
+    intervalStart: string;
+    intervalEnd: string;
+  };
+  address: {
+    morning?: string;
+    afternoon: string;
+    night?: string;
+  };
+  instrutorA: {
+    instrutor?: string;
+    periodo?: string;
+  };
+  instrutorB: {
+    instrutor?: string;
+    periodo?: string;
+  };
+};
 
 // Updated Period type to include noite and combined periods
 export type Period =
@@ -22,10 +44,6 @@ export type Period =
   | "manhaTarde"
   | "manhaNoite"
   | "tardeNoite";
-
-type PagesData = CourseDate & {
-  instrutor?: string;
-};
 
 // Define the structure for the processed schedule entries
 type SortedScheduleEntry = {
@@ -72,55 +90,74 @@ const TabelaXmlConstantData: Partial<
 
 // Processes and sorts the course schedule data
 function sortData(
-  pages: PagesData[],
+  courseData: CourseDate[], // Changed parameter type
   numParticipantes: number
 ): SortedScheduleEntry[] {
   const numeroPaginas = Math.ceil(numParticipantes / 10);
   const groupedEntriesMap = new Map<string, SortedScheduleEntry>();
 
-  pages.forEach((item) => {
-    if (!item.date || !item.start || !item.end) {
+  courseData.forEach((item) => {
+    const dateDetails = item.date; // This is { date, start, end, intervalStart, intervalEnd }
+
+    if (
+      !dateDetails ||
+      !dateDetails.date ||
+      !dateDetails.start ||
+      !dateDetails.end
+    ) {
       console.warn(
-        "Skipping item due to missing date, start, or end time:",
+        "Skipping item due to missing date, start, or end time in dateDetails:",
         item
       );
       return;
     }
-    const instrutorIdentifier = item.instrutor;
-    if (!instrutorIdentifier) {
-      console.warn("Skipping item due to missing instructor identifier:", item);
-      return;
-    }
 
-    const periodo = calcularPeriodoDia(item.start, item.end);
+    const processInstructor = (instrutorConfig: {
+      instrutor?: string;
+      periodo?: string;
+    }) => {
+      if (
+        instrutorConfig &&
+        instrutorConfig.instrutor &&
+        instrutorConfig.periodo &&
+        instrutorConfig.periodo !== "nenhum"
+      ) {
+        const instrutorIdentifier = instrutorConfig.instrutor;
+        const periodo = instrutorConfig.periodo as Exclude<Period, "nenhum">;
 
-    const key = `${item.date}-${periodo}`;
-    const horario = `${item.start} ÀS ${item.end}`;
-    let intervalo: string | undefined = undefined;
-    if (
-      item.intervalStart &&
-      item.intervalStart !== "N/A" &&
-      item.intervalEnd &&
-      item.intervalEnd !== "N/A"
-    ) {
-      intervalo = `${item.intervalStart} ÀS ${item.intervalEnd}`;
-    }
+        const key = `${dateDetails.date}-${periodo}`;
 
-    const existingEntry = groupedEntriesMap.get(key);
-    if (!existingEntry) {
-      groupedEntriesMap.set(key, {
-        dia: item.date,
-        periodo: periodo,
-        paginas: numeroPaginas,
-        instrutores: [instrutorIdentifier],
-        horario: horario,
-        intervalo: intervalo,
-      });
-    } else {
-      if (!existingEntry.instrutores.includes(instrutorIdentifier)) {
-        existingEntry.instrutores.push(instrutorIdentifier);
+        const horario = `${dateDetails.start} ÀS ${dateDetails.end}`;
+        let intervalo: string | undefined = undefined;
+        if (
+          dateDetails.intervalStart &&
+          dateDetails.intervalStart !== "N/A" &&
+          dateDetails.intervalEnd &&
+          dateDetails.intervalEnd !== "N/A"
+        ) {
+          intervalo = `${dateDetails.intervalStart} ÀS ${dateDetails.intervalEnd}`;
+        }
+
+        const existingEntry = groupedEntriesMap.get(key);
+        if (!existingEntry) {
+          groupedEntriesMap.set(key, {
+            dia: dateDetails.date,
+            periodo: periodo,
+            paginas: numeroPaginas,
+            instrutores: [instrutorIdentifier],
+            horario: horario,
+            intervalo: intervalo,
+          });
+        } else {
+          if (!existingEntry.instrutores.includes(instrutorIdentifier)) {
+            existingEntry.instrutores.push(instrutorIdentifier);
+          }
+        }
       }
-    }
+    };
+
+    processInstructor(item.instrutorA);
+    processInstructor(item.instrutorB);
   });
 
   const groupedEntries = Array.from(groupedEntriesMap.values());
@@ -337,11 +374,11 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
 
 export async function gerarIdentificador(
   docData: Identificador,
-  pages: PagesData[],
+  courseDate: CourseDate[],
   numeroParticipantes: number
 ): Promise<void> {
   try {
-    const formattedPages = sortData(pages, numeroParticipantes);
+    const formattedPages = sortData(courseDate, numeroParticipantes);
 
     const DOCX_TEMPLATE_BUFFER = await loadFile(
       "/templates/identificador/identificacao-do-participante-nova.docx"
