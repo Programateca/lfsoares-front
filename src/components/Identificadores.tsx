@@ -31,6 +31,7 @@ import { useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
 import { fillParticipants } from "@/utils/preencher-participantes-identificador";
+import { CourseData } from "@/@types/Identificador";
 
 type FormData = {
   evento: string;
@@ -186,18 +187,71 @@ export const Identificadores = () => {
   };
 
   const onSubmit = async (data: FormData) => {
-    const transformedCourseData = Object.entries(data.courseDate).map(
-      ([date, details]) => {
-        const dayInfo = days.find((d) => d.date === date);
-        if (dayInfo) {
-          return {
-            ...details,
-            date: { ...dayInfo },
-          };
+    let transformedCourseData: CourseData[] | null = null;
+
+    if (signatureCount > 2) {
+      transformedCourseData = Object.entries(data.courseDate).map(
+        ([date, details]) => {
+          const dayInfo = days.find((d) => d.date === date);
+          if (dayInfo) {
+            return {
+              ...details,
+              date: { ...dayInfo },
+            };
+          }
+          throw new Error("Erro com a data do evento");
         }
-        throw new Error("Erro com a data do evento");
-      }
-    );
+      );
+    } else {
+      transformedCourseData = days.map((day) => {
+        const dayStartTime = day.start;
+        const dayEndTime = day.end;
+
+        const isMorning = dayStartTime < "12:00" && dayEndTime > "06:00";
+        const isAfternoon = dayStartTime < "18:00" && dayEndTime > "12:00";
+        const isNight = dayStartTime < "23:59" && dayEndTime > "18:00";
+
+        let instructorAPeriod: string | undefined = undefined;
+        if (isMorning && isAfternoon && isNight) {
+          instructorAPeriod = undefined; // Full day coverage, specific period string might be ambiguous
+        } else if (isMorning && isAfternoon) {
+          instructorAPeriod = "manhaTarde";
+        } else if (isMorning && isNight) {
+          instructorAPeriod = "manhaNoite";
+        } else if (isAfternoon && isNight) {
+          instructorAPeriod = "tardeNoite";
+        } else if (isMorning) {
+          instructorAPeriod = "manha";
+        } else if (isAfternoon) {
+          instructorAPeriod = "tarde";
+        } else if (isNight) {
+          instructorAPeriod = "noite";
+        }
+
+        const courseDayAddress: {
+          morning?: string;
+          afternoon?: string;
+          night?: string;
+        } = {};
+        if (selectedEvento?.courseLocation) {
+          if (isMorning)
+            courseDayAddress.morning = selectedEvento.courseLocation;
+          if (isAfternoon)
+            courseDayAddress.afternoon = selectedEvento.courseLocation;
+          if (isNight) courseDayAddress.night = selectedEvento.courseLocation;
+        }
+
+        return {
+          address: courseDayAddress,
+          date: { ...day },
+          instrutorA: {
+            instrutor: data.assinatura[0]?.assinante,
+            periodo: instructorAPeriod,
+          },
+          instrutorB: {}, // Assuming instrutorB is not applicable or empty for this case
+        };
+      });
+    }
 
     if (!data.participantes?.length) {
       toast.error("Selecione os participantes");
@@ -281,41 +335,32 @@ export const Identificadores = () => {
       revisao: "00",
       // Fim Header
       ...(() => {
-        // Find the last filled assinatura
-        if (!data?.assinatura || !Array.isArray(data.assinatura)) {
-          return {
-            titulo2: "",
-            nome2: "",
-            qualificacao_profissional2: "",
-            registro_profissional2: "",
-          };
+        const defaultSignatureProps = {
+          titulo2: "",
+          nome2: "",
+          qualificacao_profissional2: "",
+          registro_profissional2: "",
+        };
+
+        if (!Array.isArray(data?.assinatura) || data.assinatura.length === 0) {
+          return defaultSignatureProps;
         }
 
-        let lastValidIndex = -1;
-        for (let i = data.assinatura.length - 1; i >= 0; i--) {
-          if (data.assinatura[i]?.assinante) {
-            lastValidIndex = i;
-            break;
-          }
+        const lastFilledAssinatura = [...data.assinatura]
+          .reverse()
+          .find((sig) => sig?.assinante);
+
+        if (!lastFilledAssinatura) {
+          return defaultSignatureProps;
         }
 
-        if (lastValidIndex === -1) {
-          return {
-            titulo2: "",
-            nome2: "",
-            qualificacao_profissional2: "",
-            registro_profissional2: "",
-          };
-        }
-
-        const assinatura = data.assinatura[lastValidIndex];
         const instrutor = instrutores.find(
-          (item) => item.id === assinatura.assinante
+          (item) => item.id === lastFilledAssinatura.assinante
         );
 
         return {
-          titulo2: assinatura.titulo || "",
-          nome2: instrutor ? instrutor.name + ":" : "",
+          titulo2: lastFilledAssinatura.titulo || "",
+          nome2: instrutor ? `${instrutor.name}:` : "",
           qualificacao_profissional2: instrutor?.qualificacaoProfissional || "",
           registro_profissional2: instrutor?.registroProfissional || "",
         };
