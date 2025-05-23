@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "./ui/card";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "./ui/button";
@@ -44,10 +44,6 @@ type FormData = {
   assinatura: { titulo?: string; assinante?: string }[];
   motivoTreinamento?: string;
   objetivoTreinamento?: string;
-  // address: Record<
-  //   string,
-  //   Partial<Record<"morning" | "afternoon" | "night", string>>
-  // >;
   courseDate: Record<
     string,
     {
@@ -58,7 +54,7 @@ type FormData = {
   >;
 };
 
-export type CourseDate = {
+type CourseDate = {
   date: string;
   start: string;
   end: string;

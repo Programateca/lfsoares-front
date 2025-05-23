@@ -22,7 +22,7 @@ type CourseData = {
   };
   address: {
     morning?: string;
-    afternoon: string;
+    afternoon?: string;
     night?: string;
   };
   instrutorA: {

@@ -1,7 +1,27 @@
 export type Period = "manha" | "tarde" | "manhaTarde";
-type Schedule = { dia: string; periodo?: Period };
-type DaySchedule = { instrutorA: Schedule[]; instrutorB: Schedule[] };
-type EventSchedule = DaySchedule;
+
+export type CourseData = {
+  date: {
+    date: string;
+    start: string;
+    end: string;
+    intervalStart: string;
+    intervalEnd: string;
+  };
+  address: {
+    morning?: string;
+    afternoon?: string;
+    night?: string;
+  };
+  instrutorA: {
+    instrutor?: string;
+    periodo?: string;
+  };
+  instrutorB: {
+    instrutor?: string;
+    periodo?: string;
+  };
+};
 
 export interface Identificador {
   id: string;
@@ -39,7 +59,7 @@ export interface Identificador {
   instrutor_a: string;
   instrutor_b: string;
 
-  instrutorDates: EventSchedule;
+  courseData: CourseData;
 
   // add
   certificateYear: string;
