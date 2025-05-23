@@ -342,12 +342,8 @@ export const Identificadores = () => {
       tipo: selectedEvento.treinamento.courseType,
       carga_horaria: `${selectedEvento.treinamento.courseHours} HORAS/AULA`,
       intervalo: intervalos,
-      endereco: selectedEvento?.courseLocation2
-        ? `${selectedEvento.courseLocation} | ${selectedEvento.courseLocation2}`
-        : selectedEvento?.courseLocation || "",
-      endereco2: selectedEvento?.courseLocation2
-        ? selectedEvento?.courseLocation2
-        : "",
+      endereco: selectedEvento.courseLocation || "",
+      endereco2: selectedEvento?.courseLocation2 || "",
       empresa: `${selectedEvento.empresa.name} - ${
         selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
       }`,
