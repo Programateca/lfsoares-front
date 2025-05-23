@@ -381,29 +381,35 @@ export const Identificadores = () => {
       courseData: transformedCourseData,
     };
 
-    // // FOR DEBUG
-    console.log("dataGerador.courseData", dataGerador.instrutorDates);
-    gerarIdentificador(
-      {
-        ...(dataGerador as any),
-        id_code: "teste",
-      },
-      dataGerador.courseData,
-      dataGerador.numeroParticipantes
-    );
-    return;
+    // FOR DEBUG
+    // console.log("dataGerador.courseData", dataGerador.instrutorDates);
+    // gerarIdentificador(
+    //   {
+    //     ...(dataGerador as any),
+    //     id_code: "teste",
+    //   },
+    //   dataGerador.courseData,
+    //   dataGerador.numeroParticipantes
+    // );
+    // return;
 
-    // const saveResponse = await api.post("identificadores", newIdentificador);
-    // if (saveResponse.status === 201) {
-    //   toast.success("Identificador gerado com sucesso!");
-    //   setIdentificadoresGerados((prev) => [
-    //     ...prev,
-    //     saveResponse.data as IdentificadorData,
-    //   ]);
-    //   setFormsOpen(false);
-    // } else {
-    //   toast.error("Erro ao gerar identificador!");
-    // }
+    const newIdentificador: Partial<IdentificadorData> = {
+      treinamento: selectedEvento.treinamento.name,
+      identificadorData: JSON.stringify(dataGerador),
+      year: String(fullYear),
+    };
+
+    const saveResponse = await api.post("identificadores", newIdentificador);
+    if (saveResponse.status === 201) {
+      toast.success("Identificador gerado com sucesso!");
+      setIdentificadoresGerados((prev) => [
+        ...prev,
+        saveResponse.data as IdentificadorData,
+      ]);
+      setFormsOpen(false);
+    } else {
+      toast.error("Erro ao gerar identificador!");
+    }
   };
 
   useEffect(() => {
