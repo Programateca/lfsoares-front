@@ -691,7 +691,7 @@ export const Identificadores = () => {
                                   {instrutores.map((instrutor) => (
                                     <SelectItem
                                       key={instrutor.id} // Changed to use only instrutor.id for uniqueness
-                                      value={instrutor.id}
+                                      value={String(instrutor.id)}
                                     >
                                       {instrutor.name} -{" "}
                                       {instrutor.qualificacaoProfissional} -{" "}
@@ -800,6 +800,7 @@ export const Identificadores = () => {
                                                 Endereços
                                               </SelectLabel>
                                               <SelectItem
+                                                key="address1"
                                                 value={
                                                   selectedEvento.courseLocation
                                                 }
@@ -808,6 +809,7 @@ export const Identificadores = () => {
                                               </SelectItem>
                                               {selectedEvento.courseLocation2 && (
                                                 <SelectItem
+                                                  key="address2"
                                                   value={
                                                     selectedEvento.courseLocation2
                                                   }
@@ -855,7 +857,7 @@ export const Identificadores = () => {
                                           {instrutores.map((instrutor) => {
                                             return (
                                               <SelectItem
-                                                key={instrutor.id} // Changed to use only instrutor.id for uniqueness
+                                                key={instrutor.id}
                                                 value={instrutor.name}
                                               >
                                                 {instrutor.name}
