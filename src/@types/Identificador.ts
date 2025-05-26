@@ -46,6 +46,9 @@ export interface Identificador {
   endereco: string;
   empresa: string;
   datas: string;
+  empresa_id: string;
+  evento_id: string;
+
   // Assinaturas
   assinante_titulo1: string;
   assinante_titulo2: string;
@@ -59,7 +62,7 @@ export interface Identificador {
   instrutor_a: string;
   instrutor_b: string;
 
-  courseData: CourseData;
+  courseData: CourseData[];
 
   // add
   certificateYear: string;

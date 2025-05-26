@@ -9,17 +9,7 @@ import {
   TABLE_DIA_TODO,
   TABLE_MEIO_PERIODO,
 } from "./constants-xml-data-lista";
-
-type DatasObject = {
-  date: string;
-  start: string;
-  end: string;
-  intervalStart: string;
-  intervalEnd: string;
-  instrutor: string;
-  instrutorA: boolean;
-  instrutorB: boolean;
-};
+import { Identificador, CourseData } from "@/@types/Identificador";
 
 type FormattedDateResult = {
   date: string;
@@ -34,10 +24,13 @@ type FormattedDateResult = {
 };
 
 type Props = {
-  listaData: Record<string, any>;
+  listaData: Partial<Identificador> & {
+    numberOfParticipantes: number;
+  };
 };
 
 export async function gerarLista({ listaData }: Props): Promise<void> {
+  console.log("gerarLista", listaData);
   const FILE_NAME_A = "lista-instrutor-A.docx";
   const FILE_NAME_B = "lista-instrutor-B.docx";
   const TOTAL_PARTICIPANTS = listaData.numberOfParticipantes;
@@ -58,7 +51,7 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
       throw new Error("TAG_NAME não encontrada no XML principal");
     }
 
-    const formattedDates = formatDates(listaData.datasObject);
+    const formattedDates = formatDates(listaData.courseData!);
 
     // INSTRUTOR A
     if (formattedDates.instrutorA.length) {
@@ -202,201 +195,93 @@ function substituirOcorrencias(
   return result;
 }
 
-function determinePeriodo(
-  start: string,
-  end: string
-): "manha" | "tarde" | "dia-todo" | "noite" | "indefinido" {
-  // Basic validation
-  if (!start || !end || !start.includes(":") || !end.includes(":")) {
-    return "indefinido";
-  }
+function formatDates(dates: CourseData[]): {
+  instrutorA: FormattedDateResult[];
+  instrutorB: FormattedDateResult[];
+} {
+  const instrutorAResults: FormattedDateResult[] = [];
+  const instrutorBResults: FormattedDateResult[] = [];
 
-  const startHour = parseInt(start.split(":")[0], 10);
-  const endHour = parseInt(end.split(":")[0], 10);
-  // Basic validation for parsed hours
-  if (isNaN(startHour) || isNaN(endHour)) {
-    return "indefinido";
-  }
+  for (const courseItem of dates) {
+    const dateDetails = courseItem.date; // Contains date, start, end, intervalStart, intervalEnd
 
-  // Define time boundaries (adjust if needed)
-  const morningEndHour = 12;
-  const afternoonStartHour = 13; // Assuming interval is 12-13
-  const nightStartHour = 18; // Assuming night starts at 18:00
-  const nightEndHour = 6; // Assuming night ends at 24:00
-
-  const startsInMorning = startHour < morningEndHour;
-  const startsInAfternoon =
-    startHour >= afternoonStartHour && startHour < nightStartHour; // Covers afternoon hours
-  const endsInNight = endHour >= nightStartHour || endHour < nightEndHour; // Covers night hours
-
-  // Check for full day spanning morning and afternoon
-  if (startsInMorning && endHour <= morningEndHour) {
-    // Example: 08:00 - 12:00
-    return "manha";
-  } else if (startsInAfternoon) {
-    // Example: 13:00 - 17:00
-    return "tarde";
-  } else if (endsInNight) {
-    return "noite";
-  } else {
-    // Covers edge cases or times strictly within the typical lunch break, etc.
-    // Or could indicate an error in data.
-    console.warn(
-      `Could not determine periodo for start: ${start}, end: ${end}`
-    );
-    return "indefinido";
-  }
-}
-
-function formatDates(dates: DatasObject[]) {
-  // 1. Group entries by date
-  const groupedByDate = dates.reduce((acc, entry) => {
-    const date = entry.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    // Sort entries within the date by start time for consistent processing
-    acc[date].sort((a, b) => a.start.localeCompare(b.start));
-    return acc;
-  }, {} as Record<string, DatasObject[]>);
-
-  const results: FormattedDateResult[] = [];
-
-  // 2. Process each date group
-  for (const date in groupedByDate) {
-    const dailyEntries = groupedByDate[date];
-
-    if (dailyEntries.length === 1) {
-      // Case 1: Single entry for the day
-      const entry = dailyEntries[0];
-
-      // If intervalStart and intervalEnd are provided in the input,
-      // it's a split session for a single instructor. Keep the interval
-      // and classify as "dia-todo".
+    // Process Instrutor A
+    if (
+      courseItem.instrutorA &&
+      courseItem.instrutorA.instrutor &&
+      courseItem.instrutorA.periodo !== "nenhum"
+    ) {
+      const resultA: FormattedDateResult = {
+        date: dateDetails.date,
+        start: dateDetails.start,
+        end: dateDetails.end,
+        instrutor: courseItem.instrutorA.instrutor,
+        instrutorA: true,
+        instrutorB: false,
+        periodo: courseItem.instrutorA.periodo || "", // Use the period from CourseData
+      };
+      // Add interval if the period is 'dia-todo' and interval times are available
       if (
-        entry.intervalStart &&
-        entry.intervalEnd &&
-        entry.intervalStart !== "N/A"
+        courseItem.instrutorA.periodo === "dia-todo" &&
+        dateDetails.intervalStart &&
+        dateDetails.intervalEnd &&
+        dateDetails.intervalStart !== "N/A" &&
+        dateDetails.intervalEnd !== "N/A"
       ) {
-        results.push({
-          date: entry.date,
-          start: entry.start,
-          end: entry.end,
-          intervalStart: entry.intervalStart,
-          intervalEnd: entry.intervalEnd,
-          instrutor: entry.instrutor,
-          instrutorA: entry.instrutorA,
-          instrutorB: entry.instrutorB,
-          periodo: "dia-todo", // Mark as "dia-todo" for entries with an interval
-        });
-      } else {
-        // No interval provided in the input, or one is missing.
-        // Treat as a continuous block and determine periodo normally.
-        const periodo = determinePeriodo(entry.start, entry.end);
-        results.push({
-          date: entry.date,
-          start: entry.start,
-          end: entry.end,
-          // intervalStart and intervalEnd are omitted
-          instrutor: entry.instrutor,
-          instrutorA: entry.instrutorA,
-          instrutorB: entry.instrutorB,
-          periodo: periodo,
-        });
+        resultA.intervalStart = dateDetails.intervalStart;
+        resultA.intervalEnd = dateDetails.intervalEnd;
       }
-    } else if (dailyEntries.length === 2) {
-      // Case 2: Two entries for the day (expected: morning and afternoon)
-      const entry1 = dailyEntries[0]; // Assumes first is morning due to sort
-      const entry2 = dailyEntries[1]; // Assumes second is afternoon
-
-      if (entry1.instrutor === entry2.instrutor) {
-        // Same instructor for both periods: Combine into one full-day entry, keep interval
-        results.push({
-          date: entry1.date,
-          start: entry1.start, // Start of the first period
-          end: entry2.end, // End of the second period
-          intervalStart: entry1.intervalStart, // Keep interval (assuming consistent or from first part)
-          intervalEnd: entry1.intervalEnd,
-          instrutor: entry1.instrutor,
-          instrutorA: entry1.instrutorA,
-          instrutorB: entry1.instrutorB,
-          periodo: "dia-todo",
-        });
-      } else {
-        // Different instructors: Create two separate entries, remove interval
-        // Entry 1
-        results.push({
-          date: entry1.date,
-          start: entry1.start,
-          end: entry1.end,
-          // intervalStart and intervalEnd are omitted
-          instrutor: entry1.instrutor,
-          instrutorA: entry1.instrutorA,
-          instrutorB: entry1.instrutorB,
-          periodo: determinePeriodo(entry1.start, entry1.end),
-        });
-        // Entry 2
-        results.push({
-          date: entry2.date,
-          start: entry2.start,
-          end: entry2.end,
-          // intervalStart and intervalEnd are omitted
-          instrutor: entry2.instrutor,
-          instrutorA: entry2.instrutorA,
-          instrutorB: entry2.instrutorB,
-          periodo: determinePeriodo(entry2.start, entry2.end),
-        });
-      }
+      instrutorAResults.push(resultA);
     }
-    // Optional: Handle cases with > 2 entries per day if necessary
-    else if (dailyEntries.length > 2) {
-      console.warn(
-        `Date ${date} has ${dailyEntries.length} entries. Processing individually without interval.`
-      );
-      // Process each entry individually as a partial day without interval
-      dailyEntries.forEach((entry) => {
-        results.push({
-          date: entry.date,
-          start: entry.start,
-          end: entry.end,
-          instrutor: entry.instrutor,
-          instrutorA: entry.instrutorA,
-          instrutorB: entry.instrutorB,
-          periodo: determinePeriodo(entry.start, entry.end),
-        });
-      });
+
+    // Process Instrutor B
+    if (
+      courseItem.instrutorB &&
+      courseItem.instrutorB.instrutor &&
+      courseItem.instrutorB.periodo !== "nenhum"
+    ) {
+      const resultB: FormattedDateResult = {
+        date: dateDetails.date,
+        start: dateDetails.start,
+        end: dateDetails.end,
+        instrutor: courseItem.instrutorB.instrutor,
+        instrutorA: false,
+        instrutorB: true,
+        periodo: courseItem.instrutorB.periodo || "", // Use the period from CourseData
+      };
+      // Add interval if the period is 'dia-todo' and interval times are available
+      if (
+        courseItem.instrutorB.periodo === "dia-todo" &&
+        dateDetails.intervalStart &&
+        dateDetails.intervalEnd &&
+        dateDetails.intervalStart !== "N/A" &&
+        dateDetails.intervalEnd !== "N/A"
+      ) {
+        resultB.intervalStart = dateDetails.intervalStart;
+        resultB.intervalEnd = dateDetails.intervalEnd;
+      }
+      instrutorBResults.push(resultB);
     }
   }
 
-  // 3. Optional: Sort final results by date then start time for consistency
-  results.sort((a, b) => {
+  // Sort results by date then start time
+  const sortFn = (a: FormattedDateResult, b: FormattedDateResult) => {
     const dateComparison = a.date.localeCompare(b.date);
     if (dateComparison !== 0) return dateComparison;
     // If dates are the same, sort by start time
-    return a.start.localeCompare(b.start);
-  });
-
-  // Define the type for the accumulator
-  type SeparatedResults = {
-    instrutorA: FormattedDateResult[];
-    instrutorB: FormattedDateResult[];
+    // Ensure start times are valid before comparing
+    const aStart = a.start || "";
+    const bStart = b.start || "";
+    return aStart.localeCompare(bStart);
   };
 
-  // Initialize accumulator with the correct structure
-  const initialAcc: SeparatedResults = { instrutorA: [], instrutorB: [] };
+  instrutorAResults.sort(sortFn);
+  instrutorBResults.sort(sortFn);
 
-  const separaPorInstrutor = results.reduce<SeparatedResults>((acc, item) => {
-    if (item.instrutorA) {
-      acc.instrutorA.push(item);
-    }
-    if (item.instrutorB) {
-      acc.instrutorB.push(item);
-    }
-    return acc;
-  }, initialAcc);
-
-  return separaPorInstrutor;
+  return {
+    instrutorA: instrutorAResults,
+    instrutorB: instrutorBResults,
+  };
 }
 
 async function saveAndRenderFile({

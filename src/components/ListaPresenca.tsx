@@ -41,7 +41,7 @@ import { Label } from "./ui/label";
 import { SelectMap } from "./SelectMap";
 import { IdentificadorData } from "@/@types/IdentificadorData";
 import toast from "react-hot-toast";
-import { ListaData } from "@/@types/ListaData";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,6 +54,7 @@ import {
   AlertDialogTrigger,
 } from "./ui/alert-dialog";
 import { Evento } from "@/@types/Evento";
+import { Identificador } from "@/@types/Identificador";
 
 export interface ListaFormData {
   documento_identificador: string;
@@ -95,7 +96,7 @@ const ListaPresenca = () => {
     if (identificadorValido) {
       const dataIdentificador = JSON.parse(
         identificadorValido.identificadorData
-      ) as ListaData;
+      ) as Identificador;
       const empresaCNPJ = empresas.find(
         (empresa) => empresa.id === dataIdentificador.empresa_id
       ).cnpj;
@@ -107,9 +108,11 @@ const ListaPresenca = () => {
       );
 
       const titulo = dataIdentificador.assinante_titulo2.split(":")[0].trim();
+
+      console.log("dataIdentificador", dataIdentificador);
       // return;
       const schema: Record<string, any> = {
-        datasObject: dataIdentificador.instrutorDates,
+        courseData: dataIdentificador.courseData, // Changed from datasObject to courseData
         nome_treinamento: dataIdentificador.treinamento,
         tipo: dataIdentificador.tipo,
         carga_horaria: `${dataIdentificador.carga_horaria}`,
@@ -166,7 +169,12 @@ const ListaPresenca = () => {
       // FOR DEBUG
       // const listaData = JSON.parse(newLista.documentData);
       // console.log("LISTA DATA", listaData);
-      // gerarLista({ listaData });
+      // gerarLista({
+      //   listaData: {
+      //     ...schema,
+      //     numberOfParticipantes: participantes.length,
+      //   },
+      // });
       // return;
       // ----
 
