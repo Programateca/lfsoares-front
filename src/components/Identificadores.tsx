@@ -245,7 +245,7 @@ export const Identificadores = () => {
           address: courseDayAddress,
           date: { ...day },
           instrutorA: {
-            instrutor: getAssinante(0),
+            instrutor: getAssinante(0, false),
             periodo: instructorAPeriod,
           },
           instrutorB: {}, // Assuming instrutorB is not applicable or empty for this case
@@ -287,7 +287,7 @@ export const Identificadores = () => {
       conteudoAplicado = selectedEvento.treinamento.conteudoAplicado;
     }
 
-    function getAssinante(index: number) {
+    function getAssinante(index: number, full = true) {
       const instrutor = instrutores.find(
         (item) =>
           data.assinatura[index]?.assinante &&
@@ -296,6 +296,7 @@ export const Identificadores = () => {
       if (!instrutor) {
         return " ";
       }
+      if (!full) return instrutor.name.trim();
       return `${instrutor.name} - ${instrutor.qualificacaoProfissional} - ${instrutor.registroProfissional}`;
     }
 
@@ -410,7 +411,7 @@ export const Identificadores = () => {
     };
 
     // FOR DEBUG
-    // console.log("dataGerador.courseData", dataGerador.instrutorDates);
+    // console.log("dataGerador.courseData", transformedCourseData);
     // gerarIdentificador(
     //   {
     //     ...(dataGerador as any),
