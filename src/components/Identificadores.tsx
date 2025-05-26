@@ -113,6 +113,7 @@ export const Identificadores = () => {
 
   const eventoSelecionado = watch("evento");
   const selectedEvento = eventos.find((ev) => ev.id === eventoSelecionado);
+  console.log("selectedEvento", selectedEvento);
 
   // Estados para paginação
   const [page, setPage] = useState(1);
@@ -203,6 +204,8 @@ export const Identificadores = () => {
         }
       );
     } else {
+      console.log("transformedCourseData", transformedCourseData);
+
       transformedCourseData = days.map((day) => {
         const dayStartTime = day.start;
         const dayEndTime = day.end;
@@ -233,19 +236,23 @@ export const Identificadores = () => {
           afternoon?: string;
           night?: string;
         } = {};
+
         if (selectedEvento?.courseLocation) {
           if (isMorning)
             courseDayAddress.morning = selectedEvento.courseLocation;
           if (isAfternoon)
-            courseDayAddress.afternoon = selectedEvento.courseLocation;
-          if (isNight) courseDayAddress.night = selectedEvento.courseLocation;
+            courseDayAddress.afternoon = selectedEvento.courseLocation; // Ensure selectedEvento is used
+          if (isNight) courseDayAddress.night = selectedEvento.courseLocation; // Ensure selectedEvento is used
         }
 
+        const instrutorName = instrutores.find(
+          (inst) => inst.id === data.assinatura[0]?.assinante
+        )?.name;
         return {
           address: courseDayAddress,
           date: { ...day },
           instrutorA: {
-            instrutor: data.assinatura[0]?.assinante,
+            instrutor: instrutorName,
             periodo: instructorAPeriod,
           },
           instrutorB: {}, // Assuming instrutorB is not applicable or empty for this case
@@ -257,7 +264,7 @@ export const Identificadores = () => {
       toast.error("Selecione os participantes");
       return;
     }
-    const selectedEvento = eventos.find((evento) => evento.id === data.evento);
+
     if (!selectedEvento) {
       toast.error("Evento selecionado não foi encontrado!");
       return;
