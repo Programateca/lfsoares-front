@@ -30,8 +30,6 @@ type Props = {
 };
 
 export async function gerarLista({ listaData }: Props): Promise<void> {
-  console.log("gerarLista", listaData.courseData);
-
   const TOTAL_PARTICIPANTS = listaData.numberOfParticipantes;
   const TAG_NAME = "<!-- TABLE -->";
   const LISTA_TEMPLATE_DOCX_PATH = "/templates/lista/template-lista.docx";
