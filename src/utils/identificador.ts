@@ -425,7 +425,7 @@ export async function gerarIdentificador(
       mimeType:
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
-    saveAs(out, "output.docx");
+    saveAs(out, "identificador.docx");
   } catch (error) {
     console.error("Erro ao gerar identificador:", error);
     // Potentially re-throw or handle more gracefully depending on application needs
