@@ -113,8 +113,6 @@ export const Identificadores = () => {
 
   const eventoSelecionado = watch("evento");
   const selectedEvento = eventos.find((ev) => ev.id === eventoSelecionado);
-  console.log("selectedEvento", selectedEvento);
-
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -204,8 +202,6 @@ export const Identificadores = () => {
         }
       );
     } else {
-      console.log("transformedCourseData", transformedCourseData);
-
       transformedCourseData = days.map((day) => {
         const dayStartTime = day.start;
         const dayEndTime = day.end;
