@@ -21,6 +21,11 @@ export type CourseData = {
     instrutor?: string;
     periodo?: string;
   };
+  instrutoresConfig?: Array<{
+    instrutor?: string;
+    periodo?: string;
+    id?: string; // Assuming id might be part of this config from Identificadores.tsx
+  }>;
 };
 
 export interface Identificador {

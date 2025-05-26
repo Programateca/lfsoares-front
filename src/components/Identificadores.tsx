@@ -641,7 +641,7 @@ export const Identificadores = () => {
                                   <SelectLabel>Assinante</SelectLabel>
                                   {instrutores.map((instrutor) => (
                                     <SelectItem
-                                      key={instrutor.id}
+                                      key={instrutor.id} // Changed to use only instrutor.id for uniqueness
                                       value={instrutor.id}
                                     >
                                       {instrutor.name} -{" "}
@@ -705,7 +705,7 @@ export const Identificadores = () => {
               <div className="mt-4 flex flex-col">
                 <p>Configurar Lista de Instrutores:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {days.map((day, idx) => {
+                  {days.map((day) => {
                     const parsed = day;
                     const { start, end } = parsed;
                     const supports = {
@@ -714,7 +714,7 @@ export const Identificadores = () => {
                       night: start < "23:59" && end > "18:00",
                     };
                     return (
-                      <div key={idx} className="border p-4 rounded">
+                      <div key={day.date} className="border p-4 rounded">
                         <div className="flex flex-col gap-2">
                           <Label>
                             Dia: {format(parseISO(parsed.date), "dd/MM/yyyy")}
@@ -803,14 +803,16 @@ export const Identificadores = () => {
                                       <SelectContent>
                                         <SelectGroup>
                                           <SelectLabel>Instrutores</SelectLabel>
-                                          {instrutores.map((i) => (
-                                            <SelectItem
-                                              key={i.id}
-                                              value={i.name}
-                                            >
-                                              {i.name}
-                                            </SelectItem>
-                                          ))}
+                                          {instrutores.map((instrutor) => {
+                                            return (
+                                              <SelectItem
+                                                key={instrutor.id} // Changed to use only instrutor.id for uniqueness
+                                                value={instrutor.name}
+                                              >
+                                                {instrutor.name}
+                                              </SelectItem>
+                                            );
+                                          })}
                                         </SelectGroup>
                                       </SelectContent>
                                     </Select>
