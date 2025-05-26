@@ -58,7 +58,6 @@ import { Identificador } from "@/@types/Identificador";
 
 export interface ListaFormData {
   documento_identificador: string;
-  tipo_lista: string;
   cidade: string;
 }
 
@@ -109,8 +108,6 @@ const ListaPresenca = () => {
 
       const titulo = dataIdentificador.assinante_titulo2.split(":")[0].trim();
 
-      console.log("dataIdentificador", dataIdentificador);
-      // return;
       const schema: Record<string, any> = {
         courseData: dataIdentificador.courseData, // Changed from datasObject to courseData
         nome_treinamento: dataIdentificador.treinamento,
@@ -158,11 +155,11 @@ const ListaPresenca = () => {
 
       const newLista = {
         year: new Date().getFullYear().toString(),
-        modelType: data.tipo_lista,
+        modelType: "lista-dia-todo",
         documentData: JSON.stringify({
           ...schema,
           numberOfParticipantes: participantes.length,
-          tipo_lista: data.tipo_lista,
+          tipo_lista: "lista-dia-todo",
         }),
       };
 
@@ -361,33 +358,6 @@ const ListaPresenca = () => {
                       handleInputChange("documento_identificador", e)
                     }
                     eventos={eventos}
-                  />
-                  <Controller
-                    name="tipo_lista"
-                    control={control}
-                    render={({ field }) => (
-                      <div>
-                        <Label className="text-sm font-medium">
-                          Tipo de lista
-                        </Label>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o tipo de lista" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="lista-dia-todo">
-                              Lista do Dia Todo
-                            </SelectItem>
-                            <SelectItem value="lista-meio-periodo">
-                              Lista do Meio Período
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
                   />
                   <Controller
                     name="cidade"

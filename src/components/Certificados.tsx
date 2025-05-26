@@ -210,7 +210,6 @@ const Certificados = () => {
         .filter((key) => key.startsWith("p_id") && dataIdentificador[key])
         .map((key) => ({ id: dataIdentificador[key].trim() }))
         .filter((p) => p.id);
-      console.log(participantesIdentificador);
       const assinantesIdentificador = Object.keys(dataIdentificador)
         .filter(
           (key) => key.startsWith("assinante_titulo") && dataIdentificador[key]

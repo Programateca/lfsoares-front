@@ -46,8 +46,6 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
 
     const allInstructorFormattedDates = formatDates(listaData.courseData!);
 
-    console.log("allInstructorFormattedDates", allInstructorFormattedDates);
-
     for (const sanitizedInstructorNameKey in allInstructorFormattedDates) {
       if (
         allInstructorFormattedDates.hasOwnProperty(sanitizedInstructorNameKey)
