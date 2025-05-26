@@ -32,34 +32,63 @@ import { format, parseISO } from "date-fns";
 import { formatarDatas } from "@/utils/formatar-datas";
 import { fillParticipants } from "@/utils/preencher-participantes-identificador";
 import { CourseData } from "@/@types/Identificador";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-type FormData = {
-  evento: string;
-  certificadoTipo: string;
-  conteudoAplicado: string;
-  participantes: string[];
-  assinatura: { titulo?: string; assinante?: string }[];
-  motivoTreinamento?: string;
-  objetivoTreinamento?: string;
-  courseDate: Record<
-    string,
-    {
-      address: { morning?: string; afternoon: string; night?: string };
-      instrutorA: { instrutor?: string; periodo?: string };
-      instrutorB: { instrutor?: string; periodo?: string };
-    }
-  >;
-};
+const courseDateDetailSchema = z.object({
+  address: z.object({
+    morning: z.string().optional(),
+    afternoon: z.string().optional(), // Made optional to align with FormData, ensure required if it is
+    night: z.string().optional(),
+  }),
+  instrutorA: z.object({
+    instrutor: z.string().optional(),
+    periodo: z.string().optional(),
+  }),
+  instrutorB: z.object({
+    instrutor: z.string().optional(),
+    periodo: z.string().optional(),
+  }),
+  // If instrutoresConfig is part of the form data submitted directly, add it here
+  // instrutoresConfig: z.array(z.object({
+  //   id: z.string().optional(),
+  //   instrutor: z.string().optional(),
+  //   periodo: z.string().optional(),
+  // })).optional(),
+});
 
-type CourseDate = {
-  date: string;
-  start: string;
-  end: string;
-  intervalStart: string;
-  intervalEnd: string;
-  instrutorA?: boolean;
-  instrutorB?: boolean;
-};
+const formDataSchema = z.object({
+  evento: z.string().min(1, "Selecione um evento"),
+  certificadoTipo: z.string().min(1, "Tipo de certificado é obrigatório"),
+  conteudoAplicado: z.string().optional(),
+  participantes: z
+    .array(z.string())
+    .min(1, "Selecione ao menos um participante"),
+  assinatura: z
+    .array(
+      z.object({
+        titulo: z.string().optional(),
+        assinante: z.string().optional(),
+      })
+    )
+    .refine(
+      (data) => {
+        return data.every(
+          (sig) =>
+            (sig.titulo && sig.assinante) || (!sig.titulo && !sig.assinante)
+        );
+      },
+      {
+        message:
+          "Assinante é obrigatório se o título da assinatura estiver preenchido",
+      }
+    ),
+  motivoTreinamento: z.string().optional(),
+  objetivoTreinamento: z.string().optional(),
+  courseDate: z.record(courseDateDetailSchema), // For objects with dynamic keys
+});
+
+type FormData = z.infer<typeof formDataSchema>;
 
 export const Identificadores = () => {
   const {
@@ -69,9 +98,10 @@ export const Identificadores = () => {
     watch,
     setValue,
     getValues,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting }, // Added errors here
     reset,
   } = useForm<FormData>({
+    resolver: zodResolver(formDataSchema), // Added zodResolver
     defaultValues: {
       evento: "",
       certificadoTipo: "",
@@ -83,6 +113,25 @@ export const Identificadores = () => {
       courseDate: {},
     },
   });
+
+  useEffect(() => {
+    if (errors.evento?.message) {
+      toast.error(errors.evento.message);
+    }
+    if (errors.certificadoTipo?.message) {
+      toast.error(errors.certificadoTipo.message);
+    }
+    if (
+      errors.participantes?.message &&
+      typeof errors.participantes.message === "string"
+    ) {
+      toast.error(errors.participantes.message);
+    }
+
+    if (errors.assinatura?.root?.message) {
+      toast.error(errors.assinatura.root.message);
+    }
+  }, [errors]);
 
   const [days, setDays] = useState<
     {
@@ -302,7 +351,7 @@ export const Identificadores = () => {
 
     const courseDateItens = selectedEvento?.courseDate.map((itemStr) =>
       JSON.parse(itemStr)
-    ) as CourseDate[];
+    );
 
     const horariosSet = new Set<string>();
     const intervalosSet = new Set<string>();
