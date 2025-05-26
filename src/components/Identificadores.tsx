@@ -241,14 +241,11 @@ export const Identificadores = () => {
           if (isNight) courseDayAddress.night = selectedEvento.courseLocation; // Ensure selectedEvento is used
         }
 
-        const instrutorName = instrutores.find(
-          (inst) => inst.id === data.assinatura[0]?.assinante
-        )?.name;
         return {
           address: courseDayAddress,
           date: { ...day },
           instrutorA: {
-            instrutor: instrutorName,
+            instrutor: getAssinante(0),
             periodo: instructorAPeriod,
           },
           instrutorB: {}, // Assuming instrutorB is not applicable or empty for this case
@@ -290,7 +287,7 @@ export const Identificadores = () => {
       conteudoAplicado = selectedEvento.treinamento.conteudoAplicado;
     }
 
-    const getAssinante = (index: number) => {
+    function getAssinante(index: number) {
       const instrutor = instrutores.find(
         (item) =>
           data.assinatura[index]?.assinante &&
@@ -300,7 +297,7 @@ export const Identificadores = () => {
         return " ";
       }
       return `${instrutor.name} - ${instrutor.qualificacaoProfissional} - ${instrutor.registroProfissional}`;
-    };
+    }
 
     const courseDateItens = selectedEvento?.courseDate.map((itemStr) =>
       JSON.parse(itemStr)
