@@ -614,8 +614,33 @@ export const Identificadores = () => {
       });
     }
 
-    // console.log("transformedCourseData", transformedCourseData);
-    // return;
+    const isCourseDataValid = transformedCourseData.every((courseDate) => {
+      if (
+        courseDate.instrutorA?.periodo !== "nenhum" &&
+        (!courseDate.instrutorA?.instrutor ||
+          courseDate.instrutorA?.instrutor === "")
+      ) {
+        return false;
+      }
+      if (
+        courseDate.instrutorB?.periodo !== "nenhum" &&
+        (!courseDate.instrutorB?.instrutor ||
+          courseDate.instrutorB?.instrutor === "")
+      ) {
+        return false;
+      }
+      return (
+        courseDate.instrutorA?.periodo !== "nenhum" ||
+        courseDate.instrutorB?.periodo !== "nenhum"
+      );
+    });
+
+    if (!isCourseDataValid) {
+      toast.error(
+        "Pelo menos um instrutor deve estar alocado em cada período do curso."
+      );
+      return;
+    }
 
     if (!data.participantes?.length) {
       toast.error("Selecione os participantes");
