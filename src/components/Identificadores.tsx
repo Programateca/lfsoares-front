@@ -293,11 +293,6 @@ export const Identificadores = () => {
     otherInstructorPeriod: ValidPeriod,
     daySupports: { morning: boolean; afternoon: boolean; night: boolean }
   ): { value: ValidPeriod; label: string }[] => {
-    const availableLog: string[] = []; // For debugging
-    availableLog.push(
-      `Starting getAvailablePeriodsForInstructor. Other: ${otherInstructorPeriod}, Supports: M${daySupports.morning}, A${daySupports.afternoon}, N${daySupports.night}`
-    );
-
     const initialAvailable: { value: ValidPeriod; label: string }[] = [
       { value: "nenhum", label: "Nenhum" },
     ];
@@ -338,29 +333,17 @@ export const Identificadores = () => {
       }
       return true;
     });
-    availableLog.push(
-      `Supported for day: ${JSON.stringify(
-        supportedPeriodsForDay.map((p) => p.value)
-      )}`
-    );
 
     const otherBasePeriods = getBasePeriodsLocal(otherInstructorPeriod);
-    availableLog.push(
-      `Other instructor base periods: ${JSON.stringify(
-        Array.from(otherBasePeriods)
-      )}`
-    );
 
     // If the other instructor has a combined period, this instructor can only be "nenhum".
     if (otherBasePeriods.size >= 2) {
-      availableLog.push('Other has combined. Current can only be "nenhum".');
       return initialAvailable; // Only "Nenhum"
     }
 
     const finalAvailable = [...initialAvailable];
     supportedPeriodsForDay.forEach((p) => {
       finalAvailable.push({ value: p.value, label: p.label });
-      availableLog.push(`  Adding: ${p.value}`);
     });
     return finalAvailable;
   };
@@ -397,8 +380,6 @@ export const Identificadores = () => {
       if (daySupports.afternoon) supportedSingleDayPeriods.push("tarde");
       if (daySupports.night) supportedSingleDayPeriods.push("noite");
 
-      // Scenario: Day supports exactly two single periods (e.g., Manhã and Tarde only)
-      // And the changed instructor selected one of these two.
       if (
         supportedSingleDayPeriods.length === 2 &&
         supportedSingleDayPeriods.includes(newlySelectedSingleBase)
@@ -545,6 +526,10 @@ export const Identificadores = () => {
     let transformedCourseData: CourseData[] | null = null;
 
     if (signatureCount > 2) {
+      if (!data.courseDate) {
+        toast.error("Erro inesperado.");
+        return;
+      }
       transformedCourseData = Object.entries(data.courseDate).map(
         ([date, details]) => {
           const dayInfo = days.find((d) => d.date === date);
