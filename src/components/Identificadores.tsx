@@ -35,10 +35,9 @@ import { CourseData } from "@/@types/Identificador";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-// Define Period types for clarity
 type SinglePeriod = "manha" | "tarde" | "noite";
 type CombinedPeriod = "manhaTarde" | "manhaNoite" | "tardeNoite";
-type ValidPeriod = SinglePeriod | CombinedPeriod | "nenhum" | ""; // "" for initial empty state
+type ValidPeriod = SinglePeriod | CombinedPeriod | "nenhum";
 
 const periodSchema = z
   .enum([
@@ -61,8 +60,8 @@ const instructorConfigSchema = z
   })
   .refine(
     (data) => {
-      //@ts-ignore
-      if (data.periodo && data.periodo !== "nenhum" && data.periodo !== "") {
+      // Removed check against "", as periodSchema does not include it as a valid enum value.
+      if (data.periodo && data.periodo !== "nenhum") {
         return data.instrutor && data.instrutor.trim() !== "";
       }
       return true;
@@ -76,6 +75,8 @@ const instructorConfigSchema = z
 
 const courseDateDetailSchema = z
   .object({
+    addressMode: z.enum(["single", "individual"]).default("individual"),
+    singleAddress: z.string().optional(),
     address: z.object({
       morning: z.string().optional(),
       afternoon: z.string().optional(),
@@ -86,22 +87,11 @@ const courseDateDetailSchema = z
   })
   .refine(
     (data) => {
-      const pA = data.instrutorA.periodo || "nenhum";
-      const pB = data.instrutorB.periodo || "nenhum";
+      const periodA_val = data.instrutorA.periodo || "nenhum"; // Default to "nenhum" if undefined
+      const periodB_val = data.instrutorB.periodo || "nenhum"; // Default to "nenhum" if undefined
 
-      // @ts-ignore
-      if (pA === "" || pB === "") return true; // Skip validation if not fully selected
-
-      const getBasePeriods = (period: ValidPeriod): Set<SinglePeriod> => {
-        const base = new Set<SinglePeriod>();
-        if (period.includes("manha")) base.add("manha");
-        if (period.includes("tarde")) base.add("tarde");
-        if (period.includes("noite")) base.add("noite");
-        return base;
-      };
-
-      const periodsA = getBasePeriods(pA as ValidPeriod);
-      const periodsB = getBasePeriods(pB as ValidPeriod);
+      const periodsA = getBasePeriodsLocal(periodA_val as ValidPeriod);
+      const periodsB = getBasePeriodsLocal(periodB_val as ValidPeriod);
 
       // Check for overlap
       for (const period of periodsA) {
@@ -111,35 +101,84 @@ const courseDateDetailSchema = z
       }
 
       const isPaDouble =
-        pA === "manhaTarde" || pA === "manhaNoite" || pA === "tardeNoite";
+        periodA_val === "manhaTarde" ||
+        periodA_val === "manhaNoite" ||
+        periodA_val === "tardeNoite";
       const isPbDouble =
-        pB === "manhaTarde" || pB === "manhaNoite" || pB === "tardeNoite";
+        periodB_val === "manhaTarde" ||
+        periodB_val === "manhaNoite" ||
+        periodB_val === "tardeNoite";
 
-      if (isPaDouble && pB !== "nenhum") return false;
-      if (isPbDouble && pA !== "nenhum") return false;
-
-      // Total distinct base periods covered by both should not exceed 2, unless one instructor covers all.
-      // This is implicitly handled by: if A takes 2, B must be none. If A takes 1, B can take 1 other.
-      // The "maximo de 2 periodos por dia" from user seems to imply that M+T+N by two instructors is not allowed.
-      // e.g. A=manha, B=tardeNoite is not allowed.
-      const allCoveredPeriods = new Set([...periodsA, ...periodsB]);
-      if (allCoveredPeriods.size > 2) {
-        // This case happens if e.g. A=manha, B=tardeNoite.
-        // If A=manhaTarde, B must be "nenhum", so allCoveredPeriods.size would be 2.
-        // This rule might be too strict or needs clarification if A=M, B=TN is desired.
-        // For now, the isPaDouble/isPbDouble check handles the primary user case.
-        // Let's refine: if one is single, the other can be single (non-overlapping).
-        if (periodsA.size === 1 && periodsB.size > 1) return false; // A=single, B=double is not allowed by "A=M => B=T"
-        if (periodsB.size === 1 && periodsA.size > 1) return false; // B=single, A=double is not allowed
-      }
+      if (isPaDouble && periodB_val !== "nenhum") return false;
+      if (isPbDouble && periodA_val !== "nenhum") return false;
 
       return true;
     },
     {
       message:
-        "Configuração de período inválida. Verifique sobreposições ou a regra: se um instrutor cobre dois períodos (ex: Manhã e Tarde), o outro deve ter 'Nenhum'. Se um cobre um período, o outro pode cobrir um período diferente.",
+        "Configuração de período inválida. Verifique sobreposições ou a regra: se um instrutor cobre dois períodos (ex: Manhã e Tarde), o outro deve ter 'Nenhum'. Se um cobre um período, o outro pode cobrir um período diferente (não sobreposto).",
     }
-  );
+  )
+  .superRefine((data, ctx) => {
+    const activePeriods: SinglePeriod[] = [];
+    const periodsA = getBasePeriodsLocal(
+      data.instrutorA.periodo as ValidPeriod
+    );
+    const periodsB = getBasePeriodsLocal(
+      data.instrutorB.periodo as ValidPeriod
+    );
+    periodsA.forEach((p) => activePeriods.push(p));
+    periodsB.forEach((p) => {
+      if (!activePeriods.includes(p)) {
+        activePeriods.push(p);
+      }
+    });
+
+    if (data.addressMode === "single") {
+      if (!data.singleAddress || data.singleAddress.trim() === "") {
+        if (activePeriods.length > 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message:
+              "O endereço único é obrigatório quando há períodos ativos.",
+            path: ["singleAddress"],
+          });
+        }
+      }
+    } else {
+      // addressMode === "individual"
+      if (
+        activePeriods.includes("manha") &&
+        (!data.address.morning || data.address.morning.trim() === "")
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Endereço da manhã é obrigatório.",
+          path: ["address", "morning"],
+        });
+      }
+      if (
+        activePeriods.includes("tarde") &&
+        (!data.address.afternoon || data.address.afternoon.trim() === "")
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Endereço da tarde é obrigatório.",
+          path: ["address", "afternoon"],
+        });
+      }
+      if (
+        activePeriods.includes("noite") &&
+        (!data.address.night || data.address.night.trim() === "")
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Endereço da noite é obrigatório.",
+          path: ["address", "night"],
+        });
+      }
+    }
+  });
 
 // Renamed original formDataSchema to createFormDataSchema and made it a function
 const createFormDataSchema = (signatureCount: number) => {
@@ -191,9 +230,7 @@ type FormData = z.infer<ReturnType<typeof createFormDataSchema>>;
 // Helper function to get base periods from a ValidPeriod
 const getBasePeriodsLocal = (period: ValidPeriod): Set<SinglePeriod> => {
   const base = new Set<SinglePeriod>();
-  // ValidPeriod can be "", so this check is intentional and correct based on the type.
-  // @ts-ignore
-  if (!period || period === "nenhum" || period === "") return base;
+  if (!period || period === "nenhum") return base; // Removed check against "" as it's no longer in ValidPeriod
   if (period.toLocaleLowerCase().includes("manha")) base.add("manha");
   if (period.toLocaleLowerCase().includes("tarde")) base.add("tarde");
   if (period.toLocaleLowerCase().includes("noite")) base.add("noite");
@@ -241,16 +278,10 @@ export const Identificadores = () => {
             errorObject[key]?.message &&
             typeof errorObject[key].message === "string"
           ) {
-            toast.error(
-              `Erro em '${currentPath}': ${errorObject[key].message}`
-            );
+            toast.error(`Erro: ${errorObject[key].message}`);
           } else if (key === "root" && errorObject[key]?.message) {
             // Handle root errors specifically for arrays/objects
-            toast.error(
-              `Erro em '${pathPrefix || "formulario"}': ${
-                errorObject[key].message
-              }`
-            );
+            toast.error(`Erro: ${errorObject[key].message}`);
           } else if (
             typeof errorObject[key] === "object" &&
             errorObject[key] !== null &&
@@ -262,7 +293,7 @@ export const Identificadores = () => {
               errorObject[key]._errors.length > 0
             ) {
               errorObject[key]._errors.forEach((errMsg: string) => {
-                toast.error(`Erro em '${currentPath}': ${errMsg}`);
+                toast.error(`Erro: ${errMsg}`);
               });
             } else {
               displayErrors(errorObject[key], currentPath);
@@ -696,7 +727,7 @@ export const Identificadores = () => {
     const horariosSet = new Set<string>();
     const intervalosSet = new Set<string>();
 
-    courseDateItens.forEach((item) => {
+    courseDateItens?.forEach((item) => {
       if (item.intervalStart !== "N/A" || item.intervalEnd !== "N/A") {
         intervalosSet.add(`${item.intervalStart} ÀS ${item.intervalEnd}`);
         horariosSet.add(`${item.start} ÀS ${item.end}`);
@@ -722,7 +753,7 @@ export const Identificadores = () => {
       // Header
       header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
       header_data: "14/02/2025",
-      revisao: "00",
+      revisao: "00", // Added comma
       // Fim Header
       ...(() => {
         const defaultSignatureProps = {
@@ -754,7 +785,7 @@ export const Identificadores = () => {
           qualificacao_profissional2: instrutor?.qualificacaoProfissional || "",
           registro_profissional2: instrutor?.registroProfissional || "",
         };
-      })(),
+      })(), // Added comma
 
       is_short_course: selectedEvento?.treinamento?.courseHours,
       modulo: selectedEvento?.treinamento.courseMethodology,
