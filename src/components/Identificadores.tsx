@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "./ui/card";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "./ui/button";
@@ -141,39 +141,52 @@ const courseDateDetailSchema = z
     }
   );
 
-const formDataSchema = z.object({
-  evento: z.string().min(1, "Selecione um evento"),
-  certificadoTipo: z.string().min(1, "Tipo de certificado é obrigatório"),
-  conteudoAplicado: z.string().optional(),
-  participantes: z
-    .array(z.string())
-    .min(1, "Selecione ao menos um participante"),
-  assinatura: z
-    .array(
-      z.object({
-        titulo: z.string().optional(),
-        assinante: z.string().optional(),
-      })
-    )
-    .refine(
-      (data) => {
-        return data.every(
-          (sig) =>
-            (sig.titulo && sig.assinante) || (!sig.titulo && !sig.assinante)
-        );
-      },
-      {
-        message:
-          "Assinante é obrigatório se o título da assinatura estiver preenchido",
-        path: ["root"], // Apply error to the array itself
-      }
-    ),
-  motivoTreinamento: z.string().optional(),
-  objetivoTreinamento: z.string().optional(),
-  courseDate: z.record(courseDateDetailSchema), // For objects with dynamic keys
-});
+// Renamed original formDataSchema to createFormDataSchema and made it a function
+const createFormDataSchema = (signatureCount: number) => {
+  return z.object({
+    evento: z.string().min(1, "Selecione um evento"),
+    certificadoTipo: z.string().min(1, "Tipo de certificado é obrigatório"),
+    conteudoAplicado: z.string().optional(),
+    participantes: z
+      .array(z.string())
+      .min(1, "Selecione ao menos um participante"),
+    assinatura: z
+      .array(
+        z.object({
+          titulo: z.string().optional(),
+          assinante: z.string().optional(),
+        })
+      )
+      .refine(
+        (data) => {
+          return data.every(
+            (sig) =>
+              (sig.titulo && sig.assinante) || (!sig.titulo && !sig.assinante)
+          );
+        },
+        {
+          message:
+            "Assinante é obrigatório se o título da assinatura estiver preenchido",
+          path: ["root"], // Apply error to the array itself
+        }
+      ),
+    motivoTreinamento: z.string().optional(),
+    objetivoTreinamento: z.string().optional(),
+    // Conditionally define courseDate schema based on signatureCount
+    courseDate:
+      signatureCount < 3
+        ? z.record(courseDateDetailSchema).optional().default({})
+        : z
+            .record(courseDateDetailSchema)
+            .refine((val) => val && Object.keys(val).length > 0, {
+              message:
+                "A configuração de datas e instrutores é obrigatória e não pode estar vazia quando há 3 ou mais assinaturas.",
+            }),
+  });
+};
 
-type FormData = z.infer<typeof formDataSchema>;
+// Update FormData type to infer from the new factory function
+type FormData = z.infer<ReturnType<typeof createFormDataSchema>>;
 
 // Helper function to get base periods from a ValidPeriod
 const getBasePeriodsLocal = (period: ValidPeriod): Set<SinglePeriod> => {
@@ -188,6 +201,14 @@ const getBasePeriodsLocal = (period: ValidPeriod): Set<SinglePeriod> => {
 };
 
 export const Identificadores = () => {
+  const [signatureCount, setSignatureCount] = useState(0); // Moved up to be available for schema creation
+
+  // Create the schema memoized, based on signatureCount
+  const schema = useMemo(
+    () => createFormDataSchema(signatureCount),
+    [signatureCount]
+  );
+
   const {
     control,
     register,
@@ -198,7 +219,7 @@ export const Identificadores = () => {
     formState: { errors, isSubmitting }, // Added errors here
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(formDataSchema), // Added zodResolver
+    resolver: zodResolver(schema), // Use the memoized schema
     defaultValues: {
       evento: "",
       certificadoTipo: "",
@@ -269,7 +290,6 @@ export const Identificadores = () => {
   const [loading, setLoading] = useState(true);
   const [formsOpen, setFormsOpen] = useState(false);
 
-  const [signatureCount, setSignatureCount] = useState(0);
   const [showIdentificationConfig, setShowIdentificationConfig] =
     useState(false);
   const [identificadoresGerados, setIdentificadoresGerados] = useState<
@@ -356,7 +376,7 @@ export const Identificadores = () => {
   ) => {
     // 1. Set the value for the instructor whose period was manually changed
     setValue(`courseDate.${date}.${changedInstructorKey}.periodo`, newPeriod, {
-      shouldValidate: true,
+      // shouldValidate: signatureCount > 2 ? true : false,
     });
 
     const otherInstructorKey =
@@ -367,7 +387,7 @@ export const Identificadores = () => {
 
     if (newPeriodBaseCount >= 2) {
       setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
-        shouldValidate: true,
+        // shouldValidate: signatureCount > 2 ? true : false,
       });
       return;
     }
@@ -390,8 +410,8 @@ export const Identificadores = () => {
         if (otherPeriodToAutoAssign) {
           setValue(
             `courseDate.${date}.${otherInstructorKey}.periodo`,
-            otherPeriodToAutoAssign as ValidPeriod,
-            { shouldValidate: true }
+            otherPeriodToAutoAssign as ValidPeriod
+            // { shouldValidate: signatureCount > 2 ? true : false }
           );
           return;
         }
@@ -407,7 +427,7 @@ export const Identificadores = () => {
 
       if (otherInstructorCurrentBases.size >= 2) {
         setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
-          shouldValidate: true,
+          // shouldValidate: signatureCount > 2 ? true : false,
         });
       } else if (otherInstructorCurrentBases.size === 1) {
         const otherExistingSingleBase = Array.from(
@@ -428,8 +448,8 @@ export const Identificadores = () => {
             ) {
               setValue(
                 `courseDate.${date}.${otherInstructorKey}.periodo`,
-                shiftTarget as ValidPeriod,
-                { shouldValidate: true }
+                shiftTarget as ValidPeriod
+                // { shouldValidate: signatureCount > 2 ? true : false }
               );
               shifted = true;
               break;
@@ -440,7 +460,7 @@ export const Identificadores = () => {
               `courseDate.${date}.${otherInstructorKey}.periodo`,
               "nenhum",
               {
-                shouldValidate: true,
+                // shouldValidate: signatureCount > 2 ? true : false,
               }
             );
           }
@@ -593,6 +613,9 @@ export const Identificadores = () => {
         };
       });
     }
+
+    // console.log("transformedCourseData", transformedCourseData);
+    // return;
 
     if (!data.participantes?.length) {
       toast.error("Selecione os participantes");
