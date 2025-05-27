@@ -406,9 +406,11 @@ export const Identificadores = () => {
     daySupports: { morning: boolean; afternoon: boolean; night: boolean }
   ) => {
     // 1. Set the value for the instructor whose period was manually changed
-    setValue(`courseDate.${date}.${changedInstructorKey}.periodo`, newPeriod, {
-      // shouldValidate: signatureCount > 2 ? true : false,
-    });
+    setValue(
+      `courseDate.${date}.${changedInstructorKey}.periodo`,
+      newPeriod,
+      {}
+    );
 
     const otherInstructorKey =
       changedInstructorKey === "instrutorA" ? "instrutorB" : "instrutorA";
@@ -417,9 +419,11 @@ export const Identificadores = () => {
     const newPeriodBaseCount = newPeriodBases.size;
 
     if (newPeriodBaseCount >= 2) {
-      setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
-        // shouldValidate: signatureCount > 2 ? true : false,
-      });
+      setValue(
+        `courseDate.${date}.${otherInstructorKey}.periodo`,
+        "nenhum",
+        {}
+      );
       return;
     }
 
@@ -442,7 +446,6 @@ export const Identificadores = () => {
           setValue(
             `courseDate.${date}.${otherInstructorKey}.periodo`,
             otherPeriodToAutoAssign as ValidPeriod
-            // { shouldValidate: signatureCount > 2 ? true : false }
           );
           return;
         }
@@ -457,9 +460,11 @@ export const Identificadores = () => {
       );
 
       if (otherInstructorCurrentBases.size >= 2) {
-        setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
-          // shouldValidate: signatureCount > 2 ? true : false,
-        });
+        setValue(
+          `courseDate.${date}.${otherInstructorKey}.periodo`,
+          "nenhum",
+          {}
+        );
       } else if (otherInstructorCurrentBases.size === 1) {
         const otherExistingSingleBase = Array.from(
           otherInstructorCurrentBases
@@ -480,7 +485,6 @@ export const Identificadores = () => {
               setValue(
                 `courseDate.${date}.${otherInstructorKey}.periodo`,
                 shiftTarget as ValidPeriod
-                // { shouldValidate: signatureCount > 2 ? true : false }
               );
               shifted = true;
               break;
@@ -489,10 +493,7 @@ export const Identificadores = () => {
           if (!shifted) {
             setValue(
               `courseDate.${date}.${otherInstructorKey}.periodo`,
-              "nenhum",
-              {
-                // shouldValidate: signatureCount > 2 ? true : false,
-              }
+              "nenhum"
             );
           }
         }
@@ -666,7 +667,7 @@ export const Identificadores = () => {
       );
     });
 
-    if (!isCourseDataValid) {
+    if (!isCourseDataValid && signatureCount > 2) {
       toast.error(
         "Pelo menos um instrutor deve estar alocado em cada período do curso."
       );
@@ -1123,6 +1124,100 @@ export const Identificadores = () => {
             {/* Seleção de instrutores por dia */}
             {formsOpen && showIdentificationConfig && (
               <div className="mt-4 flex flex-col">
+                <div className="mb-4">
+                  <Label>Aplicar Endereço em Todos Campos</Label>
+                  {selectedEvento && selectedEvento.courseLocation && (
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={selectedEvento.courseLocation}
+                        readOnly
+                        className="max-w-96"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="default"
+                        className="px-8"
+                        onClick={() => {
+                          days.forEach((day) => {
+                            const daySupports = {
+                              morning: day.start < "12:00" && day.end > "06:00",
+                              afternoon:
+                                day.start < "18:00" && day.end > "12:00",
+                              night: day.start < "23:59" && day.end > "18:00",
+                            };
+                            if (daySupports.morning) {
+                              setValue(
+                                `courseDate.${day.date}.address.morning`,
+                                selectedEvento.courseLocation
+                              );
+                            }
+                            if (daySupports.afternoon) {
+                              setValue(
+                                `courseDate.${day.date}.address.afternoon`,
+                                selectedEvento.courseLocation
+                              );
+                            }
+                            if (daySupports.night) {
+                              setValue(
+                                `courseDate.${day.date}.address.night`,
+                                selectedEvento.courseLocation
+                              );
+                            }
+                          });
+                        }}
+                      >
+                        Aplicar
+                      </Button>
+                    </div>
+                  )}
+                  {selectedEvento && selectedEvento.courseLocation2 && (
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={selectedEvento.courseLocation2}
+                        readOnly
+                        className="max-w-96"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="default"
+                        className="px-8"
+                        onClick={() => {
+                          days.forEach((day) => {
+                            const daySupports = {
+                              morning: day.start < "12:00" && day.end > "06:00",
+                              afternoon:
+                                day.start < "18:00" && day.end > "12:00",
+                              night: day.start < "23:59" && day.end > "18:00",
+                            };
+                            if (daySupports.morning) {
+                              setValue(
+                                `courseDate.${day.date}.address.morning`,
+                                selectedEvento.courseLocation2
+                              );
+                            }
+                            if (daySupports.afternoon) {
+                              setValue(
+                                `courseDate.${day.date}.address.afternoon`,
+                                selectedEvento.courseLocation2
+                              );
+                            }
+                            if (daySupports.night) {
+                              setValue(
+                                `courseDate.${day.date}.address.night`,
+                                selectedEvento.courseLocation2
+                              );
+                            }
+                          });
+                        }}
+                      >
+                        Aplicar
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
                 <p>Configurar Lista de Instrutores:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {days.map((day) => {
