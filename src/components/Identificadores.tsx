@@ -35,27 +35,111 @@ import { CourseData } from "@/@types/Identificador";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-const courseDateDetailSchema = z.object({
-  address: z.object({
-    morning: z.string().optional(),
-    afternoon: z.string().optional(), // Made optional to align with FormData, ensure required if it is
-    night: z.string().optional(),
-  }),
-  instrutorA: z.object({
-    instrutor: z.string().optional(),
-    periodo: z.string().optional(),
-  }),
-  instrutorB: z.object({
-    instrutor: z.string().optional(),
-    periodo: z.string().optional(),
-  }),
-  // If instrutoresConfig is part of the form data submitted directly, add it here
-  // instrutoresConfig: z.array(z.object({
-  //   id: z.string().optional(),
-  //   instrutor: z.string().optional(),
-  //   periodo: z.string().optional(),
-  // })).optional(),
-});
+// Define Period types for clarity
+type SinglePeriod = "manha" | "tarde" | "noite";
+type CombinedPeriod = "manhaTarde" | "manhaNoite" | "tardeNoite";
+type ValidPeriod = SinglePeriod | CombinedPeriod | "nenhum" | ""; // "" for initial empty state
+
+const periodSchema = z
+  .enum([
+    "nenhum",
+    "manha",
+    "tarde",
+    "noite",
+    "manhaTarde",
+    "manhaNoite",
+    "tardeNoite",
+    "",
+  ])
+  .optional()
+  .default("nenhum");
+
+const instructorConfigSchema = z
+  .object({
+    instrutor: z.string().optional(), // Assuming name is stored, change if ID
+    periodo: periodSchema,
+  })
+  .refine(
+    (data) => {
+      //@ts-ignore
+      if (data.periodo && data.periodo !== "nenhum" && data.periodo !== "") {
+        return data.instrutor && data.instrutor.trim() !== "";
+      }
+      return true;
+    },
+    {
+      message:
+        "Instrutor é obrigatório se um período (diferente de Nenhum) for selecionado.",
+      path: ["instrutor"],
+    }
+  );
+
+const courseDateDetailSchema = z
+  .object({
+    address: z.object({
+      morning: z.string().optional(),
+      afternoon: z.string().optional(),
+      night: z.string().optional(),
+    }),
+    instrutorA: instructorConfigSchema,
+    instrutorB: instructorConfigSchema,
+  })
+  .refine(
+    (data) => {
+      const pA = data.instrutorA.periodo || "nenhum";
+      const pB = data.instrutorB.periodo || "nenhum";
+
+      // @ts-ignore
+      if (pA === "" || pB === "") return true; // Skip validation if not fully selected
+
+      const getBasePeriods = (period: ValidPeriod): Set<SinglePeriod> => {
+        const base = new Set<SinglePeriod>();
+        if (period.includes("manha")) base.add("manha");
+        if (period.includes("tarde")) base.add("tarde");
+        if (period.includes("noite")) base.add("noite");
+        return base;
+      };
+
+      const periodsA = getBasePeriods(pA as ValidPeriod);
+      const periodsB = getBasePeriods(pB as ValidPeriod);
+
+      // Check for overlap
+      for (const period of periodsA) {
+        if (periodsB.has(period)) {
+          return false; // Overlap detected
+        }
+      }
+
+      const isPaDouble =
+        pA === "manhaTarde" || pA === "manhaNoite" || pA === "tardeNoite";
+      const isPbDouble =
+        pB === "manhaTarde" || pB === "manhaNoite" || pB === "tardeNoite";
+
+      if (isPaDouble && pB !== "nenhum") return false;
+      if (isPbDouble && pA !== "nenhum") return false;
+
+      // Total distinct base periods covered by both should not exceed 2, unless one instructor covers all.
+      // This is implicitly handled by: if A takes 2, B must be none. If A takes 1, B can take 1 other.
+      // The "maximo de 2 periodos por dia" from user seems to imply that M+T+N by two instructors is not allowed.
+      // e.g. A=manha, B=tardeNoite is not allowed.
+      const allCoveredPeriods = new Set([...periodsA, ...periodsB]);
+      if (allCoveredPeriods.size > 2) {
+        // This case happens if e.g. A=manha, B=tardeNoite.
+        // If A=manhaTarde, B must be "nenhum", so allCoveredPeriods.size would be 2.
+        // This rule might be too strict or needs clarification if A=M, B=TN is desired.
+        // For now, the isPaDouble/isPbDouble check handles the primary user case.
+        // Let's refine: if one is single, the other can be single (non-overlapping).
+        if (periodsA.size === 1 && periodsB.size > 1) return false; // A=single, B=double is not allowed by "A=M => B=T"
+        if (periodsB.size === 1 && periodsA.size > 1) return false; // B=single, A=double is not allowed
+      }
+
+      return true;
+    },
+    {
+      message:
+        "Configuração de período inválida. Verifique sobreposições ou a regra: se um instrutor cobre dois períodos (ex: Manhã e Tarde), o outro deve ter 'Nenhum'. Se um cobre um período, o outro pode cobrir um período diferente.",
+    }
+  );
 
 const formDataSchema = z.object({
   evento: z.string().min(1, "Selecione um evento"),
@@ -81,6 +165,7 @@ const formDataSchema = z.object({
       {
         message:
           "Assinante é obrigatório se o título da assinatura estiver preenchido",
+        path: ["root"], // Apply error to the array itself
       }
     ),
   motivoTreinamento: z.string().optional(),
@@ -89,6 +174,18 @@ const formDataSchema = z.object({
 });
 
 type FormData = z.infer<typeof formDataSchema>;
+
+// Helper function to get base periods from a ValidPeriod
+const getBasePeriodsLocal = (period: ValidPeriod): Set<SinglePeriod> => {
+  const base = new Set<SinglePeriod>();
+  // ValidPeriod can be "", so this check is intentional and correct based on the type.
+  // @ts-ignore
+  if (!period || period === "nenhum" || period === "") return base;
+  if (period.includes("manha")) base.add("manha");
+  if (period.includes("tarde")) base.add("tarde");
+  if (period.includes("noite")) base.add("noite");
+  return base;
+};
 
 export const Identificadores = () => {
   const {
@@ -107,7 +204,7 @@ export const Identificadores = () => {
       certificadoTipo: "",
       conteudoAplicado: "",
       participantes: [],
-      assinatura: [],
+      assinatura: [{ titulo: "INSTRUTOR", assinante: undefined }], // Ensure array for signatures
       motivoTreinamento: "",
       objetivoTreinamento: "",
       courseDate: {},
@@ -115,21 +212,47 @@ export const Identificadores = () => {
   });
 
   useEffect(() => {
-    if (errors.evento?.message) {
-      toast.error(errors.evento.message);
-    }
-    if (errors.certificadoTipo?.message) {
-      toast.error(errors.certificadoTipo.message);
-    }
-    if (
-      errors.participantes?.message &&
-      typeof errors.participantes.message === "string"
-    ) {
-      toast.error(errors.participantes.message);
-    }
-
-    if (errors.assinatura?.root?.message) {
-      toast.error(errors.assinatura.root.message);
+    const displayErrors = (errorObject: any, pathPrefix = "") => {
+      if (errorObject) {
+        Object.keys(errorObject).forEach((key) => {
+          const currentPath = pathPrefix ? `${pathPrefix}.${key}` : key;
+          if (
+            errorObject[key]?.message &&
+            typeof errorObject[key].message === "string"
+          ) {
+            toast.error(
+              `Erro em '${currentPath}': ${errorObject[key].message}`
+            );
+          } else if (key === "root" && errorObject[key]?.message) {
+            // Handle root errors specifically for arrays/objects
+            toast.error(
+              `Erro em '${pathPrefix || "formulario"}': ${
+                errorObject[key].message
+              }`
+            );
+          } else if (
+            typeof errorObject[key] === "object" &&
+            errorObject[key] !== null &&
+            !errorObject[key].message
+          ) {
+            // Check for _errors which zod uses for refine issues not tied to a specific field
+            if (
+              errorObject[key]._errors &&
+              errorObject[key]._errors.length > 0
+            ) {
+              errorObject[key]._errors.forEach((errMsg: string) => {
+                toast.error(`Erro em '${currentPath}': ${errMsg}`);
+              });
+            } else {
+              displayErrors(errorObject[key], currentPath);
+            }
+          }
+        });
+      }
+    };
+    if (Object.keys(errors).length > 0) {
+      // console.log("Zod Errors:", JSON.stringify(errors, null, 2)); // For debugging
+      displayErrors(errors);
     }
   }, [errors]);
 
@@ -162,6 +285,136 @@ export const Identificadores = () => {
 
   const eventoSelecionado = watch("evento");
   const selectedEvento = eventos.find((ev) => ev.id === eventoSelecionado);
+
+  // Watch all courseDate fields for reactivity
+  const watchedCourseDate = watch("courseDate");
+
+  const getAvailablePeriodsForInstructor = (
+    otherInstructorPeriod: ValidPeriod,
+    daySupports: { morning: boolean; afternoon: boolean; night: boolean }
+  ): { value: ValidPeriod; label: string }[] => {
+    const available: { value: ValidPeriod; label: string }[] = [
+      { value: "nenhum", label: "Nenhum" },
+    ];
+    const allPossiblePeriods: {
+      value: ValidPeriod;
+      label: string;
+      bases: SinglePeriod[];
+    }[] = [
+      { value: "manha", label: "Manhã", bases: ["manha"] },
+      { value: "tarde", label: "Tarde", bases: ["tarde"] },
+      { value: "noite", label: "Noite", bases: ["noite"] },
+      {
+        value: "manhaTarde",
+        label: "Manhã e Tarde",
+        bases: ["manha", "tarde"],
+      },
+      {
+        value: "manhaNoite",
+        label: "Manhã e Noite",
+        bases: ["manha", "noite"],
+      },
+      {
+        value: "tardeNoite",
+        label: "Tarde e Noite",
+        bases: ["tarde", "noite"],
+      },
+    ];
+
+    const supportedPeriodsForDay = allPossiblePeriods.filter((p) => {
+      if (p.bases.length === 1) {
+        const base = p.bases[0];
+        if (base === "manha") return daySupports.morning;
+        if (base === "tarde") return daySupports.afternoon;
+        if (base === "noite") return daySupports.night;
+      } else if (p.bases.length === 2) {
+        const [base1, base2] = p.bases;
+        let supportsBase1 = false;
+        let supportsBase2 = false;
+        if (base1 === "manha") supportsBase1 = daySupports.morning;
+        else if (base1 === "tarde") supportsBase1 = daySupports.afternoon;
+        else if (base1 === "noite") supportsBase1 = daySupports.night;
+
+        if (base2 === "manha") supportsBase2 = daySupports.morning;
+        else if (base2 === "tarde") supportsBase2 = daySupports.afternoon;
+        else if (base2 === "noite") supportsBase2 = daySupports.night;
+        return supportsBase1 && supportsBase2;
+      }
+      return false;
+    });
+
+    const otherBasePeriods = getBasePeriodsLocal(otherInstructorPeriod);
+
+    if (otherBasePeriods.size >= 2) {
+      // Other instructor has a combined period
+      return available; // Only "Nenhum" is available
+    }
+
+    if (otherBasePeriods.size === 1) {
+      // Other instructor has a single period
+      supportedPeriodsForDay.forEach((p) => {
+        if (p.bases.length === 1) {
+          // Only single, non-overlapping periods
+          const currentBase = p.bases[0];
+          if (!otherBasePeriods.has(currentBase)) {
+            available.push({ value: p.value, label: p.label });
+          }
+        }
+      });
+      return available;
+    }
+
+    // Other instructor has "nenhum" or ""
+    supportedPeriodsForDay.forEach((p) => {
+      available.push({ value: p.value, label: p.label });
+    });
+    return available;
+  };
+
+  const handlePeriodChangeForDay = (
+    date: string,
+    changedInstructorKey: "instrutorA" | "instrutorB",
+    newPeriod: ValidPeriod,
+    _daySupports: { morning: boolean; afternoon: boolean; night: boolean } // Prefixed as unused for now
+  ) => {
+    setValue(`courseDate.${date}.${changedInstructorKey}.periodo`, newPeriod, {
+      shouldValidate: true,
+    });
+
+    const otherInstructorKey =
+      changedInstructorKey === "instrutorA" ? "instrutorB" : "instrutorA";
+    const newPeriodBaseCount = getBasePeriodsLocal(newPeriod).size;
+
+    if (newPeriodBaseCount >= 2) {
+      // Current instructor selected a combined period
+      // Set other instructor to "nenhum"
+      setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
+        shouldValidate: true,
+      });
+    } else if (newPeriodBaseCount === 1) {
+      // Current instructor selected a single period
+      const otherInstructorCurrentPeriod =
+        getValues(`courseDate.${date}.${otherInstructorKey}.periodo`) ||
+        "nenhum";
+      const otherInstructorCurrentBaseCount = getBasePeriodsLocal(
+        otherInstructorCurrentPeriod
+      ).size;
+      if (otherInstructorCurrentBaseCount >= 2) {
+        // Other instructor HAD a combined period
+        // Set other instructor to "nenhum"
+        setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
+          shouldValidate: true,
+        });
+      }
+    }
+    // Trigger validation for the whole courseDate entry for this day
+    // This helps re-validate the .refine rule on courseDateDetailSchema
+    // For example by temporarily setting a value and then unsetting it, or using trigger.
+    // However, setValue with shouldValidate: true on the period fields should be enough
+    // for Zod to re-evaluate. If not, one might need to trigger validation explicitly
+    // for the path `courseDate.${date}`.
+  };
+
   // Estados para paginação
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -755,7 +1008,7 @@ export const Identificadores = () => {
                 <p>Configurar Lista de Instrutores:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {days.map((day) => {
-                    const parsed = day;
+                    const parsed = day; // This is { date, start, end, intervalStart, intervalEnd }
                     const { start, end } = parsed;
                     const supports = {
                       morning: start < "12:00" && end > "06:00",
@@ -763,7 +1016,7 @@ export const Identificadores = () => {
                       night: start < "23:59" && end > "18:00",
                     };
                     return (
-                      <div key={day.date} className="border p-4 rounded">
+                      <div key={parsed.date} className="border p-4 rounded">
                         <div className="flex flex-col gap-2">
                           <Label>
                             Dia: {format(parseISO(parsed.date), "dd/MM/yyyy")}
@@ -784,12 +1037,14 @@ export const Identificadores = () => {
                                         period.slice(1)}
                                     </Label>
                                     <Controller
-                                      name={`courseDate.${parsed.date}.address.${period}`}
+                                      name={`courseDate.${
+                                        parsed.date
+                                      }.address.${period as SinglePeriod}`}
                                       control={control}
                                       render={({ field }) => (
                                         <Select
                                           onValueChange={field.onChange}
-                                          value={field.value}
+                                          value={field.value || ""}
                                         >
                                           <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Selecione o endereço" />
@@ -800,7 +1055,7 @@ export const Identificadores = () => {
                                                 Endereços
                                               </SelectLabel>
                                               <SelectItem
-                                                key="address1"
+                                                key={`${parsed.date}-address1-${period}`}
                                                 value={
                                                   selectedEvento.courseLocation
                                                 }
@@ -809,7 +1064,7 @@ export const Identificadores = () => {
                                               </SelectItem>
                                               {selectedEvento.courseLocation2 && (
                                                 <SelectItem
-                                                  key="address2"
+                                                  key={`${parsed.date}-address2-${period}`}
                                                   value={
                                                     selectedEvento.courseLocation2
                                                   }
@@ -830,52 +1085,86 @@ export const Identificadores = () => {
                           </div>
                         )}
 
-                        {["A", "B"].map((key) => {
+                        {["A", "B"].map((instrChar, instrIndex) => {
                           const instrKey =
-                            key === "A" ? "instrutorA" : "instrutorB";
+                            instrChar === "A" ? "instrutorA" : "instrutorB";
+                          const otherInstrKey =
+                            instrChar === "A" ? "instrutorB" : "instrutorA";
+
+                          const otherInstructorPeriodValue =
+                            watchedCourseDate?.[parsed.date]?.[otherInstrKey]
+                              ?.periodo || "nenhum";
+
+                          const availablePeriods =
+                            getAvailablePeriodsForInstructor(
+                              otherInstructorPeriodValue, // Pass watched value
+                              supports
+                            );
+
                           return (
                             <div
-                              key={key}
-                              className="flex gap-4 items-center mt-2"
+                              key={`${parsed.date}-${instrKey}`}
+                              className="flex flex-col gap-2 mt-2"
                             >
-                              <div className="w-full">
-                                <Label>Instrutor {key}</Label>
+                              <div>
+                                <Label>Instrutor {instrChar}</Label>
                                 <Controller
                                   name={`courseDate.${parsed.date}.${instrKey}.instrutor`}
                                   control={control}
                                   render={({ field }) => (
                                     <Select
-                                      value={field.value || "erro"}
+                                      value={field.value || ""}
                                       onValueChange={field.onChange}
                                     >
-                                      <SelectTrigger className="w-full mb-2">
+                                      <SelectTrigger className="w-full mb-1">
                                         <SelectValue placeholder="Selecione Instrutor" />
                                       </SelectTrigger>
                                       <SelectContent>
                                         <SelectGroup>
                                           <SelectLabel>Instrutores</SelectLabel>
-                                          {instrutores.map((instrutor) => {
-                                            return (
-                                              <SelectItem
-                                                key={instrutor.id}
-                                                value={instrutor.name}
-                                              >
-                                                {instrutor.name}
-                                              </SelectItem>
-                                            );
-                                          })}
+                                          {instrutores.map((instrutor, idx) => (
+                                            <SelectItem
+                                              key={instrutor.id || idx}
+                                              value={instrutor.name}
+                                            >
+                                              {instrutor.name}
+                                            </SelectItem>
+                                          ))}
                                         </SelectGroup>
                                       </SelectContent>
                                     </Select>
                                   )}
                                 />
+                                {errors?.courseDate?.[parsed.date]?.[instrKey]
+                                  ?.instrutor && (
+                                  <p className="text-sm text-red-500 mt-1">
+                                    {
+                                      errors.courseDate[parsed.date]?.[instrKey]
+                                        ?.instrutor?.message
+                                    }
+                                  </p>
+                                )}
+                              </div>
+                              <div>
+                                <Label>Período Instrutor {instrChar}</Label>
                                 <Controller
                                   name={`courseDate.${parsed.date}.${instrKey}.periodo`}
                                   control={control}
                                   render={({ field }) => (
                                     <Select
-                                      value={field.value}
-                                      onValueChange={field.onChange}
+                                      value={field.value || "nenhum"}
+                                      onValueChange={(newValue) => {
+                                        const currentInstructorKey =
+                                          instrIndex === 0
+                                            ? "instrutorA"
+                                            : "instrutorB";
+                                        handlePeriodChangeForDay(
+                                          parsed.date,
+                                          currentInstructorKey,
+                                          newValue as ValidPeriod,
+                                          supports
+                                        );
+                                      }}
                                     >
                                       <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Período" />
@@ -883,42 +1172,14 @@ export const Identificadores = () => {
                                       <SelectContent>
                                         <SelectGroup>
                                           <SelectLabel>Períodos</SelectLabel>
-                                          <SelectItem value="nenhum">
-                                            Nenhum
-                                          </SelectItem>
-                                          {supports.morning && (
-                                            <SelectItem value="manha">
-                                              Manhã
+                                          {availablePeriods.map((p) => (
+                                            <SelectItem
+                                              key={`${parsed.date}-${instrKey}-${p.value}`}
+                                              value={p.value}
+                                            >
+                                              {p.label}
                                             </SelectItem>
-                                          )}
-                                          {supports.afternoon && (
-                                            <SelectItem value="tarde">
-                                              Tarde
-                                            </SelectItem>
-                                          )}
-                                          {supports.night && (
-                                            <SelectItem value="noite">
-                                              Noite
-                                            </SelectItem>
-                                          )}
-                                          {supports.morning &&
-                                            supports.afternoon && (
-                                              <SelectItem value="manhaTarde">
-                                                Manhã e Tarde
-                                              </SelectItem>
-                                            )}
-                                          {supports.morning &&
-                                            supports.night && (
-                                              <SelectItem value="manhaNoite">
-                                                Manhã e Noite
-                                              </SelectItem>
-                                            )}
-                                          {supports.afternoon &&
-                                            supports.night && (
-                                              <SelectItem value="tardeNoite">
-                                                Tarde e Noite
-                                              </SelectItem>
-                                            )}
+                                          ))}
                                         </SelectGroup>
                                       </SelectContent>
                                     </Select>
@@ -928,6 +1189,11 @@ export const Identificadores = () => {
                             </div>
                           );
                         })}
+                        {errors?.courseDate?.[parsed.date]?.root && (
+                          <p className="text-sm text-red-500 mt-2">
+                            {errors.courseDate[parsed.date]?.root?.message}
+                          </p>
+                        )}
                       </div>
                     );
                   })}
