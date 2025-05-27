@@ -181,9 +181,9 @@ const getBasePeriodsLocal = (period: ValidPeriod): Set<SinglePeriod> => {
   // ValidPeriod can be "", so this check is intentional and correct based on the type.
   // @ts-ignore
   if (!period || period === "nenhum" || period === "") return base;
-  if (period.includes("manha")) base.add("manha");
-  if (period.includes("tarde")) base.add("tarde");
-  if (period.includes("noite")) base.add("noite");
+  if (period.toLocaleLowerCase().includes("manha")) base.add("manha");
+  if (period.toLocaleLowerCase().includes("tarde")) base.add("tarde");
+  if (period.toLocaleLowerCase().includes("noite")) base.add("noite");
   return base;
 };
 
@@ -293,9 +293,15 @@ export const Identificadores = () => {
     otherInstructorPeriod: ValidPeriod,
     daySupports: { morning: boolean; afternoon: boolean; night: boolean }
   ): { value: ValidPeriod; label: string }[] => {
-    const available: { value: ValidPeriod; label: string }[] = [
+    const availableLog: string[] = []; // For debugging
+    availableLog.push(
+      `Starting getAvailablePeriodsForInstructor. Other: ${otherInstructorPeriod}, Supports: M${daySupports.morning}, A${daySupports.afternoon}, N${daySupports.night}`
+    );
+
+    const initialAvailable: { value: ValidPeriod; label: string }[] = [
       { value: "nenhum", label: "Nenhum" },
     ];
+
     const allPossiblePeriods: {
       value: ValidPeriod;
       label: string;
@@ -322,97 +328,145 @@ export const Identificadores = () => {
     ];
 
     const supportedPeriodsForDay = allPossiblePeriods.filter((p) => {
-      if (p.bases.length === 1) {
-        const base = p.bases[0];
-        if (base === "manha") return daySupports.morning;
-        if (base === "tarde") return daySupports.afternoon;
-        if (base === "noite") return daySupports.night;
-      } else if (p.bases.length === 2) {
-        const [base1, base2] = p.bases;
-        let supportsBase1 = false;
-        let supportsBase2 = false;
-        if (base1 === "manha") supportsBase1 = daySupports.morning;
-        else if (base1 === "tarde") supportsBase1 = daySupports.afternoon;
-        else if (base1 === "noite") supportsBase1 = daySupports.night;
+      if (p.value === "nenhum") return false;
+      if (p.bases.length === 0) return false;
 
-        if (base2 === "manha") supportsBase2 = daySupports.morning;
-        else if (base2 === "tarde") supportsBase2 = daySupports.afternoon;
-        else if (base2 === "noite") supportsBase2 = daySupports.night;
-        return supportsBase1 && supportsBase2;
+      for (const base of p.bases) {
+        if (base === "manha" && !daySupports.morning) return false;
+        if (base === "tarde" && !daySupports.afternoon) return false;
+        if (base === "noite" && !daySupports.night) return false;
       }
-      return false;
+      return true;
     });
+    availableLog.push(
+      `Supported for day: ${JSON.stringify(
+        supportedPeriodsForDay.map((p) => p.value)
+      )}`
+    );
 
     const otherBasePeriods = getBasePeriodsLocal(otherInstructorPeriod);
+    availableLog.push(
+      `Other instructor base periods: ${JSON.stringify(
+        Array.from(otherBasePeriods)
+      )}`
+    );
 
+    // If the other instructor has a combined period, this instructor can only be "nenhum".
     if (otherBasePeriods.size >= 2) {
-      // Other instructor has a combined period
-      return available; // Only "Nenhum" is available
+      availableLog.push('Other has combined. Current can only be "nenhum".');
+      return initialAvailable; // Only "Nenhum"
     }
 
-    if (otherBasePeriods.size === 1) {
-      // Other instructor has a single period
-      supportedPeriodsForDay.forEach((p) => {
-        if (p.bases.length === 1) {
-          // Only single, non-overlapping periods
-          const currentBase = p.bases[0];
-          if (!otherBasePeriods.has(currentBase)) {
-            available.push({ value: p.value, label: p.label });
-          }
-        }
-      });
-      return available;
-    }
-
-    // Other instructor has "nenhum" or ""
+    const finalAvailable = [...initialAvailable];
     supportedPeriodsForDay.forEach((p) => {
-      available.push({ value: p.value, label: p.label });
+      finalAvailable.push({ value: p.value, label: p.label });
+      availableLog.push(`  Adding: ${p.value}`);
     });
-    return available;
+    return finalAvailable;
   };
 
   const handlePeriodChangeForDay = (
     date: string,
     changedInstructorKey: "instrutorA" | "instrutorB",
     newPeriod: ValidPeriod,
-    _daySupports: { morning: boolean; afternoon: boolean; night: boolean } // Prefixed as unused for now
+    daySupports: { morning: boolean; afternoon: boolean; night: boolean }
   ) => {
+    // 1. Set the value for the instructor whose period was manually changed
     setValue(`courseDate.${date}.${changedInstructorKey}.periodo`, newPeriod, {
       shouldValidate: true,
     });
 
     const otherInstructorKey =
       changedInstructorKey === "instrutorA" ? "instrutorB" : "instrutorA";
-    const newPeriodBaseCount = getBasePeriodsLocal(newPeriod).size;
+    const newPeriodBases = getBasePeriodsLocal(newPeriod);
+
+    const newPeriodBaseCount = newPeriodBases.size;
 
     if (newPeriodBaseCount >= 2) {
-      // Current instructor selected a combined period
-      // Set other instructor to "nenhum"
       setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
         shouldValidate: true,
       });
-    } else if (newPeriodBaseCount === 1) {
-      // Current instructor selected a single period
+      return;
+    }
+
+    if (newPeriodBaseCount === 1) {
+      const newlySelectedSingleBase = Array.from(newPeriodBases)[0];
+
+      const supportedSingleDayPeriods: SinglePeriod[] = [];
+      if (daySupports.morning) supportedSingleDayPeriods.push("manha");
+      if (daySupports.afternoon) supportedSingleDayPeriods.push("tarde");
+      if (daySupports.night) supportedSingleDayPeriods.push("noite");
+
+      // Scenario: Day supports exactly two single periods (e.g., Manhã and Tarde only)
+      // And the changed instructor selected one of these two.
+      if (
+        supportedSingleDayPeriods.length === 2 &&
+        supportedSingleDayPeriods.includes(newlySelectedSingleBase)
+      ) {
+        const otherPeriodToAutoAssign = supportedSingleDayPeriods.find(
+          (p) => p !== newlySelectedSingleBase
+        );
+        if (otherPeriodToAutoAssign) {
+          setValue(
+            `courseDate.${date}.${otherInstructorKey}.periodo`,
+            otherPeriodToAutoAssign as ValidPeriod,
+            { shouldValidate: true }
+          );
+          return;
+        }
+      }
+
+      // General handling for single period selection (including conflicts):
       const otherInstructorCurrentPeriod =
         getValues(`courseDate.${date}.${otherInstructorKey}.periodo`) ||
         "nenhum";
-      const otherInstructorCurrentBaseCount = getBasePeriodsLocal(
+      const otherInstructorCurrentBases = getBasePeriodsLocal(
         otherInstructorCurrentPeriod
-      ).size;
-      if (otherInstructorCurrentBaseCount >= 2) {
-        // Other instructor HAD a combined period
-        // Set other instructor to "nenhum"
+      );
+
+      if (otherInstructorCurrentBases.size >= 2) {
         setValue(`courseDate.${date}.${otherInstructorKey}.periodo`, "nenhum", {
           shouldValidate: true,
         });
+      } else if (otherInstructorCurrentBases.size === 1) {
+        const otherExistingSingleBase = Array.from(
+          otherInstructorCurrentBases
+        )[0];
+
+        if (otherExistingSingleBase === newlySelectedSingleBase) {
+          const potentialShiftsOrder: SinglePeriod[] = [
+            "manha",
+            "tarde",
+            "noite",
+          ];
+          let shifted = false;
+          for (const shiftTarget of potentialShiftsOrder) {
+            if (
+              shiftTarget !== newlySelectedSingleBase && // Don't shift to the period causing conflict
+              supportedSingleDayPeriods.includes(shiftTarget) // Day must support this shift target
+            ) {
+              setValue(
+                `courseDate.${date}.${otherInstructorKey}.periodo`,
+                shiftTarget as ValidPeriod,
+                { shouldValidate: true }
+              );
+              shifted = true;
+              break;
+            }
+          }
+          if (!shifted) {
+            setValue(
+              `courseDate.${date}.${otherInstructorKey}.periodo`,
+              "nenhum",
+              {
+                shouldValidate: true,
+              }
+            );
+          }
+        }
       }
+      return;
     }
-    // Trigger validation for the whole courseDate entry for this day
-    // This helps re-validate the .refine rule on courseDateDetailSchema
-    // For example by temporarily setting a value and then unsetting it, or using trigger.
-    // However, setValue with shouldValidate: true on the period fields should be enough
-    // for Zod to re-evaluate. If not, one might need to trigger validation explicitly
-    // for the path `courseDate.${date}`.
   };
 
   // Estados para paginação
