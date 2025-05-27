@@ -425,7 +425,27 @@ export async function gerarIdentificador(
       mimeType:
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
-    saveAs(out, "identificador.docx");
+
+    const dateTimeString = new Date()
+      .toISOString()
+      .replace(/[-:T.]/g, "")
+      .slice(0, 14);
+
+    const treinamentoNome =
+      typeof docData.treinamento === "string"
+        ? docData.treinamento
+        : "IDENTIFICADOR";
+
+    const cleanedTreinamento = treinamentoNome
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toUpperCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^A-Z0-9_]/g, "");
+
+    const newFilename = `${cleanedTreinamento}_${dateTimeString}.docx`;
+
+    saveAs(out, newFilename);
   } catch (error) {
     console.error("Erro ao gerar identificador:", error);
     // Potentially re-throw or handle more gracefully depending on application needs
