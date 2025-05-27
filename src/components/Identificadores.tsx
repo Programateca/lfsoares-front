@@ -1151,8 +1151,13 @@ export const Identificadores = () => {
                                   <div key={period} className="mb-2">
                                     <Label>
                                       Endereço{" "}
-                                      {period.charAt(0).toUpperCase() +
-                                        period.slice(1)}
+                                      {{
+                                        morning: "Manhã",
+                                        afternoon: "Tarde",
+                                        night: "Noite",
+                                      }[period as string] ||
+                                        period.charAt(0).toUpperCase() +
+                                          period.slice(1)}
                                     </Label>
                                     <Controller
                                       name={`courseDate.${
