@@ -11,7 +11,6 @@ import {
 } from "./constants-xml-data-lista";
 import { Identificador, CourseData } from "@/@types/Identificador";
 import { calcularPeriodoDia } from "./calcular-periodo-dia";
-import { start } from "repl";
 
 type FormattedDateResult = {
   date: string;
