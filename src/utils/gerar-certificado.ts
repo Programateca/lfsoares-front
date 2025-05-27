@@ -46,7 +46,17 @@ export async function gerarCertificado(
     mimeType:
       "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   });
-  saveAs(out, "certificados-frente.pptx");
+
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+  const year = now.getFullYear();
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  const dateTimeString = `${day}${month}${year}T${hours}${minutes}`;
+
+  saveAs(out, `CERTIFICADOS_FRENTE-${dateTimeString}.pptx`);
 
   // Verso
   const zipVerso = new PizZip(fileArrayBufferVerso);
@@ -68,7 +78,7 @@ export async function gerarCertificado(
     mimeType:
       "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   });
-  saveAs(outVerso, "certificados-verso.pptx");
+  saveAs(outVerso, `CERTIFICADOS_VERSO-${dateTimeString}.pptx`);
 }
 
 async function duplicateSlide(

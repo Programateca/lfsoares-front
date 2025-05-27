@@ -426,10 +426,14 @@ export async function gerarIdentificador(
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     });
 
-    const dateTimeString = new Date()
-      .toISOString()
-      .replace(/[-:T.]/g, "")
-      .slice(0, 14);
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    const dateTimeString = `${day}${month}${year}T${hours}${minutes}`;
 
     const treinamentoNome =
       typeof docData.treinamento === "string"
