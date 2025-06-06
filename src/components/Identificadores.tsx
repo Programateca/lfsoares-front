@@ -527,7 +527,9 @@ export const Identificadores = () => {
       setParticipantes(
         pessoasResp.data.data.filter((e: any) => e.status.id === 1)
       );
-      setInstrutores(instrutoresResp.data.data);
+      setInstrutores(
+        instrutoresResp.data.data.filter((inst: any) => inst.status.id === 1)
+      );
     } catch (error) {
       toast.error("Erro ao buscar dados iniciais");
     } finally {
