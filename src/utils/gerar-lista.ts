@@ -29,6 +29,7 @@ type Props = {
 };
 
 export async function gerarLista({ listaData }: Props): Promise<void> {
+  console.log("Dados da Lista", listaData.courseData);
   const TOTAL_PARTICIPANTS = listaData.numberOfParticipantes;
   const TAG_NAME = "<!-- TABLE -->";
   const LISTA_TEMPLATE_DOCX_PATH = "/templates/lista/template-lista.docx";
@@ -44,6 +45,8 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
     }
 
     const allInstructorFormattedDates = formatDates(listaData.courseData!);
+
+    console.log("Dados formatados por instrutor:", allInstructorFormattedDates);
 
     for (const sanitizedInstructorNameKey in allInstructorFormattedDates) {
       if (
@@ -110,7 +113,7 @@ function makeTables(data: FormattedDateResult[], participantsCount: number) {
   const pagesNumber = Math.ceil(participantsCount / 5);
   return data
     .map((item) => {
-      if (item.intervalStart) {
+      if (item.intervalStart && item.intervalStart !== "N/A") {
         return substituirOcorrencias(TABLE_DIA_TODO.repeat(pagesNumber), item);
       }
 
@@ -143,7 +146,12 @@ function substituirOcorrencias(
     noite: "NOITE",
   };
 
-  if (data.intervalStart && data.intervalEnd) {
+  if (
+    data.intervalStart &&
+    data.intervalEnd &&
+    data.intervalStart !== "N/A" &&
+    data.intervalEnd !== "N/A"
+  ) {
     diaTodoPeriodo.push(
       PERIODOS[
         calcularPeriodoDia(
@@ -172,7 +180,10 @@ function substituirOcorrencias(
     },
     "\\[nome_instrutor\\]": () => data.instrutor,
     "\\[intervalo\\]": () =>
-      data.intervalStart
+      data.intervalStart &&
+      data.intervalStart !== "N/A" &&
+      data.intervalEnd &&
+      data.intervalEnd !== "N/A"
         ? `${data.intervalStart} ÀS ${data.intervalEnd}`
         : "N/A",
     "\\[horario\\]": () => `${data.start} ÀS ${data.end}`,
@@ -180,8 +191,14 @@ function substituirOcorrencias(
     PERIODO_2: () => diaTodoPeriodo[1] || "",
     PERIODO: () =>
       data.periodo === "manha" ? "MANHÃ" : data.periodo.toUpperCase(),
-    HORARIO_1: () => `${data.start} ÀS ${data.intervalStart}`,
-    HORARIO_2: () => `${data.intervalEnd} ÀS ${data.end}`,
+    HORARIO_1: () =>
+      data.intervalStart && data.intervalStart !== "N/A"
+        ? `${data.start} ÀS ${data.intervalStart}`
+        : `${data.start} ÀS ${data.end}`,
+    HORARIO_2: () =>
+      data.intervalEnd && data.intervalEnd !== "N/A"
+        ? `${data.intervalEnd} ÀS ${data.end}`
+        : "",
     HORARIO: () => `${data.start} ÀS ${data.end}`,
   };
 
@@ -222,8 +239,8 @@ function formatDates(dates: CourseData[]): {
         date: dateDetails.date,
         start: dateDetails.start,
         end: dateDetails.end,
-        intervalStart: dateDetails.intervalStart || "N/A",
-        intervalEnd: dateDetails.intervalEnd || "N/A",
+        intervalStart: dateDetails.intervalStart,
+        intervalEnd: dateDetails.intervalEnd,
         instrutor: instructorName, // Store original name for content
         periodo: periodo || "",
       };
