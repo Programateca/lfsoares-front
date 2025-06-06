@@ -1099,13 +1099,15 @@ export const Identificadores = () => {
                 control={control}
                 render={({ field }) => (
                   <MultiSelect
-                    options={participantes.map((pessoa) => ({
-                      label: pessoa.name,
-                      cpf: pessoa.cpf,
-                      matricula: pessoa.matricula,
-                      empresa: pessoa?.empresa?.name,
-                      value: pessoa.id,
-                    }))}
+                    options={participantes
+                      .map((pessoa) => ({
+                        label: pessoa.name,
+                        cpf: pessoa.cpf,
+                        matricula: pessoa.matricula,
+                        empresa: pessoa?.empresa?.name,
+                        value: pessoa.id,
+                      }))
+                      .sort((a, b) => a.label.localeCompare(b.label))}
                     onValueChange={(value) => field.onChange(value)}
                     defaultValue={field.value || []}
                     placeholder="Selecione os participantes"

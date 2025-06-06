@@ -153,7 +153,24 @@ const Pessoas = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // If editing, only validate CPF if it changed
     const pessoa = pessoas.find((pessoa) => pessoa.id === newPessoa.id);
+
+    if (!pessoaInEditMode) {
+      // Check if CPF already exists when creating new person
+      const cpfExists = pessoas.some((p) => p.cpf === newPessoa.cpf);
+      if (cpfExists) {
+        toast.error("CPF já cadastrado no sistema!");
+        return;
+      }
+    } else if (pessoa && pessoa.cpf !== newPessoa.cpf) {
+      // Check if new CPF exists when editing
+      const cpfExists = pessoas.some((p) => p.cpf === newPessoa.cpf);
+      if (cpfExists) {
+        toast.error("CPF já cadastrado no sistema!");
+        return;
+      }
+    }
 
     if (pessoaInEditMode) {
       try {

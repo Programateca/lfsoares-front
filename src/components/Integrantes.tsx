@@ -137,10 +137,43 @@ const Integrantes = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Normalize strings by trimming and converting to lowercase
+    const normalizeString = (str: string) => str.trim().toLowerCase();
+
+    const normalizedNewName = normalizeString(newInstrutor.name);
+    const normalizedNewQualificacao = normalizeString(
+      newInstrutor.qualificacaoProfissional
+    );
+    const normalizedNewRegistro = normalizeString(
+      newInstrutor.registroProfissional
+    );
+
+    // Check for existing instructor with same data (case insensitive and normalized)
+    const isDuplicate = instrutores.some((instrutor) => {
+      const normalizedExistingName = normalizeString(instrutor.name);
+      const normalizedExistingQualificacao = normalizeString(
+        instrutor.qualificacaoProfissional
+      );
+      const normalizedExistingRegistro = normalizeString(
+        instrutor.registroProfissional
+      );
+
+      return (
+        normalizedExistingName === normalizedNewName &&
+        normalizedExistingQualificacao === normalizedNewQualificacao &&
+        normalizedExistingRegistro === normalizedNewRegistro
+      );
+    });
+
+    if (isDuplicate) {
+      toast.error("Este integrante já existe no sistema com os mesmos dados!");
+      return;
+    }
+
     if (instrutorInEditMode) {
       try {
         await api.patch(`instrutores/${instrutorInEditMode}`, {
-          name: newInstrutor.name.trim(), // Remove espaços em branco do início e fim
+          name: newInstrutor.name.trim(),
           qualificacaoProfissional:
             newInstrutor.qualificacaoProfissional.trim(),
           registroProfissional: newInstrutor.registroProfissional.trim(),
