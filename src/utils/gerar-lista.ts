@@ -11,7 +11,6 @@ import {
 } from "./constants-xml-data-lista";
 import { Identificador, CourseData } from "@/@types/Identificador";
 import { calcularPeriodoDia } from "./calcular-periodo-dia";
-import { date } from "zod";
 
 type FormattedDateResult = {
   date: string;
@@ -21,6 +20,7 @@ type FormattedDateResult = {
   intervalEnd?: string;
   instrutor: string; // Original instructor name for content
   periodo: string;
+  address: string;
 };
 
 type Props = {
@@ -188,6 +188,7 @@ function substituirOcorrencias(
         ? `${data.intervalStart} ÀS ${data.intervalEnd}`
         : "N/A",
     "\\[horario\\]": () => `${data.start} ÀS ${data.end}`,
+    endereco: () => data.address,
     PERIODO_1: () => diaTodoPeriodo[0] || "",
     PERIODO_2: () => diaTodoPeriodo[1] || "",
     PERIODO: () =>
@@ -229,6 +230,7 @@ function formatDates(dates: CourseData[]): {
     instructorName: string | undefined,
     periodo: string | undefined,
     baseDateDetails: CourseData["date"],
+    addressObject: CourseData["address"], // Changed parameter name and type
     entryStart: string,
     entryEnd: string,
     isSegmentOfInterval: boolean
@@ -239,7 +241,26 @@ function formatDates(dates: CourseData[]): {
         allInstructorResults[sanitizedName] = [];
       }
 
+      let addressString = "";
+      if (addressObject) {
+        if (periodo.includes("manha") && addressObject.morning) {
+          addressString = addressObject.morning;
+        } else if (periodo.includes("tarde") && addressObject.afternoon) {
+          addressString = addressObject.afternoon;
+        } else if (periodo.includes("noite") && addressObject.night) {
+          addressString = addressObject.night;
+        } else {
+          // Fallback or default if specific period address is not found
+          addressString =
+            addressObject.morning ||
+            addressObject.afternoon ||
+            addressObject.night ||
+            "";
+        }
+      }
+
       const result: FormattedDateResult = {
+        address: addressString, // Use the determined address string
         date: baseDateDetails.date,
         start: entryStart,
         end: entryEnd,
@@ -315,6 +336,7 @@ function formatDates(dates: CourseData[]): {
         courseItem.instrutorA.instrutor,
         courseItem.instrutorA.periodo,
         originalDateDetails,
+        courseItem.address, // Pass courseItem.address
         entryStart,
         entryEnd,
         isSegment
@@ -347,6 +369,7 @@ function formatDates(dates: CourseData[]): {
         courseItem.instrutorB.instrutor,
         courseItem.instrutorB.periodo,
         originalDateDetails,
+        courseItem.address, // Pass courseItem.address
         entryStart,
         entryEnd,
         isSegment
@@ -383,6 +406,7 @@ function formatDates(dates: CourseData[]): {
           config.instrutor,
           config.periodo,
           originalDateDetails,
+          courseItem.address, // Pass courseItem.address
           entryStart,
           entryEnd,
           isSegment
