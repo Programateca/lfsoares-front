@@ -11,6 +11,7 @@ import {
 } from "./constants-xml-data-lista";
 import { Identificador, CourseData } from "@/@types/Identificador";
 import { calcularPeriodoDia } from "./calcular-periodo-dia";
+import { date } from "zod";
 
 type FormattedDateResult = {
   date: string;
@@ -65,7 +66,7 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
           const hours = String(now.getHours()).padStart(2, "0");
           const minutes = String(now.getMinutes()).padStart(2, "0");
 
-          const dateTimeString = `${day}${month}${year}T${hours}${minutes}`;
+          const dateTimeString = `${day}-${month}-${year}_${hours}-${minutes}`;
 
           const outputFileName = `LISTA-${sanitizedInstructorNameKey.toUpperCase()}-${dateTimeString}.docx`;
 
@@ -227,7 +228,10 @@ function formatDates(dates: CourseData[]): {
   function addResult(
     instructorName: string | undefined,
     periodo: string | undefined,
-    dateDetails: CourseData["date"]
+    baseDateDetails: CourseData["date"],
+    entryStart: string,
+    entryEnd: string,
+    isSegmentOfInterval: boolean
   ) {
     if (instructorName && periodo && periodo !== "nenhum") {
       const sanitizedName = sanitizeFilename(instructorName);
@@ -236,33 +240,25 @@ function formatDates(dates: CourseData[]): {
       }
 
       const result: FormattedDateResult = {
-        date: dateDetails.date,
-        start: dateDetails.start,
-        end: dateDetails.end,
-        intervalStart: dateDetails.intervalStart,
-        intervalEnd: dateDetails.intervalEnd,
-        instrutor: instructorName, // Store original name for content
-        periodo: periodo || "",
+        date: baseDateDetails.date,
+        start: entryStart,
+        end: entryEnd,
+        intervalStart: isSegmentOfInterval
+          ? "N/A"
+          : baseDateDetails.intervalStart,
+        intervalEnd: isSegmentOfInterval ? "N/A" : baseDateDetails.intervalEnd,
+        instrutor: instructorName,
+        periodo: periodo || "", // Ensure periodo is a string
       };
 
-      // if (
-      //   periodo === "dia-todo" &&
-      //   dateDetails.intervalStart &&
-      //   dateDetails.intervalEnd &&
-      //   dateDetails.intervalStart !== "N/A" &&
-      //   dateDetails.intervalEnd !== "N/A"
-      // ) {
-      //   result.intervalStart = dateDetails.intervalStart;
-      //   result.intervalEnd = dateDetails.intervalEnd;
-      // }
-      // Avoid duplicate entries for the exact same date, instructor, and period
-      // This is a simple check; more complex logic might be needed if periods can overlap or be combined.
       const existingEntry = allInstructorResults[sanitizedName].find(
         (entry) =>
           entry.date === result.date &&
           entry.start === result.start &&
           entry.end === result.end &&
-          entry.periodo === result.periodo
+          entry.periodo === result.periodo &&
+          entry.intervalStart === result.intervalStart &&
+          entry.intervalEnd === result.intervalEnd
       );
       if (!existingEntry) {
         allInstructorResults[sanitizedName].push(result);
@@ -271,64 +267,126 @@ function formatDates(dates: CourseData[]): {
   }
 
   for (const courseItem of dates) {
-    const dateDetails = courseItem.date;
+    const originalDateDetails = { ...courseItem.date }; // Use a fresh copy
 
-    // Process Instrutor A (from older structure or signatureCount <= 2)
-    if (courseItem.instrutorA && courseItem.instrutorA.instrutor) {
-      addResult(
-        courseItem.instrutorA.instrutor,
-        courseItem.instrutorA.periodo,
-        dateDetails
+    const hasInterval =
+      originalDateDetails.intervalStart &&
+      originalDateDetails.intervalStart !== "N/A" &&
+      originalDateDetails.intervalEnd &&
+      originalDateDetails.intervalEnd !== "N/A";
+
+    let periodoHorario1: string | undefined;
+    let periodoHorario2: string | undefined;
+
+    if (hasInterval) {
+      periodoHorario1 = calcularPeriodoDia(
+        originalDateDetails.start,
+        originalDateDetails.intervalStart!
+      );
+      periodoHorario2 = calcularPeriodoDia(
+        originalDateDetails.intervalEnd!,
+        originalDateDetails.end
       );
     }
 
-    // Process Instrutor B (from older structure or signatureCount <= 2)
-    if (courseItem.instrutorB && courseItem.instrutorB.instrutor) {
-      // Avoid double-adding if already added via instrutorA if names are identical
-      // and also ensure it's not processed again if it's part of instrutoresConfig
-      const isAlreadyAddedByA =
-        courseItem.instrutorA &&
-        courseItem.instrutorA.instrutor === courseItem.instrutorB.instrutor;
-      if (!isAlreadyAddedByA) {
-        addResult(
-          courseItem.instrutorB.instrutor,
-          courseItem.instrutorB.periodo,
-          dateDetails
-        );
-      } else if (
-        isAlreadyAddedByA &&
-        courseItem.instrutorA!.periodo !== courseItem.instrutorB.periodo
-      ) {
-        // If same instructor as A but different period, add it as a distinct entry for that period.
-        addResult(
-          courseItem.instrutorB.instrutor,
-          courseItem.instrutorB.periodo,
-          dateDetails
-        );
+    // Process Instrutor A
+    if (
+      courseItem.instrutorA &&
+      courseItem.instrutorA.instrutor &&
+      courseItem.instrutorA.periodo &&
+      courseItem.instrutorA.periodo !== "nenhum"
+    ) {
+      let entryStart = originalDateDetails.start;
+      let entryEnd = originalDateDetails.end;
+      let isSegment = false;
+
+      if (hasInterval) {
+        if (courseItem.instrutorA.periodo === periodoHorario1) {
+          entryStart = originalDateDetails.start;
+          entryEnd = originalDateDetails.intervalStart!;
+          isSegment = true;
+        } else if (courseItem.instrutorA.periodo === periodoHorario2) {
+          entryStart = originalDateDetails.intervalEnd!;
+          entryEnd = originalDateDetails.end;
+          isSegment = true;
+        }
       }
+      addResult(
+        courseItem.instrutorA.instrutor,
+        courseItem.instrutorA.periodo,
+        originalDateDetails,
+        entryStart,
+        entryEnd,
+        isSegment
+      );
     }
 
-    // Process instrutoresConfig (for dynamic multiple instructors)
+    // Process Instrutor B
+    if (
+      courseItem.instrutorB &&
+      courseItem.instrutorB.instrutor &&
+      courseItem.instrutorB.periodo &&
+      courseItem.instrutorB.periodo !== "nenhum"
+    ) {
+      let entryStart = originalDateDetails.start;
+      let entryEnd = originalDateDetails.end;
+      let isSegment = false;
+
+      if (hasInterval) {
+        if (courseItem.instrutorB.periodo === periodoHorario1) {
+          entryStart = originalDateDetails.start;
+          entryEnd = originalDateDetails.intervalStart!;
+          isSegment = true;
+        } else if (courseItem.instrutorB.periodo === periodoHorario2) {
+          entryStart = originalDateDetails.intervalEnd!;
+          entryEnd = originalDateDetails.end;
+          isSegment = true;
+        }
+      }
+      addResult(
+        courseItem.instrutorB.instrutor,
+        courseItem.instrutorB.periodo,
+        originalDateDetails,
+        entryStart,
+        entryEnd,
+        isSegment
+      );
+    }
+
+    // Process instrutoresConfig
     if (courseItem.instrutoresConfig) {
       for (const config of courseItem.instrutoresConfig) {
-        // Check if this instructor and period combination for this date might have already been added
-        // from instrutorA or instrutorB fields to prevent duplicates if data is messy.
-        // This simple check might need to be more robust depending on how Identificadores.tsx structures the data.
-        let alreadyAdded = false;
-        if (config.instrutor) {
-          const sanitizedName = sanitizeFilename(config.instrutor);
-          if (allInstructorResults[sanitizedName]) {
-            alreadyAdded = allInstructorResults[sanitizedName].some(
-              (entry) =>
-                entry.date === dateDetails.date &&
-                entry.instrutor === config.instrutor &&
-                entry.periodo === config.periodo
-            );
+        if (
+          !config.instrutor ||
+          !config.periodo ||
+          config.periodo === "nenhum"
+        ) {
+          continue;
+        }
+
+        let entryStart = originalDateDetails.start;
+        let entryEnd = originalDateDetails.end;
+        let isSegment = false;
+
+        if (hasInterval) {
+          if (config.periodo === periodoHorario1) {
+            entryStart = originalDateDetails.start;
+            entryEnd = originalDateDetails.intervalStart!;
+            isSegment = true;
+          } else if (config.periodo === periodoHorario2) {
+            entryStart = originalDateDetails.intervalEnd!;
+            entryEnd = originalDateDetails.end;
+            isSegment = true;
           }
         }
-        if (!alreadyAdded) {
-          addResult(config.instrutor, config.periodo, dateDetails);
-        }
+        addResult(
+          config.instrutor,
+          config.periodo,
+          originalDateDetails,
+          entryStart,
+          entryEnd,
+          isSegment
+        );
       }
     }
   }
