@@ -30,7 +30,6 @@ type Props = {
 };
 
 export async function gerarLista({ listaData }: Props): Promise<void> {
-  console.log("Dados da Lista", listaData.courseData);
   const TOTAL_PARTICIPANTS = listaData.numberOfParticipantes;
   const TAG_NAME = "<!-- TABLE -->";
   const LISTA_TEMPLATE_DOCX_PATH = "/templates/lista/template-lista.docx";
@@ -46,8 +45,6 @@ export async function gerarLista({ listaData }: Props): Promise<void> {
     }
 
     const allInstructorFormattedDates = formatDates(listaData.courseData!);
-
-    console.log("Dados formatados por instrutor:", allInstructorFormattedDates);
 
     for (const sanitizedInstructorNameKey in allInstructorFormattedDates) {
       if (
