@@ -170,6 +170,97 @@ function substituirOcorrencias(
 
   const patterns: { [key: string]: () => string } = {
     p_: () => `${++contador.pi}`,
+    "\\[carga_horaria\\]": () => {
+      const parseTimeToMinutesLocal = (
+        timeStr: string | undefined
+      ): number | null => {
+        if (!timeStr || timeStr === "N/A") return null;
+        const parts = timeStr.split(":");
+        if (parts.length !== 2) return null; // Invalid format
+        const hours = parseInt(parts[0], 10);
+        const minutes = parseInt(parts[1], 10);
+        if (isNaN(hours) || isNaN(minutes)) return null; // Not numbers
+        return hours * 60 + minutes;
+      };
+
+      const startMinutes = parseTimeToMinutesLocal(data.start);
+      const endMinutes = parseTimeToMinutesLocal(data.end);
+
+      let totalMinutes = 0;
+
+      if (startMinutes === null || endMinutes === null) {
+        return "Tempo Indisponível";
+      }
+
+      if (endMinutes < startMinutes) {
+        // This case might indicate an overnight period or an error in data.
+        // For now, treating as invalid for simple duration.
+        console.warn("End time is earlier than start time:", data);
+        return "Tempo Inválido (Fim < Início)";
+      }
+
+      // Check for a valid interval
+      const hasValidInterval =
+        data.intervalStart &&
+        data.intervalStart !== "N/A" &&
+        data.intervalEnd &&
+        data.intervalEnd !== "N/A";
+
+      if (hasValidInterval) {
+        const intervalStartMinutes = parseTimeToMinutesLocal(
+          data.intervalStart
+        );
+        const intervalEndMinutes = parseTimeToMinutesLocal(data.intervalEnd);
+
+        if (intervalStartMinutes === null || intervalEndMinutes === null) {
+          return "Tempo de Intervalo Inválido";
+        }
+
+        // Validate interval logic: start <= intervalStart <= intervalEnd <= end
+        if (
+          !(
+            startMinutes <= intervalStartMinutes &&
+            intervalStartMinutes <= intervalEndMinutes &&
+            intervalEndMinutes <= endMinutes
+          )
+        ) {
+          console.warn(
+            "Invalid interval times relative to session or each other:",
+            data
+          );
+          return "Intervalo com Horário Inválido";
+        }
+
+        const duration1 = intervalStartMinutes - startMinutes;
+        const duration2 = endMinutes - intervalEndMinutes;
+        totalMinutes = duration1 + duration2;
+      } else {
+        // No valid interval, calculate total duration directly
+        totalMinutes = endMinutes - startMinutes;
+      }
+
+      if (totalMinutes < 0) {
+        // This should ideally be caught by previous checks
+        console.error("Negative total minutes calculated:", data);
+        return "Erro no Cálculo de Tempo";
+      }
+
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      let resultStr = "";
+      if (hours > 0) {
+        resultStr += `${hours} hora${hours > 1 ? "s" : ""}`;
+      }
+      if (minutes > 0) {
+        if (resultStr.length > 0) {
+          resultStr += " e ";
+        }
+        resultStr += `${minutes} minuto${minutes > 1 ? "s" : ""}`;
+      }
+
+      return resultStr || "0 horas"; // If totalMinutes is 0
+    },
     participante_: () =>
       `[p_${(++contador.p_nome).toString().padStart(2, "0")}]`,
     "\\[datas\\]": () => {
