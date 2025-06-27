@@ -375,7 +375,6 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
   let newXmlPages = "";
 
   for (const day of pages) {
-    console.log(day);
     const formattedDate = day.dia.split("-").reverse().join("/");
     const splitTimes = calculateSplitTimes(
       day.periodo,
