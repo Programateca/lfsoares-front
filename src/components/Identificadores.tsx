@@ -813,9 +813,10 @@ export const Identificadores = () => {
       intervalo: intervalos,
       endereco: selectedEvento.courseLocation || "",
       endereco2: selectedEvento?.courseLocation2 || "",
-      empresa: `${selectedEvento.empresa.name} - ${
-        selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : ""
-      }`,
+      // empresa: `${selectedEvento.empresa.name} - ${
+      //   selectedEvento.empresa.cnpj ? selectedEvento.empresa.cnpj : "" ANTIGO se der problema talvez seja isso
+      // }`,
+      empresa: `${selectedEvento.empresa.name.trim()}`,
       empresa_id: selectedEvento.empresa.id,
       datas: datasFormatadas.split(";")[0],
       tipo_certificado: data.certificadoTipo,
