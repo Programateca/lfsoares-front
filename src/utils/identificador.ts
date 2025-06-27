@@ -12,7 +12,6 @@ import {
   TABLE_DOUBLE_MANHA_NOITE,
 } from "./constant-xml-data";
 import { calcularPeriodoDia } from "./calcular-periodo-dia";
-import { start } from "repl";
 
 type CourseData = {
   date: {
