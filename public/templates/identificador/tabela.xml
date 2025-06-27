@@ -281,7 +281,7 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
+                        <w:sz w:val="20" />
                         <w:szCs w:val="48" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
@@ -444,7 +444,7 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
+                        <w:sz w:val="20" />
                         <w:szCs w:val="48" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
@@ -600,7 +600,7 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
+                        <w:sz w:val="20" />
                         <w:szCs w:val="48" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
@@ -838,7 +838,7 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
+                        <w:sz w:val="20" />
                         <w:szCs w:val="48" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
@@ -873,8 +873,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -885,8 +885,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -911,8 +911,8 @@
                     <w:ind w:right="-70" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -946,8 +946,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1064,8 +1064,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1074,8 +1074,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -1110,8 +1110,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1122,8 +1122,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1147,8 +1147,8 @@
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -1182,8 +1182,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1300,8 +1300,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1310,8 +1310,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -1347,8 +1347,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1359,8 +1359,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1385,8 +1385,8 @@
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -1422,8 +1422,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1540,8 +1540,8 @@
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -1549,8 +1549,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -1586,8 +1586,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1598,8 +1598,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1624,8 +1624,8 @@
                 <w:pPr>
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -1661,8 +1661,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1781,8 +1781,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1791,8 +1791,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -1828,8 +1828,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1840,8 +1840,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -1869,8 +1869,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -1907,8 +1907,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2024,8 +2024,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -2033,8 +2033,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -2070,8 +2070,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2082,8 +2082,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2111,8 +2111,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2149,8 +2149,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2266,8 +2266,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -2275,8 +2275,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -2312,8 +2312,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2324,8 +2324,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2353,8 +2353,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2391,8 +2391,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2508,8 +2508,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -2517,8 +2517,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -2554,8 +2554,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2566,8 +2566,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2595,8 +2595,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2633,8 +2633,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2750,8 +2750,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -2759,8 +2759,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -2796,8 +2796,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2808,8 +2808,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -2837,8 +2837,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2875,8 +2875,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -2992,8 +2992,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -3001,8 +3001,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -3038,8 +3038,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -3050,8 +3050,8 @@
                         <w:b />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[pi]</w:t>
@@ -3079,8 +3079,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -3117,8 +3117,8 @@
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:bCs />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                 </w:pPr>
@@ -3235,8 +3235,8 @@
                     <w:jc w:val="center" />
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                 </w:pPr>
                 <w:r>
@@ -3244,8 +3244,8 @@
                         <w:rFonts w:ascii="Arial" w:eastAsia="Times New Roman"
                             w:hAnsi="Arial" w:cs="Arial" />
                         <w:color w:val="000000" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                         <w:lang w:eastAsia="pt-BR" />
                     </w:rPr>
                     <w:t>[p_codigo]</w:t>
@@ -3446,8 +3446,8 @@
                 <w:r w:rsidR="00A967DF">
                     <w:rPr>
                         <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                        <w:sz w:val="22" />
-                        <w:szCs w:val="22" />
+                        <w:sz w:val="20" />
+                        <w:szCs w:val="20" />
                     </w:rPr>
                     <w:t>[instrutor]</w:t>
                 </w:r>

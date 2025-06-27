@@ -359,7 +359,7 @@
                     <w:b />
                     <w:bCs />
                     <w:color w:val="000000" />
-                    <w:sz w:val="22" />
+                    <w:sz w:val="20" />
                     <w:szCs w:val="44" />
                     <w:lang w:eastAsia="pt-BR" />
                 </w:rPr>
@@ -404,8 +404,8 @@
                     <w:b />
                     <w:bCs />
                     <w:color w:val="000000" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:sectPr w:rsidR="0043225E" w:rsidSect="001266D1">
                     <w:headerReference w:type="default" r:id="rId11" />
@@ -480,8 +480,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
             <w:r>
@@ -489,8 +489,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:lastRenderedPageBreak />
                 <w:t>Motivo do Treinamento</w:t>
@@ -500,8 +500,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>:</w:t>
             </w:r>
@@ -512,15 +512,15 @@
                 <w:ind w:left="-851" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>[</w:t>
             </w:r>
@@ -528,8 +528,8 @@
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>motivo_treinamento</w:t>
             </w:r>
@@ -537,8 +537,8 @@
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>]</w:t>
             </w:r>
@@ -551,8 +551,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
         </w:p>
@@ -564,8 +564,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
             <w:r w:rsidRPr="00424FF4">
@@ -573,8 +573,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>Objetivo d</w:t>
             </w:r>
@@ -583,8 +583,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>a</w:t>
             </w:r>
@@ -593,8 +593,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t xml:space="preserve"> </w:t>
             </w:r>
@@ -603,8 +603,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>LF Soares Treinamentos e Serviços</w:t>
             </w:r>
@@ -613,8 +613,8 @@
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                     <w:b />
                     <w:bCs />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>:</w:t>
             </w:r>
@@ -625,15 +625,15 @@
                 <w:ind w:left="-851" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>[</w:t>
             </w:r>
@@ -641,8 +641,8 @@
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>objetivo_lf</w:t>
             </w:r>
@@ -650,8 +650,8 @@
             <w:r>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
                 <w:t>]</w:t>
             </w:r>
@@ -662,8 +662,8 @@
                 <w:ind w:left="-851" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
         </w:p>
@@ -694,8 +694,8 @@
                             <w:jc w:val="center" />
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="22" />
-                                <w:szCs w:val="22" />
+                                <w:sz w:val="20" />
+                                <w:szCs w:val="20" />
                             </w:rPr>
                         </w:pPr>
                         <w:r w:rsidRPr="00ED0769">
@@ -703,7 +703,7 @@
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                                 <w:b />
                                 <w:bCs />
-                                <w:sz w:val="22" />
+                                <w:sz w:val="20" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
                             <w:t>[titulo</w:t>
@@ -713,7 +713,7 @@
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                                 <w:b />
                                 <w:bCs />
-                                <w:sz w:val="22" />
+                                <w:sz w:val="20" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
                             <w:t>2</w:t>
@@ -725,8 +725,8 @@
                             <w:jc w:val="center" />
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="22" />
-                                <w:szCs w:val="22" />
+                                <w:sz w:val="20" />
+                                <w:szCs w:val="20" />
                             </w:rPr>
                         </w:pPr>
                         <w:r w:rsidRPr="00ED0769">
@@ -734,7 +734,7 @@
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                                 <w:b />
                                 <w:bCs />
-                                <w:sz w:val="22" />
+                                <w:sz w:val="20" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
                             <w:t>]</w:t>
@@ -752,8 +752,8 @@
                             <w:jc w:val="center" />
                             <w:rPr>
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                                <w:sz w:val="22" />
-                                <w:szCs w:val="22" />
+                                <w:sz w:val="20" />
+                                <w:szCs w:val="20" />
                             </w:rPr>
                         </w:pPr>
                         <w:r>
@@ -761,7 +761,7 @@
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                                 <w:b />
                                 <w:bCs />
-                                <w:sz w:val="22" />
+                                <w:sz w:val="20" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
                             <w:t>SÓCIO PROPRIETÁRIO</w:t>
@@ -771,7 +771,7 @@
                                 <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
                                 <w:b />
                                 <w:bCs />
-                                <w:sz w:val="22" />
+                                <w:sz w:val="20" />
                                 <w:szCs w:val="20" />
                             </w:rPr>
                             <w:t xml:space="preserve"> – CNPJ: 26.866.346/0001-60</w:t>
@@ -1038,8 +1038,8 @@
                 <w:ind w:left="-851" />
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
         </w:p>
@@ -1048,8 +1048,8 @@
             <w:pPr>
                 <w:rPr>
                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
-                    <w:sz w:val="22" />
-                    <w:szCs w:val="22" />
+                    <w:sz w:val="20" />
+                    <w:szCs w:val="20" />
                 </w:rPr>
             </w:pPr>
             <w:r>
@@ -1136,7 +1136,7 @@
                                                                 <w:rFonts w:ascii="Arial"
                                                                     w:hAnsi="Arial" w:cs="Arial" />
                                                                 <w:b />
-                                                                <w:sz w:val="22" />
+                                                                <w:sz w:val="20" />
                                                                 <w:szCs w:val="28" />
                                                             </w:rPr>
                                                             <w:t>CONTRATANTE</w:t>
@@ -1146,7 +1146,7 @@
                                                                 <w:rFonts w:ascii="Arial"
                                                                     w:hAnsi="Arial" w:cs="Arial" />
                                                                 <w:b />
-                                                                <w:sz w:val="22" />
+                                                                <w:sz w:val="20" />
                                                                 <w:szCs w:val="28" />
                                                             </w:rPr>
                                                             <w:t xml:space="preserve">: </w:t>
@@ -1229,7 +1229,7 @@
                                                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial"
                                                         w:cs="Arial" />
                                                     <w:b />
-                                                    <w:sz w:val="22" />
+                                                    <w:sz w:val="20" />
                                                     <w:szCs w:val="28" />
                                                 </w:rPr>
                                                 <w:t>CONTRATANTE</w:t>
@@ -1239,7 +1239,7 @@
                                                     <w:rFonts w:ascii="Arial" w:hAnsi="Arial"
                                                         w:cs="Arial" />
                                                     <w:b />
-                                                    <w:sz w:val="22" />
+                                                    <w:sz w:val="20" />
                                                     <w:szCs w:val="28" />
                                                 </w:rPr>
                                                 <w:t xml:space="preserve">: </w:t>
