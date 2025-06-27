@@ -11,6 +11,8 @@ import {
   TABLE_DOUBLE_TARDE_NOITE,
   TABLE_DOUBLE_MANHA_NOITE,
 } from "./constant-xml-data";
+import { calcularPeriodoDia } from "./calcular-periodo-dia";
+import { start } from "repl";
 
 type CourseData = {
   date: {
@@ -282,12 +284,39 @@ function calculateSplitTimes(
 
   switch (periodo) {
     case "manha":
+      if (intervalStart && intervalEnd) {
+        if (calcularPeriodoDia(startTime, intervalStart) === "manha") {
+          splitTimes.manha = `${startTime} ÀS ${intervalStart}`;
+        }
+        if (calcularPeriodoDia(intervalEnd, endTime) === "manha") {
+          splitTimes.manha = `${intervalEnd} ÀS ${endTime}`;
+        }
+        break;
+      }
       splitTimes.manha = horario;
       break;
     case "tarde":
+      if (intervalStart && intervalEnd) {
+        if (calcularPeriodoDia(startTime, intervalStart) === "tarde") {
+          splitTimes.tarde = `${startTime} ÀS ${intervalStart}`;
+        }
+        if (calcularPeriodoDia(intervalEnd, endTime) === "tarde") {
+          splitTimes.tarde = `${intervalEnd} ÀS ${endTime}`;
+        }
+        break;
+      }
       splitTimes.tarde = horario;
       break;
     case "noite":
+      if (intervalStart && intervalEnd) {
+        if (calcularPeriodoDia(startTime, intervalStart) === "noite") {
+          splitTimes.noite = `${startTime} ÀS ${intervalStart}`;
+        }
+        if (calcularPeriodoDia(intervalEnd, endTime) === "noite") {
+          splitTimes.noite = `${intervalEnd} ÀS ${endTime}`;
+        }
+        break;
+      }
       splitTimes.noite = horario;
       break;
     case "manhaTarde":
@@ -347,6 +376,7 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
   let newXmlPages = "";
 
   for (const day of pages) {
+    console.log(day);
     const formattedDate = day.dia.split("-").reverse().join("/");
     const splitTimes = calculateSplitTimes(
       day.periodo,
