@@ -183,6 +183,14 @@ function substituirOcorrencias(
         return hours * 60 + minutes;
       };
 
+      const formatMinutesToHHMM = (minutes: number): string => {
+        const h = Math.floor(minutes / 60)
+          .toString()
+          .padStart(2, "0");
+        const m = (minutes % 60).toString().padStart(2, "0");
+        return `${h}:${m}`;
+      };
+
       const startMinutes = parseTimeToMinutesLocal(data.start);
       const endMinutes = parseTimeToMinutesLocal(data.end);
 
@@ -242,24 +250,10 @@ function substituirOcorrencias(
       if (totalMinutes < 0) {
         // This should ideally be caught by previous checks
         console.error("Negative total minutes calculated:", data);
-        return "Erro no Cálculo de Tempo";
+        return "0 HORAS";
       }
 
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-
-      let resultStr = "";
-      if (hours > 0) {
-        resultStr += `${hours} hora${hours > 1 ? "s" : ""}`;
-      }
-      if (minutes > 0) {
-        if (resultStr.length > 0) {
-          resultStr += " e ";
-        }
-        resultStr += `${minutes} minuto${minutes > 1 ? "s" : ""}`;
-      }
-
-      return resultStr || "0 horas"; // If totalMinutes is 0
+      return formatMinutesToHHMM(totalMinutes) + " HORAS";
     },
     participante_: () =>
       `[p_${(++contador.p_nome).toString().padStart(2, "0")}]`,
