@@ -81,7 +81,7 @@ const Certificados = () => {
     Identificador[]
   >([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
-  const [imageMap, setImageMap] = useState<Record<string, ArrayBuffer>>({});
+  const [imageMap, setImageMap] = useState<Record<string, { data: ArrayBuffer; extension: string; }>>({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
@@ -436,7 +436,7 @@ const Certificados = () => {
     gerarCertificado(data, imageMap, modelType.split("-")[1]);
   };
 
-  const handleDownload2 = async (
+  const handleCriarCertificadoComCapaEAssinatura = async (
     e: React.FormEvent,
     certificado: DocumentData
   ) => {
@@ -682,7 +682,7 @@ const Certificados = () => {
                           variant={"outline"}
                         >
                           <ImageDownIcon className="mr-1" />
-                          Alterar Capas
+                          Alterar Capas e Assinatura
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-3xl">
@@ -693,7 +693,7 @@ const Certificados = () => {
                         </DialogHeader>
                         <form
                           onSubmit={(e) =>
-                            handleDownload2(e, {
+                            handleCriarCertificadoComCapaEAssinatura(e, {
                               ...certificado,
                               treinamento: "",
                               year: "",
@@ -717,11 +717,11 @@ const Certificados = () => {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       const reader = new FileReader();
+                                      const extension = file.name.split('.').pop() || '';
                                       reader.onload = () => {
                                         setImageMap((prev) => ({
                                           ...prev,
-                                          ["image1.jpeg"]:
-                                            reader.result as ArrayBuffer,
+                                          ["image1"]: { data: reader.result as ArrayBuffer, extension },
                                         }));
                                       };
                                       reader.readAsArrayBuffer(file);
@@ -745,11 +745,11 @@ const Certificados = () => {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       const reader = new FileReader();
+                                      const extension = file.name.split('.').pop() || '';
                                       reader.onload = () => {
                                         setImageMap((prev) => ({
                                           ...prev,
-                                          ["image2.jpeg"]:
-                                            reader.result as ArrayBuffer,
+                                          ["image2"]: { data: reader.result as ArrayBuffer, extension },
                                         }));
                                       };
                                       reader.readAsArrayBuffer(file);
@@ -758,6 +758,34 @@ const Certificados = () => {
                                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                 />
                               </div>
+                            </div>
+                            <div className="col-span-3">
+                              <label
+                                htmlFor="signature-upload"
+                                className="block text-sm font-medium text-gray-700"
+                              >
+                                Selecione a imagem da assinatura
+                              </label>
+                              <input
+                                type="file"
+                                id="signature-upload"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    const extension = file.name.split('.').pop() || '';
+                                    reader.onload = () => {
+                                      setImageMap((prev) => ({
+                                        ...prev,
+                                        ["image3"]: { data: reader.result as ArrayBuffer, extension },
+                                      }));
+                                    };
+                                    reader.readAsArrayBuffer(file);
+                                  }
+                                }}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                              />
                             </div>
                           </div>
                           <div className="flex justify-end space-x-2 mt-5">

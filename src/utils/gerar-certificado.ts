@@ -5,28 +5,116 @@ import { parseStringPromise, Builder, Parser } from "xml2js";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
 
-function replaceImage(zip: PizZip, imageMap: Record<string, ArrayBuffer>) {
+async function replaceImage(
+  zip: PizZip,
+  imageMap: Record<string, { data: ArrayBuffer; extension: string }>
+) {
   const mediaFolder = "ppt/media/";
 
-  Object.keys(imageMap).forEach((imageName) => {
-    const newImage = imageMap[imageName];
-    const imagePath = `${mediaFolder}${imageName}`;
+  for (const imageName in imageMap) {
+    const { data: newImage, extension } = imageMap[imageName];
+    const originalImageName = `${imageName.split(".")[0]}`;
+    const files = Object.keys(zip.files);
+    const imageFile = files.find((f) =>
+      f.startsWith(`${mediaFolder}${originalImageName}`)
+    );
 
-    if (zip.files[imagePath]) {
-      zip.file(imagePath, newImage, { binary: true });
+    if (imageFile) {
+      const newImagePath = `${mediaFolder}${originalImageName}.${extension}`;
+      zip.file(newImagePath, newImage, { binary: true });
+
+      if (imageFile !== newImagePath) {
+        zip.remove(imageFile);
+        const slideFiles = files.filter(
+          (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
+        );
+        for (const slideFile of slideFiles) {
+          let slideContent = zip.file(slideFile)!.asText();
+          const oldImageName = imageFile.split("/").pop()!;
+          const newImageName = newImagePath.split("/").pop()!;
+          slideContent = slideContent.replace(
+            new RegExp(oldImageName, "g"),
+            newImageName
+          );
+          zip.file(slideFile, slideContent);
+        }
+
+        const slideRelsFiles = files.filter(
+          (f) => f.startsWith("ppt/slides/_rels/") && f.endsWith(".xml.rels")
+        );
+        for (const relsFile of slideRelsFiles) {
+          let relsContent = zip.file(relsFile)!.asText();
+          const oldImageName = imageFile.split("/").pop()!;
+          const newImageName = newImagePath.split("/").pop()!;
+          relsContent = relsContent.replace(
+            new RegExp(oldImageName, "g"),
+            newImageName
+          );
+          zip.file(relsFile, relsContent);
+        }
+      }
+
+      if (imageName === "image3") {
+        const slideFiles = files.filter(
+          (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
+        );
+        for (const slideFile of slideFiles) {
+          const slideContent = zip.file(slideFile)!.asText();
+          const parser = new Parser();
+          const slideObj = await parser.parseStringPromise(slideContent);
+          const newImageName = newImagePath.split("/").pop()!;
+
+          const pictures =
+            slideObj["p:sld"]["p:cSld"][0]["p:spTree"][0]["p:pic"];
+          if (pictures) {
+            for (const pic of pictures) {
+              const blip = pic["p:blipFill"][0]["a:blip"][0];
+              const relationshipId = blip?.$["r:embed"];
+
+              if (relationshipId) {
+                const relsFile = `ppt/slides/_rels/${slideFile
+                  .split("/")
+                  .pop()}.rels`;
+                const relsContent = zip.file(relsFile)!.asText();
+                const relsParser = new Parser();
+                const relsObj = await relsParser.parseStringPromise(
+                  relsContent
+                );
+                const relationship = relsObj.Relationships.Relationship.find(
+                  (r: any) => r.$.Id === relationshipId
+                );
+
+                if (
+                  relationship &&
+                  relationship.$.Target.endsWith(newImageName)
+                ) {
+                  const xfrm = pic["p:spPr"][0]["a:xfrm"][0];
+                  if (xfrm && xfrm["a:ext"]) {
+                    xfrm["a:ext"][0].$.cy = "972800"; // 2.72cm em EMUs
+                  }
+                }
+              }
+            }
+          }
+
+          const builder = new Builder();
+          const newSlideXml = builder.buildObject(slideObj);
+          zip.file(slideFile, newSlideXml);
+        }
+      }
     } else {
       console.warn(`Image ${imageName} not found in the archive.`);
     }
-  });
+  }
 }
 
 export async function gerarCertificado(
   data: Record<string, string>[],
-  imageMap: Record<string, ArrayBuffer>,
+  imageMap: Record<string, { data: ArrayBuffer; extension: string }>,
   type: string
 ): Promise<void> {
   const fileArrayBufferFrente = await loadFile(
-    `/templates/certificado/frente.pptx`
+    `/templates/certificado/frente-assinatura.pptx`
   );
   let templateVerso = `/templates/certificado/verso-${type}.pptx`;
   if (data[0]?.conteudo && data[0].conteudo.length > 700) {
