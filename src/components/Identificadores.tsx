@@ -1489,6 +1489,30 @@ export const Identificadores = () => {
                 console.error("Erro ao processar o identificador:", error);
               }
             }}
+            onDownloadAssinatura={(_, row) => {
+              try {
+                // ✅ Parseando documentData antes de chamar gerarIdentificador
+                const identificadorParsed = row.identificadorData
+                  ? JSON.parse(row.identificadorData)
+                  : null;
+
+                if (!identificadorParsed) {
+                  console.warn("Dados do identificador inválidos:", row);
+                  return;
+                }
+                gerarIdentificador(
+                  {
+                    ...identificadorParsed,
+                    id_code: String(row.code).padStart(3, "0"),
+                  },
+                  identificadorParsed.courseData,
+                  identificadorParsed.numeroParticipantes,
+                  { assinaturaA: row.assinaturaA, assinaturaB: row.assinaturaB }
+                );
+              } catch (error) {
+                console.error("Erro ao processar o identificador:", error);
+              }
+            }}
             loading={loading}
             entityLabel="Identificador"
             searchable

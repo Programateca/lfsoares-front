@@ -400,13 +400,11 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
   return newXmlPages;
 }
 
-type Assinatura = "luiz" | "cledione";
-
 export async function gerarIdentificador(
   docData: Identificador,
   courseData: CourseData[],
   numeroParticipantes: number,
-  assinatura?: { assinaturaA: Assinatura; assinaturaB: Assinatura }
+  assinatura?: { assinaturaA: string; assinaturaB: string }
 ): Promise<void> {
   try {
     const formattedPages = sortData(courseData, numeroParticipantes);
@@ -448,14 +446,14 @@ export async function gerarIdentificador(
     const UPDATED_DOCUMENT_XML_FILE =
       MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(pagesXmlContent);
 
-    const ASSINATURA_LUIZ = await loadFile(
+    const BLANK_IMAGE = await loadFile(
       "/templates/assinaturas/blank-image.png"
     );
     const ASSINATURA_CLEDIONE = await loadFile(
-      "/templates/assinaturas/blank-image.png"
+      "/templates/assinaturas/cledione_assinatura.png"
     );
-    const BLANK_IMAGE = await loadFile(
-      "/templates/assinaturas/blank-image.png"
+    const ASSINATURA_LUIZ = await loadFile(
+      "/templates/assinaturas/luiz_assinatura.png"
     );
 
     const ASSINATURAS = {
@@ -464,17 +462,21 @@ export async function gerarIdentificador(
       blank: BLANK_IMAGE,
     };
 
+    type AssinaturaKey = keyof typeof ASSINATURAS;
+
+    function getAssinaturaKey(key?: string): AssinaturaKey {
+      if (key === "luiz" || key === "cledione") return key;
+      return "blank";
+    }
+
+    const assinaturaAKey = getAssinaturaKey(assinatura?.assinaturaA);
+    const assinaturaBKey = getAssinaturaKey(assinatura?.assinaturaB);
+
     const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
     zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
     zip.file("word/header3.xml", HEADER3_XML_CONTENT);
-    zip.file(
-      "word/media/image5.png",
-      ASSINATURAS[assinatura?.assinaturaA || "blank"]
-    );
-    zip.file(
-      "word/media/image6.png",
-      ASSINATURAS[assinatura?.assinaturaA || "blank"]
-    );
+    zip.file("word/media/image5.png", ASSINATURAS[assinaturaAKey]);
+    zip.file("word/media/image6.png", ASSINATURAS[assinaturaBKey]);
     zip.file("word/_rels/document.xml.rels", DOCUMENT_XML_RELS);
 
     const doc = new Docxtemplater(zip, {
