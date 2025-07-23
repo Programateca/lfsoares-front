@@ -400,10 +400,13 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
   return newXmlPages;
 }
 
+type Assinatura = "luiz" | "cledione";
+
 export async function gerarIdentificador(
   docData: Identificador,
   courseData: CourseData[],
-  numeroParticipantes: number
+  numeroParticipantes: number,
+  assinatura?: { assinaturaA: Assinatura; assinaturaB: Assinatura }
 ): Promise<void> {
   try {
     const formattedPages = sortData(courseData, numeroParticipantes);
@@ -417,28 +420,62 @@ export async function gerarIdentificador(
         ? "document-template.xml"
         : "document-3colunas.xml";
 
-    const [MAIN_XML_RESPONSE, HEADER3_XML_RESPONSE] = await Promise.all([
+    const [
+      MAIN_XML_RESPONSE,
+      HEADER3_XML_RESPONSE,
+      DOCUMENT_XML_RELS_RESPONSE,
+    ] = await Promise.all([
       fetch(`/templates/identificador/${templateFileName}`),
       fetch(`/templates/identificador/header3.xml`),
+      fetch(`/templates/identificador/document.xml.rels`),
     ]);
 
     if (!MAIN_XML_RESPONSE.ok)
       throw new Error(`Falha ao buscar ${templateFileName}`);
     if (!HEADER3_XML_RESPONSE.ok)
       throw new Error(`Falha ao buscar header3.xml`);
+    if (!DOCUMENT_XML_RELS_RESPONSE.ok)
+      throw new Error(`Falha ao buscar document.xml.rels`);
 
-    const [MAIN_XML_CONTENT, HEADER3_XML_CONTENT] = await Promise.all([
-      MAIN_XML_RESPONSE.text(),
-      HEADER3_XML_RESPONSE.text(),
-    ]);
+    const [MAIN_XML_CONTENT, HEADER3_XML_CONTENT, DOCUMENT_XML_RELS] =
+      await Promise.all([
+        MAIN_XML_RESPONSE.text(),
+        HEADER3_XML_RESPONSE.text(),
+        DOCUMENT_XML_RELS_RESPONSE.text(),
+      ]);
 
     const pagesXmlContent = await formatarPaginas(formattedPages);
     const UPDATED_DOCUMENT_XML_FILE =
       MAIN_XML_CONTENT.split(MAIN_XML_TAG).join(pagesXmlContent);
 
+    const ASSINATURA_LUIZ = await loadFile(
+      "/templates/assinaturas/blank-image.png"
+    );
+    const ASSINATURA_CLEDIONE = await loadFile(
+      "/templates/assinaturas/blank-image.png"
+    );
+    const BLANK_IMAGE = await loadFile(
+      "/templates/assinaturas/blank-image.png"
+    );
+
+    const ASSINATURAS = {
+      luiz: ASSINATURA_LUIZ,
+      cledione: ASSINATURA_CLEDIONE,
+      blank: BLANK_IMAGE,
+    };
+
     const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
     zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
     zip.file("word/header3.xml", HEADER3_XML_CONTENT);
+    zip.file(
+      "word/media/image5.png",
+      ASSINATURAS[assinatura?.assinaturaA || "blank"]
+    );
+    zip.file(
+      "word/media/image6.png",
+      ASSINATURAS[assinatura?.assinaturaA || "blank"]
+    );
+    zip.file("word/_rels/document.xml.rels", DOCUMENT_XML_RELS);
 
     const doc = new Docxtemplater(zip, {
       delimiters: { start: "[", end: "]" },
