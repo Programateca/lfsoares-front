@@ -1,3 +1,6 @@
+# Misc
+/test/extracted
+
 # Logs
 logs
 *.log
