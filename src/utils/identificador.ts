@@ -403,8 +403,7 @@ async function formatarPaginas(pages: SortedScheduleEntry[]): Promise<string> {
 export async function gerarIdentificador(
   docData: Identificador,
   courseData: CourseData[],
-  numeroParticipantes: number,
-  assinatura?: { assinaturaA: string; assinaturaB: string }
+  numeroParticipantes: number
 ): Promise<void> {
   try {
     const formattedPages = sortData(courseData, numeroParticipantes);
@@ -457,7 +456,7 @@ export async function gerarIdentificador(
     );
 
     const ASSINATURAS = {
-      luiz: ASSINATURA_LUIZ,
+      luis: ASSINATURA_LUIZ,
       cledione: ASSINATURA_CLEDIONE,
       blank: BLANK_IMAGE,
     };
@@ -465,18 +464,17 @@ export async function gerarIdentificador(
     type AssinaturaKey = keyof typeof ASSINATURAS;
 
     function getAssinaturaKey(key?: string): AssinaturaKey {
-      if (key === "luiz" || key === "cledione") return key;
+      if (key === "luis" || key === "cledione") return key;
       return "blank";
     }
 
-    const assinaturaAKey = getAssinaturaKey(assinatura?.assinaturaA);
-    const assinaturaBKey = getAssinaturaKey(assinatura?.assinaturaB);
+    const assinaturaAKey = getAssinaturaKey(docData.assinatura);
 
     const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
     zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
     zip.file("word/header3.xml", HEADER3_XML_CONTENT);
     zip.file("word/media/image5.png", ASSINATURAS[assinaturaAKey]);
-    zip.file("word/media/image6.png", ASSINATURAS[assinaturaBKey]);
+    zip.file("word/media/image6.png", ASSINATURA_LUIZ);
     zip.file("word/_rels/document.xml.rels", DOCUMENT_XML_RELS);
 
     const doc = new Docxtemplater(zip, {

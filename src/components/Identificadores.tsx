@@ -183,6 +183,7 @@ const courseDateDetailSchema = z
 // Renamed original formDataSchema to createFormDataSchema and made it a function
 const createFormDataSchema = (signatureCount: number) => {
   return z.object({
+    assinaturaImagem: z.enum(["cledione", "luis"]).optional(),
     evento: z.string().min(1, "Selecione um evento"),
     certificadoTipo: z.string().min(1, "Tipo de certificado é obrigatório"),
     conteudoAplicado: z.string().optional(),
@@ -832,6 +833,7 @@ export const Identificadores = () => {
       assinante3: getAssinante(2),
       assinante4: getAssinante(3),
       courseData: transformedCourseData,
+      assinatura: data.assinaturaImagem || null,
     };
 
     // FOR DEBUG
@@ -1426,6 +1428,29 @@ export const Identificadores = () => {
             {/* Separador */}
             <div className="w-full h-[2px] bg-gray-300 rounded-lg my-5" />
 
+            <div className="flex flex-col gap-4">
+              <div>
+                <Label>Seleção de Pessoa</Label>
+                <Controller
+                  name="assinaturaImagem"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma pessoa" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Pessoas</SelectLabel>
+                          <SelectItem value="luis">Luis</SelectItem>
+                          <SelectItem value="cledione">Cledione</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
             {/* Observações complementares */}
             <div className="flex flex-col gap-4">
               <div>
@@ -1484,30 +1509,6 @@ export const Identificadores = () => {
                   },
                   identificadorParsed.courseData,
                   identificadorParsed.numeroParticipantes
-                );
-              } catch (error) {
-                console.error("Erro ao processar o identificador:", error);
-              }
-            }}
-            onDownloadAssinatura={(_, row) => {
-              try {
-                // ✅ Parseando documentData antes de chamar gerarIdentificador
-                const identificadorParsed = row.identificadorData
-                  ? JSON.parse(row.identificadorData)
-                  : null;
-
-                if (!identificadorParsed) {
-                  console.warn("Dados do identificador inválidos:", row);
-                  return;
-                }
-                gerarIdentificador(
-                  {
-                    ...identificadorParsed,
-                    id_code: String(row.code).padStart(3, "0"),
-                  },
-                  identificadorParsed.courseData,
-                  identificadorParsed.numeroParticipantes,
-                  { assinaturaA: row.assinaturaA, assinaturaB: row.assinaturaB }
                 );
               } catch (error) {
                 console.error("Erro ao processar o identificador:", error);

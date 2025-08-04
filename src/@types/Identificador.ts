@@ -29,6 +29,7 @@ export type CourseData = {
 };
 
 export interface Identificador {
+  assinatura: string;
   id: string;
   identificadorData: string;
   modulo: string;

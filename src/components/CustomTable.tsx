@@ -29,16 +29,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-
-import { Label } from "./ui/label";
-
 interface Column {
   key: string;
   label: string;
@@ -64,10 +54,6 @@ interface CustomTableProps<T extends { id: string | number }> {
   hasNextPage?: boolean;
   page?: number;
   onPageChange?: (page: number) => void;
-  onDownloadAssinatura?: (
-    id: string | number,
-    row: T & { assinaturaA: string; assinaturaB: string }
-  ) => void; // ✅ Nova prop para download com assinatura
 }
 
 const getValue = (obj: any, key: string): any => {
@@ -93,17 +79,13 @@ const CustomTable = <T extends { id: string | number }>({
   hasNextPage = false,
   page = 1,
   onPageChange,
-  onDownloadAssinatura,
 }: CustomTableProps<T>) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [selectedItem, setSelectedItem] = useState<{
     id: string | number;
     status: number;
   } | null>(null);
-  const [selectedAssinaturaA, setSelectedAssinaturaA] = useState<string>(""); // New state
-  const [selectedAssinaturaB, setSelectedAssinaturaB] = useState<string>(""); // New state
 
   const handleSort = (column: string) => {
     let direction: "asc" | "desc" = "asc";
@@ -209,85 +191,6 @@ const CustomTable = <T extends { id: string | number }>({
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
-                  )}
-
-                  {onDownloadAssinatura && ( // ✅ Mostra o botão de download se `onDownloadAssinatura` for fornecido
-                    <Dialog
-                      onOpenChange={(open) => {
-                        setIsModalOpen(open);
-                        if (!open) {
-                          // Reset values when dialog closes
-                          setSelectedAssinaturaA("");
-                          setSelectedAssinaturaB("");
-                        }
-                      }}
-                      open={isModalOpen}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className="p-2 h-fit hover:bg-gray-200"
-                        >
-                          <BookUp2 className="h-4 w-4" />
-                          Baixar Com Assinatura
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                          <DialogTitle>Selecione a Assinatura</DialogTitle>
-                        </DialogHeader>
-                        <form className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="assinaturaA">AssinaturaA</Label>
-                            <select
-                              id="assinaturaA"
-                              name="assinaturaA"
-                              className="w-full border rounded px-2 py-1"
-                              value={selectedAssinaturaA}
-                              onChange={(e) =>
-                                setSelectedAssinaturaA(e.target.value)
-                              }
-                            >
-                              <option value="">Selecione</option>
-                              <option value="luiz">Luiz</option>
-                              <option value="cledione">Cledione</option>
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="assinaturaB">AssinaturaB</Label>
-                            <select
-                              id="assinaturaB"
-                              name="assinaturaB"
-                              className="w-full border rounded px-2 py-1"
-                              value={selectedAssinaturaB}
-                              onChange={(e) =>
-                                setSelectedAssinaturaB(e.target.value)
-                              }
-                            >
-                              <option value="">Selecione</option>
-                              <option value="luiz">Luiz</option>
-                              <option value="cledione">Cledione</option>
-                            </select>
-                          </div>
-
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              type="button"
-                              onClick={() => {
-                                onDownloadAssinatura(item.id, {
-                                  ...item,
-                                  assinaturaA: selectedAssinaturaA,
-                                  assinaturaB: selectedAssinaturaB,
-                                });
-                                setIsModalOpen(false); // Close the dialog after confirming
-                              }}
-                            >
-                              Confirmar
-                            </Button>
-                          </div>
-                        </form>
-                      </DialogContent>
-                    </Dialog>
                   )}
 
                   {onDownload && ( // ✅ Mostra o botão de download se `onDownload` for fornecido
