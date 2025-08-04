@@ -1430,7 +1430,7 @@ export const Identificadores = () => {
 
             <div className="flex flex-col gap-4">
               <div>
-                <Label>Seleção de Pessoa</Label>
+                <Label>Seleção de Assinatura</Label>
                 <Controller
                   name="assinaturaImagem"
                   control={control}
