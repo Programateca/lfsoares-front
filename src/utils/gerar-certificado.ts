@@ -20,6 +20,115 @@ async function replaceImage(
   imageMap: Record<string, { data: ArrayBuffer; extension: string }>,
   tipoCertificado?: string
 ) {
+  // Util helpers
+  const toMime = (extOrMime?: string) => {
+    const v = (extOrMime || "").trim().toLowerCase();
+    if (v.includes("/")) return v; // already a mime
+    const e = v.replace(/^\./, "");
+    switch (e) {
+      case "jpg":
+      case "jpeg":
+        return "image/jpeg";
+      case "png":
+        return "image/png";
+      case "gif":
+        return "image/gif";
+      case "bmp":
+        return "image/bmp";
+      case "svg":
+        return "image/svg+xml";
+      case "tiff":
+      case "tif":
+        return "image/tiff";
+      case "webp":
+        return "image/webp";
+      default:
+        return "image/jpeg";
+    }
+  };
+
+  const findExistingMediaPath = (index: number) => {
+    const re = new RegExp(`^ppt\\/media\\/image${index}\\.[A-Za-z0-9]+$`, "i");
+    const found = Object.keys(zip.files).find((n) => re.test(n));
+    const path = found || `ppt/media/image${index}.jpeg`;
+    const partName = `/${path}`;
+    return { path, partName };
+  };
+
+  const updateContentType = async (partName: string, mime: string) => {
+    try {
+      const ctPath = "[Content_Types].xml";
+      const ctXml = zip.file(ctPath)?.asText();
+      if (!ctXml) return;
+
+      const ctObj = await parseStringPromise(ctXml);
+      if (!ctObj.Types.Override) ctObj.Types.Override = [];
+
+      const override = ctObj.Types.Override.find(
+        (o: any) => o.$?.PartName === partName
+      );
+      if (override) {
+        override.$.ContentType = mime;
+      } else {
+        ctObj.Types.Override.push({
+          $: { PartName: partName, ContentType: mime },
+        });
+      }
+
+      const builder = new Builder();
+      const newCtXml = builder.buildObject(ctObj);
+      zip.file(ctPath, newCtXml);
+    } catch {
+      // ignore content-types update failure; image bytes already replaced
+    }
+  };
+
+  const writeImageToSlot = async (
+    slotIndex: 1 | 2,
+    file?: { data: ArrayBuffer; extension: string }
+  ) => {
+    if (!file?.data) return;
+    const { path, partName } = findExistingMediaPath(slotIndex);
+    zip.file(path, file.data, { binary: true });
+    await updateContentType(partName, toMime(file.extension));
+  };
+
+  // Troca image1 e image2 se houver alguma imagem que não seja assinatura
+  if (imageMap) {
+    const allKeys = Object.keys(imageMap);
+    const nonSignatureKeys = allKeys.filter((k) => !/^assinatura\d+$/i.test(k));
+
+    if (nonSignatureKeys.length > 0) {
+      // Prefer explicit keys image1 / image2 if provided
+      const keyLookup = new Map(allKeys.map((k) => [k.toLowerCase(), k]));
+      const used = new Set<string>();
+
+      const selectKeyForSlot = (slot: 1 | 2) => {
+        const explicit = keyLookup.get(`image${slot}`);
+        if (explicit) {
+          used.add(explicit);
+          return explicit;
+        }
+        const next = nonSignatureKeys.find((k) => !used.has(k));
+        if (next) {
+          used.add(next);
+          return next;
+        }
+        return undefined;
+      };
+
+      const key1 = selectKeyForSlot(1);
+      const key2 = selectKeyForSlot(2);
+
+      if (key1) {
+        await writeImageToSlot(1, imageMap[key1]);
+      }
+      if (key2) {
+        await writeImageToSlot(2, imageMap[key2]);
+      }
+    }
+  }
+
   // SE FOR CERTIFICADO VAI TER O TIPO DE CERTIFICADO
   if (tipoCertificado) {
     console.log("imageMap", imageMap);
@@ -51,44 +160,6 @@ async function replaceImage(
     }
     return;
   }
-  // Se o arquivo antigo existia com outra extensão, atualiza as referências e remove o antigo
-  // if (existingFile && existingFile !== newImagePath) {
-  //   const oldImageName = existingFile.split("/").pop()!;
-  //   const newImageName = newImagePath.split("/").pop()!;
-
-  //   // Atualiza referências nos slides
-  //   const slideFiles = allFiles.filter(
-  //     (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
-  //   );
-  //   for (const slideFile of slideFiles) {
-  //     let slideContent = zip.file(slideFile)!.asText();
-  //     if (slideContent.includes(oldImageName)) {
-  //       slideContent = slideContent.replace(
-  //         new RegExp(oldImageName, "g"),
-  //         newImageName
-  //       );
-  //       zip.file(slideFile, slideContent);
-  //     }
-  //   }
-
-  //   // Atualiza referências nos relacionamentos dos slides
-  //   const slideRelsFiles = allFiles.filter(
-  //     (f) => f.startsWith("ppt/slides/_rels/") && f.endsWith(".xml.rels")
-  //   );
-  //   for (const relsFile of slideRelsFiles) {
-  //     let relsContent = zip.file(relsFile)!.asText();
-  //     if (relsContent.includes(oldImageName)) {
-  //       relsContent = relsContent.replace(
-  //         new RegExp(oldImageName, "g"),
-  //         newImageName
-  //       );
-  //       zip.file(relsFile, relsContent);
-  //     }
-  //   }
-
-  //   zip.remove(existingFile);
-  // }
-  // Se não existia arquivo antigo ou já era .png com o mesmo nome, apenas sobrescrevemos
 }
 
 export async function gerarCertificado(
