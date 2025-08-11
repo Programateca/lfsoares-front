@@ -81,7 +81,9 @@ const Certificados = () => {
     Identificador[]
   >([]);
   const [eventos, setEventos] = useState<Evento[]>([]);
-  const [imageMap, setImageMap] = useState<Record<string, { data: ArrayBuffer; extension: string; }>>({});
+  const [imageMap, setImageMap] = useState<
+    Record<string, { data: ArrayBuffer; extension: string }>
+  >({});
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
@@ -717,11 +719,15 @@ const Certificados = () => {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       const reader = new FileReader();
-                                      const extension = file.name.split('.').pop() || '';
+                                      const extension =
+                                        file.name.split(".").pop() || "";
                                       reader.onload = () => {
                                         setImageMap((prev) => ({
                                           ...prev,
-                                          ["image1"]: { data: reader.result as ArrayBuffer, extension },
+                                          ["image1"]: {
+                                            data: reader.result as ArrayBuffer,
+                                            extension,
+                                          },
                                         }));
                                       };
                                       reader.readAsArrayBuffer(file);
@@ -745,11 +751,15 @@ const Certificados = () => {
                                     const file = e.target.files?.[0];
                                     if (file) {
                                       const reader = new FileReader();
-                                      const extension = file.name.split('.').pop() || '';
+                                      const extension =
+                                        file.name.split(".").pop() || "";
                                       reader.onload = () => {
                                         setImageMap((prev) => ({
                                           ...prev,
-                                          ["image2"]: { data: reader.result as ArrayBuffer, extension },
+                                          ["image2"]: {
+                                            data: reader.result as ArrayBuffer,
+                                            extension,
+                                          },
                                         }));
                                       };
                                       reader.readAsArrayBuffer(file);
@@ -760,32 +770,39 @@ const Certificados = () => {
                               </div>
                             </div>
                             <div className="col-span-3">
-                              <label
-                                htmlFor="signature-upload"
-                                className="block text-sm font-medium text-gray-700"
-                              >
-                                Selecione a imagem da assinatura
+                              <label className="block text-sm font-medium text-gray-700">
+                                Selecione as assinaturas
                               </label>
-                              <input
-                                type="file"
-                                id="signature-upload"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    const reader = new FileReader();
-                                    const extension = file.name.split('.').pop() || '';
-                                    reader.onload = () => {
-                                      setImageMap((prev) => ({
-                                        ...prev,
-                                        ["image3"]: { data: reader.result as ArrayBuffer, extension },
-                                      }));
-                                    };
-                                    reader.readAsArrayBuffer(file);
-                                  }
-                                }}
-                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                              />
+                              {Array.from({
+                                length:
+                                  parseInt(
+                                    (
+                                      (certificado.modelType?.split(
+                                        "-"
+                                      )[1] as string) || "1"
+                                    ).replace(/\D/g, "")
+                                  ) || 1,
+                              }).map((_, idx) => (
+                                <select
+                                  key={idx}
+                                  defaultValue=""
+                                  className="block w-full mt-2 border rounded-md p-2 text-sm text-gray-700"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setImageMap((prev) => ({
+                                      ...prev,
+                                      [`assinatura${idx + 1}`]: {
+                                        data: new ArrayBuffer(0),
+                                        extension: value,
+                                      },
+                                    }));
+                                  }}
+                                >
+                                  <option value="none">Nenhuma</option>
+                                  <option value="luiz">Luiz</option>
+                                  <option value="cledione">Cledione</option>
+                                </select>
+                              ))}
                             </div>
                           </div>
                           <div className="flex justify-end space-x-2 mt-5">

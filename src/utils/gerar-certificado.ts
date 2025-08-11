@@ -5,107 +5,90 @@ import { parseStringPromise, Builder, Parser } from "xml2js";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
 
+const getAssinaturaImage = async (nome: "luiz" | "cledione" | "vazio") => {
+  const basePath = "/templates/assinaturas";
+  if (nome === "vazio") {
+    return await loadFile(`${basePath}/blank-image.png`);
+  }
+  return await loadFile(
+    `${basePath}/${nome.toLowerCase().replace(/\s/g, "_")}_assinatura.png`
+  );
+};
+
 async function replaceImage(
   zip: PizZip,
-  imageMap: Record<string, { data: ArrayBuffer; extension: string }>
+  imageMap: Record<string, { data: ArrayBuffer; extension: string }>,
+  tipoCertificado?: string
 ) {
-  const mediaFolder = "ppt/media/";
+  // SE FOR CERTIFICADO VAI TER O TIPO DE CERTIFICADO
+  if (tipoCertificado) {
+    console.log("imageMap", imageMap);
+    const totalAssinaturas = Number(tipoCertificado[0]);
 
-  for (const imageName in imageMap) {
-    const { data: newImage, extension } = imageMap[imageName];
-    const originalImageName = `${imageName.split(".")[0]}`;
-    const files = Object.keys(zip.files);
-    const imageFile = files.find((f) =>
-      f.startsWith(`${mediaFolder}${originalImageName}`)
-    );
-
-    if (imageFile) {
-      const newImagePath = `${mediaFolder}${originalImageName}.${extension}`;
-      zip.file(newImagePath, newImage, { binary: true });
-
-      if (imageFile !== newImagePath) {
-        zip.remove(imageFile);
-        const slideFiles = files.filter(
-          (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
-        );
-        for (const slideFile of slideFiles) {
-          let slideContent = zip.file(slideFile)!.asText();
-          const oldImageName = imageFile.split("/").pop()!;
-          const newImageName = newImagePath.split("/").pop()!;
-          slideContent = slideContent.replace(
-            new RegExp(oldImageName, "g"),
-            newImageName
-          );
-          zip.file(slideFile, slideContent);
-        }
-
-        const slideRelsFiles = files.filter(
-          (f) => f.startsWith("ppt/slides/_rels/") && f.endsWith(".xml.rels")
-        );
-        for (const relsFile of slideRelsFiles) {
-          let relsContent = zip.file(relsFile)!.asText();
-          const oldImageName = imageFile.split("/").pop()!;
-          const newImageName = newImagePath.split("/").pop()!;
-          relsContent = relsContent.replace(
-            new RegExp(oldImageName, "g"),
-            newImageName
-          );
-          zip.file(relsFile, relsContent);
-        }
-      }
-
-      if (imageName === "image3") {
-        const slideFiles = files.filter(
-          (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
-        );
-        for (const slideFile of slideFiles) {
-          const slideContent = zip.file(slideFile)!.asText();
-          const parser = new Parser();
-          const slideObj = await parser.parseStringPromise(slideContent);
-          const newImageName = newImagePath.split("/").pop()!;
-
-          const pictures =
-            slideObj["p:sld"]["p:cSld"][0]["p:spTree"][0]["p:pic"];
-          if (pictures) {
-            for (const pic of pictures) {
-              const blip = pic["p:blipFill"][0]["a:blip"][0];
-              const relationshipId = blip?.$["r:embed"];
-
-              if (relationshipId) {
-                const relsFile = `ppt/slides/_rels/${slideFile
-                  .split("/")
-                  .pop()}.rels`;
-                const relsContent = zip.file(relsFile)!.asText();
-                const relsParser = new Parser();
-                const relsObj = await relsParser.parseStringPromise(
-                  relsContent
-                );
-                const relationship = relsObj.Relationships.Relationship.find(
-                  (r: any) => r.$.Id === relationshipId
-                );
-
-                if (
-                  relationship &&
-                  relationship.$.Target.endsWith(newImageName)
-                ) {
-                  const xfrm = pic["p:spPr"][0]["a:xfrm"][0];
-                  if (xfrm && xfrm["a:ext"]) {
-                    xfrm["a:ext"][0].$.cy = "972800"; // 2.72cm em EMUs
-                  }
-                }
-              }
-            }
-          }
-
-          const builder = new Builder();
-          const newSlideXml = builder.buildObject(slideObj);
-          zip.file(slideFile, newSlideXml);
-        }
-      }
-    } else {
-      console.warn(`Image ${imageName} not found in the archive.`);
+    for (let i = 1; i < totalAssinaturas; i++) {
+      const blankImage = await getAssinaturaImage("vazio");
+      zip.file(`ppt/media/image${i + 2}.png`, blankImage, { binary: true });
     }
+
+    // Assinaturas ocupam os slots image3..image6
+    const slots = [3, 4, 5, 6];
+
+    for (let i = 0; i < slots.length; i++) {
+      console.log("SLOTS FOR", i);
+      const slotNumber = slots[i];
+      const key = `assinatura${i + 1}`;
+
+      const selected = (imageMap?.[key]?.extension || "none").toLowerCase();
+      const nomeAssinatura: "luiz" | "cledione" | "vazio" =
+        selected === "luiz" || selected === "cledione"
+          ? (selected as any)
+          : "vazio";
+
+      const newImage = await getAssinaturaImage(nomeAssinatura);
+
+      const newImagePath = `ppt/media/image${slotNumber}.png`;
+      zip.file(newImagePath, newImage, { binary: true });
+    }
+    return;
   }
+  // Se o arquivo antigo existia com outra extensão, atualiza as referências e remove o antigo
+  // if (existingFile && existingFile !== newImagePath) {
+  //   const oldImageName = existingFile.split("/").pop()!;
+  //   const newImageName = newImagePath.split("/").pop()!;
+
+  //   // Atualiza referências nos slides
+  //   const slideFiles = allFiles.filter(
+  //     (f) => f.startsWith("ppt/slides/") && f.endsWith(".xml")
+  //   );
+  //   for (const slideFile of slideFiles) {
+  //     let slideContent = zip.file(slideFile)!.asText();
+  //     if (slideContent.includes(oldImageName)) {
+  //       slideContent = slideContent.replace(
+  //         new RegExp(oldImageName, "g"),
+  //         newImageName
+  //       );
+  //       zip.file(slideFile, slideContent);
+  //     }
+  //   }
+
+  //   // Atualiza referências nos relacionamentos dos slides
+  //   const slideRelsFiles = allFiles.filter(
+  //     (f) => f.startsWith("ppt/slides/_rels/") && f.endsWith(".xml.rels")
+  //   );
+  //   for (const relsFile of slideRelsFiles) {
+  //     let relsContent = zip.file(relsFile)!.asText();
+  //     if (relsContent.includes(oldImageName)) {
+  //       relsContent = relsContent.replace(
+  //         new RegExp(oldImageName, "g"),
+  //         newImageName
+  //       );
+  //       zip.file(relsFile, relsContent);
+  //     }
+  //   }
+
+  //   zip.remove(existingFile);
+  // }
+  // Se não existia arquivo antigo ou já era .png com o mesmo nome, apenas sobrescrevemos
 }
 
 export async function gerarCertificado(
@@ -116,6 +99,7 @@ export async function gerarCertificado(
   const fileArrayBufferFrente = await loadFile(
     `/templates/certificado/frente-assinatura.pptx`
   );
+
   let templateVerso = `/templates/certificado/verso-${type}.pptx`;
   if (data[0]?.conteudo && data[0].conteudo.length > 700) {
     templateVerso = `/templates/certificado/verso-${type}-2coluna.pptx`;
@@ -127,6 +111,7 @@ export async function gerarCertificado(
   if (imageMap) {
     replaceImage(zip, imageMap);
   }
+
   const numeroDeCertificados = data.length;
   await duplicateSlide(zip, numeroDeCertificados, data);
   const out = zip.generate({
@@ -150,7 +135,7 @@ export async function gerarCertificado(
   const zipVerso = new PizZip(fileArrayBufferVerso);
 
   if (imageMap) {
-    replaceImage(zipVerso, imageMap);
+    await replaceImage(zipVerso, imageMap, type);
   }
 
   const doc = new Docxtemplater(zipVerso, {
