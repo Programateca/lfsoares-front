@@ -420,10 +420,12 @@ export async function gerarIdentificador(
     const [
       MAIN_XML_RESPONSE,
       HEADER3_XML_RESPONSE,
+      HEADER4_XML_RESPONSE,
       DOCUMENT_XML_RELS_RESPONSE,
     ] = await Promise.all([
       fetch(`/templates/identificador/${templateFileName}`),
       fetch(`/templates/identificador/header3.xml`),
+      fetch(`/templates/identificador/header4.xml`),
       fetch(`/templates/identificador/document.xml.rels`),
     ]);
 
@@ -434,12 +436,17 @@ export async function gerarIdentificador(
     if (!DOCUMENT_XML_RELS_RESPONSE.ok)
       throw new Error(`Falha ao buscar document.xml.rels`);
 
-    const [MAIN_XML_CONTENT, HEADER3_XML_CONTENT, DOCUMENT_XML_RELS] =
-      await Promise.all([
-        MAIN_XML_RESPONSE.text(),
-        HEADER3_XML_RESPONSE.text(),
-        DOCUMENT_XML_RELS_RESPONSE.text(),
-      ]);
+    const [
+      MAIN_XML_CONTENT,
+      HEADER3_XML_CONTENT,
+      HEADER4_XML_CONTENT,
+      DOCUMENT_XML_RELS,
+    ] = await Promise.all([
+      MAIN_XML_RESPONSE.text(),
+      HEADER3_XML_RESPONSE.text(),
+      HEADER4_XML_RESPONSE.text(),
+      DOCUMENT_XML_RELS_RESPONSE.text(),
+    ]);
 
     const pagesXmlContent = await formatarPaginas(formattedPages);
     const UPDATED_DOCUMENT_XML_FILE =
@@ -473,6 +480,7 @@ export async function gerarIdentificador(
     const zip = new PizZip(DOCX_TEMPLATE_BUFFER);
     zip.file("word/document.xml", UPDATED_DOCUMENT_XML_FILE);
     zip.file("word/header3.xml", HEADER3_XML_CONTENT);
+    zip.file("word/header4.xml", HEADER4_XML_CONTENT);
     zip.file("word/media/image5.png", ASSINATURAS[assinaturaAKey]);
     zip.file("word/media/image6.png", ASSINATURA_LUIZ);
     zip.file("word/_rels/document.xml.rels", DOCUMENT_XML_RELS);
