@@ -807,7 +807,7 @@
                             </w:rPr>
                             <w:drawing>
                                 <wp:anchor distT="0" distB="0" distL="114300" distR="114300"
-                                    simplePos="0" relativeHeight="251660288" behindDoc="1"
+                                    simplePos="0" relativeHeight="251660288" behindDoc="0"
                                     locked="0" layoutInCell="1" allowOverlap="1"
                                     wp14:anchorId="531D7CEB" wp14:editId="4F52FD73">
                                     <wp:simplePos x="0" y="0" />
