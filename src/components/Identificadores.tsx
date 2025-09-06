@@ -16,12 +16,27 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { api } from "@/lib/axios";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 import { Evento } from "@/@types/Evento";
 import { Pessoa } from "@/@types/Pessoa";
 import { Instrutor } from "@/@types/Instrutor";
 
-import { MultiSelect } from "@/components/multi-select";
 import { gerarIdentificador } from "@/utils/identificador";
 import toast from "react-hot-toast";
 import CustomTable from "./CustomTable";
@@ -331,6 +346,19 @@ export const Identificadores = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [participantes, setParticipantes] = useState<Pessoa[]>([]);
   const [instrutores, setInstrutores] = useState<Instrutor[]>([]);
+  const [empresas, setEmpresas] = useState<any[]>([]);
+
+  // Estados para modal de participante
+  const [isModalParticipanteOpen, setIsModalParticipanteOpen] = useState(false);
+  const [newParticipante, setNewParticipante] = useState({
+    name: "",
+    cpf: "",
+    matricula: "",
+    empresa: {
+      id: "",
+      name: "",
+    },
+  });
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -517,11 +545,13 @@ export const Identificadores = () => {
       const response = await api.get("identificadores", {
         params: { page: pageNumber, limit },
       });
-      const [eventosResp, pessoasResp, instrutoresResp] = await Promise.all([
-        api.get("eventos", { params: { limit: 100000 } }),
-        api.get("pessoas", { params: { limit: 100000 } }),
-        api.get("instrutores", { params: { limit: 100000 } }),
-      ]);
+      const [eventosResp, pessoasResp, instrutoresResp, empresasResp] =
+        await Promise.all([
+          api.get("eventos", { params: { limit: 100000 } }),
+          api.get("pessoas", { params: { limit: 100000 } }),
+          api.get("instrutores", { params: { limit: 100000 } }),
+          api.get("empresas"),
+        ]);
 
       setHasNextPage(response.data.hasNextPage);
       setIdentificadoresGerados(response.data.data);
@@ -532,6 +562,7 @@ export const Identificadores = () => {
       setInstrutores(
         instrutoresResp.data.data.filter((inst: any) => inst.status.id === 1)
       );
+      setEmpresas(empresasResp.data.data);
     } catch (error) {
       toast.error("Erro ao buscar dados iniciais");
     } finally {
@@ -869,6 +900,60 @@ export const Identificadores = () => {
     }
   };
 
+  const handleSubmitParticipante = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if CPF already exists
+    const cpfExists = participantes.some((p) => p.cpf === newParticipante.cpf);
+    if (cpfExists) {
+      toast.error("CPF já cadastrado no sistema!");
+      return;
+    }
+
+    try {
+      await api.post("pessoas", {
+        name: newParticipante.name,
+        cpf: newParticipante.cpf,
+        matricula: newParticipante.matricula,
+        empresa: {
+          id:
+            newParticipante.empresa.id === "0"
+              ? null
+              : newParticipante.empresa.id,
+        },
+      });
+
+      // Recarregar participantes
+      const pessoasResp = await api.get("pessoas", {
+        params: { limit: 100000 },
+      });
+      setParticipantes(
+        pessoasResp.data.data.filter((e: any) => e.status.id === 1)
+      );
+
+      setIsModalParticipanteOpen(false);
+      toast.success("Participante adicionado com sucesso!");
+      setNewParticipante({
+        name: "",
+        cpf: "",
+        matricula: "",
+        empresa: {
+          id: "",
+          name: "",
+        },
+      });
+    } catch (error) {
+      toast.error("Erro ao adicionar participante.");
+    }
+  };
+
+  const handleInputChangeParticipante = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setNewParticipante((prev) => ({ ...prev, [name]: value }));
+  };
+
   useEffect(() => {
     const inicializarFetch = async () => {
       setLoading(true);
@@ -1105,21 +1190,17 @@ export const Identificadores = () => {
                 name="participantes"
                 control={control}
                 render={({ field }) => (
-                  <MultiSelect
-                    options={participantes
-                      .map((pessoa) => ({
-                        label: pessoa.name,
-                        cpf: pessoa.cpf,
-                        matricula: pessoa.matricula,
-                        empresa: pessoa?.empresa?.name,
-                        value: pessoa.id,
-                      }))
-                      .sort((a, b) => a.label.localeCompare(b.label))}
-                    onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value || []}
-                    placeholder="Selecione os participantes"
-                    variant="default"
-                    animation={2}
+                  <ParticipantesTable
+                    participantes={participantes}
+                    selectedIds={field.value || []}
+                    onSelectionChange={(value) => field.onChange(value)}
+                    isModalOpen={isModalParticipanteOpen}
+                    onModalChange={setIsModalParticipanteOpen}
+                    newParticipante={newParticipante}
+                    setNewParticipante={setNewParticipante}
+                    empresas={empresas}
+                    onSubmitParticipante={handleSubmitParticipante}
+                    onInputChangeParticipante={handleInputChangeParticipante}
                   />
                 )}
               />
@@ -1553,3 +1634,337 @@ export const Identificadores = () => {
     </Card>
   );
 };
+
+// Componente de tabela para seleção de participantes
+interface ParticipantesTableProps {
+  participantes: Pessoa[];
+  selectedIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+  isModalOpen: boolean;
+  onModalChange: (open: boolean) => void;
+  newParticipante: {
+    name: string;
+    cpf: string;
+    matricula: string;
+    empresa: { id: string; name: string };
+  };
+  setNewParticipante: React.Dispatch<
+    React.SetStateAction<{
+      name: string;
+      cpf: string;
+      matricula: string;
+      empresa: { id: string; name: string };
+    }>
+  >;
+  empresas: any[];
+  onSubmitParticipante: (e: React.FormEvent) => void;
+  onInputChangeParticipante: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const ParticipantesTable: React.FC<ParticipantesTableProps> = ({
+  participantes,
+  selectedIds,
+  onSelectionChange,
+  isModalOpen,
+  onModalChange,
+  newParticipante,
+  setNewParticipante,
+  empresas,
+  onSubmitParticipante,
+  onInputChangeParticipante,
+}) => {
+  const [filters, setFilters] = useState({
+    name: "",
+    cpf: "",
+    matricula: "",
+    empresa: "",
+  });
+
+  const filteredParticipantes = participantes.filter((pessoa) => {
+    return (
+      pessoa.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+      pessoa.cpf.toLowerCase().includes(filters.cpf.toLowerCase()) &&
+      pessoa.matricula
+        .toLowerCase()
+        .includes(filters.matricula.toLowerCase()) &&
+      (pessoa.empresa?.name || "")
+        .toLowerCase()
+        .includes(filters.empresa.toLowerCase())
+    );
+  });
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allIds = filteredParticipantes.map((p) => p.id);
+      onSelectionChange(allIds);
+    } else {
+      onSelectionChange([]);
+    }
+  };
+
+  const handleSelectParticipant = (id: string, checked: boolean) => {
+    if (checked) {
+      onSelectionChange([...selectedIds, id]);
+    } else {
+      onSelectionChange(selectedIds.filter((selectedId) => selectedId !== id));
+    }
+  };
+
+  const isAllSelected =
+    filteredParticipantes.length > 0 &&
+    filteredParticipantes.every((p) => selectedIds.includes(p.id));
+
+  const isIndeterminate =
+    filteredParticipantes.some((p) => selectedIds.includes(p.id)) &&
+    !isAllSelected;
+
+  return (
+    <div className="border rounded-lg">
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium">Selecionar Participantes</h3>
+          <Dialog open={isModalOpen} onOpenChange={onModalChange}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Plus className="mr-2 h-4 w-4" /> Adicionar Participante
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Adicionar novo participante</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={onSubmitParticipante} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={newParticipante.name}
+                    onChange={onInputChangeParticipante}
+                    required
+                    placeholder="Ex: João da Silva"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cpf">CPF</Label>
+                  <Input
+                    id="cpf"
+                    name="cpf"
+                    type="text"
+                    value={newParticipante.cpf}
+                    onChange={(e) => {
+                      const { value } = e.target;
+                      const formattedValue = value
+                        .replace(/\D/g, "")
+                        .replace(/(\d{3})(\d)/, "$1.$2")
+                        .replace(/(\d{3})(\d)/, "$1.$2")
+                        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                      setNewParticipante((prev) => ({
+                        ...prev,
+                        cpf: formattedValue,
+                      }));
+                    }}
+                    required
+                    pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                    placeholder="000.000.000-00"
+                    maxLength={14}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="matricula">Matricula (opcional)</Label>
+                  <Input
+                    id="matricula"
+                    name="matricula"
+                    type="text"
+                    placeholder="Ex: 000000"
+                    value={newParticipante.matricula}
+                    onChange={onInputChangeParticipante}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="empresa">Empresa (opcional)</Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setNewParticipante((prev) => ({
+                        ...prev,
+                        empresa: {
+                          id: value,
+                          name:
+                            empresas.find((empresa) => empresa.id === value)
+                              ?.name || "",
+                        },
+                      }));
+                    }}
+                    value={newParticipante.empresa.id || "0"}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione uma empresa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Empresas:</SelectLabel>
+                        <SelectItem value="0">Nenhuma</SelectItem>
+                        {empresas.map((empresa) => (
+                          <SelectItem key={empresa.id} value={empresa.id}>
+                            {empresa.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      onModalChange(false);
+                      setNewParticipante({
+                        name: "",
+                        cpf: "",
+                        matricula: "",
+                        empresa: {
+                          id: "",
+                          name: "",
+                        },
+                      });
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button type="submit">Adicionar</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Filtros */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div>
+            <Label htmlFor="filter-name">Nome</Label>
+            <Input
+              id="filter-name"
+              placeholder="Filtrar por nome..."
+              value={filters.name}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <Label htmlFor="filter-cpf">CPF</Label>
+            <Input
+              id="filter-cpf"
+              placeholder="Filtrar por CPF..."
+              value={filters.cpf}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, cpf: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <Label htmlFor="filter-matricula">Matrícula</Label>
+            <Input
+              id="filter-matricula"
+              placeholder="Filtrar por matrícula..."
+              value={filters.matricula}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, matricula: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <Label htmlFor="filter-empresa">Empresa</Label>
+            <Input
+              id="filter-empresa"
+              placeholder="Filtrar por empresa..."
+              value={filters.empresa}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, empresa: e.target.value }))
+              }
+            />
+          </div>
+        </div>
+
+        {/* Tabela */}
+        <div className="border rounded max-h-96 overflow-y-auto">
+          <Table>
+            <TableHeader className="sticky top-0 bg-white">
+              <TableRow>
+                <TableHead className="w-12 py-2 px-3">
+                  <input
+                    type="checkbox"
+                    checked={isAllSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = isIndeterminate;
+                    }}
+                    onChange={(e) => handleSelectAll(e.target.checked)}
+                  />
+                </TableHead>
+                <TableHead className="py-2 px-3">Nome</TableHead>
+                <TableHead className="py-2 px-3">CPF</TableHead>
+                <TableHead className="py-2 px-3">Matrícula</TableHead>
+                <TableHead className="py-2 px-3">Empresa</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredParticipantes.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className="text-center py-2 px-3 text-muted-foreground"
+                  >
+                    Nenhum participante encontrado
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredParticipantes.map((pessoa) => (
+                  <TableRow
+                    key={pessoa.id}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() =>
+                      handleSelectParticipant(
+                        pessoa.id,
+                        !selectedIds.includes(pessoa.id)
+                      )
+                    }
+                  >
+                    <TableCell
+                      className="py-2 px-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(pessoa.id)}
+                        onChange={(e) =>
+                          handleSelectParticipant(pessoa.id, e.target.checked)
+                        }
+                      />
+                    </TableCell>
+                    <TableCell className="py-2 px-3">{pessoa.name}</TableCell>
+                    <TableCell className="py-2 px-3">{pessoa.cpf}</TableCell>
+                    <TableCell className="py-2 px-3">
+                      {pessoa.matricula || "-"}
+                    </TableCell>
+                    <TableCell className="py-2 px-3">
+                      {pessoa.empresa?.name || "-"}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Contador de selecionados */}
+        <div className="mt-4 text-sm text-muted-foreground">
+          {selectedIds.length} participante(s) selecionado(s)
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Identificadores;
