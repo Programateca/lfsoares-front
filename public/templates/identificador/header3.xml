@@ -762,7 +762,7 @@
                                                             <w:sz w:val="18" />
                                                             <w:szCs w:val="18" />
                                                         </w:rPr>
-                                                        <w:t>LUIS FERNANDO SOARES</w:t>
+                                                        <w:t>[header_elaboracao]</w:t>
                                                     </w:r>
                                                 </w:p>
                                                 <w:p w14:paraId="535722C7" w14:textId="77777777"
@@ -852,7 +852,7 @@
                                                 <w:sz w:val="18" />
                                                 <w:szCs w:val="18" />
                                             </w:rPr>
-                                            <w:t>LUIS FERNANDO SOARES</w:t>
+                                            <w:t>[header_elaboracao]</w:t>
                                         </w:r>
                                     </w:p>
                                     <w:p w14:paraId="535722C7" w14:textId="77777777"
@@ -934,7 +934,7 @@
                                                             <w:sz w:val="18" />
                                                             <w:szCs w:val="18" />
                                                         </w:rPr>
-                                                        <w:t>DATA: 11</w:t>
+                                                        <w:t>DATA: [</w:t>
                                                     </w:r>
                                                     <w:r w:rsidR="00C11AF4">
                                                         <w:rPr>
@@ -942,7 +942,7 @@
                                                             <w:sz w:val="18" />
                                                             <w:szCs w:val="18" />
                                                         </w:rPr>
-                                                        <w:t>/06/2024</w:t>
+                                                        <w:t>header_data]</w:t>
                                                     </w:r>
                                                 </w:p>
                                             </w:txbxContent>
@@ -996,7 +996,7 @@
                                                 <w:sz w:val="18" />
                                                 <w:szCs w:val="18" />
                                             </w:rPr>
-                                            <w:t>DATA: 11</w:t>
+                                            <w:t>DATA: [</w:t>
                                         </w:r>
                                         <w:r w:rsidR="00C11AF4">
                                             <w:rPr>
@@ -1004,7 +1004,7 @@
                                                 <w:sz w:val="18" />
                                                 <w:szCs w:val="18" />
                                             </w:rPr>
-                                            <w:t>/06/2024</w:t>
+                                            <w:t>header_data]</w:t>
                                         </w:r>
                                     </w:p>
                                 </w:txbxContent>
