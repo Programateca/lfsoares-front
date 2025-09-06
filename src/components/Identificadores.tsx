@@ -756,8 +756,9 @@ export const Identificadores = () => {
 
     const dataGerador = {
       // Header
-      header_revisao: "LUIS FERNANDO SOARES", // Nome de quem revisou
-      header_data: "14/02/2025",
+      header_revisao: "LUIS FERNANDO SOARES",
+      header_elaboracao: user?.name,
+      header_data: new Date().toLocaleDateString("pt-BR"),
       revisao: "00", // Added comma
       // Fim Header
       ...(() => {
