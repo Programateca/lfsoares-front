@@ -183,6 +183,7 @@ const courseDateDetailSchema = z
 // Renamed original formDataSchema to createFormDataSchema and made it a function
 const createFormDataSchema = (signatureCount: number) => {
   return z.object({
+    assinaturaBlocked: z.string().optional(),
     assinaturaImagem: z.enum(["cledione", "luis"]).optional(),
     evento: z.string().min(1, "Selecione um evento"),
     certificadoTipo: z.string().min(1, "Tipo de certificado é obrigatório"),
@@ -1428,9 +1429,10 @@ export const Identificadores = () => {
             {/* Separador */}
             <div className="w-full h-[2px] bg-gray-300 rounded-lg my-5" />
 
+            {/* Seleção de assinatura e observações */}
             <div className="flex flex-col gap-4">
               <div>
-                <Label>Seleção de Assinatura</Label>
+                <Label>ASSINATURA INSTRUTOR</Label>
                 <Controller
                   name="assinaturaImagem"
                   control={control}
@@ -1446,6 +1448,27 @@ export const Identificadores = () => {
                           <SelectItem value="cledione">Cledione</SelectItem>
                         </SelectGroup>
                       </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div>
+                <Label>ASSINATURA SÓCIO PROPRIETÁRIO</Label>
+                <Controller
+                  name="assinaturaBlocked"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      disabled
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="LUIS" />
+                      </SelectTrigger>
                     </Select>
                   )}
                 />
@@ -1497,6 +1520,7 @@ export const Identificadores = () => {
                 const identificadorParsed = row.identificadorData
                   ? JSON.parse(row.identificadorData)
                   : null;
+                console.log(identificadorParsed);
 
                 if (!identificadorParsed) {
                   console.warn("Dados do identificador inválidos:", row);
