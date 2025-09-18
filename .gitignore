@@ -1,6 +1,8 @@
 # Misc
 /test/extracted
 
+/coverage
+
 # Logs
 logs
 *.log
