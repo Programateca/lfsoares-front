@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContextProvider";
 import { api } from "@/lib/axios";
 import { Eye, EyeClosed, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Role = "User";
 
@@ -25,6 +25,7 @@ type LoginResponseData = {
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,7 +46,8 @@ export default function Login() {
         if (data) {
           login({ ...data.user, token: data.token });
           toast.success("Login efetuado com sucesso!");
-          navigate("/");
+          const from = (location.state as any)?.from?.pathname || "/";
+          navigate(from, { replace: true });
         }
       })
       .catch(() => {

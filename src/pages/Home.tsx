@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -7,7 +7,7 @@ import Usuarios from "@/components/Usuarios";
 import Treinamentos from "@/components/Treinamentos";
 import Integrantes from "@/components/Integrantes";
 import Pessoas from "@/components/Pessoas";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
@@ -95,6 +95,9 @@ export default function HomePage() {
       setSelectedOption(map[path]);
     } else if (path === "/") {
       setSelectedOption("");
+    } else {
+      // Unknown path: clear selection so Outlet can render (e.g., 404)
+      setSelectedOption("");
     }
   }, [location.pathname]);
 
@@ -129,7 +132,7 @@ export default function HomePage() {
               </Button>
             </div>
           </header>
-          {selectedOption === "" ? (
+          {location.pathname === "/" ? (
             <Card className="bg-green-500 rounded-xl shadow-lg">
               <CardContent className="p-5 py-4">
                 <div className="text-start text-white">
@@ -141,9 +144,8 @@ export default function HomePage() {
               </CardContent>
             </Card>
           ) : (
-            selectedOption &&
-            componentsMap[selectedOption] &&
-            React.createElement(componentsMap[selectedOption])
+            // Render child route element here
+            <Outlet />
           )}
         </div>
       </div>
