@@ -40,7 +40,6 @@ import { Input } from "./ui/input";
 import { DocumentData } from "@/@types/DocumentData";
 import toast from "react-hot-toast";
 import { formatDataRealizada } from "@/utils/formatDataRealizada";
-import { Status } from "@/@types/Status";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,7 +67,7 @@ interface Certificado {
   id: string;
   createdAt: string;
   updatedAt: string;
-  status: Status;
+  statusId?: number;
 }
 
 type NewCertificado = typeof defaultValues;
@@ -93,6 +92,9 @@ const Certificados = () => {
     status: number;
   } | null>(null);
 
+  const [selectedCertificado, setSelectedCertificado] =
+    useState<Certificado | null>(null);
+
   const [newCertificado, setNewCertificado] =
     useState<NewCertificado>(defaultValues);
 
@@ -110,6 +112,9 @@ const Certificados = () => {
 
   const [showInativos, setShowInativos] = useState(false);
 
+  const [localEmissaoSignature, setLocalEmissaoSignature] =
+    useState<string>("");
+
   const fetchData = async (pageNumber: number = 1) => {
     try {
       setLoading(true);
@@ -117,7 +122,7 @@ const Certificados = () => {
         params: { limit: 100000 },
       });
       setIdentificadores(
-        response.data.data.filter((e: any) => e.status.id === 1)
+        response.data.data.filter((e: any) => e.statusId === 1)
       );
       const eventosResp = await api.get("eventos", {
         params: { limit: 100000 },
@@ -144,7 +149,7 @@ const Certificados = () => {
 
       setCertificados(certificadosResp.data.data || []);
       setHasNextPage(certificadosResp.data.hasNextPage);
-    } catch (error) {
+    } catch {
       toast.error("Erro ao buscar dados");
     } finally {
       setLoading(false);
@@ -169,7 +174,7 @@ const Certificados = () => {
       setCertificados(response.data.data || []);
       setPage(newPage);
       setHasNextPage(response.data.hasNextPage);
-    } catch (error) {
+    } catch {
       toast.error("Erro ao buscar dados");
     } finally {
       setLoading(false);
@@ -439,21 +444,62 @@ const Certificados = () => {
   };
 
   const handleCriarCertificadoComCapaEAssinatura = async (
-    e: React.FormEvent,
-    certificado: DocumentData
+    e: React.FormEvent
   ) => {
     e.preventDefault();
-    const data = JSON.parse(certificado.documentData) as Record<
-      string,
-      string
-    >[];
-    gerarCertificado(data, imageMap, certificado.modelType.split("-")[1]);
-    setIsModalOpen2(false);
-    resetForm();
+
+    if (!selectedCertificado) {
+      toast.error("Nenhum certificado selecionado.");
+      return;
+    }
+
+    try {
+      const dataCertificado = JSON.parse(selectedCertificado.documentData);
+
+      if (!Array.isArray(dataCertificado) || dataCertificado.length === 0) {
+        toast.error("Dados do certificado em formato inválido.");
+        return;
+      }
+
+      const baseData = dataCertificado[0];
+
+      const schema = {
+        ...baseData,
+        local_emissao: localEmissaoSignature || baseData.local_emissao || "",
+      };
+
+      const dados = dataCertificado.map((participante: any) => ({
+        ...schema,
+        nome_participante: participante.nome_participante,
+        cpf: participante.cpf,
+        codigo: participante.codigo,
+      }));
+
+      const assinaturasCount = [
+        schema.assinatura_1,
+        schema.assinatura_2,
+        schema.assinatura_3,
+        schema.assinatura_4,
+      ].filter(Boolean).length;
+
+      gerarCertificado(dados, imageMap, `${assinaturasCount}a`);
+      setIsModalOpen2(false);
+      resetForm();
+    } catch (error) {
+      console.error("Erro ao processar dados do certificado:", error);
+      if (error instanceof AppError) {
+        toast.error(error.message);
+      } else {
+        toast.error("Erro ao gerar certificado com nova capa.");
+      }
+    }
   };
 
   const resetForm = () => {
     setNewCertificado({ ...defaultValues });
+    setSelectedCertificado(null);
+    setLocalEmissaoSignature("");
+    setImageMap({});
   };
 
   // Funções de ordenação e filtragem da tabela
@@ -506,12 +552,16 @@ const Certificados = () => {
           duration: 2000,
         });
       fetchData();
-    } catch (error) {}
+    } catch {
+      toast.error("Erro ao atualizar status do certificado.");
+    }
   };
 
   const filteredData = showInativos
-    ? sortedCertificates.filter((p) => p?.status?.id === 2)
-    : sortedCertificates.filter((p) => p?.status?.id === 1);
+    ? sortedCertificates.filter((p) => p.statusId === 2)
+    : sortedCertificates.filter(
+        (p) => p.statusId === 1 || p.statusId === undefined
+      );
 
   return (
     <Card className="shadow-md">
@@ -682,6 +732,17 @@ const Certificados = () => {
                         <Button
                           className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                           variant={"outline"}
+                          onClick={() => {
+                            setSelectedCertificado(certificado);
+                            try {
+                              const data = JSON.parse(certificado.documentData);
+                              setLocalEmissaoSignature(
+                                data[0]?.local_emissao || ""
+                              );
+                            } catch (e) {
+                              setLocalEmissaoSignature("");
+                            }
+                          }}
                         >
                           <ImageDownIcon className="mr-1" />
                           Alterar Capas e Assinatura
@@ -694,15 +755,22 @@ const Certificados = () => {
                           </DialogTitle>
                         </DialogHeader>
                         <form
-                          onSubmit={(e) =>
-                            handleCriarCertificadoComCapaEAssinatura(e, {
-                              ...certificado,
-                              treinamento: "",
-                              year: "",
-                            })
-                          }
+                          onSubmit={handleCriarCertificadoComCapaEAssinatura}
                         >
                           <div className="grid grid-cols-3 gap-4 max-h-[80vh]">
+                            <div className="col-span-3 space-y-2">
+                              <Label>Local de Emissão</Label>
+                              <Input
+                                type="text"
+                                className="w-full"
+                                value={localEmissaoSignature}
+                                onChange={(e) =>
+                                  setLocalEmissaoSignature(e.target.value)
+                                }
+                                placeholder="Ex: São Paulo"
+                                required
+                              />
+                            </div>
                             <div className="col-span-3 flex justify-between gap-4">
                               <div className="space-y-2 col-span-3">
                                 <label
@@ -738,14 +806,14 @@ const Certificados = () => {
                               </div>
                               <div className="space-y-2 col-span-3">
                                 <label
-                                  htmlFor="image-upload"
+                                  htmlFor="image-upload-verso"
                                   className="block text-sm font-medium text-gray-700"
                                 >
                                   Selecione a capa do verso
                                 </label>
                                 <input
                                   type="file"
-                                  id="image-upload"
+                                  id="image-upload-verso"
                                   accept="image/*"
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
@@ -844,11 +912,11 @@ const Certificados = () => {
                           onClick={() =>
                             setSelectedItem({
                               id: certificado.id,
-                              status: certificado.status.id === 1 ? 2 : 1,
+                              status: certificado.statusId === 1 ? 2 : 1,
                             })
                           }
                         >
-                          {certificado.status.id === 1 ? (
+                          {certificado.statusId === 1 ? (
                             <Trash2Icon className="h-4 w-4" />
                           ) : (
                             <RotateCcw className="h-4 w-4" />
@@ -858,12 +926,12 @@ const Certificados = () => {
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            {certificado.status.id === 1
+                            {certificado.statusId === 1
                               ? "Inativar certificado?"
                               : "Reativar certificado?"}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            {certificado.status.id === 1
+                            {certificado.statusId === 1
                               ? "Tem certeza que deseja inativar este certificado?"
                               : "Tem certeza que deseja reativar este certificado?"}
                           </AlertDialogDescription>

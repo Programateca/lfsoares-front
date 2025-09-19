@@ -93,73 +93,79 @@ async function replaceImage(
     await updateContentType(partName, toMime(file.extension));
   };
 
-  // Troca image1 e image2 se houver alguma imagem que não seja assinatura
-  if (imageMap) {
-    const allKeys = Object.keys(imageMap);
-    const nonSignatureKeys = allKeys.filter((k) => !/^assinatura\d+$/i.test(k));
+  // Quando NÃO é certificado (sem tipo), apenas troca image1 e image2 (ex.: frente)
+  if (!tipoCertificado) {
+    if (imageMap) {
+      const allKeys = Object.keys(imageMap);
+      const nonSignatureKeys = allKeys.filter(
+        (k) => !/^assinatura\d+$/i.test(k)
+      );
 
-    if (nonSignatureKeys.length > 0) {
-      // Prefer explicit keys image1 / image2 if provided
-      const keyLookup = new Map(allKeys.map((k) => [k.toLowerCase(), k]));
-      const used = new Set<string>();
+      if (nonSignatureKeys.length > 0) {
+        // Prefer explicit keys image1 / image2 if provided
+        const keyLookup = new Map(allKeys.map((k) => [k.toLowerCase(), k]));
+        const used = new Set<string>();
 
-      const selectKeyForSlot = (slot: 1 | 2) => {
-        const explicit = keyLookup.get(`image${slot}`);
-        if (explicit) {
-          used.add(explicit);
-          return explicit;
+        const selectKeyForSlot = (slot: 1 | 2) => {
+          const explicit = keyLookup.get(`image${slot}`);
+          if (explicit) {
+            used.add(explicit);
+            return explicit;
+          }
+          const next = nonSignatureKeys.find((k) => !used.has(k));
+          if (next) {
+            used.add(next);
+            return next;
+          }
+          return undefined;
+        };
+
+        const key1 = selectKeyForSlot(1);
+        const key2 = selectKeyForSlot(2);
+
+        if (key1) {
+          await writeImageToSlot(1, imageMap[key1]);
         }
-        const next = nonSignatureKeys.find((k) => !used.has(k));
-        if (next) {
-          used.add(next);
-          return next;
+        if (key2) {
+          await writeImageToSlot(2, imageMap[key2]);
         }
-        return undefined;
-      };
-
-      const key1 = selectKeyForSlot(1);
-      const key2 = selectKeyForSlot(2);
-
-      if (key1) {
-        await writeImageToSlot(1, imageMap[key1]);
       }
-      if (key2) {
-        await writeImageToSlot(2, imageMap[key2]);
-      }
-    }
-  }
-
-  // SE FOR CERTIFICADO VAI TER O TIPO DE CERTIFICADO
-  if (tipoCertificado) {
-    console.log("imageMap", imageMap);
-    const totalAssinaturas = Number(tipoCertificado[0]);
-
-    for (let i = 1; i < totalAssinaturas; i++) {
-      const blankImage = await getAssinaturaImage("vazio");
-      zip.file(`ppt/media/image${i + 2}.png`, blankImage, { binary: true });
-    }
-
-    // Assinaturas ocupam os slots image3..image6
-    const slots = [3, 4, 5, 6];
-
-    for (let i = 0; i < slots.length; i++) {
-      console.log("SLOTS FOR", i);
-      const slotNumber = slots[i];
-      const key = `assinatura${i + 1}`;
-
-      const selected = (imageMap?.[key]?.extension || "none").toLowerCase();
-      const nomeAssinatura: "luiz" | "cledione" | "vazio" =
-        selected === "luiz" || selected === "cledione"
-          ? (selected as any)
-          : "vazio";
-
-      const newImage = await getAssinaturaImage(nomeAssinatura);
-
-      const newImagePath = `ppt/media/image${slotNumber}.png`;
-      zip.file(newImagePath, newImage, { binary: true });
     }
     return;
   }
+
+  // SE FOR CERTIFICADO (VERSO): aplica capa do verso como background e mapeia assinaturas
+
+  // 1) Background do verso: usar explicitamente a 'image2' (capa do verso) no slot 1 do PPTX do verso
+  //    Caso não tenha 'image2', tenta usar 'image1' como fallback
+  const coverBack = imageMap?.image2 || imageMap?.image1;
+  if (coverBack) {
+    await writeImageToSlot(1, coverBack);
+  }
+
+  // 2) Assinaturas ocupam os slots image2..image5 no template do verso
+  const signatureSlots = [2, 3, 4, 5];
+
+  // Preenche primeiro com "vazio" para garantir placeholders consistentes
+  const blankImage = await getAssinaturaImage("vazio");
+  for (const slot of signatureSlots) {
+    zip.file(`ppt/media/image${slot}.png`, blankImage, { binary: true });
+  }
+
+  // 3) Aplica as assinaturas selecionadas (ou "vazio" quando não selecionadas)
+  for (let i = 0; i < signatureSlots.length; i++) {
+    const slotNumber = signatureSlots[i];
+    const key = `assinatura${i + 1}`;
+    const selected = (imageMap?.[key]?.extension || "none").toLowerCase();
+    const nomeAssinatura: "luiz" | "cledione" | "vazio" =
+      selected === "luiz" || selected === "cledione"
+        ? (selected as any)
+        : "vazio";
+
+    const newImage = await getAssinaturaImage(nomeAssinatura);
+    zip.file(`ppt/media/image${slotNumber}.png`, newImage, { binary: true });
+  }
+  return;
 }
 
 export async function gerarCertificado(
