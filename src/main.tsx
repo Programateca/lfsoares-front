@@ -18,6 +18,7 @@ import { PublicRoute } from "@/routes/PublicRoute";
 import { AuthProvider } from "./context/AuthContextProvider.tsx";
 import { Toaster } from "react-hot-toast";
 import NotFound from "./pages/NotFound.tsx";
+import ErrorFallback from "./pages/ErrorFallback.tsx";
 
 if (!import.meta.env.VITE_BACKEND_DOMAIN)
   throw new Error("Env VITE_BACKEND_DOMAIN missing");
@@ -25,6 +26,7 @@ if (!import.meta.env.VITE_BACKEND_DOMAIN)
 const router = createBrowserRouter([
   {
     path: "/login",
+    errorElement: <ErrorFallback />,
     element: (
       <PublicRoute>
         <Login />
@@ -33,6 +35,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    errorElement: <ErrorFallback />,
     element: (
       <ProtectedRoute>
         <Home />
