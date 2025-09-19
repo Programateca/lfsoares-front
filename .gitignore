@@ -31,3 +31,6 @@ dist-ssr
 .tool-versions
 test/output
 test/templates
+
+# TypeScript incremental build info
+*.tsbuildinfo
