@@ -43,7 +43,20 @@ export const useIdentificadoresData = () => {
       setHasNextPage(response.hasNextPage);
       setIdentificadoresGerados(response.data);
       setEventos(eventosResp.data.filter((e: any) => e.status?.id === 1));
-      setParticipantes(pessoasResp.data.filter((e: any) => e.status?.id === 1));
+      setParticipantes(
+        pessoasResp.data
+          .filter((e: any) => e.status?.id === 1)
+          .map((e: any) => ({
+            id: e.id,
+            name: e.name,
+            cpf: e.cpf,
+            empresa: e.empresa,
+            matricula: e.matricula,
+            createdAt: e.createdAt,
+            updatedAt: e.updatedAt,
+            status: e.status,
+          }))
+      );
       setInstrutores(
         instrutoresResp.data.filter((inst: any) => inst.status?.id === 1)
       );

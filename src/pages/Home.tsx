@@ -7,7 +7,7 @@ import Usuarios from "@/components/Usuarios";
 import Treinamentos from "@/components/Treinamentos";
 import Integrantes from "@/components/Integrantes";
 import Pessoas from "@/components/Pessoas";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContextProvider";
 import Empresas from "@/components/Empresas";
 import Eventos from "@/components/Eventos";
@@ -32,6 +32,7 @@ type ComponentKeys = keyof typeof componentsMap;
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, logout, user } = useAuth();
 
   const [selectedOption, setSelectedOption] = useState<ComponentKeys | "">("");
@@ -40,6 +41,23 @@ export default function HomePage() {
 
   const handleSelectedOption = (option: ComponentKeys | "") => {
     setSelectedOption(option);
+    // push route reflecting selection
+    const routeMap: Record<ComponentKeys, string> = {
+      Usuários: "/usuarios",
+      Eventos: "/eventos",
+      Treinamentos: "/treinamentos",
+      Integrantes: "/integrantes",
+      Pessoas: "/pessoas",
+      Empresas: "/empresas",
+      Certificados: "/certificados",
+      Lista: "/lista",
+      Identificadores: "/identificadores",
+    };
+    if (option && routeMap[option as ComponentKeys]) {
+      navigate(routeMap[option as ComponentKeys]);
+    } else if (option === "") {
+      navigate("/");
+    }
   };
 
   const toggleCadastro = () => {
@@ -58,6 +76,27 @@ export default function HomePage() {
   useEffect(() => {
     if (!isAuthenticated()) navigate("/login");
   }, [isAuthenticated, navigate, user]);
+
+  // Sync selected component from current path
+  useEffect(() => {
+    const path = location.pathname;
+    const map: Record<string, ComponentKeys> = {
+      "/usuarios": "Usuários",
+      "/eventos": "Eventos",
+      "/treinamentos": "Treinamentos",
+      "/integrantes": "Integrantes",
+      "/pessoas": "Pessoas",
+      "/empresas": "Empresas",
+      "/certificados": "Certificados",
+      "/lista": "Lista",
+      "/identificadores": "Identificadores",
+    };
+    if (map[path]) {
+      setSelectedOption(map[path]);
+    } else if (path === "/") {
+      setSelectedOption("");
+    }
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen h-full flex flex-col">

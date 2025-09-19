@@ -11,14 +11,17 @@ if (!import.meta.env.VITE_BACKEND_DOMAIN)
   throw new Error("Env VITE_BACKEND_DOMAIN missing");
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
+  { path: "/", element: <Home /> },
+  { path: "/login", element: <Login /> },
+  { path: "/usuarios", element: <Home /> },
+  { path: "/eventos", element: <Home /> },
+  { path: "/treinamentos", element: <Home /> },
+  { path: "/integrantes", element: <Home /> },
+  { path: "/pessoas", element: <Home /> },
+  { path: "/empresas", element: <Home /> },
+  { path: "/certificados", element: <Home /> },
+  { path: "/lista", element: <Home /> },
+  { path: "/identificadores", element: <Home /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
