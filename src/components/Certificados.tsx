@@ -727,13 +727,23 @@ const Certificados = () => {
                       : "Data não disponível"}
                   </TableCell>
                   <TableCell className="text-end space-x-2 whitespace-nowrap py-2">
-                    <Dialog open={isModalOpen2} onOpenChange={setIsModalOpen2}>
+                    <Dialog
+                      open={
+                        isModalOpen2 &&
+                        selectedCertificado?.id === certificado.id
+                      }
+                      onOpenChange={(open) => {
+                        setIsModalOpen2(open);
+                        if (!open) resetForm();
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button
                           className="p-2 h-fit hover:bg-gray-200 hover:border-gray-300"
                           variant={"outline"}
                           onClick={() => {
                             setSelectedCertificado(certificado);
+                            setIsModalOpen2(true);
                             try {
                               const data = JSON.parse(certificado.documentData);
                               setLocalEmissaoSignature(
