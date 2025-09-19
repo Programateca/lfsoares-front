@@ -5,6 +5,11 @@ import { parseStringPromise, Builder, Parser } from "xml2js";
 import { saveAs } from "file-saver";
 import { loadFile } from "./load-file";
 
+const DEBUG_CERT = import.meta.env.DEV;
+const dlog = (...args: unknown[]) => {
+  if (DEBUG_CERT) console.log("[cert-gen]", ...args);
+};
+
 const getAssinaturaImage = async (nome: "luiz" | "cledione" | "vazio") => {
   const basePath = "/templates/assinaturas";
   if (nome === "vazio") {
@@ -20,6 +25,10 @@ async function replaceImage(
   imageMap: Record<string, { data: ArrayBuffer; extension: string }>,
   tipoCertificado?: string
 ) {
+  dlog("replaceImage:start", {
+    tipoCertificado,
+    imageMapKeys: Object.keys(imageMap || {}),
+  });
   // Util helpers
   const toMime = (extOrMime?: string) => {
     const v = (extOrMime || "").trim().toLowerCase();
@@ -45,6 +54,41 @@ async function replaceImage(
       default:
         return "image/jpeg";
     }
+  };
+  const inspectSlideRels = async (slideNo = 1) => {
+    try {
+      const relsPath = `ppt/slides/_rels/slide${slideNo}.xml.rels`;
+      const relsXml = zip.file(relsPath)?.asText();
+      if (!relsXml) return { rels: [], byId: {} as Record<string, string> };
+      const obj = await parseStringPromise(relsXml);
+      const rels = obj?.Relationships?.Relationship || [];
+      const byId: Record<string, string> = {};
+      rels.forEach((r: any) => {
+        if (r.$?.Id && r.$?.Target) byId[r.$.Id] = r.$.Target;
+      });
+      return { rels, byId };
+    } catch (e) {
+      dlog("inspectSlideRels:error", e);
+      return { rels: [], byId: {} as Record<string, string> };
+    }
+  };
+
+  const inspectMedia = () => {
+    const media = Object.keys(zip.files)
+      .filter((n) => /^ppt\/media\/image\d+\.[A-Za-z0-9]+$/.test(n))
+      .sort((a, b) => {
+        const na = Number(a.match(/image(\d+)\./)?.[1] || 0);
+        const nb = Number(b.match(/image(\d+)\./)?.[1] || 0);
+        return na - nb;
+      });
+    const entries = media.map((path) => {
+      const buf = zip.file(path)?.asArrayBuffer();
+      return {
+        path,
+        bytes: buf ? (buf as ArrayBuffer).byteLength : 0,
+      };
+    });
+    dlog("media:list", entries);
   };
 
   const findExistingMediaPath = (index: number) => {
@@ -84,17 +128,25 @@ async function replaceImage(
   };
 
   const writeImageToSlot = async (
-    slotIndex: 1 | 2,
+    slotIndex: number,
     file?: { data: ArrayBuffer; extension: string }
   ) => {
     if (!file?.data) return;
     const { path, partName } = findExistingMediaPath(slotIndex);
     zip.file(path, file.data, { binary: true });
     await updateContentType(partName, toMime(file.extension));
+    dlog("writeImageToSlot", {
+      slotIndex,
+      path,
+      partName,
+      mime: toMime(file.extension),
+    });
   };
 
   // Quando NÃO é certificado (sem tipo), apenas troca image1 e image2 (ex.: frente)
   if (!tipoCertificado) {
+    dlog("front:before-inspect");
+    inspectMedia();
     if (imageMap) {
       const allKeys = Object.keys(imageMap);
       const nonSignatureKeys = allKeys.filter(
@@ -131,25 +183,47 @@ async function replaceImage(
         }
       }
     }
+    dlog("front:after-inspect");
+    inspectMedia();
     return;
   }
 
   // SE FOR CERTIFICADO (VERSO): aplica capa do verso como background e mapeia assinaturas
 
-  // 1) Background do verso: usar explicitamente a 'image2' (capa do verso) no slot 1 do PPTX do verso
-  //    Caso não tenha 'image2', tenta usar 'image1' como fallback
-  const coverBack = imageMap?.image2 || imageMap?.image1;
-  if (coverBack) {
-    await writeImageToSlot(1, coverBack);
-  }
+  dlog("verso:before-inspect", { tipoCertificado });
+  inspectMedia();
+  const relsInfoBefore = await inspectSlideRels(1);
+  dlog("verso:slideRels:before", relsInfoBefore);
 
-  // 2) Assinaturas ocupam os slots image2..image5 no template do verso
-  const signatureSlots = [2, 3, 4, 5];
+  // Descobre quais imagens o slide realmente usa (targets de media) para mapear assinaturas
+  const usedMediaTargets = Object.values(relsInfoBefore.byId || {}).filter(
+    (t) => /..\/media\/image\d+\.[A-Za-z0-9]+$/.test(t)
+  );
+  const usedIndices = usedMediaTargets
+    .map((t) => Number(t.match(/image(\d+)\./)?.[1] || 0))
+    .filter((n) => n > 0)
+    .sort((a, b) => a - b);
+  dlog("verso:usedIndices", usedIndices);
+
+  // Assinaturas: use exatamente os índices que o slide referencia
+  const signatureSlots = usedIndices.length ? usedIndices : [2, 3, 4, 5];
+  dlog("verso:signatureSlots:target", signatureSlots);
+
+  // Evitar sobrescrever background: por ora, não escreveremos capa do verso
+  // Se necessário, reintroduzir lógica de capa detectando slots livres que não conflitam
+  dlog("verso:cover:skipped", { reason: "avoid-background-collision" });
 
   // Preenche primeiro com "vazio" para garantir placeholders consistentes
   const blankImage = await getAssinaturaImage("vazio");
   for (const slot of signatureSlots) {
-    zip.file(`ppt/media/image${slot}.png`, blankImage, { binary: true });
+    await writeImageToSlot(slot, {
+      data: blankImage as ArrayBuffer,
+      extension: "png",
+    });
+    dlog("verso:blank:slot", {
+      slot,
+      bytes: (blankImage as ArrayBuffer).byteLength,
+    });
   }
 
   // 3) Aplica as assinaturas selecionadas (ou "vazio" quando não selecionadas)
@@ -163,8 +237,21 @@ async function replaceImage(
         : "vazio";
 
     const newImage = await getAssinaturaImage(nomeAssinatura);
-    zip.file(`ppt/media/image${slotNumber}.png`, newImage, { binary: true });
+    await writeImageToSlot(slotNumber, {
+      data: newImage as ArrayBuffer,
+      extension: "png",
+    });
+    dlog("verso:apply-signature", {
+      key,
+      nomeAssinatura,
+      slotNumber,
+      bytes: (newImage as ArrayBuffer).byteLength,
+    });
   }
+  dlog("verso:after-inspect (bytes should be updated)");
+  inspectMedia();
+  const relsInfoAfter = await inspectSlideRels(1);
+  dlog("verso:slideRels:after", relsInfoAfter);
   return;
 }
 
