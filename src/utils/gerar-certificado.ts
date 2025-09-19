@@ -205,13 +205,78 @@ async function replaceImage(
     .sort((a, b) => a - b);
   dlog("verso:usedIndices", usedIndices);
 
-  // Assinaturas: use exatamente os índices que o slide referencia
-  const signatureSlots = usedIndices.length ? usedIndices : [2, 3, 4, 5];
+  // Índices de mídias existentes no template (para validar slots)
+  const existingMediaIndices = Object.keys(zip.files)
+    .map((n) => n.match(/^ppt\/media\/image(\d+)\.[A-Za-z0-9]+$/))
+    .filter((m): m is RegExpMatchArray => !!m)
+    .map((m) => Number(m[1]))
+    .sort((a, b) => a - b);
+  dlog("verso:existingMediaIndices", existingMediaIndices);
+
+  // Mapeamento explícito por template (assinaturas + capa) com fallback
+  const baseType = (tipoCertificado || "").toLowerCase();
+  const templateMap: Record<string, { cover: number; sigs: number[] }> = {
+    // 2 assinaturas: fundo no image2, assinaturas em 3 e 4
+    "2a": { cover: 2, sigs: [3, 4] },
+    // 3 assinaturas: fundo no image2, assinaturas 3,4,5
+    "3a": { cover: 2, sigs: [3, 4, 5] },
+    // 4 assinaturas: cover 1, assinaturas 2..5
+    "4a": { cover: 1, sigs: [2, 3, 4, 5] },
+  };
+
+  const keyType = baseType.startsWith("2a")
+    ? "2a"
+    : baseType.startsWith("3a")
+    ? "3a"
+    : baseType.startsWith("4a")
+    ? "4a"
+    : "";
+
+  const mapped = keyType ? templateMap[keyType] : undefined;
+  let signatureSlots = (
+    mapped?.sigs?.length
+      ? mapped.sigs
+      : usedIndices.length
+      ? usedIndices
+      : [2, 3, 4, 5]
+  ).filter((i) => existingMediaIndices.includes(i));
+
   dlog("verso:signatureSlots:target", signatureSlots);
 
-  // Evitar sobrescrever background: por ora, não escreveremos capa do verso
-  // Se necessário, reintroduzir lógica de capa detectando slots livres que não conflitam
-  dlog("verso:cover:skipped", { reason: "avoid-background-collision" });
+  // Capa do verso: usar o slot mapeado se existir e não conflitar; senão fallback seguro
+  const coverBack = imageMap?.image2 || imageMap?.image1;
+  if (coverBack) {
+    let coverSlot: number | undefined = mapped?.cover;
+    if (
+      typeof coverSlot !== "number" ||
+      !existingMediaIndices.includes(coverSlot) ||
+      signatureSlots.includes(coverSlot)
+    ) {
+      // Evitar slots já usados por relações do slide (usedIndices)
+      const preferred = [1, 2].filter(
+        (s) =>
+          existingMediaIndices.includes(s) &&
+          !signatureSlots.includes(s) &&
+          !usedIndices.includes(s)
+      );
+      coverSlot = preferred[0];
+      if (typeof coverSlot !== "number") {
+        const foundAny = existingMediaIndices.find(
+          (idx) => !signatureSlots.includes(idx) && !usedIndices.includes(idx)
+        );
+        if (typeof foundAny === "number") coverSlot = foundAny;
+      }
+    }
+
+    if (typeof coverSlot === "number") {
+      await writeImageToSlot(coverSlot, coverBack);
+      dlog("verso:cover:applied", { coverSlot });
+    } else {
+      dlog("verso:cover:skipped", { reason: "no-free-slot" });
+    }
+  } else {
+    dlog("verso:cover:skipped", { reason: "no-cover-image-in-imageMap" });
+  }
 
   // Preenche primeiro com "vazio" para garantir placeholders consistentes
   const blankImage = await getAssinaturaImage("vazio");
@@ -222,11 +287,10 @@ async function replaceImage(
     });
     dlog("verso:blank:slot", {
       slot,
-      bytes: (blankImage as ArrayBuffer).byteLength,
     });
   }
 
-  // 3) Aplica as assinaturas selecionadas (ou "vazio" quando não selecionadas)
+  // Aplica as assinaturas selecionadas (ou "vazio" quando não selecionadas)
   for (let i = 0; i < signatureSlots.length; i++) {
     const slotNumber = signatureSlots[i];
     const key = `assinatura${i + 1}`;
